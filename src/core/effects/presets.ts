@@ -1,6 +1,7 @@
 import gsap from "gsap";
 import { Container, BlurFilter } from "pixi.js";
 import type { EffectFunction } from "./types";
+import { TokenWrapper } from "../TokenWrapper";
 
 // 1. 震动 (Continuous Shake)
 // 适合表达恐惧、寒冷、愤怒
@@ -114,4 +115,31 @@ export const glitch: EffectFunction = (target: Container, params = {}) => {
   });
 
   return tl;
+};
+
+// 新增：组特效 - 边框
+// 注意：这个函数期望 target 是 TokenWrapper 类型
+export const border: EffectFunction = (target, params = {}) => {
+  if (!(target instanceof TokenWrapper)) {
+    console.warn("[Effect] border effect requires TokenWrapper");
+    return;
+  }
+
+  const color = params.color || 0xff0000;
+  const width = params.width || 2;
+  const padding = params.padding || 5;
+
+  const bounds = target.getContentBounds();
+
+  // 使用内置的 Graphics 对象画框
+  const g = target.bgGraphics;
+  g.clear();
+  g.rect(
+    -padding,
+    -padding,
+    bounds.width + padding * 2,
+    bounds.height + padding * 2,
+  );
+  g.stroke({ width, color }); // v8 语法: stroke({...})
+  // g.fill(0x000000, 0.5); // 如果需要背景色
 };

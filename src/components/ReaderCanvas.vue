@@ -8,30 +8,25 @@
 <script setup lang="ts">
   import { ref, onMounted, onUnmounted } from "vue";
   import { readerApp } from "../core/App";
-  import { KineticText } from "../core/KineticText";
+  // import { KineticText } from "../core/KineticText";
+  import { layout } from "../core/layout/LayoutEngine";
 
   const canvasContainer = ref<HTMLElement | null>(null);
   const isReady = ref(false);
 
   onMounted(async () => {
     if (!canvasContainer.value) return;
-
-    // 1. 初始化 Pixi
     await readerApp.init(canvasContainer.value);
+    // 初始化排版引擎，告诉它往 stage 上画
+    layout.init(readerApp.pixiApp.stage, 150);
     isReady.value = true;
-    const text = new KineticText("Ghost In Shell");
-    text.x = 100;
-    text.y = 300;
-    readerApp.pixiApp.stage.addChild(text);
-
-    // 测试 1: 全体波浪
-    text.applyEffectToAll("wave", { height: 15 });
-
-    // 测试 2: "Ghost" 这个词模糊进场
-    text.applyEffectToRange(0, 5, "blurIn", { duration: 2 });
-
-    // 测试 3: "Shell" 这个词故障震动
-    text.applyEffectToRange(9, 14, "glitch");
+    // 开始写小说！
+    layout.addLine("{第一章}：觉醒 @ f.big.bold");
+    layout.addLine(""); // 空行
+    layout.addLine("那是{深渊}的凝视。 @ f.purple.glitch");
+    layout.addLine("它在问我：");
+    layout.addLine("你愿意献祭灵魂吗？ @ .red.shake.glow");
+    layout.addLine("我回答：{不愿意}。 @ f(blue, bold)");
   });
 
   onUnmounted(() => {
@@ -42,10 +37,11 @@
 <style scoped>
   .canvas-container {
     width: 100%;
-    height: 100vh; /* 全屏 */
+    height: 100%; /* 全屏 */
     background: #000;
     overflow: hidden;
     position: relative;
+    flex: auto;
   }
   .loading {
     color: white;

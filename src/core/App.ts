@@ -23,10 +23,11 @@ class ReaderApp {
 
     // v8 初始化方式
     await this.pixiApp.init({
-      background: "#1099bb", //以此颜色测试，方便看清画布边界
-      resizeTo: container, // 自动跟随容器大小
+      background: "#000000", //以此颜色测试，方便看清画布边界
+      resizeTo: window, // 自动跟随容器大小
       antialias: true, // 抗锯齿
-      resolution: window.devicePixelRatio || 1, // 高清屏适配
+      resolution: window.devicePixelRatio || 1, // 使用设备像素比
+      autoDensity: true, // 【关键】告诉 Pixi 调整 CSS 样式以匹配分辨率
     });
 
     // 将 Canvas 添加到 DOM
