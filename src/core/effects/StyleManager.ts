@@ -1,22 +1,26 @@
 import { TextStyle } from "pixi.js";
-import type { StyleFunction, IStyleRegistry } from "./types";
+import type { StyleFunction, IStyleRegistry, EffectMetadata } from "./types";
 import * as Presets from "./styles";
 
 class StyleManager {
   private registry: IStyleRegistry = {};
+  
+  // Track applied mutex groups for each TextStyle object
+  // Using WeakMap to avoid memory leaks when TextStyle is destroyed
+  private activeMutexes: WeakMap<TextStyle, Set<string>> = new WeakMap();
 
   constructor() {
     // 自动加载所有静态样式预设
-    this.registerBatch(Presets as Record<string, StyleFunction>);
+    this.registerBatch(Presets as unknown as Record<string, { fn: StyleFunction; meta: EffectMetadata }>);
   }
 
   // 注册单个样式
-  public register(name: string, styleFn: StyleFunction) {
-    this.registry[name] = styleFn;
+  public register(name: string, fn: StyleFunction, meta: EffectMetadata) {
+    this.registry[name] = { fn, meta };
   }
 
   // 批量注册
-  public registerBatch(styles: Record<string, StyleFunction>) {
+  public registerBatch(styles: Record<string, { fn: StyleFunction; meta: EffectMetadata }>) {
     Object.assign(this.registry, styles);
   }
 
@@ -32,18 +36,39 @@ class StyleManager {
     params?: Record<string, any>,
   ) {
     if (Array.isArray(name)) {
-      name.forEach((n) => this.apply(style, n));
+      name.forEach((n) => this.apply(style, n, params));
       return;
     }
 
-    const styleFn = this.registry[name];
-    if (!styleFn) {
+    const entry = this.registry[name];
+    if (!entry) {
       console.warn(`[StyleManager] Unknown style: ${name}`);
       return;
     }
 
+    const { fn, meta } = entry;
+
+    // --- Conflict Detection ---
+    if (meta.mutexGroup) {
+      let appliedMutexes = this.activeMutexes.get(style);
+      if (!appliedMutexes) {
+        appliedMutexes = new Set();
+        this.activeMutexes.set(style, appliedMutexes);
+      }
+
+      if (appliedMutexes.has(meta.mutexGroup)) {
+        console.warn(
+          `%c[Style Conflict] Style group "${meta.mutexGroup}" already applied. Skipping "${name}".`,
+          "color: orange; font-weight: bold;"
+        );
+        return;
+      }
+
+      appliedMutexes.add(meta.mutexGroup);
+    }
+
     try {
-      styleFn(style, params);
+      fn(style, params);
     } catch (err) {
       console.error(`[StyleManager] Error applying style "${name}":`, err);
     }

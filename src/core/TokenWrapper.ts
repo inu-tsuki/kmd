@@ -1,36 +1,33 @@
-import { Container, Text, Graphics, Rectangle } from "pixi.js";
+import { Container, Graphics, Rectangle } from "pixi.js";
+import { KineticChar } from "./KineticChar"; // 引入新类
 
 export class TokenWrapper extends Container {
-  public chars: Text[] = []; // 存储内部的字符
-  public bgGraphics: Graphics; // 专门用于画背景、边框
+  public chars: KineticChar[] = []; // 存储内部的字符
+  // public bgGraphics: Graphics; // 专门用于画背景、边框
+  private graphicsLayers: Map<string, Graphics> = new Map();
 
   constructor() {
     super();
-    // 初始化背景层，放在最底层 (zIndex = 0)
-    this.bgGraphics = new Graphics();
-    this.addChild(this.bgGraphics);
   }
 
   // 添加字符并自动排版
-  public addChars(textObjects: Text[]) {
+  public addChars(charObjects: KineticChar[]) {
     let currentX = 0;
     let maxHeight = 0;
 
-    textObjects.forEach((textObj) => {
+    charObjects.forEach((charObj) => {
       // 1. 设置字符在 Token 内部的相对位置
-      textObj.anchor.set(0.5); // 保持中心锚点
+      charObj.anchor.set(0.5); // 保持中心锚点
 
       // 2. 字符的 y 设为 0 (相对于 Token 中心线的垂直偏移)
-      // 注意：Text(anchor=0.5) 的 (0,0) 就是字符中心
-      // 这里的 currentX 是字符左边界，所以 x 要加上半宽
-      textObj.x = currentX + textObj.width / 2;
-      textObj.y = textObj.height / 2; // 暂定：垂直居中于行高一半
+      charObj.layoutX = currentX + charObj.width / 2;
+      charObj.layoutY = charObj.height / 2; // 暂定：垂直居中于行高一半
 
-      this.addChild(textObj);
-      this.chars.push(textObj);
+      this.addChild(charObj);
+      this.chars.push(charObj);
 
-      currentX += textObj.width;
-      maxHeight = Math.max(maxHeight, textObj.height);
+      currentX += charObj.width;
+      maxHeight = Math.max(maxHeight, charObj.height);
     });
 
     // --- 核心修正：设置 Token 自身的 Pivot ---
@@ -63,5 +60,15 @@ export class TokenWrapper extends Container {
     const width = (last?.x ?? 0) + (last?.width ?? 0) / 2;
     const height = first?.height ?? 0; // 简略
     return new Rectangle(0, 0, width, height);
+  }
+
+  // 获取指定名字的层，如果不存在就创建
+  public getGraphicsLayer(name: string): Graphics {
+    if (!this.graphicsLayers.has(name)) {
+      const g = new Graphics();
+      this.addChildAt(g, 0); // 始终放在最底层
+      this.graphicsLayers.set(name, g);
+    }
+    return this.graphicsLayers.get(name)!;
   }
 }

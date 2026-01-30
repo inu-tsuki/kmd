@@ -1,8 +1,9 @@
-import { Container, Text, TextStyle } from "pixi.js";
+import { Container, TextStyle } from "pixi.js";
 import { effectManager } from "./effects/EffectManager"; // 引入管理器
 import { parser } from "./parser/Parser"; // 引入解析器
 import { styleManager } from "./effects/StyleManager";
-import { TokenWrapper } from "./TokenWrapper"; // 引入新类
+import { TokenWrapper } from "./TokenWrapper"; // 引入组容器类
+import { KineticChar } from "./KineticChar"; // 引入单字类
 
 export class KineticText extends Container {
   public tokens: TokenWrapper[] = []; // 存储 Token 列表
@@ -14,6 +15,15 @@ export class KineticText extends Container {
   }
 
   private build(kmdString: string) {
+    // 开发模式下打印错误
+    if (import.meta.env.DEV) {
+      const errors = parser.validate(kmdString);
+      if (errors.length > 0) {
+        console.error("[KMD Error]", errors);
+        // 甚至可以在画布上画一个红色的 "ERROR" 标记
+      }
+    }
+
     console.log(" [KineticText] Parsing KMD string:", kmdString);
     const { tokens: parsedTokens, globalEffects } = parser.parse(kmdString);
     console.log(
@@ -35,15 +45,16 @@ export class KineticText extends Container {
 
     parsedTokens.forEach((tokenData) => {
       // --- 1. 准备样式 ---
-      const tokenStyle = baseStyle.clone();
       const allEffects = [...globalEffects, ...tokenData.effects];
 
-      allEffects.forEach((name) => {
-        if (styleManager.has(name)) {
-          styleManager.apply(tokenStyle, name);
+      const tokenStyle = baseStyle.clone();
+      allEffects.forEach((config) => {
+        if (styleManager.has(config.name)) {
+          styleManager.apply(tokenStyle, config.name, config.params);
           console.log(
             " [KineticText] for " + tokenData.content + " Applied style:",
-            name,
+            config.name,
+            config.params,
           );
         }
       });
@@ -52,12 +63,11 @@ export class KineticText extends Container {
       const tokenWrapper = new TokenWrapper();
 
       // --- 3. 创建字符并添加到 Wrapper ---
-      const charObjects: Text[] = [];
-      for (let i = 0; i < tokenData.content.length; i++) {
-        const charObj = new Text({
-          text: tokenData.content[i],
-          style: tokenStyle,
-        });
+      const charObjects: KineticChar[] = [];
+      const content = tokenData.content ?? "";
+      for (let i = 0; i < content.length; i++) {
+        const ch = content.charAt(i);
+        const charObj = new KineticChar(ch, tokenStyle);
         charObjects.push(charObj);
       }
       tokenWrapper.addChars(charObjects);
@@ -75,30 +85,37 @@ export class KineticText extends Container {
       // --- 5. 分发特效 (核心逻辑) ---
       // 我们需要决定特效给谁：给 Wrapper 还是给 Chars？
 
-      allEffects.forEach((effectName) => {
-        if (styleManager.has(effectName)) return; // 跳过静态样式
+      allEffects.forEach((config) => {
+        if (styleManager.has(config.name)) return; // 跳过静态样式
 
         // 【策略】
         // 我们可以维护一个列表，或者根据命名约定。
         // 这里做一个简单的硬编码判断：如果是 "border", "bg" 这种，给 Wrapper
         // 其他默认给 Chars (保持原有 shake, wave 的细腻感)
 
-        if (["border", "bg", "blurIn"].includes(effectName)) {
+        if (["border", "bg", "blurIn"].includes(config.name)) {
           // 给组应用
-          effectManager.apply(tokenWrapper, effectName);
+          effectManager.apply(tokenWrapper, config.name, config.params);
           console.log(
             " [KineticText] for " + tokenData.content + " Applied effect:",
-            effectName,
+            config.name,
+            config.params,
             "to TokenWrapper",
           );
         } else {
           // 给每个字应用 (Per-char animation)
           // 这里的逻辑可以优化：也可以把 applyEffectToAll 移入 TokenWrapper
           tokenWrapper.chars.forEach((char, index) => {
-            effectManager.apply(char, effectName, { delay: index * 0.05 });
+            const autoParams = {
+              ...config.params,
+              delay: (config.params.delay || 0) + index * 0.1,
+            };
+
+            effectManager.apply(char, config.name, autoParams);
             console.log(
               " [KineticText] for " + tokenData.content + " Applied effect:",
-              effectName,
+              config.name,
+              autoParams,
               "to char:",
               char.text,
             );
