@@ -5,15 +5,17 @@ import { stageManager } from "../stage/StageManager";
 export class KMDScanner {
   private braceIdCounter = 0;
 
-  public scan(bodyText: string): { tokens: KMDToken[]; globalEffects: EffectConfig[] } {
+  public scan(bodyText: string, startLine: number = 0): { tokens: KMDToken[]; globalEffects: EffectConfig[] } {
     const lines = bodyText.split("\n");
     const allTokens: KMDToken[] = [];
     const allGlobalEffects: EffectConfig[] = [];
 
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i]!;
+      const absoluteLine = startLine + i;
+
       if (!line.trim() && i !== lines.length - 1) {
-        allTokens.push({ content: "\n", effects: [], commands: [], params: {}, layoutInstructions: [], sugar: [] });
+        allTokens.push({ content: "\n", effects: [], commands: [], params: {}, layoutInstructions: [], sugar: [], line: absoluteLine } as any);
         continue;
       }
 
@@ -23,9 +25,11 @@ export class KMDScanner {
               content: "",
               effects: [], commands: [], params: {}, sugar: [],
               layoutInstructions: [{ type: "wait", params: { 0: "0.5s" }, blocking: true }],
-              isSceneClear: true // 标记为场景清除
+              isSceneClear: true, // 标记为场景清除
+              line: absoluteLine,
+              range: { start: 0, end: line.length }
           } as any);
-          if (i < lines.length - 1) allTokens.push({ content: "\n", effects: [], commands: [], params: {}, layoutInstructions: [], sugar: [] });
+          if (i < lines.length - 1) allTokens.push({ content: "\n", effects: [], commands: [], params: {}, layoutInstructions: [], sugar: [], line: absoluteLine } as any);
           continue;
       }
 
@@ -41,6 +45,8 @@ export class KMDScanner {
       }
 
       const lineTokens = this.scanLineBody(bodyPart);
+      // 注入行号
+      lineTokens.forEach(t => t.line = absoluteLine);
       
       if (isSpecialHeading) {
           lineTokens.forEach(t => {
@@ -51,7 +57,7 @@ export class KMDScanner {
       if (cmdPart) this.applyCommandsToTokens(cmdPart, lineTokens, allGlobalEffects);
 
       allTokens.push(...lineTokens);
-      if (i < lines.length - 1) allTokens.push({ content: "\n", effects: [], commands: [], params: {}, layoutInstructions: [], sugar: [] });
+      if (i < lines.length - 1) allTokens.push({ content: "\n", effects: [], commands: [], params: {}, layoutInstructions: [], sugar: [], line: absoluteLine } as any);
     }
     return { tokens: allTokens, globalEffects: allGlobalEffects };
   }
@@ -62,10 +68,12 @@ export class KMDScanner {
     let currentText = "";
     let isBold = false;
     let isItalic = false;
+    let tokenStartPos = 0; // 记录当前正在构建的 Token 的起始列号
 
     const flushText = (bracedGroupId?: number) => {
         if (currentText || bracedGroupId !== undefined) {
             const t = this.createSimpleToken(currentText);
+            t.range = { start: tokenStartPos, end: pos }; // 注入位置
             if (bracedGroupId !== undefined) {
                 (t as any).isBraced = true;
                 (t as any).braceGroupId = bracedGroupId;
@@ -81,6 +89,7 @@ export class KMDScanner {
             }
             tokens.push(t);
             currentText = "";
+            tokenStartPos = pos; // 更新下一个 Token 的起点
         }
     };
 
@@ -96,12 +105,14 @@ export class KMDScanner {
           flushText();
           isBold = !isBold;
           pos += 2;
+          tokenStartPos = pos;
           continue;
       }
-      if (char === "*" && !isBold) { // 简单的处理，避免与 ** 冲突
+      if (char === "*" && !isBold) { 
           flushText();
           isItalic = !isItalic;
           pos++;
+          tokenStartPos = pos;
           continue;
       }
 
@@ -111,8 +122,10 @@ export class KMDScanner {
         const level = cnt >= 3 ? "block" : (cnt === 2 ? "group" : "char");
         tokens.push({
             content: "", isSugar: true, sugar: [{ name: "go", params: {}, level }],
-            effects: [], commands: [], params: {}, layoutInstructions: []
+            effects: [], commands: [], params: {}, layoutInstructions: [],
+            range: { start: tokenStartPos, end: pos }
         } as any);
+        tokenStartPos = pos;
         continue;
       }
 
@@ -121,6 +134,7 @@ export class KMDScanner {
         this.braceIdCounter++;
         const gid = this.braceIdCounter;
         pos++;
+        tokenStartPos = pos;
         while (pos < text.length && text[pos] !== "}") {
           const c = text[pos]!;
           if (c === "\\") { pos++; if (pos < text.length) { currentText += text[pos]; pos++; } } 
@@ -128,44 +142,55 @@ export class KMDScanner {
               flushText(gid);
               isBold = !isBold;
               pos += 2;
+              tokenStartPos = pos;
           }
           else if (c === "*" && !isBold) {
               flushText(gid);
               isItalic = !isItalic;
               pos++;
+              tokenStartPos = pos;
           }
           else if (c === ">" || c === "~" || c === "^") {
             flushText(gid);
+            const sugarPosStart = pos;
             if (c === ">") {
                 let cnt = 0; while (pos < text.length && text[pos] === ">") { cnt++; pos++; }
                 const level = cnt >= 3 ? "block" : (cnt === 2 ? "group" : "char");
                 tokens.push({
                     content: "", isSugar: true, sugar: [{ name: "go", params: {}, level }],
-                    effects: [], commands: [], params: {}, layoutInstructions: []
+                    effects: [], commands: [], params: {}, layoutInstructions: [],
+                    range: { start: sugarPosStart, end: pos }
                 } as any);
             } else {
                 const sName = c === "~" ? "slow" : "fast";
                 tokens.push({
                     content: "", isSugar: true, sugar: [{ name: sName, params: {}, level: "char" }],
-                    effects: [], commands: [], params: {}, layoutInstructions: []
+                    effects: [], commands: [], params: {}, layoutInstructions: [],
+                    range: { start: sugarPosStart, end: pos + 1 }
                 } as any);
                 pos++;
             }
+            tokenStartPos = pos;
           } else { currentText += c; pos++; }
         }
         flushText(gid);
-        pos++; continue;
+        pos++; 
+        tokenStartPos = pos;
+        continue;
       }
 
       if (char === "|") {
         flushText();
+        const pipeStart = pos;
         pos++; let p = "";
         if (text[pos] === "(") { pos++; while (pos < text.length && text[pos] !== ")") { p += text[pos]; pos++; } pos++; }
         tokens.push({
           content: "", isPipe: true as any, 
           layoutInstructions: [{ type: "wait", params: KMDCommandParser.parseParams(p || "0.5s"), blocking: true }],
-          effects: [], commands: [], params: {}, sugar: []
+          effects: [], commands: [], params: {}, sugar: [],
+          range: { start: pipeStart, end: pos }
         } as any);
+        tokenStartPos = pos;
         continue;
       }
 
@@ -174,9 +199,12 @@ export class KMDScanner {
         const sName = char === "~" ? "slow" : "fast";
         tokens.push({
           content: "", isSugar: true, sugar: [{ name: sName, params: {}, level: "char" }],
-          effects: [], commands: [], params: {}, layoutInstructions: []
+          effects: [], commands: [], params: {}, layoutInstructions: [],
+          range: { start: pos, end: pos + 1 }
         } as any);
-        pos++; continue;
+        pos++; 
+        tokenStartPos = pos;
+        continue;
       }
 
       currentText += char; pos++;
@@ -194,9 +222,13 @@ export class KMDScanner {
         const canMerge = last && 
             !(t as any).isSugar && !(t as any).isPipe && !(t as any).isBraced && t.content && t.content !== "\n" &&
             !(last as any).isSugar && !(last as any).isPipe && !(last as any).isBraced && last.content && last.content !== "\n" &&
-            !hasEffects && !lastHasEffects && !hasSugar && !lastHasSugar;
+            !hasEffects && !lastHasEffects && !hasSugar && !lastHasSugar &&
+            t.line === last.line; // 同行才合并
 
-        if (canMerge) { last.content += t.content; } 
+        if (canMerge) { 
+            last.content += t.content; 
+            if (last.range && t.range) last.range.end = t.range.end;
+        } 
         else { merged.push(t); }
     });
     return merged;

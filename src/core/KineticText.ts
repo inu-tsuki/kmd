@@ -210,31 +210,47 @@ export class KineticText extends Container {
   }
 
   private async _playInternal(allChars: KineticChar[], absoluteOffset: number, options: { speed?: number; mode?: string; onAdvance?: () => void } = {}, isAsyncBranch: boolean = false): Promise<{ skipAutoPause?: boolean }> {
-    let currentRevealSpeed = options.speed ?? this._options.speed ?? 50;
+    let baseRevealSpeed = options.speed ?? this._options.speed ?? 50;
     if (!isAsyncBranch) {
         this._allCharsCached.forEach((c) => (c.visible = false));
     }
     
     let lastWasInstantGo = false;
+    let persistentSpeedMultiplier = 1.0; // 行级/持久化速度
+    let groupSpeedMultiplier = 1.0;      // 组内局部速度
 
     for (let i = 0; i < allChars.length; i++) {
       const char = allChars[i]!;
       const realIdx = i + absoluteOffset;
       const isNewLine = char.isNewLine || char.text === "\n";
       
-      // 3. 执行单字效果 (Visual Phase)
-      // 核心修正：节奏糖衣决定的速度应该是独立于 baseSpeed 的，不应在循环中累加
-      currentRevealSpeed = options.speed ?? this._options.speed ?? 50; 
-      
+      // 1. 处理行级重置
+      if (isNewLine) {
+          persistentSpeedMultiplier = 1.0;
+          groupSpeedMultiplier = 1.0;
+      }
+
+      // 2. 检查节奏糖衣 (Sugar Phase)
       const timing = EffectProcessor.resolveTiming(char.timingSugars);
       if (timing.speedMultiplier !== undefined) {
-          currentRevealSpeed *= timing.speedMultiplier;
-          console.log(`[Play-Trace] Char: "${char.text}", speedMultiplier: ${timing.speedMultiplier}, finalSpeed: ${currentRevealSpeed}`);
+          // 糖衣总是持久化的
+          persistentSpeedMultiplier = timing.speedMultiplier;
+          console.log(`[Play-Trace] Sugar Speed Change: ${persistentSpeedMultiplier}`);
       }
       
       const delayOverride = timing.delayOverride;
       const advanceLevel = timing.advanceLevel;
 
+      // 3. 执行单字效果 (Visual Phase)
+      // 注意：这里需要捕获指令中可能产生的速度变化 (如 f.slow:group)
+      const charEffectRes = await this.executeCharEffects(char, realIdx);
+      if (charEffectRes.speedMultiplier !== undefined) {
+          persistentSpeedMultiplier = charEffectRes.speedMultiplier;
+      }
+
+      // 4. 计算当前最终速度
+      let currentRevealSpeed = baseRevealSpeed * persistentSpeedMultiplier * groupSpeedMultiplier;
+      
       // 核心修正 5.1：精准控制持续加速状态
       const isSugarGo = (delayOverride === 0);
       const isPersistentGo = isSugarGo && advanceLevel === "char";
@@ -260,11 +276,10 @@ export class KineticText extends Container {
       }
 
       // 执行演出：如果是 Go 模式，不等待
-      const perfTask = this.executePerformance(char, isInstantGo, realIdx);
-      if (!isInstantGo) {
-          await perfTask; 
-      } else {
-          perfTask.catch(() => {});
+      // executePerformance 将处理指令应用
+      const perfRes = await this.executePerformance(char, isInstantGo, realIdx);
+      if (perfRes.speedMultiplier !== undefined) {
+          groupSpeedMultiplier = perfRes.speedMultiplier;
       }
       
       // 信号分流
@@ -305,11 +320,27 @@ export class KineticText extends Container {
               await new Promise(resolve => setTimeout(resolve, waitTime));
           }
       }
+
+      // 5. 检查 Token 边界以处理 Group 级逻辑重置
+      const nextChar = allChars[i + 1];
+      const isTokenEnd = !nextChar || nextChar.tokenIdx !== char.tokenIdx;
+      if (isTokenEnd) {
+          groupSpeedMultiplier = 1.0; // 组播完重置
+      }
     }
     return { skipAutoPause: lastWasInstantGo };
   }
 
-  private async executePerformance(char: KineticChar, isInstantGo: boolean, charIdx: number) {
+  private async executeCharEffects(char: KineticChar, charIdx: number) {
+      if (char.visualEffects.length > 0) {
+          return await EffectProcessor.applyCharEffects(char, char.visualEffects, charIdx);
+      }
+      return {};
+  }
+
+  private async executePerformance(char: KineticChar, isInstantGo: boolean, charIdx: number): Promise<{ speedMultiplier?: number }> {
+    let speedMultiplier: number | undefined = undefined;
+
     if (char.stageInstructions.length > 0) {
       for (const instr of char.stageInstructions) {
         const result = stageManager.apply(instr.type, instr.params);
@@ -318,22 +349,16 @@ export class KineticText extends Container {
     }
 
     if (char.visualEffects.length > 0) {
-      const visualTask = EffectProcessor.applyCharEffects(char, char.visualEffects, charIdx);
-      if (!isInstantGo) await visualTask;
-      
       const nextChar = this._allCharsCached[charIdx + 1];
       const isTokenEnd = !nextChar || nextChar.tokenIdx !== char.tokenIdx;
       if (isTokenEnd) {
           const wrapper = this.tokens.find(t => t.tokenIdx === char.tokenIdx);
           if (wrapper) {
-              const groupTask = EffectProcessor.applyGroupEffects(wrapper, char.visualEffects);
-              if (!isInstantGo) {
-                  await groupTask;
-              } else {
-                  groupTask.catch(() => {});
-              }
+              const groupRes = await EffectProcessor.applyGroupEffects(wrapper, char.visualEffects);
+              speedMultiplier = groupRes.speedMultiplier;
           }
       }
     }
+    return { speedMultiplier };
   }
 }

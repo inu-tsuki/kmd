@@ -14,24 +14,52 @@ export class KMDParser {
     if (typeof input !== 'string') return result;
 
     try {
-      let content = input.replace(/\r\n/g, "\n").trim();
-
-      // 1. 提取 Metadata (索引搜索)
-      if (content.startsWith("---")) {
-        const endIdx = content.indexOf("---", 3);
-        if (endIdx !== -1) {
-          const metaStr = content.substring(3, endIdx).trim();
-          this.parseMetadata(metaStr, result.metadata);
-          content = content.substring(endIdx + 3).trim();
-        }
+      const allLines = input.replace(/\r\n/g, "\n").split("\n");
+      
+      // 1. 提取 Metadata (寻找 --- ... ---)
+      let currentLineIdx = 0;
+      if (allLines.length > 0 && allLines[0]?.trim() === "---") {
+          let endIdx = -1;
+          for(let i=1; i<allLines.length; i++) {
+              const line = allLines[i];
+              if (line !== undefined && line.trim() === "---") { endIdx = i; break; }
+          }
+          if (endIdx !== -1) {
+              const metaLines = allLines.slice(1, endIdx);
+              this.parseMetadata(metaLines.join("\n"), result.metadata);
+              currentLineIdx = endIdx + 1;
+          }
       }
 
-      // 2. 分段 (双换行或以上)
-      const rawBlocks = content.split(/\n{2,}/).filter(s => s.trim());
-      result.rawParagraphs = rawBlocks;
+      // 2. 逐行聚合成段落，同时保持行号
+      let currentBlockLines: string[] = [];
+      let blockStartLine = currentLineIdx;
 
-      // 3. 逐段解析
-      result.paragraphs = rawBlocks.map(block => this.parseParagraph(block));
+      for (let i = currentLineIdx; i < allLines.length; i++) {
+          const line = allLines[i];
+          if (line === undefined) continue;
+
+          if (line.trim() === "" && currentBlockLines.length > 0) {
+              // 提交段落
+              const raw = currentBlockLines.join("\n");
+              result.rawParagraphs.push(raw);
+              result.paragraphs.push(this.parseParagraph(raw, blockStartLine));
+              currentBlockLines = [];
+              blockStartLine = i + 1;
+          } else if (line.trim() !== "") {
+              if (currentBlockLines.length === 0) blockStartLine = i;
+              currentBlockLines.push(line);
+          } else {
+              // 纯空行，更新起点
+              blockStartLine = i + 1;
+          }
+      }
+      
+      if (currentBlockLines.length > 0) {
+          const raw = currentBlockLines.join("\n");
+          result.rawParagraphs.push(raw);
+          result.paragraphs.push(this.parseParagraph(raw, blockStartLine));
+      }
 
       return result;
     } catch (e: any) {
@@ -64,7 +92,7 @@ export class KMDParser {
     });
   }
 
-  public parseParagraph(input: string): KMDParagraphData {
+  public parseParagraph(input: string, startLine: number = 0): KMDParagraphData {
     const lines = input.split("\n").map(l => {
       const idx = l.indexOf("//");
       return (idx !== -1 && (idx === 0 || l[idx-1] === " ")) ? l.substring(0, idx) : l;
@@ -95,7 +123,6 @@ export class KMDParser {
         } else if (KMDCommandParser.isVisual(p)) {
           blockOptions.globalEffects.push(...KMDCommandParser.parseEffectChain(p));
         } else {
-          // 核心修正：尝试将 [] 内部的裸指令解析为舞台指令或布局指令
           const subChain = KMDCommandParser.parseEffectChain(p);
           subChain.forEach(eff => {
             blockOptions.globalEffects.push({ 
@@ -112,7 +139,7 @@ export class KMDParser {
       if (remaining) lines[startIdx] = remaining; else startIdx++;
     }
 
-    const { tokens, globalEffects } = this.scanner.scan(lines.slice(startIdx).join("\n"));
+    const { tokens, globalEffects } = this.scanner.scan(lines.slice(startIdx).join("\n"), startLine + startIdx);
     return {
       blockOptions: blockOptions.options,
       tokens,
@@ -120,21 +147,50 @@ export class KMDParser {
     };
   }
 
-  public validate(input: string): string[] {
-    const errors: string[] = [];
+  public validate(input: string): { message: string; line: number }[] {
+    const errors: { message: string; line: number }[] = [];
     try {
       const result = this.parse(input);
-      result.paragraphs.forEach((p) => {
-        p.tokens.forEach(token => {
-          token.effects.forEach((eff) => {
-            if (!effectManager.has(eff.name) && !styleManager.has(eff.name) && !layoutManager.has(eff.name) && !stageManager.has(eff.name)) {
-              errors.push(`Unknown effect: "${eff.name}"`);
-            }
+      const check = (name: string, line: number) => {
+        // 支持命名空间检查 (如 cam.zoom)
+        const isKnown = (n: string) => 
+          effectManager.has(n) || styleManager.has(n) || 
+          layoutManager.has(n) || stageManager.has(n);
+
+        let valid = isKnown(name);
+        if (!valid && name.includes('.')) {
+          const parts = name.split('.');
+          // 如果是 cam.move，检查 cam 命名空间是否存在
+          const namespace = parts[0];
+          if (namespace !== undefined) {
+            valid = isKnown(namespace);
+          }
+        }
+
+        if (!valid) {
+          errors.push({ 
+            message: `未知指令: "${name}"`, 
+            line: line + 1 // Monaco 是 1-based
           });
+        }
+      };
+
+      result.paragraphs.forEach((p) => {
+        // 校验全局指令
+        p.globalEffects.forEach(eff => {
+          // 全局指令的行号目前不太好精确确定，先用段落第一个 token 的行号或 blockStartLine
+          const line = p.tokens[0]?.line ?? 0;
+          check(eff.name, line);
+        });
+
+        p.tokens.forEach(token => {
+          const line = token.line ?? 0;
+          token.effects.forEach((eff) => check(eff.name, line));
+          token.layoutInstructions.forEach((instr) => check(instr.type, line));
         });
       });
     } catch (e: any) {
-      errors.push(`Syntax Error: ${e.message}`);
+      errors.push({ message: `语法错误: ${e.message}`, line: 1 });
     }
     return errors;
   }

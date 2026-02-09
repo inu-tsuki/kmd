@@ -206,3 +206,6 @@ class StageManager {
 }
 
 export const stageManager = new StageManager();
+
+import { initStagePresets } from "./stagePresets";
+initStagePresets();

@@ -30,6 +30,8 @@ export interface KMDToken {
   params: EffectParams;
   layoutInstructions: LayoutInstruction[];
   isSceneClear?: boolean; // 新增：是否是场景清除指令 (---)
+  range?: { start: number; end: number }; // 【新增】该 Token 在行内的起止位置
+  line?: number; // 【新增】该 Token 所在的行号
   sugar?: Array<{
     charIdx?: number;
     name: string;
