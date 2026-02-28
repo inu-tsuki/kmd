@@ -7,6 +7,8 @@ import { ref, onMounted, onUnmounted, watch } from 'vue';
 import * as monaco from 'monaco-editor';
 import { registerKMDLanguage } from '../core/editor/kmd-lang';
 import { parser } from '../core/parser/Parser';
+import { useEditorStore } from '../store/editorStore';
+import { scriptPlayer } from '../core/player/ScriptPlayer';
 
 // 初始化语言 (幂等)
 registerKMDLanguage();
@@ -17,9 +19,51 @@ const props = defineProps<{
 
 const emit = defineEmits(['update:modelValue', 'change']);
 
+const store = useEditorStore();
 const editorContainer = ref<HTMLElement | null>(null);
 let editor: monaco.editor.IStandaloneCodeEditor | null = null;
 let isDisposed = false;
+
+// 现代装饰器集合管理
+let decorationsCollection: monaco.editor.IEditorDecorationsCollection | null = null;
+
+const updatePlayingLine = (line: number) => {
+  if (!editor || isDisposed) return;
+  
+  if (!decorationsCollection) {
+    decorationsCollection = editor.createDecorationsCollection([]);
+  }
+
+  if (line <= 0) {
+    decorationsCollection.clear();
+    return;
+  }
+
+  // 1. 设置高亮样式
+  decorationsCollection.set([
+    {
+      range: new monaco.Range(line, 1, line, 1),
+      options: {
+        isWholeLine: true,
+        className: 'kmd-playing-line',
+        glyphMarginClassName: 'kmd-playing-line-margin',
+      }
+    }
+  ]);
+
+  // 2. 自动滚动到视觉中心 (仅当不在当前视图内时)
+  editor.revealLineInCenterIfOutsideViewport(line, monaco.editor.ScrollType.Smooth);
+};
+
+// 监听 Store 中的行号变化
+watch(() => store.currentLine, (newLine) => {
+  updatePlayingLine(newLine);
+});
+
+// 监听播放状态，停止时清除高亮
+watch(() => store.isPlaying, (playing) => {
+  if (!playing) updatePlayingLine(0);
+});
 
 const validateModel = (value: string) => {
   if (!editor || isDisposed) return;
@@ -59,10 +103,34 @@ onMounted(() => {
     minimap: { enabled: false },
     scrollBeyondLastLine: false,
     lineNumbers: 'on',
+    glyphMargin: true, // 开启侧边栏图标区，用于播放指示
     renderWhitespace: 'selection',
     wordWrap: 'on',
     unicodeHighlight: {
       ambiguousCharacters: false
+    }
+  });
+
+  // Alt + 点击：跳转播放
+  editor.onMouseDown((e) => {
+    if (e.event.altKey && e.target.position) {
+      const line = e.target.position.lineNumber;
+      const paragraphs = scriptPlayer.paragraphs;
+      
+      // 寻找该行所属的段落 (或之前的最后一个段落)
+      let targetIdx = 0;
+      for (let i = 0; i < paragraphs.length; i++) {
+          const p = paragraphs[i];
+          if (p && p.lineOffset !== undefined && p.lineOffset + 1 <= line) {
+              targetIdx = i;
+          } else if (p && p.lineOffset !== undefined && p.lineOffset + 1 > line) {
+              break;
+          }
+      }
+      
+      console.log(`[Editor-Jump] Alt+Click at line ${line}, seeking to p[${targetIdx}]`);
+      scriptPlayer.seekTo(targetIdx);
+      store.isPlaying = true;
     }
   });
 

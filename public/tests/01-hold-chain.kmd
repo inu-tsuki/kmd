@@ -1,0 +1,19 @@
+---
+title: 01 - hold 链内基本行为
+mode: stage
+speed: 50
+designWidth: 1920
+designHeight: 1080
+---
+
+// 预期：{准备} 先变红，1秒后变蓝
+{准备} @ f.red.hold(1s).blue
+
+// 预期：{一二三} 先变黄，1秒后变绿，再1秒后变红
+{一二三} @ f.yellow.hold(1s).green.hold(1s).red
+
+// 预期：文字震动2秒后停止震动变波浪
+{震动然后波浪} @ f.shake(10).hold(2s).wave
+
+// 预期：组级 hold 阻塞后续组
+{先来} {后来} @ f.red.hold(1.5s).blue f.green

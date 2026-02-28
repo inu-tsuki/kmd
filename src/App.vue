@@ -1,14 +1,43 @@
 <script setup lang="ts">
-  import { onMounted, onUnmounted } from "vue";
+  import { ref, computed, onMounted, onUnmounted } from "vue";
   import 'splitpanes/dist/splitpanes.css';
 
   import DockNode from "./components/DockSystem/DockNode.vue";
   import LayoutManager from "./components/LayoutManager.vue";
+  import TimeLordBar from "./components/Playback/TimeLordBar.vue";
   import { useEditorStore } from "./store/editorStore";
 
+  interface KmdFileEntry { label: string; path: string; dir: string }
+
   const store = useEditorStore();
+  const kmdFiles = ref<KmdFileEntry[]>([]);
+
+  const groupedFiles = computed(() => {
+    const groups = new Map<string, KmdFileEntry[]>();
+    for (const f of kmdFiles.value) {
+      if (!groups.has(f.dir)) groups.set(f.dir, []);
+      groups.get(f.dir)!.push(f);
+    }
+    return Array.from(groups.entries()).map(([dir, files]) => ({ dir, files }));
+  });
+
+  const loadTestFile = async (path: string) => {
+    await store.loadTestFile(path);
+  };
 
   onMounted(async () => {
+    // 动态加载 KMD 文件清单
+    try {
+      const listRes = await fetch("/__api/kmd-files");
+      if (listRes.ok) kmdFiles.value = await listRes.json();
+    } catch {
+      try {
+        const listRes = await fetch("/kmd-manifest.json");
+        if (listRes.ok) kmdFiles.value = await listRes.json();
+      } catch { /* 无文件列表 */ }
+    }
+
+    // 加载默认文件
     const res = await fetch("/final-test.kmd");
     store.kmdContent = await res.text();
     window.addEventListener("keydown", handleKeydown);
@@ -18,9 +47,29 @@
     window.removeEventListener("keydown", handleKeydown);
   });
 
+  const isEditorFocused = () => {
+    const el = document.activeElement;
+    if (!el) return false;
+    const tag = el.tagName.toLowerCase();
+    return tag === "textarea" || tag === "input" || (el as HTMLElement).isContentEditable
+      || el.closest(".monaco-editor") !== null;
+  };
+
   const handleKeydown = (e: KeyboardEvent) => {
-    if (e.ctrlKey && e.key === "Enter") store.runScript();
-    if (e.altKey && e.key === "n") store.nextStep();
+    if (e.ctrlKey && e.key === "Enter") { store.runScript(); return; }
+    if (e.altKey && e.key === "n") { store.nextStep(); return; }
+    if (isEditorFocused()) return;
+
+    if (e.key === " ") {
+      e.preventDefault();
+      store.player?.toggleAutoPlay();
+    } else if (e.key === "ArrowLeft") {
+      e.preventDefault();
+      store.seekRelative(e.shiftKey ? -5 : -1);
+    } else if (e.key === "ArrowRight") {
+      e.preventDefault();
+      store.seekRelative(e.shiftKey ? 5 : 1);
+    }
   };
 
   const createNew = () => {
@@ -45,10 +94,17 @@
     <!-- 顶部工具栏 -->
     <header class="top-toolbar">
       <div class="left-group">
-        <span class="brand">KMD <span class="version">IDE v1.4.0</span></span>
+        <span class="brand">KMD <span class="version">IDE v1.6.0</span></span>
         <div class="divider"></div>
         <button @click="createNew" class="tool-btn">新建</button>
         <button @click="exportKmd" class="tool-btn">导出</button>
+        <div class="divider"></div>
+        <select class="test-select" @change="(e) => loadTestFile((e.target as HTMLSelectElement).value)" title="加载 KMD 文件">
+          <option value="">— KMD 文件 —</option>
+          <optgroup v-for="group in groupedFiles" :key="group.dir" :label="group.dir">
+            <option v-for="f in group.files" :key="f.path" :value="f.path">{{ f.label }}</option>
+          </optgroup>
+        </select>
       </div>
       
       <div class="center-group">
@@ -66,6 +122,9 @@
       <!-- 动态布局内核 -->
       <DockNode :node="store.layoutTree" />
     </main>
+
+    <!-- 播放控制条 -->
+    <TimeLordBar />
 
     <!-- 底部状态栏 -->
     <footer class="status-bar">
@@ -167,4 +226,17 @@
   .brand { color: #4fc08d; font-weight: bold; font-size: 13px; }
   .version { font-size: 9px; opacity: 0.5; margin-left: 4px; }
   .divider { width: 1px; height: 14px; background: #444; margin: 0 10px; }
+
+  .test-select {
+    background: #2d2d2d;
+    border: 1px solid #444;
+    color: #aaa;
+    padding: 1px 4px;
+    font-size: 11px;
+    border-radius: 2px;
+    cursor: pointer;
+    max-width: 220px;
+  }
+  .test-select:focus { outline: 1px solid #007acc; }
+  .test-select option { background: #1e1e1e; }
 </style>

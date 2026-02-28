@@ -13,13 +13,13 @@ var:
 [cam.zoom(0.8, 1s)!]
 演出开始。变量 start_x 是 {var.start_x}。
 
-{第一阶段>快速推进} @ f.red.wait(1s).blue
+{第一阶段>快速推进} @ f.red.hold(1s).blue
 这段文字使用了 `>` 瞬间弹出，并演示了红转蓝时序链。
 
 {第二阶段>>无缝衔接}。
 句号紧跟最后一个字弹出，跳过了自然停顿。
 
-打到这里{下一行>>>}就会提前开始。 @ f.shake(strength=var.heavy_shake).wait(1s)
+打到这里{下一行>>>}就会提前开始。 @ f.shake(strength=var.heavy_shake).hold(1s)
 我是被 `>>>` 提前召唤出来的，我出现时上一行还在震动并等待。
 
 [align=center]

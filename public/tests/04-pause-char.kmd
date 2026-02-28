@@ -1,0 +1,16 @@
+---
+title: 04 - pause:char 逐字揭示延迟
+mode: stage
+speed: 50
+designWidth: 1920
+designHeight: 1080
+---
+
+// 预期：每个字间隔1s出现（覆盖默认speed步进）
+{慢慢出现} @ pause:char(1s)
+
+// 预期：pause:char 0.5s + 红色
+{慢速红字} @ f.red pause:char(0.5s)
+
+// 普通速度对比
+对比：这一行以普通速度出现。

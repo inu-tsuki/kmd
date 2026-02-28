@@ -21,6 +21,8 @@ export interface EffectConfig {
   params: EffectParams;
   level?: "char" | "group" | "block";
   blocking?: boolean;
+  line?: number; // 新增：源码行号
+  range?: { start: number; end: number }; // 新增：源码列范围
 }
 
 export interface KMDToken {
@@ -29,15 +31,17 @@ export interface KMDToken {
   commands: string[];
   params: EffectParams;
   layoutInstructions: LayoutInstruction[];
-  isSceneClear?: boolean; // 新增：是否是场景清除指令 (---)
-  range?: { start: number; end: number }; // 【新增】该 Token 在行内的起止位置
-  line?: number; // 【新增】该 Token 所在的行号
+  isSceneClear?: boolean; 
+  range?: { start: number; end: number }; 
+  line?: number; 
   sugar?: Array<{
     charIdx?: number;
     name: string;
     level: "char" | "group" | "block";
     params: Record<string, any>;
   }>;
+  startTime?: number; // 新增：相对于段落开始的预估时间 (ms)
+  duration?: number;  // 新增：该 Token 的展示时长 (ms)
 }
 
 export type KMDLine = KMDToken[];
@@ -57,6 +61,9 @@ export interface LayoutInstruction {
   type: string;
   params: Record<string, any>;
   blocking?: boolean;
+  level?: "char" | "group" | "block";
+  line?: number;
+  range?: { start: number; end: number };
 }
 
 /**
@@ -65,11 +72,24 @@ export interface LayoutInstruction {
 export interface KMDParseResult {
   metadata: KMDMetadata;
   paragraphs: KMDParagraphData[];
-  rawParagraphs: string[]; // 新增：保存原始字符串片段
+  rawParagraphs: string[]; 
 }
 
 export interface KMDParagraphData {
   blockOptions: BlockOptions;
   tokens: KMDToken[];
   globalEffects: EffectConfig[];
+  estimatedDuration?: number; 
+  absStartTime?: number;      
+  lineOffset?: number;        
+  snapshot?: any; // KmdSnapshot (Any to avoid circular dep)
+}
+
+/**
+ * Scanner 返回结果
+ */
+export interface KMDScanResult {
+  tokens: KMDToken[];
+  globalEffects: EffectConfig[];
+  blockOptions: BlockOptions;
 }

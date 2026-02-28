@@ -1,0 +1,27 @@
+---
+title: 09 - 舞台指令
+mode: stage
+speed: 50
+designWidth: 1920
+designHeight: 1080
+---
+
+// 镜头平移
+@ cam.move(200, 0, 1s)!
+镜头向右移动了200。
+
+// 镜头缩放
+@ cam.zoom(0.8, 1s)!
+镜头缩小到80%。
+
+// 镜头旋转
+@ cam.rotate(15, 1s)!
+镜头旋转了15度。
+
+// 镜头震动
+@ cam.shake(10)
+镜头在震动。
+
+// 重置
+@ cam.reset(1.5s)!
+一切恢复初始。

@@ -33,32 +33,37 @@ export class KMDParser {
 
       // 2. 逐行聚合成段落，同时保持行号
       let currentBlockLines: string[] = [];
-      let blockStartLine = currentLineIdx;
+      let blockStartLine = -1;
 
       for (let i = currentLineIdx; i < allLines.length; i++) {
           const line = allLines[i];
           if (line === undefined) continue;
 
-          if (line.trim() === "" && currentBlockLines.length > 0) {
-              // 提交段落
-              const raw = currentBlockLines.join("\n");
-              result.rawParagraphs.push(raw);
-              result.paragraphs.push(this.parseParagraph(raw, blockStartLine));
-              currentBlockLines = [];
-              blockStartLine = i + 1;
-          } else if (line.trim() !== "") {
-              if (currentBlockLines.length === 0) blockStartLine = i;
-              currentBlockLines.push(line);
+          if (line.trim() === "") {
+              if (currentBlockLines.length > 0) {
+                  // 提交段落（过滤纯注释等空段落）
+                  const raw = currentBlockLines.join("\n");
+                  const pData = this.parseParagraph(raw, blockStartLine);
+                  if (pData.tokens.length > 0 || pData.globalEffects.length > 0) {
+                    result.rawParagraphs.push(raw);
+                    result.paragraphs.push(pData);
+                  }
+                  currentBlockLines = [];
+                  blockStartLine = -1;
+              }
           } else {
-              // 纯空行，更新起点
-              blockStartLine = i + 1;
+              if (blockStartLine === -1) blockStartLine = i;
+              currentBlockLines.push(line);
           }
       }
       
       if (currentBlockLines.length > 0) {
           const raw = currentBlockLines.join("\n");
-          result.rawParagraphs.push(raw);
-          result.paragraphs.push(this.parseParagraph(raw, blockStartLine));
+          const pData = this.parseParagraph(raw, blockStartLine);
+          if (pData.tokens.length > 0 || pData.globalEffects.length > 0) {
+            result.rawParagraphs.push(raw);
+            result.paragraphs.push(pData);
+          }
       }
 
       return result;
@@ -93,57 +98,15 @@ export class KMDParser {
   }
 
   public parseParagraph(input: string, startLine: number = 0): KMDParagraphData {
-    const lines = input.split("\n").map(l => {
-      const idx = l.indexOf("//");
-      return (idx !== -1 && (idx === 0 || l[idx-1] === " ")) ? l.substring(0, idx) : l;
-    }).map(l => l.trimEnd());
-
-    let blockOptions: any = { options: {}, globalEffects: [] };
-    let startIdx = 0;
-    while (startIdx < lines.length && !lines[startIdx]?.trim()) startIdx++;
-
-    const firstLine = lines[startIdx]?.trim() || "";
-    if (firstLine.startsWith("[") && firstLine.includes("]")) {
-      const endIdx = firstLine.indexOf("]");
-      const content = firstLine.substring(1, endIdx);
-      
-      const parts: string[] = [];
-      let cur = ""; let depth = 0;
-      for (let i=0; i<content.length; i++) {
-        if (content[i] === "(") depth++; else if (content[i] === ")") depth--;
-        if (content[i] === " " && depth === 0) { if (cur) parts.push(cur); cur = ""; }
-        else cur += content[i];
-      }
-      if (cur) parts.push(cur);
-
-      parts.forEach(p => {
-        if (p.includes("=")) {
-          const eq = p.indexOf("=");
-          blockOptions.options[p.substring(0, eq).trim()] = KMDCommandParser.autoConvert(p.substring(eq + 1).trim());
-        } else if (KMDCommandParser.isVisual(p)) {
-          blockOptions.globalEffects.push(...KMDCommandParser.parseEffectChain(p));
-        } else {
-          const subChain = KMDCommandParser.parseEffectChain(p);
-          subChain.forEach(eff => {
-            blockOptions.globalEffects.push({ 
-              name: eff.name, 
-              level: "block", 
-              params: eff.params, 
-              blocking: eff.blocking 
-            });
-          });
-        }
-      });
-
-      const remaining = firstLine.substring(endIdx + 1).trim();
-      if (remaining) lines[startIdx] = remaining; else startIdx++;
-    }
-
-    const { tokens, globalEffects } = this.scanner.scan(lines.slice(startIdx).join("\n"), startLine + startIdx);
+    // 关键重构：Parser 不再进行任何裁剪，将原始段落字符串完整交给 Scanner
+    // 这保证了 Scanner 内部的 i 索引绝对对应物理行号
+    const { tokens, globalEffects, blockOptions } = this.scanner.scan(input, startLine);
+    
     return {
-      blockOptions: blockOptions.options,
+      blockOptions,
       tokens,
-      globalEffects: [...blockOptions.globalEffects, ...globalEffects]
+      globalEffects,
+      lineOffset: startLine // 此时 lineOffset 就是 startLine，因为没做任何内部裁剪
     };
   }
 

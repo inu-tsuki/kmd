@@ -1,0 +1,46 @@
+---
+mode: stage
+designWidth: 1920
+designHeight: 1080
+speed: 40
+---
+
+// 测试 1: 非阻塞的长持续时间 cam.move
+// 预期：camera 在整个脚本期间持续向右平移
+[cam.move(500, 0, 15s)]
+第一段：camera 开始缓慢右移。
+
+第二段：camera 应该仍在平移中（约 33% 进度）。
+
+第三段：平移接近完成。
+
+---
+
+// 测试 2: 阻塞 cam.move + 后续 cam.reset
+// 预期：cam.move 完成后才出文字，然后 cam.reset 覆盖
+[cam.move(0, 300, 3s)!]
+第四段：这段文字在 camera 下移 300px 后出现。
+
+[cam.reset(2s)!]
+第五段：camera 已回到初始位置。
+
+---
+
+// 测试 3: cam.offset 叠加层 — 与 cam.move 不冲突
+// 预期：camera 向右移同时 offset 向上叠加，两者独立不冲突
+[cam.move(300, 0, 4s)]
+[cam.offset(0, -100, 4s)]
+第六段：camera 右移 + offset 上移，视觉上斜向右上运动。
+
+// 测试 4: cam.offset 单独使用
+// 预期：base camera 不动，offset 添加独立偏移
+[cam.offset(0, 200, 2s)!]
+第七段：仅 offset 下移，camera 本身没有变化。
+
+// 测试 5: cam.reset 同时重置 camera 和 offset
+[cam.reset(1s)!]
+第八段：camera 和 offset 都已归零。
+
+// 测试 6: 跨段落 seek 验证
+// 用 TimeLordBar 跳到测试 3 的中间位置
+// camera.x 和 cameraOffset.y 应该是插值后的中间值

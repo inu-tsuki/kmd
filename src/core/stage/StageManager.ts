@@ -10,6 +10,16 @@ export interface CameraState {
   rotation: number;
 }
 
+export interface StageState {
+  camera: CameraState;
+  /** Timeline 驱动的叠加偏移层（cam.offset 的 Tween 目标） */
+  cameraOffset: CameraState;
+  designWidth: number;
+  designHeight: number;
+  isFixedRatio: boolean;
+  backgroundColor: string | number;
+}
+
 export type CameraModifier = (time: number) => Partial<CameraState>;
 export type StageEffectFunction = (params: any) => void | gsap.core.Tween | gsap.core.Timeline | Promise<void>;
 
@@ -22,12 +32,17 @@ class StageManager {
 
   // 状态
   public camera: CameraState = { x: 0, y: 0, zoom: 1, rotation: 0 };
+  /** Timeline 驱动的叠加偏移层 — cam.offset 的 Tween 目标，与 camera 独立避免属性冲突 */
+  public cameraOffset: CameraState = { x: 0, y: 0, zoom: 1, rotation: 0 };
+  /** Build 模式标志：buildSegment() 期间为 true，禁用 overwrite:"auto" 和 immediateRender */
+  public buildMode = false;
   private modifiers: Map<string, CameraModifier> = new Map();
 
   public designWidth: number = 1920;
   public designHeight: number = 1080;
   public isFixedRatio: boolean = false;
   private _viewport = { offsetX: 0, offsetY: 0, baseScale: 1 };
+  private _bgColor: string | number = 0x000000;
 
   private registry: Map<string, StageEffectFunction> = new Map();
   public camAuditLog: any[] = [];
@@ -55,6 +70,36 @@ class StageManager {
     readerApp.pixiApp.ticker.add(this.update, this);
     
     this.isInitialized = true;
+  }
+
+  /**
+   * 导出当前完整状态快照
+   */
+  public dumpState(): StageState {
+    return {
+      camera: { ...this.camera },
+      cameraOffset: { ...this.cameraOffset },
+      designWidth: this.designWidth,
+      designHeight: this.designHeight,
+      isFixedRatio: this.isFixedRatio,
+      backgroundColor: this._bgColor
+    };
+  }
+
+  /**
+   * 加载状态快照
+   */
+  public loadState(state: StageState) {
+    this.camera = { ...state.camera };
+    this.cameraOffset = state.cameraOffset ? { ...state.cameraOffset } : { x: 0, y: 0, zoom: 1, rotation: 0 };
+    this.designWidth = state.designWidth;
+    this.designHeight = state.designHeight;
+    this.isFixedRatio = state.isFixedRatio;
+    this.setBackgroundColor(state.backgroundColor);
+
+    gsap.killTweensOf(this.camera);
+    gsap.killTweensOf(this.cameraOffset);
+    this.resize();
   }
 
   /**
@@ -145,7 +190,8 @@ class StageManager {
     this.resize();
   }
 
-  public setBackgroundColor(color: string) {
+  public setBackgroundColor(color: string | number) {
+    this._bgColor = color;
     if (readerApp.pixiApp && readerApp.pixiApp.renderer) {
       readerApp.pixiApp.renderer.background.color = color;
     }
@@ -154,11 +200,14 @@ class StageManager {
   public setMode(mode: "stage" | "scroll") {
     this.isFixedRatio = mode === "stage";
     gsap.killTweensOf(this.camera);
+    gsap.killTweensOf(this.cameraOffset);
     if (this.isFixedRatio) {
       layout.maxWidth = this.designWidth * 0.8;
       this.camera.x = 0; this.camera.y = 0; this.camera.zoom = 1; this.camera.rotation = 0;
+      this.cameraOffset.x = 0; this.cameraOffset.y = 0; this.cameraOffset.zoom = 1; this.cameraOffset.rotation = 0;
     } else {
       gsap.to(this.camera, { x: 0, y: 0, zoom: 1, rotation: 0, duration: 0.5 });
+      this.cameraOffset.x = 0; this.cameraOffset.y = 0; this.cameraOffset.zoom = 1; this.cameraOffset.rotation = 0;
     }
     this.resize();
   }
@@ -218,9 +267,15 @@ class StageManager {
     const { baseScale: vs, offsetX, offsetY } = this._viewport;
     if (!this.isFixedRatio) return;
 
-    let finalX = this.camera.x, finalY = this.camera.y, finalZoom = this.camera.zoom, finalRotation = this.camera.rotation;
+    // 三层合成：base camera + Timeline offset + Ticker modifiers
+    const co = this.cameraOffset;
+    let finalX = this.camera.x + co.x;
+    let finalY = this.camera.y + co.y;
+    let finalZoom = this.camera.zoom * co.zoom;
+    let finalRotation = this.camera.rotation + co.rotation;
+
     const time = performance.now();
-    
+
     this.modifiers.forEach(mod => {
       const offset = mod(time);
       if (offset.x !== undefined) finalX += offset.x;

@@ -30,7 +30,7 @@ export class TextLayoutEngine {
     /**
      * 幻影预扫描：模拟完整路径，建立基于 Baseline 的标记图
      */
-    private static runPhantomPass(stream: LayoutStream, options: FullOptions, globalMarkers: MarkerMap): Map<string, CursorState> {
+    private static runPhantomPass(stream: LayoutStream, options: FullOptions, globalMarkers: MarkerMap): { markers: Map<string, CursorState>, writtenKeys: Set<string> } {
         // 找出第一行流内字符的最大 ascent，确保起始 y 坐标不会导致文字超出容器顶端
         let firstLineMaxAscent = 0;
         for (const node of stream) {
@@ -41,21 +41,23 @@ export class TextLayoutEngine {
             if (ascent > firstLineMaxAscent) firstLineMaxAscent = ascent;
         }
 
-        let phantomBaselineY = firstLineMaxAscent;
         const ctx: LayoutContext = {
             activeCursor: {
                 x: options.indent * options.fontSize,
-                y: phantomBaselineY,
+                y: firstLineMaxAscent,
             },
             isFlowBroken: false,
             justMoved: false,
             markers: new Map(globalMarkers),
             touchedMarkers: [],
+            displayOffset: { x: 0, y: 0 },
+            _displayOffsetStack: [],
+            baselineY: firstLineMaxAscent,
             options: { ...options, baseOffset: { x: 0, y: 0 } },
         };
 
         const lines: LayoutResult[][] = [[]];
-        const lineBaseYs: number[] = [phantomBaselineY];
+        const lineBaseYs: number[] = [ctx.baselineY];
         let lIdx = 0;
 
         for (const node of stream) {
@@ -70,11 +72,11 @@ export class TextLayoutEngine {
 
             const handleWrap = () => {
                 const currentLine = lines[lIdx];
-                if (currentLine && currentLine.some(r => r.inFlow)) phantomBaselineY += options.lineHeight;
+                if (currentLine && currentLine.some(r => r.inFlow)) ctx.baselineY += options.lineHeight;
                 lIdx++; lines[lIdx] = [];
-                lineBaseYs[lIdx] = phantomBaselineY;
+                lineBaseYs[lIdx] = ctx.baselineY;
                 ctx.activeCursor.x = 0;
-                ctx.activeCursor.y = phantomBaselineY;
+                ctx.activeCursor.y = ctx.baselineY;
                 ctx.isFlowBroken = false;
             };
 
@@ -126,7 +128,10 @@ export class TextLayoutEngine {
                 bounds,
             );
         });
-        return ctx.markers;
+
+        // 收集幻影扫描期间被写入的标记名（touchedMarkers 在幻影扫描中不会被重置）
+        const writtenKeys = new Set(ctx.touchedMarkers);
+        return { markers: ctx.markers, writtenKeys };
     }
 
     public static calculate(
@@ -135,7 +140,7 @@ export class TextLayoutEngine {
         globalMarkers: MarkerMap = options.externalMarkers
     ): LayoutResult[] {
 
-        const phantomMarkers = this.runPhantomPass(stream, options, globalMarkers);
+        const { markers: phantomMarkers, writtenKeys: phantomWrittenKeys } = this.runPhantomPass(stream, options, globalMarkers);
         const results: LayoutResult[] = [];
 
         // 找出第一行流内字符的最大 ascent，确保起始 y 坐标不会导致文字超出容器顶端
@@ -148,21 +153,23 @@ export class TextLayoutEngine {
             if (ascent > firstLineMaxAscent) firstLineMaxAscent = ascent;
         }
 
-        let baselineY = firstLineMaxAscent;
-
         const context: LayoutContext = {
-            activeCursor: { x: options.indent * options.fontSize, y: baselineY },
+            activeCursor: { x: options.indent * options.fontSize, y: firstLineMaxAscent },
             isFlowBroken: false,
             justMoved: false,
             markers: globalMarkers,
             touchedMarkers: [],
+            displayOffset: { x: 0, y: 0 },
+            _displayOffsetStack: [],
+            baselineY: firstLineMaxAscent,
             options: { ...options },
         };
 
-        // 核心修正 5.3：同步幻影扫描发现的新标记。
-        // 我们只注入那些不在原始 globalMarkers 中，或者在 phantom_ 命名空间之外的标记。
+        // 核心修正 5.3b：同步幻影扫描期间写入的标记（前向引用支持）。
+        // 使用 writtenKeys 而非 !globalMarkers.has(k) 判断——确保 rebuild 时
+        // 前向引用标记（如 p2 被后续行定义但前文 goto(p2) 引用）总是获得正确坐标。
         phantomMarkers.forEach((v, k) => {
-            if (!k.startsWith('phantom_') && !globalMarkers.has(k)) {
+            if (!k.startsWith('phantom_') && phantomWrittenKeys.has(k)) {
                 globalMarkers.set(k, this.toGlobal(context, v));
             }
         });
@@ -171,9 +178,9 @@ export class TextLayoutEngine {
         let currentLineIndex = 0;
 
         const updateReservedMarkers = () => {
-            context.markers.set('line.start', this.toGlobal(context, { x: 0, y: baselineY }));
-            context.markers.set('line.mid', this.toGlobal(context, { x: options.maxWidth / 2, y: baselineY }));
-            context.markers.set('line.end', this.toGlobal(context, { x: context.activeCursor.x, y: baselineY }));
+            context.markers.set('line.start', this.toGlobal(context, { x: 0, y: context.baselineY }));
+            context.markers.set('line.mid', this.toGlobal(context, { x: options.maxWidth / 2, y: context.baselineY }));
+            context.markers.set('line.end', this.toGlobal(context, { x: context.activeCursor.x, y: context.baselineY }));
 
             const nS = phantomMarkers.get(`phantom_${currentLineIndex + 1}.start`);
             if (nS) {
@@ -214,14 +221,14 @@ export class TextLayoutEngine {
                             if (v) v.x += corr;
                         });
                     }
-                    context.markers.set('prev.start', this.toGlobal(context, { x: 0, y: baselineY }));
-                    context.markers.set('prev.mid', this.toGlobal(context, { x: options.maxWidth / 2, y: baselineY }));
-                    context.markers.set('prev.end', this.toGlobal(context, { x: context.activeCursor.x, y: baselineY }));
+                    context.markers.set('prev.start', this.toGlobal(context, { x: 0, y: context.baselineY }));
+                    context.markers.set('prev.mid', this.toGlobal(context, { x: options.maxWidth / 2, y: context.baselineY }));
+                    context.markers.set('prev.end', this.toGlobal(context, { x: context.activeCursor.x, y: context.baselineY }));
                 }
 
-                if (hasInFlow) baselineY += options.lineHeight;
+                if (hasInFlow) context.baselineY += options.lineHeight;
                 context.activeCursor.x = 0;
-                context.activeCursor.y = baselineY;
+                context.activeCursor.y = context.baselineY;
 
                 currentLineIndex++;
                 lines[currentLineIndex] = [];
@@ -257,6 +264,8 @@ export class TextLayoutEngine {
                 x: context.activeCursor.x + item.width / 2,
                 y: context.activeCursor.y, // 核心：直接锚定在 Baseline
                 inFlow: !context.isFlowBroken,
+                displayOffsetX: context.displayOffset.x || undefined,
+                displayOffsetY: context.displayOffset.y || undefined,
             };
 
             if (charText.trim()) {

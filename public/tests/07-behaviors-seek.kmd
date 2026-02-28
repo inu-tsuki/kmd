@@ -1,0 +1,17 @@
+---
+title: 07 - Behavior 特效 seek 重注册
+mode: stage
+speed: 50
+designWidth: 1920
+designHeight: 1080
+---
+
+// 预期：seek 后 shake/wave/rainbow 仍然激活
+{震动} @ f.shake(15)
+
+{波浪} @ f.wave
+
+{彩虹} @ f.rainbow
+
+// 测试：seek 到中间位置后，上面的行为特效应仍在运行
+{同时震动+波浪} @ f.shake(10).wave

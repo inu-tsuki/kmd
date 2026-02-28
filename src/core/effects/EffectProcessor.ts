@@ -6,6 +6,7 @@ import { TokenWrapper } from "../TokenWrapper";
 import { KineticText } from "../KineticText";
 import { layout } from "../layout/LayoutEngine";
 import type { EffectConfig } from "../parser/types";
+import type { EffectTrack } from "./types";
 import { Container, TextStyle } from "pixi.js";
 import { layoutManager } from "../layout/LayoutManager";
 import type { LayoutCommand } from "../layout/types";
@@ -17,7 +18,68 @@ export interface EffectLogicResult {
   blockAdvanceRequested?: boolean;
 }
 
+/**
+ * 按 track 分类的特效配置，供 Timeline 构建器使用
+ */
+export interface TrackClassifiedEffects {
+  entrance: EffectConfig[];   // 入场动画，生成 Tween 挂到 Timeline
+  behavior: EffectConfig[];   // 持续行为，注册到 Ticker
+  instant: EffectConfig[];    // 样式/滤镜，立即应用
+  timing: EffectConfig[];     // 时序控制 (go/slow/fast/wait)
+  stage: EffectConfig[];      // 舞台指令 (cam.move 等)
+}
+
 export class EffectProcessor {
+
+  /**
+   * 按 track 对特效列表进行分类
+   * 这是 Timeline 构建的核心分流器
+   */
+  public static classifyByTrack(configs: EffectConfig[]): TrackClassifiedEffects {
+    const result: TrackClassifiedEffects = {
+      entrance: [], behavior: [], instant: [], timing: [], stage: []
+    };
+
+    for (const cfg of configs) {
+      // 舞台指令优先判断（它们不在 effectManager 中注册）
+      if (stageManager.has(cfg.name) && !effectManager.has(cfg.name)) {
+        result.stage.push(cfg);
+        continue;
+      }
+
+      // 查询特效元数据获取 track
+      const meta = effectManager.getMetadata(cfg.name);
+      if (meta?.track) {
+        result[meta.track].push(cfg);
+        continue;
+      }
+
+      // 样式兜底：StyleManager 中的都是 instant
+      if (styleManager.has(cfg.name)) {
+        result.instant.push(cfg);
+        continue;
+      }
+
+      // 布局指令不归入任何 track（已在 partition 中处理）
+      if (layoutManager.has(cfg.name)) continue;
+
+      // 未知特效默认归入 instant
+      result.instant.push(cfg);
+    }
+
+    return result;
+  }
+
+  /**
+   * 查询单个特效的 track 类型
+   */
+  public static getTrack(name: string): EffectTrack | "stage" | "unknown" {
+    if (stageManager.has(name) && !effectManager.has(name)) return "stage";
+    const meta = effectManager.getMetadata(name);
+    if (meta?.track) return meta.track;
+    if (styleManager.has(name)) return "instant";
+    return "unknown";
+  }
   public static partition(configs: EffectConfig[]): {
     layoutCmds: LayoutCommand[];
     visualConfigs: EffectConfig[];
@@ -40,7 +102,7 @@ export class EffectProcessor {
     return { layoutCmds, visualConfigs, stageConfigs };
   }
 
-  private static resolveParams(params: any): any {
+  public static resolveParams(params: any): any {
     if (!params) return {};
     const resolved: any = {};
     Object.entries(params).forEach(([k, v]) => {
@@ -67,7 +129,7 @@ export class EffectProcessor {
 
   public static applyInitialStylesToStyle(style: TextStyle, configs: EffectConfig[]) {
     for (const config of configs) {
-      const isBlocking = config.name === "wait" || config.blocking || config.level === "group" || config.level === "block";
+      const isBlocking = config.name === "hold" || config.blocking || config.level === "group" || config.level === "block";
       if (isBlocking) break;
       if (styleManager.has(config.name)) {
         const resolved = this.resolveParams(config.params);
@@ -79,7 +141,7 @@ export class EffectProcessor {
 
   public static applyInitialStyles(target: Container, configs: EffectConfig[]) {
     for (const config of configs) {
-      const isBlocking = config.name === "wait" || config.blocking || config.level === "group" || config.level === "block";
+      const isBlocking = config.name === "hold" || config.blocking || config.level === "group" || config.level === "block";
       if (isBlocking) break;
       if (styleManager.has(config.name)) {
         if (target instanceof KineticChar) {
@@ -105,28 +167,28 @@ export class EffectProcessor {
 
   public static async applyGroupEffects(target: Container, effects: EffectConfig[]): Promise<EffectLogicResult> {
     const { visualConfigs, stageConfigs } = this.partition(effects);
-    let groupWaitEncountered = false;
+    let groupHoldEncountered = false;
     const finalRes: EffectLogicResult = {};
 
     // 1. 舞台指令
     for (const config of stageConfigs) {
        const result = stageManager.apply(config.name, config.params);
        this.processEffectResult(result, config, finalRes);
-       if ((config.name === "wait" || config.blocking) && result) await result;
+       if ((config.name === "pause" || config.blocking) && result) await result;
     }
 
     // 2. 视觉链条
     for (const config of visualConfigs) {
       const meta = effectManager.getMetadata(config.name);
       const isStyle = styleManager.has(config.name);
-      const isBlocking = config.name === "wait" || config.blocking;
+      const isBlocking = config.name === "hold" || config.blocking;
 
       if (isBlocking && config.level === "char") continue;
 
       const isExplicitGroup = config.level === "group" || config.level === "block";
       const isPureGroupType = meta && meta.targetType === "group";
       const isActionDefault = !config.level && meta && meta.type === "action";
-      const shouldExecute = isExplicitGroup || isPureGroupType || isActionDefault || groupWaitEncountered;
+      const shouldExecute = isExplicitGroup || isPureGroupType || isActionDefault || groupHoldEncountered;
 
       if (shouldExecute) {
         const resolved = this.resolveParams(config.params);
@@ -151,7 +213,7 @@ export class EffectProcessor {
           }
         }
       }
-      if (isBlocking && config.level !== "char") groupWaitEncountered = true;
+      if (isBlocking && config.level !== "char") groupHoldEncountered = true;
     }
     return finalRes;
   }
@@ -189,9 +251,9 @@ export class EffectProcessor {
     for (const config of effects) {
       const meta = effectManager.getMetadata(config.name);
       const isStyle = styleManager.has(config.name);
-      const isBlocking = config.name === "wait" || config.blocking;
+      const isBlocking = config.name === "hold" || config.blocking;
 
-      // 核心修正：如果该样式属于“初始样式”（即在第一个阻塞指令之前），
+      // 核心修正：如果该样式属于”初始样式”（即在第一个阻塞指令之前），
       // 则跳过应用，因为在 LayoutStreamBuilder 阶段它已经反映在 char.style 中了。
       // 这彻底解决了 big/small 效果叠加两次导致字号变为 81 或 23 的问题。
       if (isStyle && !isBlocking) {

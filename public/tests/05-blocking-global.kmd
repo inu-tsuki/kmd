@@ -1,0 +1,19 @@
+---
+title: 05 - 阻塞指令 (!) 在 globalEffects 路径
+mode: stage
+speed: 50
+designWidth: 1920
+designHeight: 1080
+---
+
+// 预期：镜头缩放完毕后，文字才出现
+[cam.zoom(0.7, 1.5s)!]
+这句话在镜头缩放完成后才出现。
+
+// 预期：镜头平移完毕后才继续
+@ cam.move(0, 300, 2s)!
+这句话在镜头向下移动完成后才出现。
+
+// 预期：镜头重置后结束
+[cam.reset(1s)!]
+演出结束。

@@ -7,6 +7,12 @@ import { TextLayoutEngine } from "./TextLayoutEngine";
 import { stageManager } from "../stage/StageManager";
 import gsap from "gsap";
 
+export interface LayoutState {
+  currentY: number;
+  globalMarkers: Record<string, { x: number; y: number }>;
+  targetScrollY: number;
+}
+
 class LayoutEngine {
   currentY: number = 0;
   public maxWidth: number = 800;
@@ -37,6 +43,39 @@ class LayoutEngine {
         this.recenterAll();
       });
       this.isEventsBound = true;
+    }
+  }
+
+  /**
+   * 导出布局状态快照
+   */
+  public dumpState(): LayoutState {
+    const markersObj: Record<string, { x: number; y: number }> = {};
+    this.globalMarkers.forEach((val, key) => {
+      markersObj[key] = { ...val };
+    });
+
+    return {
+      currentY: this.currentY,
+      targetScrollY: this.targetScrollY,
+      globalMarkers: markersObj
+    };
+  }
+
+  /**
+   * 加载布局状态快照
+   */
+  public loadState(state: LayoutState) {
+    this.currentY = state.currentY;
+    this.targetScrollY = state.targetScrollY;
+    
+    this.globalMarkers.clear();
+    Object.entries(state.globalMarkers).forEach(([key, val]) => {
+      this.globalMarkers.set(key, { ...val });
+    });
+
+    if (this.container) {
+      this.container.y = this.targetScrollY;
     }
   }
 

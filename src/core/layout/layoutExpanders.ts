@@ -19,7 +19,11 @@ const resolveValue = (val: any, ctx: TokenContext, axis: 'x' | 'y'): any => {
     const num = parseFloat(unitMatch[1]!);
     const unit = unitMatch[2];
     switch (unit) {
-      case 'self': return axis === 'x' ? num * ctx.width : num * ctx.fontSize;
+      case 'self': {
+        const tracking = ctx.fontSize * 0.02;
+        const advanceWidth = ctx.width + ctx.charWidths.length * tracking + ctx.letterSpacing;
+        return axis === 'x' ? num * advanceWidth : num * ctx.fontSize;
+      }
       case 'char': return num * ctx.fontSize;
       case 'line': return num * ctx.lineHeight;
     }
@@ -37,10 +41,10 @@ export const markStart: LayoutExpander = (p) => {
   return { pre: [{ type: "mark", params: { 0: 0, 1: 0, 2: name }, isCommand: true }] };
 };
 
-export const markEnd: LayoutExpander = (p, ctx) => {
+export const markEnd: LayoutExpander = (p, _ctx) => {
   const name = p.name || p.label || p.val || p[0];
-  // 标记在文字结束处
-  return { pre: [{ type: "mark", params: { 0: ctx.width, 1: 0, 2: name }, isCommand: true }] };
+  // 标记在文字结束处 — 使用 post 使其在 cursor 推进后执行，与 prev.end 一致（advance width）
+  return { post: [{ type: "mark", params: { 0: 0, 1: 0, 2: name }, isCommand: true }] };
 };
 
 export const markMiddle: LayoutExpander = (p, ctx) => {
@@ -59,24 +63,42 @@ export const markChar: LayoutExpander = (p, ctx) => {
 };
 
 /**
- * 核心指令扩展器
+ * 视觉偏移扩展器 — per-token 作用域，push/pop 自动回收
+ * Block-level 路径（[.up(50)]）跳过 expander 直接走 operator，语义为永久 cursor 修改
  */
 export const left: LayoutExpander = (p, ctx) => ({
-  pre: [{ type: "left", params: { 0: resolveValue(p.val || p[0], ctx, 'x') }, isCommand: true }]
+  pre: [{ type: "pushDisplayOffset", params: { 0: -(resolveValue(p.val || p[0], ctx, 'x') as number), 1: 0 }, isCommand: true }],
+  post: [{ type: "popDisplayOffset", params: {}, isCommand: true }]
 });
 
 export const right: LayoutExpander = (p, ctx) => ({
-  pre: [{ type: "right", params: { 0: resolveValue(p.val || p[0], ctx, 'x') }, isCommand: true }]
+  pre: [{ type: "pushDisplayOffset", params: { 0: resolveValue(p.val || p[0], ctx, 'x'), 1: 0 }, isCommand: true }],
+  post: [{ type: "popDisplayOffset", params: {}, isCommand: true }]
 });
 
 export const up: LayoutExpander = (p, ctx) => ({
-  pre: [{ type: "up", params: { 0: resolveValue(p.val || p[0], ctx, 'y') }, isCommand: true }]
+  pre: [{ type: "pushDisplayOffset", params: { 0: 0, 1: -(resolveValue(p.val || p[0], ctx, 'y') as number) }, isCommand: true }],
+  post: [{ type: "popDisplayOffset", params: {}, isCommand: true }]
 });
 
 export const down: LayoutExpander = (p, ctx) => ({
-  pre: [{ type: "down", params: { 0: resolveValue(p.val || p[0], ctx, 'y') }, isCommand: true }]
+  pre: [{ type: "pushDisplayOffset", params: { 0: 0, 1: resolveValue(p.val || p[0], ctx, 'y') }, isCommand: true }],
+  post: [{ type: "popDisplayOffset", params: {}, isCommand: true }]
 });
 
+export const offset: LayoutExpander = (p, ctx) => {
+  const params: any = {};
+  if (p[0] !== undefined) params[0] = resolveValue(p[0], ctx, 'x');
+  if (p[1] !== undefined) params[1] = resolveValue(p[1], ctx, 'y');
+  return {
+    pre: [{ type: "pushDisplayOffset", params, isCommand: true }],
+    post: [{ type: "popDisplayOffset", params: {}, isCommand: true }]
+  };
+};
+
+/**
+ * 视觉跳转 — goto（不改，保持 isFlowBroken 语义）
+ */
 export const goto: LayoutExpander = (p, ctx) => {
     const params: any = { ...p };
     if (p[0] !== undefined) params[0] = resolveValue(p[0], ctx, 'x');
@@ -84,9 +106,12 @@ export const goto: LayoutExpander = (p, ctx) => {
     return { pre: [{ type: "goto", params, isCommand: true }] };
 };
 
-export const offset: LayoutExpander = (p, ctx) => {
+/**
+ * 排版流控制 — 永久改变排版基线，不设 isFlowBroken
+ */
+export const flow: LayoutExpander = (p, ctx) => {
   const params: any = { ...p };
   if (p[0] !== undefined) params[0] = resolveValue(p[0], ctx, 'x');
   if (p[1] !== undefined) params[1] = resolveValue(p[1], ctx, 'y');
-  return { pre: [{ type: "offset", params, isCommand: true }] };
+  return { pre: [{ type: "flow", params, isCommand: true }] };
 };

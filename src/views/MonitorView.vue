@@ -18,7 +18,7 @@
       >布局审计</div>
     </div>
 
-    <div class="tab-content">
+    <div class="tab-content scroll-content">
       <div v-if="activeTab === 'audit'" class="audit-log">
         <div v-if="auditLog.length === 0" class="empty">等待播放...</div>
         <div v-for="(item, idx) in auditLog" :key="idx" class="log-item">
@@ -29,10 +29,27 @@
       </div>
       
       <div v-if="activeTab === 'vars'" class="vars-list">
-        <div v-if="Object.keys(markers).length === 0" class="empty">无变量数据</div>
-        <div v-for="(val, key) in markers" :key="key" class="var-item">
-          <span class="var-key">{{ key }}</span>
-          <span class="var-val">{{ val.x.toFixed(1) }}, {{ val.y.toFixed(1) }}</span>
+        <div class="kmd-group">
+          <div class="kmd-group-header">编辑器同步状态</div>
+          <div class="debug-table">
+            <div class="debug-row">
+              <span>Active Line</span>
+              <span class="value-box">{{ store.currentLine }}</span>
+            </div>
+            <div class="debug-row">
+              <span>Is Playing</span>
+              <span class="value-box" :class="{ active: store.isPlaying }">{{ store.isPlaying }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="kmd-group">
+          <div class="kmd-group-header">实时全局变量</div>
+          <div v-if="Object.keys(markers).length === 0" class="empty">无变量数据</div>
+          <div v-for="(val, key) in markers" :key="key" class="var-item">
+            <span class="var-key">{{ key }}</span>
+            <span class="var-val">{{ val.x.toFixed(1) }}, {{ val.y.toFixed(1) }}</span>
+          </div>
         </div>
       </div>
 
@@ -126,6 +143,42 @@ onUnmounted(() => {
   flex: 1;
   overflow-y: auto;
   padding: 10px;
+}
+
+/* 调试表格样式 */
+.kmd-group {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border-main);
+  border-radius: 4px;
+  padding: 10px;
+  margin-bottom: 15px;
+}
+
+.debug-table {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.debug-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 10px;
+  color: var(--text-dim);
+}
+
+.value-box {
+  background: var(--bg-active);
+  color: #b5cea8;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-family: 'Fira Code', monospace;
+}
+
+.value-box.active {
+  color: var(--accent-primary);
+  box-shadow: 0 0 5px rgba(79, 192, 141, 0.3);
 }
 
 .empty {

@@ -23,7 +23,8 @@
 ### Syntax at a Glance
 
 ```text
-[align=center .glitch] {Hello} {World} @ f.red.shake f.blue.wave
+[align=center .glitch] 
+{Hello} {World} @ .ease(1s).goto(globalmark_up) f.red.wait(1s).shake f.blue.wave
 ```
 
 - **`{...}`**: Define a token (group of characters).

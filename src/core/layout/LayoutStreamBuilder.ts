@@ -38,7 +38,7 @@ export class LayoutStreamBuilder {
     globalLayouts.forEach((cmd) => stream.push(cmd));
 
     tokens.forEach((token, tokenIdx) => {
-      const { layoutCmds: effectLayouts, visualConfigs } = EffectProcessor.partition(token.effects);
+      const { layoutCmds: effectLayouts, visualConfigs, stageConfigs: effectStageConfigs } = EffectProcessor.partition(token.effects);
       const allRawInstructions = [
         ...token.layoutInstructions,
         ...effectLayouts.map(cmd => ({ type: cmd.type as string, params: cmd.params }))
@@ -96,11 +96,11 @@ export class LayoutStreamBuilder {
         const charData = {
           char: dummyChar,
           effects: [],
-          // 使用 s.name 确保与 Scanner 协议一致
           timingSugars: token.sugar.map((s: any) => ({ name: s.name, params: s.params, level: s.level })),
           tokenIdx, charIdx: 0, width: 0, height: 0,
           ascent: safeGlobalMetrics.ascent, descent: safeGlobalMetrics.descent,
-          stageInstructions: []
+          stageInstructions: [],
+          line: token.line // 注入行号
         };
         allCharsData.push(charData);
         stream.push({ isCommand: false, width: 0, height: 0, charData });
@@ -141,6 +141,12 @@ export class LayoutStreamBuilder {
         }
       });
 
+      // f. chain 中的舞台指令（partition 路由到 stageConfigs）补充到 stageInstructions
+      // 例：f.pause(2s)、f.cam.move(...)! — 经由 §5.5/§6.5 在正确时间点触发
+      effectStageConfigs.forEach(cfg => {
+        stageInstructions.push({ type: cfg.name, params: cfg.params ?? {}, blocking: cfg.blocking, level: cfg.level });
+      });
+
       preCmds.forEach(c => stream.push(c));
 
       if (finalContent.length === 0 && stageInstructions.length > 0) {
@@ -148,7 +154,8 @@ export class LayoutStreamBuilder {
           char: null, effects: visualConfigs, tokenIdx, charIdx: 0,
           width: 0, height: 0,
           ascent: safeGlobalMetrics.ascent, descent: safeGlobalMetrics.descent,
-          stageInstructions
+          stageInstructions,
+          line: token.line // 注入行号
         };
         allCharsData.push(charData);
         stream.push({ isCommand: false, width: 0, height: 0, charData });
@@ -186,7 +193,8 @@ export class LayoutStreamBuilder {
           height: charMetrics.ascent + charMetrics.descent, // 核心变更：使用物理字高而非行高
           ascent: charMetrics.ascent,
           descent: charMetrics.descent,
-          stageInstructions: isLastChar ? stageInstructions : []
+          stageInstructions: isLastChar ? stageInstructions : [],
+          line: token.line // 核心修复：注入行号
         };
 
         if (token.content.includes("重音") || token.content.includes("轻声")) {

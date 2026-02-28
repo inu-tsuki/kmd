@@ -14,12 +14,11 @@ function defineEffect(fn: EffectFunction, meta: EffectMetadata) {
 const _shake: EffectFunction = (target, params = {}) => {
   const strength = params.strength || 3;
   if (target instanceof KineticChar) {
-    target.addModifier("shake", () => ({
+    target.addModifier("shake", 'behavior', () => ({
       x: (Math.random() - 0.5) * strength,
       y: (Math.random() - 0.5) * strength,
     }));
   } else if (target instanceof Container) {
-    // 对容器应用 GSAP 循环震动
     gsap.to(target.pivot, {
       x: () => (Math.random() - 0.5) * strength,
       y: () => (Math.random() - 0.5) * strength,
@@ -31,6 +30,7 @@ const _shake: EffectFunction = (target, params = {}) => {
 };
 export const shake = defineEffect(_shake, {
   type: "behavior",
+  track: "behavior",
   targetType: "both",
   mutexGroup: "position",
   stackable: true,
@@ -42,15 +42,14 @@ const _wave: EffectFunction = (target, params = {}) => {
     const height = params.height || 10;
     const freq = params.freq || 0.005;
     const offset = params.delay !== undefined ? params.delay : (params.charIndex || 0) * 0.5;
-    target.addModifier("wave", (time) => {
-      return {
-        y: Math.sin(time * freq + offset) * height,
-      };
-    });
+    target.addModifier("wave", 'behavior', (time) => ({
+      y: Math.sin(time * freq + offset) * height,
+    }));
   }
 };
 export const wave = defineEffect(_wave, {
   type: "behavior",
+  track: "behavior",
   targetType: "char",
   mutexGroup: "position",
   stackable: true,
@@ -62,15 +61,14 @@ const _float: EffectFunction = (target, params = {}) => {
     const height = params.height || 5;
     const freq = params.freq || 0.002;
     const offset = params.delay !== undefined ? params.delay : (params.charIndex || 0) * 0.5;
-    target.addModifier("float", (time) => {
-      return {
-        y: Math.sin(time * freq + offset) * height,
-      };
-    });
+    target.addModifier("float", 'behavior', (time) => ({
+      y: Math.sin(time * freq + offset) * height,
+    }));
   }
 };
 export const float = defineEffect(_float, {
   type: "behavior",
+  track: "behavior",
   targetType: "char",
   mutexGroup: "position",
   stackable: true,
@@ -82,17 +80,15 @@ const _pulse: EffectFunction = (target, params = {}) => {
     const scale = params.scale || 0.2;
     const freq = params.freq || 0.005;
     const offset = params.delay !== undefined ? params.delay : (params.charIndex || 0) * 0.5;
-    target.addModifier("pulse", (time) => {
+    target.addModifier("pulse", 'behavior', (time) => {
       const s = 1 + Math.sin(time * freq + offset) * scale;
-      return {
-        scaleX: s,
-        scaleY: s,
-      };
+      return { scaleX: s, scaleY: s };
     });
   }
 };
 export const pulse = defineEffect(_pulse, {
   type: "behavior",
+  track: "behavior",
   targetType: "char",
   mutexGroup: "scale",
   stackable: true,
@@ -102,16 +98,15 @@ export const pulse = defineEffect(_pulse, {
 const _jitter: EffectFunction = (target, params = {}) => {
   if (target instanceof KineticChar) {
     const strength = params.strength || 2;
-    target.addModifier("jitter", () => {
-      return {
-        x: Math.floor((Math.random() - 0.5) * strength * 2),
-        y: Math.floor((Math.random() - 0.5) * strength * 2),
-      };
-    });
+    target.addModifier("jitter", 'behavior', () => ({
+      x: Math.floor((Math.random() - 0.5) * strength * 2),
+      y: Math.floor((Math.random() - 0.5) * strength * 2),
+    }));
   }
 };
 export const jitter = defineEffect(_jitter, {
   type: "behavior",
+  track: "behavior",
   targetType: "char",
   mutexGroup: "position",
   stackable: true,
@@ -122,15 +117,14 @@ const _rotate: EffectFunction = (target, params = {}) => {
   if (target instanceof KineticChar) {
     const speed = params.speed || 0.002;
     const range = params.range || 0.1;
-    target.addModifier("rotate", (time) => {
-      return {
-        rotation: Math.sin(time * speed) * range,
-      };
-    });
+    target.addModifier("rotate", 'behavior', (time) => ({
+      rotation: Math.sin(time * speed) * range,
+    }));
   }
 };
 export const rotate = defineEffect(_rotate, {
   type: "behavior",
+  track: "behavior",
   targetType: "char",
   mutexGroup: "rotation",
   stackable: true,
@@ -141,20 +135,19 @@ const _jump: EffectFunction = (target, params = {}) => {
     const height = params.height || 30;
     const duration = params.duration || 0.5;
     const delay = params.delay || 0;
-    const state = { y: 0 };
-
-    const tl = gsap.timeline();
-    tl.to(state, {
+    return gsap.to(target.animOffset, {
       y: -height,
       duration: duration,
       delay: delay,
+      yoyo: true,
+      repeat: 1,
       ease: "power1.out",
     });
-    return tl;
   }
 };
 export const jump = defineEffect(_jump, {
-  type: "behavior",
+  type: "anim",
+  track: "entrance",
   targetType: "char",
   mutexGroup: "position",
 });
@@ -162,24 +155,21 @@ export const jump = defineEffect(_jump, {
 // 7. 彩虹 (Rainbow)
 const _rainbow: EffectFunction = (target, params = {}) => {
   if (target instanceof KineticChar) {
-    // 核心修复：将基础 fill 设为纯白，否则 tint 无法在非白颜色上正确工作
     target.style.fill = "#ffffff";
-    
     const speed = params.speed || 0.002;
     const offset = params.delay !== undefined ? params.delay : (params.charIndex || 0) * 0.5;
-    target.addModifier("rainbow", (time) => {
+    target.addModifier("rainbow", 'behavior', (time) => {
       const t = time * speed + offset;
       const r = Math.sin(t) * 127 + 128;
       const g = Math.sin(t + 2.09) * 127 + 128;
       const b = Math.sin(t + 4.18) * 127 + 128;
-      const color =
-        (Math.floor(r) << 16) + (Math.floor(g) << 8) + Math.floor(b);
-      return { tint: color };
+      return { tint: (Math.floor(r) << 16) + (Math.floor(g) << 8) + Math.floor(b) };
     });
   }
 };
 export const rainbow = defineEffect(_rainbow, {
   type: "behavior",
+  track: "behavior",
   targetType: "char",
   mutexGroup: "color",
 });
@@ -189,66 +179,27 @@ const _blurIn: EffectFunction = (target: Container, params = {}) => {
   const duration = params.duration || 1;
   const blurFilter = new BlurFilter();
   blurFilter.strength = 20;
-
-  const currentFilters = target.filters || [];
-  target.filters = [...currentFilters, blurFilter];
-
-  target.alpha = 0;
+  target.filters = [...(target.filters || []), blurFilter];
 
   if (target instanceof KineticChar) {
-    const state = { alpha: 0 };
-    target.addModifier("blurIn", () => ({
-      alpha: state.alpha,
-    }));
-
+    gsap.set(target.animOffset, { alpha: 0 });
     const tl = gsap.timeline();
-    tl.to(state, { alpha: 1, duration: duration }).to(
-      blurFilter,
-      {
-        strength: 0,
-        duration: duration,
-        ease: "power2.out",
-        onComplete: () => {
-          if (target.filters) {
-            target.filters = (target.filters as any[]).filter(
-              (f) => f !== blurFilter,
-            );
-            if (target.filters.length === 0) {
-              target.filters = null;
-            }
-          }
-          target.removeModifier("blurIn");
-        },
-      },
-      "<",
-    );
+    tl.to(target.animOffset, { alpha: 1, duration: duration })
+      .to(blurFilter, {
+        strength: 0, duration: duration, ease: "power2.out", onComplete: () => {
+          target.filters = (target.filters || []).filter(f => f !== blurFilter);
+          if (target.filters!.length === 0) target.filters = null;
+        }
+      }, "<");
     return tl;
   } else {
-    const tl = gsap.timeline();
-    tl.to(target, { alpha: 1, duration: duration }).to(
-      blurFilter,
-      {
-        strength: 0,
-        duration: duration,
-        ease: "power2.out",
-        onComplete: () => {
-          if (target.filters) {
-            target.filters = (target.filters as any[]).filter(
-              (f) => f !== blurFilter,
-            );
-            if (target.filters.length === 0) {
-              target.filters = null;
-            }
-          }
-        },
-      },
-      "<",
-    );
-    return tl;
+    target.alpha = 0;
+    return gsap.to(target, { alpha: 1, duration: duration });
   }
 };
 export const blurIn = defineEffect(_blurIn, {
-  type: "behavior",
+  type: "anim",
+  track: "entrance",
   targetType: "both",
   mutexGroup: "enter",
 });
@@ -277,6 +228,7 @@ const _glitch: EffectFunction = (target: Container, params = {}) => {
 };
 export const glitch = defineEffect(_glitch, {
   type: "behavior",
+  track: "behavior",
   targetType: "both",
   mutexGroup: "position",
   stackable: true,
@@ -307,6 +259,7 @@ const _border: EffectFunction = (target, params = {}) => {
 };
 export const border = defineEffect(_border, {
   type: "style",
+  track: "instant",
   targetType: "group",
   mutexGroup: "border",
 });
@@ -336,6 +289,7 @@ const _bg: EffectFunction = (target, params = {}) => {
 };
 export const bg = defineEffect(_bg, {
   type: "style",
+  track: "instant",
   targetType: "group",
   mutexGroup: "bg",
 });
@@ -345,30 +299,17 @@ const _popIn: EffectFunction = (target, params = {}) => {
   if (target instanceof KineticChar) {
     const duration = params.duration || 0.6;
     const delay = params.delay || 0;
-    const state = { scale: 0, alpha: 0 };
-
-    target.alpha = 0;
-    target.scale.set(0);
-
-    target.addModifier("popIn", () => ({
-      scaleX: state.scale,
-      scaleY: state.scale,
-      alpha: state.alpha,
-    }));
-
-    const tl = gsap.timeline();
-    tl.to(state, {
-      scale: 1,
-      alpha: 1,
-      duration: duration,
-      delay: delay,
+    gsap.set(target.animOffset, { scaleX: 0, scaleY: 0, alpha: 0 });
+    return gsap.to(target.animOffset, {
+      scaleX: 1, scaleY: 1, alpha: 1,
+      duration: duration, delay: delay,
       ease: "back.out(1.7)",
     });
-    return tl;
   }
 };
 export const popIn = defineEffect(_popIn, {
-  type: "behavior",
+  type: "anim",
+  track: "entrance",
   targetType: "char",
   mutexGroup: "enter",
 });
@@ -381,7 +322,7 @@ const _fadeShake: EffectFunction = (target, params = {}) => {
     const delay = params.delay || 0;
     const state = { strength: 0 };
 
-    target.addModifier("shake", () => ({
+    target.addModifier("shake", 'behavior', () => ({
       x: (Math.random() - 0.5) * state.strength,
       y: (Math.random() - 0.5) * state.strength,
     }));
@@ -396,6 +337,7 @@ const _fadeShake: EffectFunction = (target, params = {}) => {
 };
 export const fadeShake = defineEffect(_fadeShake, {
   type: "behavior",
+  track: "behavior",
   targetType: "char",
   mutexGroup: "position",
 });
@@ -405,27 +347,17 @@ const _jumpIn: EffectFunction = (target, params = {}) => {
     const height = params.height || 50;
     const duration = params.duration || 0.6;
     const delay = params.delay || 0;
-    const state = { y: -height, alpha: 0 };
-
-    target.alpha = 0;
-
-    target.addModifier("jumpIn", () => ({
-      y: state.y,
-      alpha: state.alpha,
-    }));
-    const tl = gsap.timeline();
-    tl.to(state, {
-      y: 0,
-      alpha: 1,
-      duration: duration,
-      delay: delay,
+    gsap.set(target.animOffset, { y: -height, alpha: 0 });
+    return gsap.to(target.animOffset, {
+      y: 0, alpha: 1,
+      duration: duration, delay: delay,
       ease: "bounce.out",
     });
-    return tl;
   }
 };
 export const jumpIn = defineEffect(_jumpIn, {
-  type: "behavior",
+  type: "anim",
+  track: "entrance",
   targetType: "char",
   mutexGroup: "enter",
 });
@@ -434,26 +366,16 @@ const _fadeIn: EffectFunction = (target, params = {}) => {
   if (target instanceof KineticChar) {
     const duration = params.duration || 0.5;
     const delay = params.delay || 0;
-    const state = { alpha: 0 };
-
-    target.alpha = 0;
-
-    target.addModifier("fadeIn", () => ({
-      alpha: state.alpha,
-    }));
-
-    const tl = gsap.timeline();
-    tl.to(state, {
-      alpha: 1,
-      duration: duration,
-      delay: delay,
+    gsap.set(target.animOffset, { alpha: 0 });
+    return gsap.to(target.animOffset, {
+      alpha: 1, duration: duration, delay: delay,
       ease: "power1.out",
     });
-    return tl;
   }
 };
 export const fadeIn = defineEffect(_fadeIn, {
-  type: "behavior",
+  type: "anim",
+  track: "entrance",
   targetType: "char",
   mutexGroup: "enter",
 });
@@ -463,28 +385,17 @@ const _punch: EffectFunction = (target, params = {}) => {
   if (target instanceof KineticChar) {
     const scale = params.scale || 1.5;
     const delay = params.delay || 0;
-    const state = { s: 1 };
-
-    target.addModifier("punch", () => ({
-      scaleX: state.s,
-      scaleY: state.s,
-    }));
-
-    return gsap.to(state, {
-      s: scale,
-      duration: 0.1,
-      yoyo: true,
-      repeat: 1,
-      delay: delay,
-      ease: "power1.out",
-      onComplete: () => {
-        target.removeModifier("punch");
-      },
+    gsap.set(target.animOffset, { scaleX: 1, scaleY: 1 });
+    return gsap.to(target.animOffset, {
+      scaleX: scale, scaleY: scale,
+      duration: 0.1, yoyo: true, repeat: 1, delay: delay,
+      ease: "power1.out"
     });
   }
 };
 export const punch = defineEffect(_punch, {
-  type: "behavior",
+  type: "anim",
+  track: "entrance",
   targetType: "char",
   mutexGroup: "action",
 });
@@ -498,7 +409,7 @@ const _gravity: EffectFunction = (target, params = {}) => {
     const bounce = params.bounce || 0.6;
     let currentY = 0;
 
-    target.addModifier("physics", () => {
+    target.addModifier("physics", 'behavior', () => {
       velocityY += gravity;
       currentY += velocityY;
 
@@ -515,6 +426,7 @@ const _gravity: EffectFunction = (target, params = {}) => {
 };
 export const gravity = defineEffect(_gravity, {
   type: "behavior",
+  track: "behavior",
   targetType: "char",
   mutexGroup: "position",
   stackable: true,
@@ -525,32 +437,20 @@ const _rgbShift: EffectFunction = (target, params = {}) => {
   const distance = params.dist || 5;
   const filter = new RGBSplitFilter();
   filter.offset = { x: distance, y: 0 };
-
   target.filters = [...(target.filters || []), filter];
 
   if (params.anim) {
     if (target instanceof KineticChar) {
-      target.addModifier("rgbAnim", (t) => {
-        filter.offset = {
-          x: Math.sin(t * 0.05) * distance,
-          y: Math.cos(t * 0.03) * distance,
-        };
+      target.addModifier("rgbAnim", 'behavior', (t) => {
+        filter.offset = { x: Math.sin(t * 0.05) * distance, y: Math.cos(t * 0.03) * distance };
         return {};
-      });
-    } else {
-      gsap.to(filter.offset, {
-        x: distance,
-        y: distance,
-        duration: 1,
-        repeat: -1,
-        yoyo: true,
-        ease: "sine.inOut",
       });
     }
   }
 };
 export const rgbShift = defineEffect(_rgbShift, {
   type: "filter",
+  track: "instant",
   targetType: "both",
   mutexGroup: "filter_rgb",
 });
@@ -572,13 +472,14 @@ const _warp: EffectFunction = (target, params = {}) => {
 
   target.filters = [...(target.filters || []), filter];
 
-  target.addModifier("warpAnim", (time) => {
+  target.addModifier("warpAnim", 'behavior', (time: number) => {
     filter.time = time * speed;
     return {};
   });
 };
 export const warp = defineEffect(_warp, {
   type: "filter",
+  track: "instant",
   targetType: "char",
   mutexGroup: "filter_warp",
 });
@@ -588,7 +489,7 @@ const _swing: EffectFunction = (target, params = {}) => {
   if (target instanceof KineticChar) {
     const speed = params.speed || 0.003;
     const range = params.range || 0.2;
-    target.addModifier("swing", (time) => {
+    target.addModifier("swing", 'behavior', (time: number) => {
       return {
         rotation: Math.cos(time * speed) * range,
       };
@@ -597,6 +498,7 @@ const _swing: EffectFunction = (target, params = {}) => {
 };
 export const swing = defineEffect(_swing, {
   type: "behavior",
+  track: "behavior",
   targetType: "char",
   mutexGroup: "rotation",
   stackable: true,
@@ -607,7 +509,7 @@ const _flash: EffectFunction = (target, params = {}) => {
   if (target instanceof KineticChar) {
     const speed = params.speed || 0.01;
     const minAlpha = params.min || 0.3;
-    target.addModifier("flash", (time) => {
+    target.addModifier("flash", 'behavior', (time: number) => {
       const t = (Math.sin(time * speed) + 1) / 2;
       return {
         alpha: minAlpha + t * (1 - minAlpha),
@@ -617,6 +519,7 @@ const _flash: EffectFunction = (target, params = {}) => {
 };
 export const flash = defineEffect(_flash, {
   type: "behavior",
+  track: "behavior",
   targetType: "char",
   mutexGroup: "alpha",
   stackable: true,
@@ -628,6 +531,7 @@ const _dim: EffectFunction = (target) => {
 };
 export const dim = defineEffect(_dim, {
   type: "style",
+  track: "instant",
   targetType: "both",
   mutexGroup: "alpha",
 });
@@ -642,7 +546,7 @@ const _blur: EffectFunction = (target, params = {}) => {
 
   if (params.anim) {
     if (target instanceof KineticChar) {
-      target.addModifier("blurAnim", (time) => {
+      target.addModifier("blurAnim", 'behavior', (time: number) => {
         filter.strength = (Math.sin(time * 0.005) + 1) * strength;
         return {};
       });
@@ -651,6 +555,7 @@ const _blur: EffectFunction = (target, params = {}) => {
 };
 export const blur = defineEffect(_blur, {
   type: "filter",
+  track: "instant",
   targetType: "both",
   mutexGroup: "filter_blur",
   stackable: true,
@@ -661,50 +566,51 @@ const _shift: EffectFunction = (target, params = {}) => {
   if (target instanceof KineticChar) {
     const x = Number(params.x || params.val || 0);
     const y = Number(params.y || 0);
-    target.addModifier("shift", () => {
+    target.addModifier("shift", 'behavior', () => {
       return { x, y };
     });
   }
 };
 export const shift = defineEffect(_shift, {
   type: "style",
+  track: "instant",
   targetType: "char",
   mutexGroup: "position_shift",
   stackable: true,
 });
 
 // 提前推进组件
-export const go = defineEffect((_target, params = {}) => {
-  const duration = Number(params.duration ?? params.d ?? params[0] ?? 0);
-  return { type: "delay", value: duration };
-}, {
+export const go = defineEffect((_target, params = {}) => ({
+  type: "delay", value: Number(params.duration ?? params.d ?? params[0] ?? 0)
+}), {
   type: "action",
+  track: "timing",
   targetType: "both",
 });
 
-export const slow = defineEffect((_target, params = {}) => {
-  const factor = Number(params.factor ?? params.f ?? params[0] ?? 2.0);
-  return { type: "speedMultiplier", value: factor };
-}, {
+export const slow = defineEffect((_target, params = {}) => ({
+  type: "speedMultiplier", value: Number(params.factor ?? params.f ?? params[0] ?? 2.0)
+}), {
   type: "action",
+  track: "timing",
   targetType: "both",
 });
 
-export const fast = defineEffect((_target, params = {}) => {
-  const factor = Number(params.factor ?? params.f ?? params[0] ?? 0.5);
-  return { type: "speedMultiplier", value: factor };
-}, {
+export const fast = defineEffect((_target, params = {}) => ({
+  type: "speedMultiplier", value: Number(params.factor ?? params.f ?? params[0] ?? 0.5)
+}), {
   type: "action",
+  track: "timing",
   targetType: "both",
 });
 
-// 流程阻塞组件 (跨界注册)
-export const wait = defineEffect((_target, params = {}) => {
-  const duration = Number(params.duration ?? params.d ?? params[0] ?? 1);
-  return new Promise<void>(resolve => {
-    gsap.delayedCall(duration, resolve);
-  });
-}, {
+export const hold = defineEffect((_target, params = {}) => new Promise<void>(resolve => {
+  gsap.delayedCall(Number(params.duration ?? params.d ?? params[0] ?? 1), resolve);
+}), {
   type: "action",
-  targetType: "both", // 支持 :char, :group, :block
+  track: "timing",
+  targetType: "both",
 });
+
+/** @deprecated 向后兼容别名，后续版本移除 */
+export const wait = hold;

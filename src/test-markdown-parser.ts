@@ -46,7 +46,7 @@ try {
     // 4. 验证分割线 (---)
     const pClear = result.paragraphs.find(p => p.tokens.some(t => t.isSceneClear));
     assert(!!pClear, "Should find paragraph with isSceneClear");
-    assert(pClear.tokens.some(t => t.layoutInstructions.some(i => i.type === "wait")), "--- should have wait instruction");
+    assert(pClear.tokens.some(t => t.layoutInstructions.some(i => i.type === "pause")), "--- should have pause instruction");
 
     console.log("\n🎊 Markdown syntax parsing validated successfully.");
 } catch (e: any) {

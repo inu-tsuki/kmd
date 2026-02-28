@@ -20,7 +20,10 @@ export type LayoutCommandType =
   | "up"
   | "lineStart"
   | "lineEnd"
-  | "moveChar";
+  | "moveChar"
+  | "pushDisplayOffset"
+  | "popDisplayOffset"
+  | "flow";
 
 // Token 的几何上下文，用于扩展器计算
 export interface TokenContext {
@@ -76,6 +79,8 @@ export interface LayoutResult {
   y: number;
   inFlow: boolean; // 是否在常规流中（影响高度计算）
   stepDistance?: number; // 【新增】该字符排版导致的光标步进值
+  displayOffsetX?: number; // 视觉偏移 X（不影响排版流）
+  displayOffsetY?: number; // 视觉偏移 Y（不影响排版流）
 }
 
 // 排版审计记录
@@ -92,9 +97,12 @@ export interface LayoutAuditRecord {
 export interface LayoutContext {
   activeCursor: CursorState;
   isFlowBroken: boolean; // 是否已脱离常规排版流（高度不再计入）
-  justMoved: boolean;    // 【新增】标记刚刚执行过定位指令，用于跳过一次自动换行
+  justMoved: boolean;    // 标记刚刚执行过定位指令，用于跳过一次自动换行
   markers: Map<string, CursorState>;
-  touchedMarkers: string[]; // 【新增】当前行内设置过的标记名，用于对齐修正
+  touchedMarkers: string[]; // 当前行内设置过的标记名，用于对齐修正
+  displayOffset: CursorState;         // 当前视觉偏移（不影响排版流），初始 {0,0}
+  _displayOffsetStack: CursorState[]; // push/pop 嵌套栈
+  baselineY: number;                  // 当前行基线 Y（从 TextLayoutEngine 局部变量提升）
   options: {
     maxWidth: number;
     lineHeight: number;

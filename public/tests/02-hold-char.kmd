@@ -1,0 +1,16 @@
+---
+title: 02 - hold:char 逐字特效链
+mode: stage
+speed: 50
+designWidth: 1920
+designHeight: 1080
+---
+
+// 预期：每个字间隔0.5s依次变红
+{逐字变红} @ f.red:char
+
+// 预期：hold:char — 每字间隔1s着红
+{逐字hold} @ f.hold:char(1s).red
+
+// 预期：hold:char + shake:char — 每字先hold后shake
+{逐字shake} @ f.hold:char(0.5s).shake:char

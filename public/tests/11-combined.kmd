@@ -1,0 +1,25 @@
+---
+title: 11 - hold + pause + blocking 组合测试
+mode: stage
+speed: 40
+designWidth: 1920
+designHeight: 1080
+---
+
+// 组合：管道符 pause + hold 链 + 阻塞镜头
+[cam.zoom(0.8, 1s)!]
+镜头就位。
+
+{先红} hold(1s) 后变蓝。 @ f.red.hold(1s).blue
+
+我在这里|停了一下|(1.5s)再继续。
+
+@ cam.move(0, 200, 2s)!
+镜头平移完成后才出现。
+
+{每字都有hold} @ f.hold:char(0.8s).wave
+
+{组合行为} @ f.shake(8).hold(2s).rainbow
+
+[cam.reset(1s)!]
+组合测试结束。

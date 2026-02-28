@@ -24,23 +24,34 @@ export const registerKMDLanguage = () => {
     tokenPostfix: '.kmd',
 
     tokenizer: {
+      // root: 初始分发器 — 仅决定是进入 frontmatter 还是 body
       root: [
+        [/^---$/, { token: 'keyword.frontmatter.delimiter', switchTo: '@frontmatter' }],
+        [/.*/, { token: '@rematch', switchTo: '@body' }],
+      ],
+
+      // frontmatter: YAML 元数据区域，关闭后进入 body（不可再回到 frontmatter）
+      frontmatter: [
+        [/^---$/, { token: 'keyword.frontmatter.delimiter', switchTo: '@body' }],
+        [/^\s*[a-zA-Z0-9_]+(?=:)/, 'type.identifier'],
+        [/[:]/, 'operator'],
+        [/.*$/, 'string'],
+      ],
+
+      // body: 正文状态 — 所有 KMD 语法规则，--- 仅作为 scene-clear
+      body: [
         // 1.1 最高优先级：转义符
         [/\\./, 'string.escape'],
 
         // 1.2 结构符号
-        [/^---/, {
-          cases: {
-            '@eos': { token: 'punctuation.definition.comment', next: '@frontmatter' }, // 仅在文件开始匹配 frontmatter
-            '@default': { token: 'punctuation.definition.comment' } // 其他地方作为 scene clear
-          }
-        }],
+        [/^---$/, 'keyword.scene-clear'],
         [/\/\/.*$/, 'comment'],
         [/^#\s.*$/, 'keyword.header'],
         [/{/, { token: 'delimiter.curly', next: '@braceContent' }],
-        [/\[/, { token: 'delimiter.square', next: '@bracketContent' }],
-        
+        [/^\[/, { token: 'delimiter.square', next: '@bracketContent' }],
+
         // 1.3 指令入口
+        [/@$/, 'operator.at'],                                       // 裸 @ — 不进入 commandChain
         [/@/, { token: 'operator.at', next: '@commandChain' }],
 
         // 1.4 节奏糖 (Go, Wait, Speed)
@@ -52,13 +63,6 @@ export const registerKMDLanguage = () => {
         [/\*\*.*?\*\*/, 'string.strong'],
         [/\*.*?\*/, 'string.italic'],
         [/var\.[a-zA-Z0-9_]+/, 'variable.predefined'],
-      ],
-
-      frontmatter: [
-        [/^---/, { token: 'punctuation.definition.comment', next: '@pop' }],
-        [/^\s*[a-zA-Z0-9_]+(?=:)/, 'type.identifier'], 
-        [/[:]/, 'operator'],                           
-        [/.*$/, 'string'],                             
       ],
 
       braceContent: [
@@ -204,7 +208,9 @@ export const registerKMDLanguage = () => {
       { token: 'keyword.prefix', foreground: '569CD6', fontStyle: 'italic' }, 
       { token: 'keyword.quantifier', foreground: 'C586C0' },             
       { token: 'variable.predefined', foreground: '4FC1FF' },            
-      { token: 'keyword.header', foreground: '6A9955', fontStyle: 'bold' }, 
+      { token: 'keyword.header', foreground: '6A9955', fontStyle: 'bold' },
+      { token: 'keyword.scene-clear', foreground: 'FF6B6B', fontStyle: 'bold' },
+      { token: 'keyword.frontmatter.delimiter', foreground: '808080', fontStyle: 'italic' },
       { token: 'function', foreground: 'DCDCAA' },                       
       { token: 'variable.parameter', foreground: '9CDCFE' },
       { token: 'delimiter.parenthesis', foreground: 'ABB2BF' },

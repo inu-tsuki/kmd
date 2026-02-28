@@ -7,7 +7,15 @@
 *   **Core Engine:** Pixi.js (v8) GPU 加速渲染。
 *   **Animation System:** GSAP 深度驱动动画生命周期。
 *   **Framework:** Vue 3 + TypeScript。
-*   **Version:** **v1.1.5 (Intelligent Edition)** - 实现了智能 Monaco 编辑器集成、实时诊断与持久化节奏系统。
+*   **Version:** **v1.6.0 (Time Lord - Under Development)** - 正在实现全时序驱动架构、语义溯源与热重载跳转。
+
+## Context Maintenance Protocol
+
+1.  **Strict Context Alignment**: 每次执行 Directives 前，必须先读取 `docs/ai/TODO.md` 和 `docs/ai/MEMORY.md` 以确保任务对齐。
+2.  **Autonomous Update**: 
+    - 任务完成后，必须主动更新 `docs/ai/TODO.md` 的状态（勾选已完成项）。
+    - 涉及架构变更或新功能实现后，必须同步更新 `docs/ai/MEMORY.md`。
+3.  **Source of Truth**: `GEMINI.md` 与 `docs/ai/*` 共同构成最高优先级的指令来源。
 
 ## Kinetic Markdown (KMD) Syntax
 
@@ -43,6 +51,5 @@
 ### Key Commands
 ```bash
 pnpm dev      # 启动开发环境
-npm run test:parser  # 运行集成测试
+npm run test:parser  # 运行解析器测试
 npx vue-tsc -b  # 项目级类型检查
-```

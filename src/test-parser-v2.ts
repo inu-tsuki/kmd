@@ -9,7 +9,7 @@ const testCases = [
   "这一行没有括号但有指令 @ cam.move(100, 100)! cam.zoom(2)",
   
   // 3. 混合语法糖：管道符 + 变量 + 感叹号
-  "{变量测试} @ f.red.wait(var.delay)!.blue",
+  "{变量测试} @ f.red.hold(var.delay)!.blue",
   
   // 4. 纯指令行
   "@ cam.reset(1s)!",

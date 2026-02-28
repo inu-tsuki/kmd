@@ -21,6 +21,12 @@ export const useEditorStore = defineStore('editor', () => {
     fontFamily: 'Sasara Regular'
   });
 
+  const currentTime = ref(0);
+  const totalDuration = ref(0);
+  const currentLine = ref(0);
+  const timelineMarkers = ref<any[]>([]);
+  const playbackSpeed = ref(1.0);
+
   // 监听内容变化，实现 Text -> UI 同步
   watch(kmdContent, () => {
     if (!isUpdatingFrontMatter) {
@@ -118,6 +124,23 @@ export const useEditorStore = defineStore('editor', () => {
 
   const nextStep = () => {
     player.value?.next(true);
+  };
+
+  const seekRelative = (deltaSeconds: number) => {
+    if (player.value) {
+      const current = currentTime.value / 1000;
+      player.value.seekToTime(current + deltaSeconds);
+    }
+  };
+
+  const setPlaybackSpeed = (speed: number) => {
+    playbackSpeed.value = speed;
+    player.value?.setTimeScale(speed);
+  };
+
+  const loadTestFile = async (path: string) => {
+    const res = await fetch(path);
+    kmdContent.value = await res.text();
   };
 
   const setPreset = (preset: string) => {
@@ -454,12 +477,20 @@ export const useEditorStore = defineStore('editor', () => {
     isPlaying,
     player,
     canvasConfig,
+    currentTime,
+    totalDuration,
+    currentLine,
+    timelineMarkers,
+    playbackSpeed,
     layoutTree,
     layoutAuditLog,
     setPlayer,
     runScript,
     stopScript,
     nextStep,
+    seekRelative,
+    setPlaybackSpeed,
+    loadTestFile,
     syncConfigFromPlayer,
     setPreset,
     moveView,

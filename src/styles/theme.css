@@ -98,3 +98,17 @@
   background: var(--border-main);
   margin: 15px 0;
 }
+
+/* Monaco 播放行高亮 */
+.kmd-playing-line {
+  background: rgba(79, 192, 141, 0.25) !important; /* 加深一点 */
+  width: 100% !important;
+}
+
+.kmd-playing-line-margin {
+  background: var(--accent-primary) !important;
+  width: 5px !important;
+  margin-left: 2px !important;
+  z-index: 10;
+}
+

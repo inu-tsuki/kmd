@@ -27,7 +27,7 @@ try {
     const p2 = result.paragraphs.find(p => p.tokens.some(t => t.content.includes("准备")));
     const tokenReady = p2?.tokens.find(t => t.content.includes("准备"));
     assert(tokenReady?.effects.some(e => e.name === "red"), "Line 19: '准备' should have red effect");
-    assert(tokenReady?.effects.some(e => e.name === "wait"), "Line 19: '准备' should have wait effect");
+    assert(tokenReady?.effects.some(e => e.name === "hold"), "Line 19: '准备' should have hold effect");
 
     // 5.2 验证排版指令
     const pLayout = result.paragraphs.find(p => p.tokens.some(t => t.content.includes("屏幕中间")));

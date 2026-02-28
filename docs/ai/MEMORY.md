@@ -26,21 +26,33 @@
 *   **Baseline V2**: 彻底重构排版基准，实现了基于物理 `ascent` 的动态锚点对齐。
 *   **Production Font System**: 使用原生 `FontFace` API 解决了 CJK 字体加载竞赛与匹配问题。
 
-### v1.1.5: 智能编辑器与持久化节奏 (Latest)
-*   **Intelligent Editor**: 深度集成 Monaco Editor，实现了上下文感知的 Monarch 语法高亮与 IntelliSense。支持命名空间 (`cam.`, `f.`) 过滤、层级后缀 (`:char/group`) 补全以及实时语法错误诊断。
-*   **Persistent Rhythm**: 重新设计了播放引擎的速度状态机。实现了行级持久化 (`~`/`^` 增速在下一行自动重置) 与组级持久化 (`:group` 增速在 Token 播放完后自动重置)，解决了旧版本中速度糖衣无限累加的逻辑缺陷。
-*   **UX Optimization**: 针对 CJK 环境优化了 Unicode 歧义字符高亮设置，提升了中文创作体验。
+### v1.1.5: 智能编辑器与持久化节奏
+*   **Intelligent Editor**: 深度集成 Monaco Editor，实现了上下文感知的 Monarch 语法高亮与 IntelliSense。
+*   **Persistent Rhythm**: 实现了行级持久化 (`~`/`^`) 与组级持久化 (`:group`) 的速度状态机，解决了糖衣无限累加的逻辑缺陷。
+
+### v1.3.0: 生产力架构与状态抽离
+*   **State Decoupling**: 引入 Pinia 建立 `editorStore`，将编辑器状态、播放状态与全局配置解耦。
+*   **Workspace System**: 实现了 `WindowFrame` 容器与多标签页布局，支持 Inspector 与 Preview 的多屏协作。
+
+### v1.4.0: 自由布局引擎 (Docking System)
+*   **LayoutTree Architecture**: 实现基于递归递归的布局树，支持复杂的嵌套停靠 (Docking) 与分栏。
+*   **Atomic Refactoring**: 布局计算从组件内部抽离到独立的布局引擎，支持动态 DnD (拖拽) 交互。
+
+### v1.5.0: 全链路同步与审计系统
+*   **Front Matter Sync Engine**: 实现了编辑器源码与 Inspector UI 的双向实时同步。
+*   **Layout Audit**: 引入布局审计系统，可导出渲染帧的完整坐标图谱 (Layout JSON)，用于辅助定位排版偏差。
 
 ---
 
 ## 3. 技术栈演进对照表
 
-| 功能模块 | v1.1.0 | v1.1.5 (Latest) |
+| 功能模块 | v1.1.5 | v1.5.0 (Latest) |
 | :--- | :--- | :--- |
-| **编辑器** | 基础文本输入 | **Monaco + 上下文感知高亮/补全/诊断** |
-| **节奏逻辑** | 逐字单次应用 (易累加) | **双层级持久化速度状态机 (自动重置)** |
-| **指令验证** | 仅运行时校验 | **实时静态扫描 + 全指令集验证** |
-| **命名空间支持** | 仅解析器支持 | **编辑器全链路高亮、补全、校验支持** |
+| **状态管理** | 组件内 State | **Pinia Store (解耦控制层)** |
+| **界面布局** | 固定比例网格 | **递归 Docking System (自由停靠)** |
+| **双向绑定** | 手动改写源码 | **Front Matter Sync Engine (实时响应)** |
+| **调试工具** | Console Log | **Layout Audit System (可视化坐标审计)** |
+| **编辑器** | 智能补全/高亮 | **增强型 IDE 集成 + 同步状态反馈** |
 
 ---
 

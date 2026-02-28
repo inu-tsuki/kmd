@@ -1,0 +1,24 @@
+---
+title: 10 - 变量解析
+mode: stage
+speed: 50
+designWidth: 1920
+designHeight: 1080
+var:
+  my_zoom: 0.7
+  shake_val: 20
+  delay_val: 1.5
+---
+
+// 预期：使用 var.my_zoom 进行缩放
+[cam.zoom(var.my_zoom, 1s)!]
+镜头使用变量 var.my_zoom 缩放到 {var.my_zoom}。
+
+// 预期：使用 var.shake_val 震动
+{震动} @ f.shake(strength=var.shake_val)
+
+// 预期：使用 var.delay_val 作为 hold 时长
+{变量hold} @ f.red.hold(var.delay_val).blue
+
+[cam.reset(1s)!]
+演出结束。
