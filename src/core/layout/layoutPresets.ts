@@ -16,7 +16,6 @@ const moveCursor = (ctx: LayoutContext, val: any, axis: 'x' | 'y', mode: 'abs' |
   const target = ctx.markers.get(String(val));
   if (target) {
     const local = toLocal(ctx, target);
-    console.log(`[KMD-POS] moveCursor (Label Match): axis=${axis} | targetLabel="${val}" | globalTarget=${target.x},${target.y} | resolvedLocal=${local.x},${local.y}`);
     ctx.activeCursor[axis] = local[axis];
     ctx.justMoved = true;
   } else {
@@ -27,10 +26,8 @@ const moveCursor = (ctx: LayoutContext, val: any, axis: 'x' | 'y', mode: 'abs' |
         const originOffset = axis === 'x' ? 960 : 540;
         const designCoord = num + originOffset;
         const localVal = designCoord - ctx.options.baseOffset[axis];
-        console.log(`[KMD-POS] moveCursor (Absolute Shifted): axis=${axis} | input=${num} | designCoord=${designCoord} | resolvedLocal=${localVal}`);
         ctx.activeCursor[axis] = localVal;
       } else {
-        console.log(`[KMD-POS] moveCursor (Relative): axis=${axis} | delta=${num} | before=${ctx.activeCursor[axis]} | after=${ctx.activeCursor[axis] + num}`);
         ctx.activeCursor[axis] += num;
       }
       ctx.justMoved = true;
@@ -57,7 +54,6 @@ export const mark: LayoutOperator = (ctx, p) => {
       x: ctx.activeCursor.x + ctx.displayOffset.x + dx,
       y: ctx.activeCursor.y + ctx.displayOffset.y + dy
     });
-    console.log(`[KMD-POS] MARK Recorded: label="${label}" | atLocal=${ctx.activeCursor.x},${ctx.activeCursor.y} | offset=${dx},${dy} | finalGlobal=${globalPos.x},${globalPos.y}`);
     ctx.markers.set(label, globalPos);
     ctx.touchedMarkers.push(label);
   }
@@ -82,7 +78,6 @@ export const markEnd: LayoutOperator = (ctx, p) => {
 };
 
 export const goto: LayoutOperator = (ctx, p) => {
-  console.log(`[KMD-POS] GOTO Triggered: currentPos=${ctx.activeCursor.x},${ctx.activeCursor.y}`);
   ctx.isFlowBroken = true;
   ctx.justMoved = true;
   
@@ -94,7 +89,6 @@ export const goto: LayoutOperator = (ctx, p) => {
     const target = ctx.markers.get(String(val));
     if (target) {
         const local = toLocal(ctx, target);
-        console.log(`[KMD-POS] GOTO (Label Match): label="${val}" | localTarget=${local.x},${local.y}`);
         ctx.activeCursor.x = local.x;
         ctx.activeCursor.y = local.y;
     } else {
@@ -104,7 +98,6 @@ export const goto: LayoutOperator = (ctx, p) => {
 };
 
 export const offset: LayoutOperator = (ctx, p) => {
-  console.log(`[KMD-POS] OFFSET Triggered: currentPos=${ctx.activeCursor.x},${ctx.activeCursor.y}`);
   if (p[0] !== undefined && p[1] !== undefined) {
     moveCursor(ctx, p[0], 'x', 'rel');
     moveCursor(ctx, p[1], 'y', 'rel');
@@ -113,7 +106,6 @@ export const offset: LayoutOperator = (ctx, p) => {
     const target = ctx.markers.get(String(val));
     if (target) {
       const local = toLocal(ctx, target);
-      console.log(`[KMD-POS] OFFSET (Label Match): label="${val}" | targetLocal=${local.x},${local.y}`);
       ctx.activeCursor = local;
       ctx.justMoved = true;
     } else {

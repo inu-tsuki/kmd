@@ -1,6 +1,5 @@
 import { Application, Assets } from "pixi.js";
 import { stageManager } from "./stage/StageManager";
-import { initStagePresets } from "./stage/stagePresets";
 
 declare global {
   var __PIXI_APP__: Application | undefined;
@@ -49,9 +48,8 @@ class ReaderApp {
     // 预加载字体
     await this.loadFonts();
 
-    // 初始化舞台管理器与预设
+    // 初始化舞台管理器（预设已通过模块顶层自动注册）
     stageManager.init();
-    initStagePresets();
 
     // 将 Canvas 添加到 DOM
     container.appendChild(this.pixiApp.canvas);

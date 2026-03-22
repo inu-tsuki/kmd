@@ -2,6 +2,8 @@ import { defineStore } from 'pinia';
 import { ref, shallowRef, watch } from 'vue';
 import type { ScriptPlayer } from '../core/player/ScriptPlayer';
 import { stageManager } from '../core/stage/StageManager';
+import * as fsService from '../services/fileSystem';
+import type { FileNode } from '../services/fileSystem';
 
 export const useEditorStore = defineStore('editor', () => {
   // --- 状态 (State) ---
@@ -11,6 +13,14 @@ export const useEditorStore = defineStore('editor', () => {
 
   // 锁，防止双向同步死循环
   let isUpdatingFrontMatter = false;
+  let isOpeningFile = false;
+
+  // --- 文件系统状态 ---
+  const projectHandle = shallowRef<FileSystemDirectoryHandle | null>(null)
+  const fileTree = shallowRef<FileNode[]>([])
+  const activeFilePath = ref<string | null>(null)
+  const dirtyFiles = ref<Set<string>>(new Set())
+  const openFileHandles = new Map<string, FileSystemFileHandle>()
 
   const canvasConfig = ref({
     mode: 'stage',
@@ -27,10 +37,15 @@ export const useEditorStore = defineStore('editor', () => {
   const timelineMarkers = ref<any[]>([]);
   const playbackSpeed = ref(1.0);
 
-  // 监听内容变化，实现 Text -> UI 同步
+  // 监听内容变化，实现 Text -> UI 同步 + dirty 追踪
   watch(kmdContent, () => {
     if (!isUpdatingFrontMatter) {
       syncConfigFromText();
+    }
+    if (activeFilePath.value && !isOpeningFile) {
+      const next = new Set(dirtyFiles.value)
+      next.add(activeFilePath.value)
+      dirtyFiles.value = next
     }
   });
 
@@ -138,10 +153,61 @@ export const useEditorStore = defineStore('editor', () => {
     player.value?.setTimeScale(speed);
   };
 
-  const loadTestFile = async (path: string) => {
-    const res = await fetch(path);
-    kmdContent.value = await res.text();
-  };
+  // --- 文件系统操作 ---
+
+  const openFolder = async () => {
+    try {
+      const handle = await fsService.openFolder()
+      projectHandle.value = handle
+      fileTree.value = await fsService.readDirectory(handle)
+    } catch (err) {
+      if ((err as Error).name !== 'AbortError') console.error('[FS] openFolder error:', err)
+    }
+  }
+
+  const restoreProject = async () => {
+    try {
+      const handle = await fsService.restoreHandle()
+      if (!handle) return
+      projectHandle.value = handle
+      fileTree.value = await fsService.readDirectory(handle)
+    } catch {
+      // 静默失败，用户手动打开即可
+    }
+  }
+
+  const openFile = async (node: FileNode) => {
+    if (node.kind !== 'file') return
+    isOpeningFile = true
+    try {
+      const handle = node.handle as FileSystemFileHandle
+      const content = await fsService.readFile(handle)
+      openFileHandles.set(node.path, handle)
+      activeFilePath.value = node.path
+      kmdContent.value = content
+    } finally {
+      isOpeningFile = false
+    }
+  }
+
+  const saveCurrentFile = async () => {
+    if (!activeFilePath.value) return
+    const handle = openFileHandles.get(activeFilePath.value)
+    if (!handle) return
+    try {
+      await fsService.writeFile(handle, kmdContent.value)
+      const next = new Set(dirtyFiles.value)
+      next.delete(activeFilePath.value)
+      dirtyFiles.value = next
+    } catch (err) {
+      console.error('[FS] save failed:', err)
+    }
+  }
+
+  const refreshFileTree = async () => {
+    if (!projectHandle.value) return
+    fileTree.value = await fsService.readDirectory(projectHandle.value)
+  }
 
   const setPreset = (preset: string) => {
     if (preset === '16:9') {
@@ -181,7 +247,7 @@ export const useEditorStore = defineStore('editor', () => {
         id: generateId(),
         size: 25,
         children: [
-          { id: generateId(), type: 'window', size: 60, views: ['editor'] },
+          { id: generateId(), type: 'window', size: 60, views: ['explorer', 'editor'] },
           { id: generateId(), type: 'window', size: 40, views: ['inspector'] }
         ]
       }
@@ -484,13 +550,17 @@ export const useEditorStore = defineStore('editor', () => {
     playbackSpeed,
     layoutTree,
     layoutAuditLog,
+    // 文件系统
+    projectHandle,
+    fileTree,
+    activeFilePath,
+    dirtyFiles,
     setPlayer,
     runScript,
     stopScript,
     nextStep,
     seekRelative,
     setPlaybackSpeed,
-    loadTestFile,
     syncConfigFromPlayer,
     setPreset,
     moveView,
@@ -498,6 +568,11 @@ export const useEditorStore = defineStore('editor', () => {
     logRealtimeSizes,
     resetLayout,
     saveLayout,
-    loadLayout
+    loadLayout,
+    openFolder,
+    restoreProject,
+    openFile,
+    saveCurrentFile,
+    refreshFileTree
   };
 });

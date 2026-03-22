@@ -1,0 +1,64 @@
+{
+  "name": "vscode-kmd",
+  "displayName": "KMD — Kinetic Markdown",
+  "description": "Syntax highlighting, auto-completion and language support for Kinetic Markdown (.kmd) files",
+  "version": "0.2.0",
+  "publisher": "inu-tsuki",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "keywords": [
+    "markdown",
+    "kinetic",
+    "animation",
+    "text",
+    "typography"
+  ],
+  "icon": "icon.png",
+  "galleryBanner": {
+    "color": "#1E1E1E",
+    "theme": "dark"
+  },
+  "contributes": {
+    "languages": [
+      {
+        "id": "kmd",
+        "aliases": [
+          "KMD",
+          "Kinetic Markdown"
+        ],
+        "extensions": [
+          ".kmd"
+        ],
+        "configuration": "./language-configuration.json",
+        "icon": {
+          "light": "./icons/kmd-light.png",
+          "dark": "./icons/kmd-dark.png"
+        }
+      }
+    ],
+    "grammars": [
+      {
+        "language": "kmd",
+        "scopeName": "source.kmd",
+        "path": "./syntaxes/kmd.tmLanguage.json"
+      }
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kmd-editor/kmd-editor.git",
+    "directory": "extensions/vscode-kmd"
+  },
+  "bugs": {
+    "url": "https://github.com/kmd-editor/kmd-editor/issues"
+  },
+  "homepage": "https://github.com/kmd-editor/kmd-editor#readme",
+  "devDependencies": {
+    "sharp": "^0.34.5"
+  }
+}

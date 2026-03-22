@@ -7,29 +7,24 @@ class LayoutManager {
   private expanders: Record<string, LayoutExpander> = {};
 
   constructor() {
-    // 自动加载所有运行期算子
-    Object.keys(Presets).forEach((key) => {
-      this.register(key, (Presets as any)[key]);
-    });
-
-    // 自动加载所有构建期扩展器
-    Object.keys(Expanders).forEach((key) => {
-      this.registerExpander(key, (Expanders as any)[key]);
-    });
-    
-    const isDev = typeof import.meta.env !== 'undefined' ? import.meta.env.DEV : false;
-    if (isDev) {
-      console.log("[LayoutManager] All Expanders:", Object.keys(this.expanders));
-      console.log("[LayoutManager] All Operators:", Object.keys(this.registry));
-    }
+    this.registerBatch(Presets as Record<string, LayoutOperator>);
+    this.registerExpanderBatch(Expanders as Record<string, LayoutExpander>);
   }
 
   public register(name: string, operator: LayoutOperator) {
     this.registry[name] = operator;
   }
 
+  public registerBatch(presets: Record<string, LayoutOperator>) {
+    Object.entries(presets).forEach(([k, v]) => this.register(k, v));
+  }
+
   public registerExpander(name: string, expander: LayoutExpander) {
     this.expanders[name] = expander;
+  }
+
+  public registerExpanderBatch(expanders: Record<string, LayoutExpander>) {
+    Object.entries(expanders).forEach(([k, v]) => this.registerExpander(k, v));
   }
 
   public has(name: string): boolean {

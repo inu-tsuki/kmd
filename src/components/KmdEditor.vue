@@ -10,9 +10,6 @@ import { parser } from '../core/parser/Parser';
 import { useEditorStore } from '../store/editorStore';
 import { scriptPlayer } from '../core/player/ScriptPlayer';
 
-// 初始化语言 (幂等)
-registerKMDLanguage();
-
 const props = defineProps<{
   modelValue: string;
 }>();
@@ -89,9 +86,12 @@ const validateModel = (value: string) => {
   }
 };
 
-onMounted(() => {
+onMounted(async () => {
   if (!editorContainer.value) return;
   isDisposed = false;
+
+  // Wait for TM grammar to load before creating editor (ensures correct initial highlight)
+  await registerKMDLanguage();
 
   editor = monaco.editor.create(editorContainer.value, {
     value: props.modelValue,

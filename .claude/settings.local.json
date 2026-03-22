@@ -6,7 +6,12 @@
       "Bash(npx vite:*)",
       "Bash(pnpm build:*)",
       "Bash(python3:*)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "Bash(find:*)",
+      "Bash(ls:*)",
+      "Bash(cp:*)",
+      "Bash(grep -E \"^export const\" /c/Users/inu_tsuki/Documents/Programmes/kmd-editor/src/core/effects/presets.ts | sed 's/export const //' | sed 's/ =.*//')",
+      "Bash(grep -E \"^export const\" /c/Users/inu_tsuki/Documents/Programmes/kmd-editor/src/core/effects/styles.ts | sed 's/export const //' | sed 's/ =.*//')"
     ]
   }
 }

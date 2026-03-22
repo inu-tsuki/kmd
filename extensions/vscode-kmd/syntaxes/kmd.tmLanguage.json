@@ -1,0 +1,366 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "KMD",
+  "scopeName": "source.kmd",
+  "patterns": [
+    { "include": "#frontmatter" },
+    { "include": "#body" }
+  ],
+  "repository": {
+    "frontmatter": {
+      "begin": "\\A(---)",
+      "end": "^(---)$",
+      "beginCaptures": { "1": { "name": "punctuation.definition.frontmatter.begin.kmd" } },
+      "endCaptures": { "1": { "name": "punctuation.definition.frontmatter.end.kmd" } },
+      "name": "meta.frontmatter.kmd",
+      "contentName": "meta.embedded.block.yaml",
+      "patterns": [
+        {
+          "match": "^\\s*([a-zA-Z0-9_]+)\\s*(:)\\s*(.*)$",
+          "captures": {
+            "1": { "name": "entity.name.tag.yaml" },
+            "2": { "name": "punctuation.separator.key-value.yaml" },
+            "3": { "name": "string.unquoted.yaml" }
+          }
+        }
+      ]
+    },
+    "body": {
+      "patterns": [
+        { "include": "#comment" },
+        { "include": "#scene-clear" },
+        { "include": "#control-flow" },
+        { "include": "#heading" },
+        { "include": "#block-options" },
+        { "include": "#line-with-command" },
+        { "include": "#inline-elements" }
+      ]
+    },
+    "comment": {
+      "match": "//.*$",
+      "name": "comment.line.double-slash.kmd"
+    },
+    "scene-clear": {
+      "match": "^---$",
+      "name": "keyword.control.scene-clear.kmd"
+    },
+    "control-flow": {
+      "comment": "aspirational — not yet implemented in parser",
+      "patterns": [
+        {
+          "match": "^\\s*(@)\\s*(if|elif|else|end|loop|while|tag|jump|wait|set)\\b(.*)",
+          "captures": {
+            "1": { "name": "keyword.operator.at.kmd" },
+            "2": { "name": "keyword.control.flow.kmd" },
+            "3": {
+              "patterns": [
+                { "include": "#expression" }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "heading": {
+      "comment": "parser only handles single # (not ##/###)",
+      "match": "^(#)\\s+(.*)$",
+      "captures": {
+        "1": { "name": "punctuation.definition.heading.kmd" },
+        "2": { "name": "markup.heading.kmd" }
+      }
+    },
+    "block-options": {
+      "begin": "^\\[",
+      "end": "\\]",
+      "name": "meta.block-options.kmd",
+      "beginCaptures": { "0": { "name": "punctuation.definition.block-options.begin.kmd" } },
+      "endCaptures": { "0": { "name": "punctuation.definition.block-options.end.kmd" } },
+      "patterns": [
+        { "include": "#async-marker" },
+        {
+          "match": "([a-zA-Z0-9_]+)(=)([^\\s\\]]+)",
+          "captures": {
+            "1": { "name": "entity.other.attribute-name.kmd" },
+            "2": { "name": "keyword.operator.assignment.kmd" },
+            "3": { "name": "string.unquoted.attribute-value.kmd" }
+          }
+        },
+        {
+          "match": "\\.[a-zA-Z0-9_]+(?:\\.[a-zA-Z0-9_]+)*",
+          "name": "entity.name.function.effect.kmd"
+        },
+        { "include": "#effect-prefix" },
+        { "include": "#cam-namespace" },
+        { "include": "#state-namespace" },
+        { "include": "#parameters" }
+      ]
+    },
+    "line-with-command": {
+      "patterns": [
+        {
+          "comment": "Line ending with standalone @ (no commands)",
+          "match": "(@)$",
+          "captures": {
+            "1": { "name": "keyword.operator.at.kmd" }
+          }
+        },
+        {
+          "comment": "Line with @ followed by command chain",
+          "match": "(?<=\\s)(@)\\s*(.+)$",
+          "captures": {
+            "1": { "name": "keyword.operator.at.kmd" },
+            "2": {
+              "patterns": [
+                { "include": "#command-chain" }
+              ]
+            }
+          }
+        },
+        {
+          "comment": "Line starting with @ (command-only line)",
+          "match": "^\\s*(@)\\s*(.+)$",
+          "captures": {
+            "1": { "name": "keyword.operator.at.kmd" },
+            "2": {
+              "patterns": [
+                { "include": "#command-chain" }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "inline-elements": {
+      "patterns": [
+        { "include": "#escape" },
+        { "include": "#braced-group" },
+        { "include": "#timing-operators" },
+        { "include": "#markdown-bold" },
+        { "include": "#markdown-italic" },
+        { "include": "#variable-ref" },
+        { "include": "#text-interpolation" }
+      ]
+    },
+    "escape": {
+      "match": "\\\\.",
+      "name": "constant.character.escape.kmd"
+    },
+    "braced-group": {
+      "begin": "\\{(?!var\\.)",
+      "end": "\\}",
+      "beginCaptures": { "0": { "name": "punctuation.definition.group.begin.kmd" } },
+      "endCaptures": { "0": { "name": "punctuation.definition.group.end.kmd" } },
+      "name": "meta.braced-group.kmd",
+      "contentName": "string.quoted.other.kmd",
+      "patterns": [
+        { "include": "#escape" },
+        { "include": "#timing-operators" },
+        { "include": "#markdown-bold" },
+        { "include": "#markdown-italic" },
+        { "include": "#variable-ref" },
+        { "include": "#text-interpolation" }
+      ]
+    },
+    "timing-operators": {
+      "patterns": [
+        {
+          "match": ">>>|>>|>",
+          "name": "keyword.operator.advance.kmd"
+        },
+        {
+          "comment": "~ slow / ^ fast — body-level only; ! is command-chain only (see async-marker)",
+          "match": "[~^]",
+          "name": "keyword.operator.speed.kmd"
+        },
+        {
+          "begin": "\\|",
+          "end": "(?=\\s|$|[^(0-9)])",
+          "beginCaptures": { "0": { "name": "keyword.operator.pause.kmd" } },
+          "patterns": [
+            { "include": "#parameters" }
+          ]
+        }
+      ]
+    },
+    "markdown-bold": {
+      "match": "\\*\\*[^*]+\\*\\*",
+      "name": "markup.bold.kmd"
+    },
+    "markdown-italic": {
+      "match": "\\*[^*]+\\*",
+      "name": "markup.italic.kmd"
+    },
+    "variable-ref": {
+      "match": "\\bvar\\.[a-zA-Z0-9_]+\\b",
+      "name": "variable.other.readwrite.kmd"
+    },
+    "text-interpolation": {
+      "comment": "Matches {var.xxx} for variable interpolation within text",
+      "begin": "\\{(var\\.)",
+      "end": "\\}",
+      "beginCaptures": {
+        "0": { "name": "punctuation.definition.interpolation.begin.kmd" },
+        "1": { "name": "variable.other.readwrite.kmd" }
+      },
+      "endCaptures": { "0": { "name": "punctuation.definition.interpolation.end.kmd" } },
+      "name": "meta.interpolation.kmd",
+      "patterns": [
+        {
+          "match": "[a-zA-Z0-9_]+",
+          "name": "variable.other.readwrite.kmd"
+        }
+      ]
+    },
+    "command-chain": {
+      "patterns": [
+        { "include": "#at-separator" },
+        { "include": "#async-marker" },
+        { "include": "#effect-prefix" },
+        { "include": "#cam-namespace" },
+        { "include": "#state-namespace" },
+        { "include": "#chain-function" },
+        { "include": "#level-suffix" },
+        { "include": "#parameters" },
+        { "include": "#timing-operators" },
+        { "include": "#concurrent-plus" },
+        { "include": "#chain-dot" },
+        { "include": "#variable-ref" },
+        { "include": "#number-with-unit" },
+        { "include": "#number" },
+        { "include": "#string-single" },
+        { "include": "#string-double" }
+      ]
+    },
+    "at-separator": {
+      "match": "@",
+      "name": "keyword.operator.at.kmd"
+    },
+    "async-marker": {
+      "match": "!(?=\\s|$|\\))",
+      "name": "keyword.operator.async.kmd"
+    },
+    "effect-prefix": {
+      "match": "\\bf\\.",
+      "name": "keyword.other.effect-prefix.kmd"
+    },
+    "cam-namespace": {
+      "match": "\\bcam\\.",
+      "name": "keyword.other.namespace.camera.kmd"
+    },
+    "state-namespace": {
+      "comment": "aspirational — not yet implemented in parser",
+      "match": "\\bstate\\.",
+      "name": "keyword.other.namespace.state.kmd"
+    },
+    "chain-function": {
+      "match": "\\b[a-zA-Z_][a-zA-Z0-9_]*(?=\\(|\\.|:|\\s|$|[+!])",
+      "name": "entity.name.function.kmd"
+    },
+    "level-suffix": {
+      "match": ":(char|group|block)\\b",
+      "name": "storage.modifier.level.kmd"
+    },
+    "concurrent-plus": {
+      "comment": "aspirational — not yet implemented in parser",
+      "match": "\\+",
+      "name": "keyword.operator.concurrent.kmd"
+    },
+    "chain-dot": {
+      "match": "\\.(?=[a-zA-Z])",
+      "name": "punctuation.separator.dot.kmd"
+    },
+    "parameters": {
+      "begin": "\\(",
+      "end": "\\)",
+      "beginCaptures": { "0": { "name": "punctuation.definition.parameters.begin.kmd" } },
+      "endCaptures": { "0": { "name": "punctuation.definition.parameters.end.kmd" } },
+      "name": "meta.parameters.kmd",
+      "patterns": [
+        { "include": "#async-marker" },
+        {
+          "match": "([a-zA-Z_][a-zA-Z0-9_]*)(=)",
+          "captures": {
+            "1": { "name": "variable.parameter.kmd" },
+            "2": { "name": "keyword.operator.assignment.kmd" }
+          }
+        },
+        { "include": "#variable-ref" },
+        { "include": "#number-with-unit" },
+        { "include": "#number" },
+        { "include": "#string-single" },
+        { "include": "#string-double" },
+        {
+          "match": ",",
+          "name": "punctuation.separator.comma.kmd"
+        },
+        {
+          "match": "[a-zA-Z_][a-zA-Z0-9_]*",
+          "name": "variable.other.kmd"
+        }
+      ]
+    },
+    "number-with-unit": {
+      "match": "\\b(\\d+(?:\\.\\d+)?)(ms|s|em|px|%|self)\\b",
+      "captures": {
+        "1": { "name": "constant.numeric.kmd" },
+        "2": { "name": "keyword.other.unit.kmd" }
+      }
+    },
+    "number": {
+      "match": "\\b\\d+(?:\\.\\d+)?\\b",
+      "name": "constant.numeric.kmd"
+    },
+    "string-single": {
+      "begin": "'",
+      "end": "'",
+      "name": "string.quoted.single.kmd",
+      "patterns": [
+        {
+          "match": "\\\\.",
+          "name": "constant.character.escape.kmd"
+        }
+      ]
+    },
+    "string-double": {
+      "begin": "\"",
+      "end": "\"",
+      "name": "string.quoted.double.kmd",
+      "patterns": [
+        {
+          "match": "\\\\.",
+          "name": "constant.character.escape.kmd"
+        }
+      ]
+    },
+    "expression": {
+      "comment": "aspirational — used by control-flow, not yet implemented in parser",
+      "patterns": [
+        {
+          "match": "\\b(and|or|not|true|false)\\b",
+          "name": "keyword.operator.logical.kmd"
+        },
+        {
+          "match": ">=|<=|==|!=|>|<",
+          "name": "keyword.operator.comparison.kmd"
+        },
+        {
+          "match": "[+\\-*/%]",
+          "name": "keyword.operator.arithmetic.kmd"
+        },
+        {
+          "match": "=",
+          "name": "keyword.operator.assignment.kmd"
+        },
+        { "include": "#variable-ref" },
+        { "include": "#number-with-unit" },
+        { "include": "#number" },
+        { "include": "#string-single" },
+        { "include": "#string-double" },
+        {
+          "match": "\\b[a-zA-Z_][a-zA-Z0-9_]*\\b",
+          "name": "variable.other.kmd"
+        }
+      ]
+    }
+  }
+}

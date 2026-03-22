@@ -4,6 +4,7 @@ import { styleManager } from '../effects/StyleManager';
 import { stageManager } from '../stage/StageManager';
 import { layoutManager } from '../layout/LayoutManager';
 import { parser } from '../parser/Parser';
+import { getKmdGrammar, createTmTokensProvider } from './tmGrammarLoader';
 
 // 定义语义 Token 类别
 const tokenTypes = ['function', 'variable', 'keyword', 'string', 'number', 'operator', 'type', 'namespace', 'method'];
@@ -12,140 +13,17 @@ const legend = { tokenTypes, tokenModifiers };
 
 let isRegistered = false;
 
-export const registerKMDLanguage = () => {
+export const registerKMDLanguage = async () => {
   if (isRegistered) return;
   isRegistered = true;
 
   monaco.languages.register({ id: 'kmd' });
 
-  // --- 1. Monarch 语法定义 ---
-  monaco.languages.setMonarchTokensProvider('kmd', {
-    defaultToken: '',
-    tokenPostfix: '.kmd',
-
-    tokenizer: {
-      // root: 初始分发器 — 仅决定是进入 frontmatter 还是 body
-      root: [
-        [/^---$/, { token: 'keyword.frontmatter.delimiter', switchTo: '@frontmatter' }],
-        [/.*/, { token: '@rematch', switchTo: '@body' }],
-      ],
-
-      // frontmatter: YAML 元数据区域，关闭后进入 body（不可再回到 frontmatter）
-      frontmatter: [
-        [/^---$/, { token: 'keyword.frontmatter.delimiter', switchTo: '@body' }],
-        [/^\s*[a-zA-Z0-9_]+(?=:)/, 'type.identifier'],
-        [/[:]/, 'operator'],
-        [/.*$/, 'string'],
-      ],
-
-      // body: 正文状态 — 所有 KMD 语法规则，--- 仅作为 scene-clear
-      body: [
-        // 1.1 最高优先级：转义符
-        [/\\./, 'string.escape'],
-
-        // 1.2 结构符号
-        [/^---$/, 'keyword.scene-clear'],
-        [/\/\/.*$/, 'comment'],
-        [/^#\s.*$/, 'keyword.header'],
-        [/{/, { token: 'delimiter.curly', next: '@braceContent' }],
-        [/^\[/, { token: 'delimiter.square', next: '@bracketContent' }],
-
-        // 1.3 指令入口
-        [/@$/, 'operator.at'],                                       // 裸 @ — 不进入 commandChain
-        [/@/, { token: 'operator.at', next: '@commandChain' }],
-
-        // 1.4 节奏糖 (Go, Wait, Speed)
-        [/>>>|>>|>/, 'keyword.operator'],
-        [/[!~^]/, 'keyword.operator'],
-        [/\|/, { token: 'keyword.operator', next: '@pipeParams' }],
-
-        // 1.5 文字装饰
-        [/\*\*.*?\*\*/, 'string.strong'],
-        [/\*.*?\*/, 'string.italic'],
-        [/var\.[a-zA-Z0-9_]+/, 'variable.predefined'],
-      ],
-
-      braceContent: [
-        [/\\./, 'string.escape'], 
-        [/}/, { token: 'delimiter.curly', next: '@pop' }],
-        [/\*\*.*?\*\*/, 'string.strong'],
-        [/\*.*?\*/, 'string.italic'],
-        [/>>>|>>|>/, 'keyword.operator'],
-        [/[!~^]/, 'keyword.operator'],
-        [/\|/, { token: 'keyword.operator', next: '@pipeParams' }],
-        [/./, 'string.quote'], 
-      ],
-
-      pipeParams: [
-        [/\(/, { token: 'delimiter.parenthesis', next: '@parameters' }],
-        [/$/, '', '@pop'], 
-        ['', '', '@pop'],  
-      ],
-
-      bracketContent: [
-        [/\]/, { token: 'delimiter.square', next: '@pop' }],
-        [/f\./, 'keyword.prefix'], 
-        [/cam\./, 'keyword.prefix'], 
-        [/[a-zA-Z0-9_]+(?==)/, 'type.identifier'], 
-        [/=/, 'operator'],
-        [/@/, 'operator.at'],                      
-        [/[a-zA-Z0-9_\.]+(?=\()/, 'function'],     
-        [/[a-zA-Z0-9_\.]+/, 'variable'],
-        [/[!~^]/, 'keyword.operator'],
-        [/\|/, { token: 'keyword.operator', next: '@pipeParams' }],
-        [/\(/, { token: 'delimiter.parenthesis', next: '@parameters' }],
-        [/\s+/, 'white'],
-        [/$/, '', '@pop'], 
-      ],
-
-      // 指令链持续到行尾
-      commandChain: [
-        [/f\./, 'keyword.prefix'], 
-        [/cam\./, 'keyword.prefix'], 
-        [/^\./, 'punctuation'], 
-        [/[a-zA-Z0-9_]+(?:\.[a-zA-Z0-9_]+)*/, 'function'], 
-        [/\(/, { token: 'delimiter.parenthesis', next: '@parameters' }],
-        [/\./, 'punctuation'], 
-        [/[:]/, { token: 'punctuation', next: '@levelSuffix' }],
-        
-        // 【关键修复 1.2-1.8】在指令链中也能识别 @ 和 节奏糖
-        [/@/, 'operator.at'],
-        [/>>>|>>|>/, 'keyword.operator'],
-        [/[!~^]/, 'keyword.operator'],
-        
-        [/\s+/, 'white'], 
-
-        // 【关键修复】如果遇到不属于指令的字符（如中文），强行回退到 root
-        // 允许常见的指令字符，包括点号和冒号
-        [/[^a-zA-Z0-9_().\s,\|!|>|~|^: \t]/, { token: '@rematch', next: '@pop' }],
-
-        [/$/, '', '@pop'], 
-      ],
-
-      levelSuffix: [
-        [/(char|group|block)\b/, 'keyword.level'],
-        ['', '', '@pop'], 
-      ],
-
-      parameters: [
-        [/\)/, { token: 'delimiter.parenthesis', next: '@pop' }],
-        [/[a-zA-Z0-9_]+(?==)/, 'variable.parameter'], 
-        [/=/, 'operator'],
-        [/var\.[a-zA-Z0-9_]+/, 'variable.predefined'],
-        [/(\d+(?:\.\d+)?)(ms|self|s|em|px|%)/, ['number', 'keyword.quantifier']],
-        [/\d+(?:\.\d+)?/, 'number'],
-        [/'[^']*'/, 'string'],
-        [/"[^"]*"/, 'string'],
-        [/,/, 'punctuation'],
-        [/[a-zA-Z0-9_]+/, 'variable'], 
-
-        // 参数内部也支持 rematch
-        [/[^a-zA-Z0-9_().\s,='": \t]/, { token: '@rematch', next: '@pop' }],
-
-        [/$/, '', '@popall'], 
-      ],
-    },
-  });
+  // --- 1. TM grammar (replaces Monarch) ---
+  const grammar = await getKmdGrammar();
+  if (grammar) {
+    monaco.languages.setTokensProvider('kmd', createTmTokensProvider(grammar));
+  }
 
   // --- 2. 语义着色 ---
   monaco.languages.registerDocumentSemanticTokensProvider('kmd', {

@@ -348,12 +348,10 @@ export class ScriptPlayer {
         }
       }
 
-      // 视觉 globalEffects → 回调（bg, border 等组级特效）
+      // 视觉 globalEffects → 立即应用（bg, border 等装饰性特效是一次性设置，
+      // 不能放入 tl.call() 否则 seek 时会被 GSAP 重复执行）
       if (visualConfigs.length > 0) {
-        const vCopy = [...visualConfigs];
-        segmentTl.call(() => {
-          EffectProcessor.applyGroupEffects(kt, vCopy);
-        }, [], segmentCursor);
+        EffectProcessor.applyGroupEffects(kt, [...visualConfigs]);
       }
 
       // ── 构建段落子 Timeline ──

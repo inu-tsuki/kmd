@@ -15,20 +15,20 @@ export class KMDParser {
 
     try {
       const allLines = input.replace(/\r\n/g, "\n").split("\n");
-      
+
       // 1. 提取 Metadata (寻找 --- ... ---)
       let currentLineIdx = 0;
       if (allLines.length > 0 && allLines[0]?.trim() === "---") {
-          let endIdx = -1;
-          for(let i=1; i<allLines.length; i++) {
-              const line = allLines[i];
-              if (line !== undefined && line.trim() === "---") { endIdx = i; break; }
-          }
-          if (endIdx !== -1) {
-              const metaLines = allLines.slice(1, endIdx);
-              this.parseMetadata(metaLines.join("\n"), result.metadata);
-              currentLineIdx = endIdx + 1;
-          }
+        let endIdx = -1;
+        for (let i = 1; i < allLines.length; i++) {
+          const line = allLines[i];
+          if (line !== undefined && line.trim() === "---") { endIdx = i; break; }
+        }
+        if (endIdx !== -1) {
+          const metaLines = allLines.slice(1, endIdx);
+          this.parseMetadata(metaLines.join("\n"), result.metadata);
+          currentLineIdx = endIdx + 1;
+        }
       }
 
       // 2. 逐行聚合成段落，同时保持行号
@@ -36,34 +36,34 @@ export class KMDParser {
       let blockStartLine = -1;
 
       for (let i = currentLineIdx; i < allLines.length; i++) {
-          const line = allLines[i];
-          if (line === undefined) continue;
+        const line = allLines[i];
+        if (line === undefined) continue;
 
-          if (line.trim() === "") {
-              if (currentBlockLines.length > 0) {
-                  // 提交段落（过滤纯注释等空段落）
-                  const raw = currentBlockLines.join("\n");
-                  const pData = this.parseParagraph(raw, blockStartLine);
-                  if (pData.tokens.length > 0 || pData.globalEffects.length > 0) {
-                    result.rawParagraphs.push(raw);
-                    result.paragraphs.push(pData);
-                  }
-                  currentBlockLines = [];
-                  blockStartLine = -1;
-              }
-          } else {
-              if (blockStartLine === -1) blockStartLine = i;
-              currentBlockLines.push(line);
+        if (line.trim() === "") {
+          if (currentBlockLines.length > 0) {
+            // 提交段落（过滤纯注释等空段落）
+            const raw = currentBlockLines.join("\n");
+            const pData = this.parseParagraph(raw, blockStartLine);
+            if (pData.tokens.length > 0 || pData.globalEffects.length > 0) {
+              result.rawParagraphs.push(raw);
+              result.paragraphs.push(pData);
+            }
+            currentBlockLines = [];
+            blockStartLine = -1;
           }
+        } else {
+          if (blockStartLine === -1) blockStartLine = i;
+          currentBlockLines.push(line);
+        }
       }
-      
+
       if (currentBlockLines.length > 0) {
-          const raw = currentBlockLines.join("\n");
-          const pData = this.parseParagraph(raw, blockStartLine);
-          if (pData.tokens.length > 0 || pData.globalEffects.length > 0) {
-            result.rawParagraphs.push(raw);
-            result.paragraphs.push(pData);
-          }
+        const raw = currentBlockLines.join("\n");
+        const pData = this.parseParagraph(raw, blockStartLine);
+        if (pData.tokens.length > 0 || pData.globalEffects.length > 0) {
+          result.rawParagraphs.push(raw);
+          result.paragraphs.push(pData);
+        }
       }
 
       return result;
@@ -101,7 +101,7 @@ export class KMDParser {
     // 关键重构：Parser 不再进行任何裁剪，将原始段落字符串完整交给 Scanner
     // 这保证了 Scanner 内部的 i 索引绝对对应物理行号
     const { tokens, globalEffects, blockOptions } = this.scanner.scan(input, startLine);
-    
+
     return {
       blockOptions,
       tokens,
@@ -116,8 +116,8 @@ export class KMDParser {
       const result = this.parse(input);
       const check = (name: string, line: number) => {
         // 支持命名空间检查 (如 cam.zoom)
-        const isKnown = (n: string) => 
-          effectManager.has(n) || styleManager.has(n) || 
+        const isKnown = (n: string) =>
+          effectManager.has(n) || styleManager.has(n) ||
           layoutManager.has(n) || stageManager.has(n);
 
         let valid = isKnown(name);
@@ -131,8 +131,8 @@ export class KMDParser {
         }
 
         if (!valid) {
-          errors.push({ 
-            message: `未知指令: "${name}"`, 
+          errors.push({
+            message: `未知指令: "${name}"`,
             line: line + 1 // Monaco 是 1-based
           });
         }

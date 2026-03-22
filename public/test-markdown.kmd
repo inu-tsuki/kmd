@@ -2,8 +2,3 @@
 
 这这这这this是is{**big大大大重音**}音文字字字字字。 @ f.big
 这这这这this是is{*small小小小轻声*}文字字字字字。 @ f.small
-
- @ wait(5s)
-
-
-这是转场后的文字。

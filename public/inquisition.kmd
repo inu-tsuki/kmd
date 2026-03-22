@@ -1,0 +1,16 @@
+---
+title: 实操用例 - 审讯室
+mode: stage
+designWidth: 1920
+designHeight: 1080
+---
+
+{说吧}，|^你把东西藏哪了？ @ .offset(200, 0).mark(left).shake
+
+~~我……|~我真的不知道…… @ .shake(strength=2).offset(800, 0)
+
+{^^你还想狡辩吗？！} @ f.shake(strength=3) .offset(200, 0)
+
+~我……~|我…… @ .shake(strength=5).offset(800, 0)
+
+~求求你|放过我…… @ .shake(strength=1.5).dim(0.7).offset(800, 0)

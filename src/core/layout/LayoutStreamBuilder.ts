@@ -131,8 +131,20 @@ export class LayoutStreamBuilder {
             lineHeight: measurementStyle.lineHeight || (measurementStyle.fontSize as number) * 1.2,
             markers: layout.globalMarkers
           });
-          if (pre) preCmds.push(...pre); if (post) postCmds.push(...post);
+          // lineScope: 行级排版拆分 — pre 仅发射 pre 命令，post 仅发射 post 命令
+          const scope = (instr as any).lineScope as string | undefined;
+          if (!scope) {
+            if (pre) preCmds.push(...pre); if (post) postCmds.push(...post);
+          } else if (scope === "pre") {
+            if (pre) preCmds.push(...pre);
+          } else if (scope === "post") {
+            if (post) postCmds.push(...post);
+          }
         } else {
+          // 非展开器指令是单点操作（如 mark），不像 offset 那样有 pre/post 成对结构。
+          // lineScope "post" 的副本应跳过，否则会在末 token 位置覆写首 token 的结果。
+          const scope = (instr as any).lineScope as string | undefined;
+          if (scope === "post") return;
           if (stageManager.has(instr.type)) stageInstructions.push(instr);
           else {
             const cmd = layoutManager.generate(instr.type, instr.params);
@@ -169,8 +181,20 @@ export class LayoutStreamBuilder {
         const charMetrics = LayoutStreamBuilder.measureTextSafe(charText, charStyle);
 
         const char = new KineticChar(charText, charStyle);
+        // 核心修复：baseStyleSnapshot 必须反映未应用特效的基准样式
+        // charStyle 已经被 applyInitialStylesToStyle 修改过（如 big → fontSize*=1.5），
+        // 如果 snapshot 也带着修改后的值，seek 时 resetStyle() 恢复到的"基准态"
+        // 仍然含有特效，再经 replayStyles 重放一次就会导致双重应用。
+        // 因此用 baseStyle（段落级原始样式）覆写 snapshot。
+        (char as any).baseStyleSnapshot.fontSize = baseStyle.fontSize;
+        (char as any).baseStyleSnapshot.fontFamily = baseStyle.fontFamily;
+        (char as any).baseStyleSnapshot.fontWeight = baseStyle.fontWeight;
+        (char as any).baseStyleSnapshot.fontStyle = baseStyle.fontStyle;
+        (char as any).baseStyleSnapshot.fill = baseStyle.fill;
+        (char as any).baseStyleSnapshot.stroke = baseStyle.stroke;
+        (char as any).baseStyleSnapshot.dropShadow = baseStyle.dropShadow;
         // 核心加固：无论来源如何，只要字符是 \n，就标记为 NewLine
-        if (charText === "\n") char.isNewLine = true; 
+        if (charText === "\n") char.isNewLine = true;
         
         const isLastChar = i === chars.length - 1;
         const charEffects = [...visualConfigs];

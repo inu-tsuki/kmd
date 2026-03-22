@@ -37,6 +37,7 @@ import EditorView from '../../views/EditorView.vue';
 import PreviewView from '../../views/PreviewView.vue';
 import InspectorView from '../../views/InspectorView.vue';
 import MonitorView from '../../views/MonitorView.vue';
+import ExplorerView from '../../views/ExplorerView.vue';
 
 const props = defineProps<{
   node: any;
@@ -61,7 +62,8 @@ const viewRegistry: Record<string, any> = {
   'editor': { id: 'editor', title: 'Editor', icon: '📝', component: markRaw(EditorView) },
   'preview': { id: 'preview', title: 'Live Preview', icon: '🎬', component: markRaw(PreviewView) },
   'inspector': { id: 'inspector', title: 'Inspector', icon: '⚙', component: markRaw(InspectorView) },
-  'monitor': { id: 'monitor', title: 'Monitor', icon: '📊', component: markRaw(MonitorView) }
+  'monitor': { id: 'monitor', title: 'Monitor', icon: '📊', component: markRaw(MonitorView) },
+  'explorer': { id: 'explorer', title: 'Explorer', icon: '📁', component: markRaw(ExplorerView) }
 };
 
 const mappedViews = computed(() => {

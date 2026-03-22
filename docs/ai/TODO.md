@@ -1,111 +1,392 @@
-# KMD Editor - Implementation Plan
+# KMD Editor — Implementation Roadmap
 
-## 1. 韵律标准与排版进化 (v1.1.0) - [DONE]
+## 1. 韵律标准与排版进化 (v1.1.0) — DONE
 - [x] MD 语法解糖、Baseline V2、相对字距。
 
-## 2. Monaco 编辑器与智能增强 (v1.1.5) - [DONE]
+## 2. Monaco 编辑器与智能增强 (v1.1.5) — DONE
 - [x] Monarch 高亮、IntelliSense 补全、实时错误诊断。
 
-## 3. 生产力工具集 (v1.2.0 - v1.3.0) - [DONE]
+## 3. 生产力工具集 (v1.2.0 - v1.3.0) — DONE
 - [x] Pinia 状态抽离、WindowFrame 容器、标签页系统。
 
-## 4. 自由布局引擎 (v1.4.0 - Docking System) - [DONE]
+## 4. 自由布局引擎 (v1.4.0 - Docking System) — DONE
 - [x] 递归 `LayoutTree`、拖拽停靠 (DnD)、原子布局重构。
 
-## 5. 深度联调与同步 (v1.5.0 - Front Matter Sync) - [DONE]
+## 5. 深度联调与同步 (v1.5.0 - Front Matter Sync) — DONE
 - [x] 双向同步引擎、科技感 Inspector、布局审计系统。
 
-## 6. 时间之主 (v1.6.0 - Segment Graph & Timeline Engine) - [Current]
+## 6. 时间之主 (v1.6.0 - Segment Graph & Timeline Engine) — Current
 
-> **核心架构决策**: 放弃"全局时间线"思维，采用 **Segment Graph + 局部 Timeline** 模型。
-> 时间是 Segment 内部的概念，Segment 之间靠逻辑状态 (Checkpoint) 衔接。
-> 动画分三轨：Entrance Anim (剧本时间, Timeline 驱动), Persistent Behavior (物理时间, Ticker 驱动), Post-entrance Chain (剧本时间, Timeline 驱动)。
+### Phase A — Timeline 化（线性脚本精确跳转）— DONE
 
-### 6.0 已完成的基础工作 (Foundation)
-- [x] **语义溯源**: 注入精确行号 (`line`) 和列号 (`range`)。
-- [x] **时长烘培**: 预估逻辑时长，生成基础 `timelineMarkers`。
-- [x] **分层属性架构**: 分离 Base/Anim/Behavior 层，解决特效覆盖与闪烁。
-- [x] **播放头同步**: 实现播放进度与编辑器行高亮的实时双向同步。
-- [x] **状态快照原型**: `StageManager.dumpState/loadState`、`LayoutEngine.dumpState/loadState`。
+- [x] **A1. Triple-Track Classification**: `EffectMetadata.track` 四轨分类，28 presets + 18 styles 审计。
+- [x] **A2. TextPlayer Timeline 化**: `buildTimeline()` 替代旧 `play()`，字符入场/时序糖衣/组特效链/Behavior 收集。
+- [x] **A3. Stage Timeline 化**: stagePresets 始终返回 Tween，cam.reset → timeline，移除 killTweensOf。
+- [x] **A4. Segment 数据结构**: `Segment`, `ParagraphUnit`, `Checkpoint` 接口。
+- [x] **A5. ScriptPlayer 重构**: `buildSegment()`, `playSegment()`, `seekToTime()`, Behavior 注册。
+- [x] **A6. Cross-Paragraph Animation Foundation**:
+    - [x] `buildMode` flag + `overwrite:false` / `immediateRender:false` in stagePresets。
+    - [x] `InFlightAnimation` tracking in buildSegment()。
+    - [x] `cam.offset` additive camera layer (3-layer composition)。
+    - [x] Stage tween trim-on-conflict (`trimActiveStageTween()`)。
+- [x] **A7. Three-Tier Layout System**:
+    - [x] Visual Displacement (`offset/up/down/left/right`) → `pushDisplayOffset`/`popDisplayOffset` (per-token scope)。
+    - [x] Visual Teleport (`goto`) → `isFlowBroken` (unchanged)。
+    - [x] Flow Control (`flow`) → moves cursor + syncs `baselineY` (NEW)。
+    - [x] Dual-path routing: per-token via expander (visual), block-level via operator (cursor)。
+    - [x] Forward-reference fix: phantom pass `writtenKeys` tracking for reliable marker sync。
+- [x] **A8. Phase A Cleanup**:
+    - [x] 6 parser/layout bugs (comment crash, phantom paragraph, bare @, sugar height, markEnd/self width, empty-body cmd line)。
+    - [x] 23 TS build errors → 0。
+    - [x] Semantic refactors: wait → hold/pause, Monaco `---` highlighting, dynamic file discovery。
 
-### 6.1 Phase A — Timeline 化 (线性脚本的精确跳转)
+### Phase B — Segment Graph、状态系统与语法演进
 
-目标：让当前的线性脚本（无分支）支持精确的 seek，跨段落动画被正确插值。
+> **核心理念**: Segment 内部仍为预烘焙 Timeline（确定性、可 seek），Segment 之间的边为运行时求值（条件分支、状态驱动）。
+> 控制流语法独立于特效链，使用行首 `@` 结构标记。状态层嵌入极简表达式求值器。
 
-- [x] **A1. 三轨分类 (Triple-Track Classification)**:
-    - [x] `EffectMetadata.track: "entrance" | "behavior" | "instant" | "timing"` 字段。
-    - [x] `EffectProcessor.classifyByTrack()` / `getTrack()` 分流。
-    - [x] 审计全部 28 presets + 18 styles，标注正确的 track。
-- [x] **A2. TextPlayer Timeline 化**:
-    - [x] `TextPlayer.buildTimeline()` → `TimelineBuildResult { timeline, behaviors, duration, advanceTime }`。
-    - [x] 字符入场动画 (entrance) 作为 Timeline 嵌套 Tween。
-    - [x] 时序糖衣 (`~`, `^`, `>`, `|`, `>>`, `>>>`) 转化为 cursor offset。
-    - [x] 组特效时序链 `unrollGroupChain()` 展开到 Timeline。
-    - [x] Behavior 特效收集到 `BehaviorRecord[]`（不进 Timeline）。
-    - [x] 旧 `play()` 保留但不再是主路径。
-- [x] **A3. Stage Timeline 化**:
-    - [x] `stagePresets` 始终返回 Tween（duration=0 用 `gsap.to({duration:0})`）。
-    - [x] `cam.reset` 返回 `gsap.timeline()` 替代 `Promise.all()`。
-    - [x] 移除 `killTweensOf`（依赖 `overwrite:"auto"`）。
-    - [x] Modifier-based (`cam.shake`, `cam.drift`) 用 `tl.call()` 兜底。
-    - [x] 导出 `MODIFIER_BASED_COMMANDS` 供 TextPlayer 使用。
-- [x] **A4. Segment 数据结构**:
-    - [x] `Segment` 接口：`{ id, paragraphs, timeline, behaviors, entryCheckpoint, exitCheckpoint, duration }`。
-    - [x] `ParagraphUnit`：`{ paragraphIndex, kineticText, offsetInSegment, behaviors, duration }`。
-    - [x] `Checkpoint`：`{ stage, layout, activeParagraphs }`。
-- [x] **A5. ScriptPlayer 重构**:
-    - [x] `buildSegment()` 替代 `bakeAll()`：构建 Segment 含完整 Timeline。
-    - [x] `playSegment()` / `pauseSegment()` / `seekToTime(seconds)` 新 API。
-    - [x] `seekTo(paragraphIndex)` 转发到 `seekToTime()`。
-    - [x] `toggleAutoPlay()` / `next()` 适配 Segment 模式。
-    - [x] Behavior 注册/重注册通过 `registerBehaviors(time)`。
-    - [x] TimeLordBar 直接调用 `seekToTime()` 实现精确跳转。
-- [ ] **A6. Bridge Tween (跨段落动画衔接)**:
-    - [ ] 烘焙时检测：如果一个 Stage Tween 在段落边界未结束，计算剩余量。
-    - [ ] 在下一段落的子 Timeline 开头插入延续 Tween。
-    - [ ] seek 时 GSAP 自动插值跨段落动画的中间状态。
+#### B0. 语法统一与增强
 
-### 6.2 Phase B — Segment Graph 基础设施 (控制流)
+> **命名规则**:
+> - **点命名空间** (`cam.*`, `state.*`, `var.*`): 独立指令行的命令/引用，不深入特效链
+> - **裸词** (`goto`, `flow`, `markStart`, `shake`, `hold`): 高频原子操作，可嵌入特效链
+> - **冒号** (`hold:char`, `pause:char`): 层级修饰符
+> - **行首 `@`** (`@ if`, `@ loop`, `@ set`): 控制流结构标记
 
-目标：引入 Segment Graph，为分支/循环/异步做好结构准备。
+- [ ] **B0.1 并发特效链 `+`**:
+    - 语法: `{text} @ f.red.hold(1s).wave + markEnd(p1) + f.shake`
+    - `+` 分隔同一 token 上的多条独立特效链
+    - 实现: `KMDCommandParser` 按 `+` 分割后独立解析每段，合并到 token.effects
+- [ ] **B0.2 续行符 `\`**:
+    - 语法: 行尾 `\` 表示下一行与本行逻辑相连
+    - 实现: `KMDScanner.scan()` 预处理阶段拼接续行
+    - 用途: 管理复杂的多链特效内容，提升可读性
+- [ ] **B0.3 文本插值 `{var.xxx}`**:
+    - 在正文中引用变量值: `你有 {var.gold} 枚金币`
+    - 实现: `KMDScanner` 识别非 `@` 后的 `{var.*}` 为插值 token
 
-- [ ] **B1. Segment Graph 数据结构**:
-    - [ ] `SegmentGraph` 类：`nodes: Segment[]`, `edges: SegmentEdge[]`。
-    - [ ] `SegmentEdge`: `{ from, to, condition?, isDefault? }`。
-    - [ ] 默认路径（default path）: 所有 `isDefault=true` 边构成的链。
-- [ ] **B2. 控制流语法扩展 (Parser)**:
-    - [ ] `@branch(condition)` / `@end_branch` — 分支语法。
-    - [ ] `@loop(count)` / `@end_loop` — 循环语法。
-    - [ ] `@wait_click` / `@wait_signal(name)` — 异步等待语法。
-    - [ ] Parser 识别控制流节点，在段落边界处切割 Segment。
-- [ ] **B3. Segment Graph 烘焙**:
-    - [ ] 分支：每条 arm 独立烘焙为 Segment，各有自己的 Timeline。
-    - [ ] 循环：循环体烘焙一次为 Segment，Checkpoint 记录迭代起始状态。
-    - [ ] 异步等待：在等待点切割 Segment，前段 exitCheckpoint 含"待继续动画"描述。
-- [ ] **B4. 跳转逻辑升级**:
-    - [ ] 同 Segment 内：`timeline.seek(localTime)`。
-    - [ ] 跨 Segment（同路径）：恢复目标 Segment 的 `entryCheckpoint` + `timeline.seek()`。
-    - [ ] 分支内：恢复分支点 Checkpoint → 进入目标 arm → `timeline.seek()`。
-    - [ ] 循环第 N 次：恢复循环入口 Checkpoint → warp-replay (N-1) 次 → `timeline.seek()`。
+#### B1. 状态层 (StateStore + 表达式)
 
-### 6.3 Phase C — 交互式运行时 (Interactive Runtime)
+- [ ] **B1.1 StateStore 单例**:
+    - `StateStore { get, set, snapshot, restore }` — `Map<string, number | boolean | string>`
+    - 挂载为全局单例，与 `layout.globalMarkers` 中的 `var.*` 统一
+    - `Checkpoint.state` 增加状态快照字段
+- [ ] **B1.2 表达式求值器**:
+    - Pratt parser (~150 行)，支持:
+      - 字面量: `42`, `3.14`, `true`, `false`, `"hello"`
+      - 变量: 裸名直接查 StateStore (表达式上下文无需 `var.` 前缀)
+      - 算术: `+ - * / %`
+      - 比较: `> < >= <= == !=`
+      - 逻辑: `and or not`
+    - **不支持**: 函数调用、数组、对象、三元运算
+- [ ] **B1.3 `@ set` 赋值语法**:
+    - `@ set gold = gold + 5` — 等号右侧为表达式
+    - 实现: Parser 识别 `@ set` → 提取变量名和表达式 → 生成 state mutation 指令
+    - 内联形式: `文本 @ state.set(gold, gold + 5)` — 作为 stage command 在 Timeline 时间点执行
 
-- [ ] **C1. SignalRegistry**: 跟踪异步事件状态（信号触发/未触发），纳入 Checkpoint。
-- [ ] **C2. 游戏化 Segment**: 无预烘焙 Timeline 的 Segment，运行在 Behavior Layer，支持实时玩家输入。
-- [ ] **C3. 桥接动画 (Carry-over Anims)**: 非确定性边界处，entryCheckpoint 记录"进行中动画"描述，启动时创建延续补间。
+#### B2. 控制流语法
 
-### 6.4 IDE Integration
+> 控制流使用行首 `@` 结构标记。Parser 在分段时识别这些标记，切割 Segment 边界。
 
-- [ ] **热重载跳转 (Hot Replay)**:
-    - [ ] 实现 Monaco 右键菜单/快捷键"从此处播放"。
-    - [ ] 逻辑还原：`segment.timeline.seek(targetTime)` + 恢复 Behavior Modifiers。
-- [ ] **Monaco 视觉增强**:
-    - [ ] 侧边栏标记：展示 Segment 边界、场景切换点。
-    - [ ] 缩略图增强：在 Minimap 上标注 Segment Graph 结构。
-- [ ] **交互式属性调参 (Inspector v2)**:
-    - [ ] 指令元数据系统：扩展 `EffectManager`，定义指令的 UI 描述。
-    - [ ] 实时调参：UI 修改参数 → 自动改写 KMD 源码 → 触发 Hot Replay。
+- [ ] **B2.1 条件分支**:
+    ```kmd
+    @ if gold >= 100
+      你很富有。
+    @ elif gold > 0
+      还行。
+    @ else
+      身无分文。
+    @ end
+    ```
+    - 条件部分使用表达式求值器 (B1.2)
+    - 每个分支 arm 独立烘焙为 Segment
+    - `SegmentEdge.condition` 为运行时求值函数
+- [ ] **B2.2 循环**:
+    ```kmd
+    @ loop 3
+      重复三次。
+    @ end
 
-## 7. 资产与视觉进阶
-- [ ] **资产库 (Asset Explorer)**: 管理图片、音频资源。
+    @ while gold > 0
+      花掉一枚。 @ state.set(gold, gold - 1)
+    @ end
+    ```
+    - `@ loop N`: 编译时展开 (N 已知) 或运行时计数 (N 为表达式)
+    - `@ while expr`: 循环体烘焙一次为 Segment，迭代结束时检查条件决定重入或继续
+- [ ] **B2.3 标签与跳转**:
+    ```kmd
+    @ tag chapter_2
+    ...
+    @ jump chapter_2
+    ```
+    - `@ tag(name)`: 命名 Segment 入口点
+    - `@ jump(name)`: 无条件跳转到目标 tag 的 Segment
+    - 进度条上 jump 目标显示为标记点
+- [ ] **B2.4 等待**:
+    ```kmd
+    @ wait click
+    @ wait signal doorOpened
+    ```
+    - 等待点切割 Segment，前段 exitCheckpoint 含暂停状态
+    - Phase C 扩展为完整 SignalRegistry
+
+#### B3. Segment Graph 数据结构
+
+- [ ] **B3.1 SegmentGraph 类**: `nodes: Segment[]`, `edges: SegmentEdge[]`
+- [ ] **B3.2 SegmentEdge**: `{ from, to, condition?: (state) => boolean, isDefault? }`
+- [ ] **B3.3 Default path**: 所有 `isDefault=true` 边构成的链，用于进度条 seek
+
+#### B4. Segment Graph 烘焙与跳转
+
+- [ ] **B4.1 烘焙**: Parser 输出的控制流标记 → 切割段落组 → 每组独立 `buildSegment()`
+- [ ] **B4.2 同 Segment 内 seek**: `timeline.seek(localTime)` (不变)
+- [ ] **B4.3 跨 Segment seek (同路径)**: 恢复目标 `entryCheckpoint` (含 state) + `timeline.seek()`
+- [ ] **B4.4 条件分支 seek**: 沿 default path 跳转 (近似)
+- [ ] **B4.5 循环 seek**: 恢复循环入口 Checkpoint → warp-replay
+- [ ] **B4.6 State 重放**: seek 时从 entryCheckpoint.state 恢复，沿路径重放 `@ set` 到目标时间
+
+### Phase C — 交互式运行时
+
+- [ ] **C1. SignalRegistry**: 异步事件状态跟踪，纳入 Checkpoint。`@ wait signal` 的完整运行时。
+- [ ] **C2. 游戏化 Segment**: 无预烘焙 Timeline 的 Segment，Behavior Layer 驱动，实时玩家输入。
+- [ ] **C3. Carry-over Anims**: 非确定性边界的进行中动画延续。消费 `InFlightAnimation` 数据。
+
+### IDE Integration
+
+- [ ] **Hot Replay**: Monaco "从此处播放" + segment seek。
+- [ ] **Monaco 视觉增强**: Segment 边界标记、Minimap 增强、控制流折叠。
+- [ ] **Inspector v2**: 指令元数据 + 实时调参 → 自动改写 KMD 源码。
+- [ ] **VS Code 颜色主题加载**:
+    - Monaco 与 VS Code `tokenColors` 格式完全兼容（已用 TM grammar），任何 `.json` 主题文件可直接传入 `defineTheme`
+    - IDE Shell 变量映射：从主题 `colors` 对象提取 ~10 个键注入 CSS 变量
+      ```
+      editor.background       → --bg-editor
+      sideBar.background      → --bg-sidebar
+      titleBar.activeBackground → --bg-header
+      editor.foreground       → --text-main
+      statusBar.background    → status bar color
+      activityBar.background  → --accent-secondary
+      ...
+      ```
+    - 加载来源：项目文件夹中的 `theme.json` 或 `project.yaml` 中 `editorTheme:` 字段
+    - 效果：Dracula、One Dark、Catppuccin 等主流 VS Code 主题开箱即用
+
+## 7. 插件化生态 (v1.7.0 - Plugin Architecture)
+
+> **核心理念**: 从内建注册表到开放插件接口，逐层递进。四大 Manager 已具备 `registerBatch` 能力，需要标准化插件契约、开放语法糖注册、建立管线钩子。
+
+### P1. 插件接口标准化
+
+- [ ] **P1.1 `KMDPlugin` 类型定义**:
+    ```typescript
+    interface KMDPlugin {
+      name: string;
+      version?: string;
+      install(ctx: KMDPluginContext): void;
+    }
+    interface KMDPluginContext {
+      effects: EffectManager;
+      styles: StyleManager;
+      layout: LayoutManager;
+      stage: StageManager;
+    }
+    ```
+    - 统一四大 Manager 的注册入口为 `KMDPluginContext`
+    - `definePlugin()` 辅助函数提供类型安全 + 自动推断
+- [ ] **P1.2 插件加载器**:
+    - `pluginManager.use(plugin)` — 同步安装，按依赖顺序执行
+    - 内建预设重构为 "core plugin"，通过 `use()` 加载而非构造函数硬编码
+    - 冲突检测：同名注册警告，可配置 override 策略
+- [ ] **P1.3 `MODIFIER_BASED_COMMANDS` 元数据化**:
+    - 从硬编码 `Set` 改为 `StageEffectMeta.tweenMode: "tween" | "modifier"`
+    - ScriptPlayer 读取 meta 决定 `captureTween` vs `tl.call()`
+    - 新增舞台指令时无需手动维护 Set
+
+### P2. 语法糖注册表化
+
+- [ ] **P2.1 SugarRegistry 设计**:
+    ```typescript
+    scanner.registerSugar({
+      trigger: "~",           // 触发字符（串）
+      mode: "inline",         // inline | prefix | wrapper
+      emit: { name: "slow", params: { 0: 2.0 } },
+      level: "char"
+    });
+    ```
+    - `inline`: 正文中的单字符触发 (`>`, `~`, `^`)
+    - `prefix`: 行首触发 (`# `)
+    - `wrapper`: 成对包裹 (`**...**`, `*...*`)
+- [ ] **P2.2 Scanner 重构**:
+    - 将 `scanLineBody()` 中硬编码的 `if (char === ...)` 分支改为遍历注册表
+    - 匹配策略：最长前缀匹配（Trie 或排序数组）
+    - 内建语法糖作为默认注册项，可被插件覆盖或扩展
+- [ ] **P2.3 Markdown 语法糖可配置化**:
+    - `**bold**`, `*italic*`, `# heading` 的行为（注入的 effects/sugars）可通过插件替换
+    - 例：插件可将 `**...**` 改为注入 `neon` 而非 `bold`
+
+### P3. 管线钩子系统 (Hook API)
+
+- [ ] **P3.1 Hook 点定义**:
+    ```typescript
+    interface KMDHooks {
+      afterParse: (paragraphs: KMDParagraphData[]) => void;
+      beforeLayout: (stream: LayoutStream) => LayoutStream;
+      onCharReveal: (char: KineticChar, time: number) => void;
+      onSegmentChange: (from: Segment, to: Segment) => void;
+      onTick: (time: number, chars: KineticChar[]) => void;
+    }
+    ```
+    - 各 Hook 点定义清晰的输入/输出契约
+    - 支持多插件注册同一 Hook（链式调用，按优先级排序）
+- [ ] **P3.2 Hook 注入到管线**:
+    - Parser → `afterParse`
+    - LayoutStreamBuilder → `beforeLayout`
+    - TextPlayer.placeCharOnTimeline → `onCharReveal`
+    - ScriptPlayer → `onSegmentChange`, `onTick`
+- [ ] **P3.3 安全沙箱**:
+    - Hook 执行超时保护（防止死循环阻塞渲染）
+    - Hook 异常隔离（单个 Hook 报错不影响其余管线）
+
+### P5. 主题系统插件化
+
+> **核心前提**：Monaco 已使用 TM grammar，与 VS Code `tokenColors` 完全兼容。
+> 主题分两层：语法着色层（Monaco `tokenColors`）+ IDE 外壳层（CSS variables）。
+
+- [ ] **P5.1 提取默认主题为独立文件**:
+    - 将 `kmd-lang.ts` 中的 `defineTheme rules` 迁移为 VS Code 兼容格式
+    - 输出为 `themes/kmd-dark.theme.json`（`tokenColors` 数组 + `colors` 对象）
+    - 加载路径：`GrammarService` 或独立 `ThemeService` 负责 `monaco.editor.defineTheme()`
+
+- [ ] **P5.2 VS Code 颜色主题直接加载**:
+    - `ThemeService.load(themeJson)` — 接受标准 VS Code `IVsCodeTheme` 格式
+    - 自动提取 `colors` → CSS variables（映射表约 15 个键）
+    - 自动传递 `tokenColors` → Monaco `defineTheme`
+    - 在 `project.yaml` 中声明：`editorTheme: ./themes/dracula.json`
+
+- [ ] **P5.3 GrammarService — 语法插件化（方案 B）**:
+    - 插件可通过 `SyntaxContribution` 贡献新 TM pattern（repository 条目 + bodyIncludes）
+    - `GrammarService.rebuild()` 合并所有插件贡献 → 重新调用 `loadGrammar()` → 热更新 Monaco tokenizer
+    - VS Code 扩展端：`pnpm emit-grammar` 构建步骤将运行时 grammar 写出为静态 `kmd.tmLanguage.json`
+    - 长期：VS Code 扩展作为 LSP client，连接运行中的 KMD 服务获取插件贡献的 semantic tokens
+
+### P4. 声明式插件包
+
+- [ ] **P4.1 `.kmd-plugin` 清单格式**:
+    ```yaml
+    name: sparkle-pack
+    version: 1.0
+    effects:
+      - name: sparkle
+        type: behavior
+        script: ./sparkle.js
+    sugars:
+      - trigger: "✨"
+        mode: inline
+        emit: { name: "sparkle" }
+    ```
+- [ ] **P4.2 运行时 `import()` 加载器**: 按清单动态加载脚本模块
+- [ ] **P4.3 插件市场 UI**: IDE 内嵌插件浏览/安装/管理面板
+
+## 8. kmd-vscode 编辑器集成 (v1.7–v1.8)
+
+> **定位**：VS Code 扩展不复刻 Web IDE，只做 VS Code 原生没有的两件事——语言智能（LSP）和预览画布（Webview）。
+> 文件系统是两端唯一的桥：VS Code 编辑 → 保存磁盘 → Web IDE 文件变更检测 → 重载。不需要 WebSocket 实时同步。
+
+### V1. LSP 语言服务器（与 v1.7 插件化同步推进）
+
+> 将 Web IDE 中 Monaco 的补全/验证逻辑提炼为独立 LSP server，
+> 服务 VS Code、Neovim、Emacs 等任何 LSP 客户端。
+> P1 插件接口完成后，补全列表自动具备插件感知能力。
+
+- [ ] **V1.1 提取 `packages/kmd-language-server/`**:
+    - 复用现有 `KMDParser` + `parser.validate()` — 零重写
+    - 标准 LSP server 入口（`vscode-languageserver` npm 包）
+    - `extensions/vscode-kmd/client.ts` 作为轻量 LSP client 包装
+- [ ] **V1.2 Diagnostics（错误波浪线）**:
+    - `parser.validate(text)` → `publishDiagnostics`
+    - 替代目前 Monaco 里手写的 `setModelMarkers` 逻辑
+- [ ] **V1.3 Completion（智能补全）**:
+    - 复用 `kmd-lang.ts` 里的补全逻辑，迁移到 LSP `onCompletion`
+    - 补全来源：`effectManager` / `styleManager` / `stageManager` / `layoutManager` 注册表
+    - v1.7 P1 完成后：补全列表自动包含所有已安装插件贡献的指令
+- [ ] **V1.4 Hover 文档**:
+    - 悬停在 effect/layout/stage 名称上显示简短说明
+    - 来源：`EffectMeta.description`（为 meta 增加可选 description 字段）
+- [ ] **V1.5 Semantic Tokens（动态高亮）**:
+    - LSP semantic tokens 覆盖 tmLanguage 无法表达的动态部分
+    - v1.7 P5.3 GrammarService 完成后：插件贡献的语法通过 semantic tokens 显示
+
+### V2. Webview 预览面板（v1.8.0）
+
+> 渲染引擎稳定后，打包为独立 bundle，嵌入 VS Code Webview。
+
+- [ ] **V2.1 渲染引擎独立打包**:
+    - 将 Pixi.js + GSAP + KMD 运行时抽取为 `packages/kmd-runtime/`
+    - 同时服务 Web IDE 和 Webview，不重复打包
+- [ ] **V2.2 `KMD: Open Preview` 命令**:
+    - 侧边 Webview 面板，内嵌完整 Pixi.js 画布
+    - VS Code `postMessage` 同步编辑器文本 → 实时预览（无需文件保存）
+    - 布局：编辑器左 + 预览右（类 Markdown Preview）
+- [ ] **V2.3 基础播放控制**:
+    - Webview 内嵌简化版时间轴：▶ ⏸ ⏹ + 进度条 + 时间显示
+    - 不需要 Dock 系统、Monitor、完整 Inspector
+
+### V3. 轻量配置面板（v1.8.0 附带）
+
+- [ ] **V3.1 Canvas 快速设置**:
+    - VS Code TreeView 或简单 Webview：模式/分辨率/背景色
+    - 修改后写回文件 frontmatter（复用 `updateFrontMatter` 逻辑）
+- [ ] **V3.2 不需要实现的面板**（节省工作量）:
+    - ~~Monitor 审计日志~~ → VS Code Output Channel 输出即可
+    - ~~完整 Inspector~~ → V3.1 的简化版足够
+    - ~~Dock 布局系统~~ → VS Code 自带布局
+    - ~~文件浏览器~~ → VS Code 原生 Explorer
+
+---
+
+## 9. 资产与视觉进阶
+- [ ] **Asset Explorer**: 图片/音频资源管理。
 - [ ] **西文 Kerning Pair 自动微调**。
+
+---
+
+## Known Gaps (Phase A 遗留)
+
+| 问题 | 影响 | 备注 |
+|------|------|------|
+| `f.slow`/`f.fast` in effect chains | speedMultiplier 返回值在 Timeline 回调中丢失 | 糖衣 `~`/`^` 正常工作 |
+| Modifier-based stage cmds | `cam.shake`/`cam.drift` 用 `tl.call()` 非可 seek Tween | seek 时不插值 |
+| Cross-segment animation recreation | `InFlightAnimation` 数据已记录但未被 Phase B 消费 | Phase C 实现 |
+| `cam.reset` 中断冲突 | `cam.reset` 未被记录为 active entry，中途被 `cam.move` 打断可能冲突 | 边缘场景 |
+
+---
+
+## KMD 语法统一规则
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  结构层 (行首 @)                                              │
+│    @ if/elif/else/end    条件分支                              │
+│    @ loop/while/end      循环                                 │
+│    @ tag/jump            标签与跳转                            │
+│    @ wait                等待 (click/signal)                   │
+│    @ set                 赋值 (= 右侧为表达式)                  │
+├─────────────────────────────────────────────────────────────┤
+│  指令层 (点命名空间，独立指令行为主)                               │
+│    cam.*                 摄影机控制    cam.move(x,y,t)         │
+│    state.*               内联状态变更  state.set(k, expr)      │
+├─────────────────────────────────────────────────────────────┤
+│  原子层 (裸词，可嵌入特效链)                                     │
+│    goto/flow/up/down     排版指令                              │
+│    markStart/markEnd     标记操作 (保持裸词，避免链内歧义)         │
+│    shake/wave/red/bold   特效与样式                             │
+│    hold/pause            时序控制                              │
+├─────────────────────────────────────────────────────────────┤
+│  修饰符                                                       │
+│    hold:char / pause:char    冒号层级修饰                       │
+│    var.x / prev.start        点分变量/标记引用                   │
+│    f.red.hold(1s).wave       点分特效链                         │
+│    chain1 + chain2           并发特效链                         │
+│    行尾 \                     续行符                            │
+└─────────────────────────────────────────────────────────────┘
+```

@@ -1,6 +1,7 @@
 import type { KMDToken, EffectConfig, LayoutInstruction, KMDScanResult, BlockOptions } from "./types";
 import { KMDCommandParser } from "./KMDCommandParser";
 import { stageManager } from "../stage/StageManager";
+import { layoutManager } from "../layout/LayoutManager";
 
 export class KMDScanner {
   private braceIdCounter = 0;
@@ -32,7 +33,7 @@ export class KMDScanner {
         if (endIdx !== -1) {
           const content = trimmed.substring(1, endIdx);
           this.parseBlockOptions(content, blockOptions, allGlobalEffects, absoluteLine);
-          
+
           const remaining = trimmed.substring(endIdx + 1).trim();
           if (!remaining) {
             hasProcessedBlockOptions = true;
@@ -45,15 +46,15 @@ export class KMDScanner {
 
       // C. 处理 --- (清屏)
       if (line.trim() === "---") {
-          allTokens.push({
-              content: "",
-              effects: [], commands: [], params: {}, sugar: [],
-              layoutInstructions: [{ type: "pause", params: KMDCommandParser.parseParams("0.5s"), blocking: true }],
-              isSceneClear: true,
-              line: absoluteLine,
-              range: { start: 0, end: line.length }
-          } as any);
-          continue;
+        allTokens.push({
+          content: "",
+          effects: [], commands: [], params: {}, sugar: [],
+          layoutInstructions: [{ type: "pause", params: KMDCommandParser.parseParams("0.5s"), blocking: true }],
+          isSceneClear: true,
+          line: absoluteLine,
+          range: { start: 0, end: line.length }
+        } as any);
+        continue;
       }
 
       if (!line.trim()) {
@@ -77,17 +78,17 @@ export class KMDScanner {
 
       let isSpecialHeading = false;
       if (bodyPart.trim().startsWith("# ")) {
-          isSpecialHeading = true;
-          bodyPart = bodyPart.trim().substring(2);
+        isSpecialHeading = true;
+        bodyPart = bodyPart.trim().substring(2);
       }
 
       const lineTokens = this.scanLineBody(bodyPart);
       lineTokens.forEach(t => t.line = absoluteLine);
-      
+
       if (isSpecialHeading) {
-          lineTokens.forEach(t => {
-              t.effects.push({ name: "special", params: {}, level: "char", line: absoluteLine, range: { start: 0, end: 1 } });
-          });
+        lineTokens.forEach(t => {
+          t.effects.push({ name: "special", params: {}, level: "char", line: absoluteLine, range: { start: 0, end: 1 } });
+        });
       }
 
       if (cmdPart.trim()) {
@@ -138,26 +139,26 @@ export class KMDScanner {
     let tokenStartPos = 0;
 
     const flushText = (bracedGroupId?: number) => {
-        if (currentText || bracedGroupId !== undefined) {
-            const t = this.createSimpleToken(currentText);
-            t.range = { start: tokenStartPos, end: pos };
-            if (bracedGroupId !== undefined) {
-                (t as any).isBraced = true;
-                (t as any).braceGroupId = bracedGroupId;
-            }
-            if (isBold) {
-                t.effects.push({ name: "bold", params: {}, level: "char" });
-                t.sugar!.push({ name: "slow", params: {}, level: "char" });
-            }
-            if (isItalic) {
-                t.effects.push({ name: "thin", params: {}, level: "char" });
-                t.effects.push({ name: "dim", params: {}, level: "char" });
-                t.sugar!.push({ name: "fast", params: {}, level: "char" });
-            }
-            tokens.push(t);
-            currentText = "";
-            tokenStartPos = pos;
+      if (currentText || bracedGroupId !== undefined) {
+        const t = this.createSimpleToken(currentText);
+        t.range = { start: tokenStartPos, end: pos };
+        if (bracedGroupId !== undefined) {
+          (t as any).isBraced = true;
+          (t as any).braceGroupId = bracedGroupId;
         }
+        if (isBold) {
+          t.effects.push({ name: "bold", params: {}, level: "char" });
+          t.sugar!.push({ name: "slow", params: {}, level: "char" });
+        }
+        if (isItalic) {
+          t.effects.push({ name: "thin", params: {}, level: "char" });
+          t.effects.push({ name: "dim", params: {}, level: "char" });
+          t.sugar!.push({ name: "fast", params: {}, level: "char" });
+        }
+        tokens.push(t);
+        currentText = "";
+        tokenStartPos = pos;
+      }
     };
 
     while (pos < text.length) {
@@ -167,19 +168,19 @@ export class KMDScanner {
         continue;
       }
       if (char === "*" && text[pos + 1] === "*") {
-          flushText(); isBold = !isBold; pos += 2; tokenStartPos = pos; continue;
+        flushText(); isBold = !isBold; pos += 2; tokenStartPos = pos; continue;
       }
-      if (char === "*" && !isBold) { 
-          flushText(); isItalic = !isItalic; pos++; tokenStartPos = pos; continue;
+      if (char === "*" && !isBold) {
+        flushText(); isItalic = !isItalic; pos++; tokenStartPos = pos; continue;
       }
       if (char === ">") {
         flushText();
         let cnt = 0; while (pos < text.length && text[pos] === ">") { cnt++; pos++; }
         const level = cnt >= 3 ? "block" : (cnt === 2 ? "group" : "char");
         tokens.push({
-            content: "", isSugar: true, sugar: [{ name: "go", params: {}, level }],
-            effects: [], commands: [], params: {}, layoutInstructions: [],
-            range: { start: tokenStartPos, end: pos }
+          content: "", isSugar: true, sugar: [{ name: "go", params: {}, level }],
+          effects: [], commands: [], params: {}, layoutInstructions: [],
+          range: { start: tokenStartPos, end: pos }
         } as any);
         tokenStartPos = pos; continue;
       }
@@ -187,25 +188,36 @@ export class KMDScanner {
         flushText(); this.braceIdCounter++; const gid = this.braceIdCounter; pos++; tokenStartPos = pos;
         while (pos < text.length && text[pos] !== "}") {
           const c = text[pos]!;
-          if (c === "\\") { pos++; if (pos < text.length) { currentText += text[pos]; pos++; } } 
+          if (c === "\\") { pos++; if (pos < text.length) { currentText += text[pos]; pos++; } }
           else if (c === "*" && text[pos + 1] === "*") { flushText(gid); isBold = !isBold; pos += 2; tokenStartPos = pos; }
           else if (c === "*" && !isBold) { flushText(gid); isItalic = !isItalic; pos++; tokenStartPos = pos; }
+          else if (c === "|") {
+            // 花括号内的管道符：生成 pause token
+            flushText(gid); const pipeStart = pos; pos++; let p = "";
+            if (text[pos] === "(") { pos++; while (pos < text.length && text[pos] !== ")" && text[pos] !== "}") { p += text[pos]; pos++; } if (text[pos] === ")") pos++; }
+            tokens.push({
+              content: "", isPipe: true as any,
+              layoutInstructions: [{ type: "pause", params: KMDCommandParser.parseParams(p || "0.5s"), blocking: true }],
+              effects: [], commands: [], params: {}, sugar: [], range: { start: pipeStart, end: pos }
+            } as any);
+            tokenStartPos = pos;
+          }
           else if (c === ">" || c === "~" || c === "^") {
             flushText(gid); const sugarPosStart = pos;
             if (c === ">") {
-                let cnt = 0; while (pos < text.length && text[pos] === ">") { cnt++; pos++; }
-                const level = cnt >= 3 ? "block" : (cnt === 2 ? "group" : "char");
-                tokens.push({
-                    content: "", isSugar: true, sugar: [{ name: "go", params: {}, level }],
-                    effects: [], commands: [], params: {}, layoutInstructions: [], range: { start: sugarPosStart, end: pos }
-                } as any);
+              let cnt = 0; while (pos < text.length && text[pos] === ">") { cnt++; pos++; }
+              const level = cnt >= 3 ? "block" : (cnt === 2 ? "group" : "char");
+              tokens.push({
+                content: "", isSugar: true, sugar: [{ name: "go", params: {}, level }],
+                effects: [], commands: [], params: {}, layoutInstructions: [], range: { start: sugarPosStart, end: pos }
+              } as any);
             } else {
-                const sName = c === "~" ? "slow" : "fast";
-                tokens.push({
-                    content: "", isSugar: true, sugar: [{ name: sName, params: {}, level: "char" }],
-                    effects: [], commands: [], params: {}, layoutInstructions: [], range: { start: sugarPosStart, end: pos + 1 }
-                } as any);
-                pos++;
+              const sName = c === "~" ? "slow" : "fast";
+              tokens.push({
+                content: "", isSugar: true, sugar: [{ name: sName, params: {}, level: "char" }],
+                effects: [], commands: [], params: {}, layoutInstructions: [], range: { start: sugarPosStart, end: pos + 1 }
+              } as any);
+              pos++;
             }
             tokenStartPos = pos;
           } else { currentText += c; pos++; }
@@ -216,7 +228,7 @@ export class KMDScanner {
         flushText(); const pipeStart = pos; pos++; let p = "";
         if (text[pos] === "(") { pos++; while (pos < text.length && text[pos] !== ")") { p += text[pos]; pos++; } pos++; }
         tokens.push({
-          content: "", isPipe: true as any, 
+          content: "", isPipe: true as any,
           layoutInstructions: [{ type: "pause", params: KMDCommandParser.parseParams(p || "0.5s"), blocking: true }],
           effects: [], commands: [], params: {}, sugar: [], range: { start: pipeStart, end: pos }
         } as any);
@@ -235,13 +247,13 @@ export class KMDScanner {
     flushText();
     const merged: KMDToken[] = [];
     tokens.forEach(t => {
-        const last = merged[merged.length - 1];
-        const canMerge = last && !(t as any).isSugar && !(t as any).isPipe && !(t as any).isBraced && t.content && t.content !== "\n" &&
-            !(last as any).isSugar && !(last as any).isPipe && !(last as any).isBraced && last.content && last.content !== "\n" &&
-            t.effects.length === 0 && last.effects.length === 0 && (!t.sugar || t.sugar.length === 0) && (!last.sugar || last.sugar.length === 0) &&
-            t.line === last.line;
-        if (canMerge) { last.content += t.content; if (last.range && t.range) last.range.end = t.range.end; } 
-        else merged.push(t);
+      const last = merged[merged.length - 1];
+      const canMerge = last && !(t as any).isSugar && !(t as any).isPipe && !(t as any).isBraced && t.content && t.content !== "\n" &&
+        !(last as any).isSugar && !(last as any).isPipe && !(last as any).isBraced && last.content && last.content !== "\n" &&
+        t.effects.length === 0 && last.effects.length === 0 && (!t.sugar || t.sugar.length === 0) && (!last.sugar || last.sugar.length === 0) &&
+        t.line === last.line;
+      if (canMerge) { last.content += t.content; if (last.range && t.range) last.range.end = t.range.end; }
+      else merged.push(t);
     });
     return merged;
   }
@@ -251,7 +263,7 @@ export class KMDScanner {
     let cur = ""; let depth = 0; let startPos = 0;
     for (let i = 0; i < cmdStr.length; i++) {
       if (cmdStr[i] === "(") depth++; else if (cmdStr[i] === ")") depth--;
-      if (cmdStr[i] === " " && depth === 0) { 
+      if (cmdStr[i] === " " && depth === 0) {
         if (cur.trim()) parts.push({ text: cur.trim(), start: offset + startPos, end: offset + i });
         cur = ""; startPos = i + 1;
       } else cur += cmdStr[i];
@@ -259,16 +271,31 @@ export class KMDScanner {
     if (cur.trim()) parts.push({ text: cur.trim(), start: offset + startPos, end: offset + cmdStr.length });
 
     const visualQueue: EffectConfig[][] = [];
+    const dotVisualEffects: EffectConfig[] = []; // .xxx 点链视觉特效，分配给全部 visualTargets
     const lineLayoutInstructions: LayoutInstruction[] = [];
+    const dotLineLayoutInstructions: LayoutInstruction[] = []; // 行级排版（.xxx 点链）
 
     parts.forEach(p => {
       const subChain = KMDCommandParser.parseEffectChain(p.text);
       subChain.forEach(eff => { eff.line = line; eff.range = { start: p.start, end: p.end }; });
-      if (KMDCommandParser.isVisual(p.text)) visualQueue.push(subChain);
-      else {
+      if (p.text.startsWith("f.")) {
+        // f.xxx → 逐 token 视觉特效链，与花括号组 1:1 匹配
+        visualQueue.push(subChain);
+      } else if (p.text.startsWith(".")) {
+        // .xxx → 视觉特效注入全部 token（不进 visualQueue，避免被花括号匹配消费）
+        //        排版/舞台指令按行级作用域拆分 pre/post
         subChain.forEach(eff => {
-           if (stageManager.has(eff.name) && tokens.length === 0) globalEffects.push({ ...eff, level: "block" });
-           else lineLayoutInstructions.push({ type: eff.name, params: eff.params, blocking: eff.blocking, level: eff.level, line: eff.line, range: eff.range });
+          if (layoutManager.has(eff.name) || stageManager.has(eff.name)) {
+            dotLineLayoutInstructions.push({ type: eff.name, params: eff.params, blocking: eff.blocking, level: eff.level, line: eff.line, range: eff.range });
+          } else {
+            dotVisualEffects.push(eff);
+          }
+        });
+      } else {
+        // 裸名 xxx → 舞台指令或排版指令
+        subChain.forEach(eff => {
+          if (stageManager.has(eff.name) && tokens.length === 0) globalEffects.push({ ...eff, level: "block" });
+          else lineLayoutInstructions.push({ type: eff.name, params: eff.params, blocking: eff.blocking, level: eff.level, line: eff.line, range: eff.range });
         });
       }
     });
@@ -276,28 +303,43 @@ export class KMDScanner {
     const visualTargets = tokens.filter(t => t.content.trim() && !(t as any).isSugar && !(t as any).isPipe);
     const bracedGroups: Map<number, KMDToken[]> = new Map();
     visualTargets.forEach(t => {
-        const gid = (t as any).braceGroupId;
-        if (gid !== undefined) {
-            if (!bracedGroups.has(gid)) bracedGroups.set(gid, []);
-            bracedGroups.get(gid)!.push(t);
-        }
+      const gid = (t as any).braceGroupId;
+      if (gid !== undefined) {
+        if (!bracedGroups.has(gid)) bracedGroups.set(gid, []);
+        bracedGroups.get(gid)!.push(t);
+      }
     });
     const bracedGroupIds = Array.from(bracedGroups.keys());
 
     if (tokens.length > 0) {
       const primaryTarget = visualTargets.filter(t => (t as any).isBraced)[0] || visualTargets[0] || tokens[0];
       if (primaryTarget) primaryTarget.layoutInstructions.push(...lineLayoutInstructions);
+      // 行级排版（.xxx）：pre 挂首 token，post 挂末 token，横跨整行
+      if (dotLineLayoutInstructions.length > 0) {
+        const firstTarget = visualTargets[0] || tokens[0];
+        const lastTarget = visualTargets[visualTargets.length - 1] || tokens[tokens.length - 1];
+        dotLineLayoutInstructions.forEach(instr => {
+          if (firstTarget) firstTarget.layoutInstructions.push({ ...instr, lineScope: "pre" });
+          if (lastTarget) lastTarget.layoutInstructions.push({ ...instr, lineScope: "post" });
+        });
+      }
+      // .xxx 点链视觉特效 → 注入全部 visualTargets（与 visualQueue 的花括号匹配逻辑独立）
+      if (dotVisualEffects.length > 0) {
+        const allTargets = visualTargets.length > 0 ? visualTargets : tokens;
+        allTargets.forEach(t => t.effects.push(...dotVisualEffects));
+      }
+      // f.xxx → visualQueue 走花括号 1:1 匹配
       if (bracedGroupIds.length > 0) {
-          if (visualQueue.length === bracedGroupIds.length) {
-              bracedGroupIds.forEach((gid, idx) => { bracedGroups.get(gid)!.forEach(t => t.effects.push(...visualQueue[idx]!)); });
-          } else {
-              const firstGroup = bracedGroups.get(bracedGroupIds[0]!);
-              if (firstGroup) { const v = visualQueue.shift(); if (v) firstGroup.forEach(t => t.effects.push(...v)); }
-              const lastGroupId = bracedGroupIds[bracedGroupIds.length - 1];
-              if (lastGroupId !== undefined) { const lastGroup = bracedGroups.get(lastGroupId); if (lastGroup) visualQueue.forEach(vChain => lastGroup.forEach(t => t.effects.push(...vChain))); }
-          }
+        if (visualQueue.length === bracedGroupIds.length) {
+          bracedGroupIds.forEach((gid, idx) => { bracedGroups.get(gid)!.forEach(t => t.effects.push(...visualQueue[idx]!)); });
+        } else {
+          const firstGroup = bracedGroups.get(bracedGroupIds[0]!);
+          if (firstGroup) { const v = visualQueue.shift(); if (v) firstGroup.forEach(t => t.effects.push(...v)); }
+          const lastGroupId = bracedGroupIds[bracedGroupIds.length - 1];
+          if (lastGroupId !== undefined) { const lastGroup = bracedGroups.get(lastGroupId); if (lastGroup) visualQueue.forEach(vChain => lastGroup.forEach(t => t.effects.push(...vChain))); }
+        }
       } else if (visualQueue.length === 1 && visualTargets.length > 0) {
-          visualTargets.forEach(t => t.effects.push(...visualQueue[0]!));
+        visualTargets.forEach(t => t.effects.push(...visualQueue[0]!));
       } else if (visualQueue.length > 0) {
         const first = visualTargets[0] || tokens[0];
         const v = visualQueue.shift(); if (v && first) first.effects.push(...v);
@@ -306,6 +348,8 @@ export class KMDScanner {
       }
     } else {
       lineLayoutInstructions.forEach(l => globalEffects.push({ name: l.type, params: l.params, blocking: l.blocking, level: "block", line: l.line, range: l.range }));
+      dotLineLayoutInstructions.forEach(l => globalEffects.push({ name: l.type, params: l.params, blocking: l.blocking, level: "block", line: l.line, range: l.range }));
+      dotVisualEffects.forEach(eff => globalEffects.push({ ...eff, level: "block" }));
       visualQueue.forEach(vChain => vChain.forEach(eff => globalEffects.push({ ...eff, level: "block" })));
     }
   }

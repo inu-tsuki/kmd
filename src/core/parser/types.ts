@@ -62,6 +62,7 @@ export interface LayoutInstruction {
   params: Record<string, any>;
   blocking?: boolean;
   level?: "char" | "group" | "block";
+  lineScope?: "pre" | "post"; // 行级排版：pre 仅发射 pre 命令，post 仅发射 post 命令
   line?: number;
   range?: { start: number; end: number };
 }

@@ -1,0 +1,38 @@
+import gsap from "gsap";
+import type { EffectFunction, EffectMetadata } from "../types";
+
+function defineEffect(fn: EffectFunction, meta: EffectMetadata) {
+  return { fn, meta };
+}
+
+export const go = defineEffect((_target, params = {}) => ({
+  type: "delay", value: Number(params.duration ?? params.d ?? params[0] ?? 0)
+}), {
+  type: "action",
+  track: "timing",
+  targetType: "both",
+});
+
+export const slow = defineEffect((_target, params = {}) => ({
+  type: "speedMultiplier", value: Number(params.factor ?? params.f ?? params[0] ?? 2.0)
+}), {
+  type: "action",
+  track: "timing",
+  targetType: "both",
+});
+
+export const fast = defineEffect((_target, params = {}) => ({
+  type: "speedMultiplier", value: Number(params.factor ?? params.f ?? params[0] ?? 0.5)
+}), {
+  type: "action",
+  track: "timing",
+  targetType: "both",
+});
+
+export const hold = defineEffect((_target, params = {}) => new Promise<void>(resolve => {
+  gsap.delayedCall(Number(params.duration ?? params.d ?? params[0] ?? 1), resolve);
+}), {
+  type: "action",
+  track: "timing",
+  targetType: "both",
+});

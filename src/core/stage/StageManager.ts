@@ -141,6 +141,10 @@ class StageManager {
     this.registry.set(name, fn);
   }
 
+  public registerBatch(presets: Record<string, StageEffectFunction>) {
+    Object.entries(presets).forEach(([k, v]) => this.register(k, v));
+  }
+
   public has(name: string): boolean {
     return this.registry.has(name);
   }
@@ -300,5 +304,5 @@ class StageManager {
 
 export const stageManager = new StageManager();
 
-import { initStagePresets } from "./stagePresets";
-initStagePresets();
+import { stagePresets } from "./stagePresets";
+stageManager.registerBatch(stagePresets);

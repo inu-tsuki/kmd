@@ -98,6 +98,15 @@ Scene clear ↓
 
 Custom fonts live in `public/fonts/`. To add a font, register it in `src/core/App.ts` inside `loadFonts()`. The default font family is `"Sasara Regular"`. The dev server auto-loads `/final-test.kmd` from `public/` on startup.
 
+### Command Routing & Effect Pipeline
+
+The `@` command routing system has three prefix types (`f.`, `.`, bare name) mapped to three scopes (token, line, paragraph). This is the most common source of bugs. **Before modifying parser or layout code, read:**
+
+- `docs/core/command-routing.md` — How `@` commands are classified, routed, and consumed. Includes the `lineScope` mechanism and five documented pitfalls.
+- `docs/core/effect-pipeline.md` — How `EffectConfig` flows through partition → buildTimeline → apply. Explains `targetType` guards and the four-track classification.
+
+**When fixing bugs in these areas, update the relevant doc's pitfall section.**
+
 ### Adding New Effects
 
 - **Visual effects**: Export a `{ fn, meta }` object from `src/core/effects/presets.ts` — it auto-registers via `EffectManager.registerBatch(Presets)`.
