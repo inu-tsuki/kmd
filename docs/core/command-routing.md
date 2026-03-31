@@ -1,49 +1,60 @@
-# 指令路由：从 @ 到渲染
+# 指令路由：从 AST 到渲染
 
-> 本文档描述 KMD `@` 后指令的分类、路由和最终消费路径。
-> 这是调试排版/特效 bug 时最关键的参考。
+> 本文档描述 KMD 指令的分类、路由和最终消费路径。
+> 当前实现的关键分界是：`AstParser` 保留语法结构，`lowering.ts` 决定作用域路由，runtime 负责执行。
+
+## 当前主路径
+
+```text
+AstParser.parseParagraph()
+  -> CommandChainAst / BlockOptionAst
+  -> lowering.ts
+  -> ParagraphIR + legacy projection
+  -> LayoutStreamBuilder / ScriptPlayer
+```
+
+这意味着：
+
+- parser 前端不再直接做最终 token/globalEffects 分发
+- `f.` / `.` / block option 的实际路由在 `lowering.ts`
+- runtime 仍会消费一部分兼容层数据，但不再承担主要语法解释职责
 
 ## 三种前缀 × 三种作用域
 
 | 写法 | 前缀 | 语义 | 作用域 |
 |------|------|------|--------|
-| `f.red.wave` | `f.` | 逐 token 特效链 | **token 级** — 与花括号组 1:1 匹配 |
-| `.red.offset(100,0)` | `.` | 全局效果 | **行级** — 应用于当前行所有 token |
-| `cam.move(100,0,1s)` | 裸名 | 舞台/排版指令 | **行级** — 挂在当前行首 token |
-| `[.glitch]` | block option | 段落全局 | **段落级** — `globalEffects` |
+| `f.red.wave` | `f.` | token/group 特效链 | **token 级** — 与花括号组或视觉目标匹配 |
+| `.red.offset(100,0)` | `.` | 行级广播链 | **行级** — 当前行全部视觉目标或 lineScope 指令 |
+| `cam.move(100,0,1s)` | 裸名 | 裸名布局/舞台指令 | **行级** — 挂在主目标上 |
+| `[.glitch]` | block option | 段落作用域链 | **段落级** — 由 `lowering.ts` 决定是 paragraph broadcast 还是 paragraph effect |
 
-## 路由详解 (`KMDScanner.applyCommandsToTokens`)
+## 路由详解 (`lowering.ts`)
 
 ```
-@ 后指令字符串
+CommandChainAst / BlockOptionAst
   │
-  ├─ 按空格拆分（括号内空格不拆）→ parts[]
+  ├─ buildInlineFromAst()
+  │    └─ 先生成过渡态 inline IR（text / pause / sugar / newline ...）
   │
-  └─ 遍历 parts:
-       │
-       ├─ f.xxx     → visualQueue（整条链作为一个 EffectConfig[]）
-       │              ↓ 后续与花括号组 1:1 匹配分配到 token.effects
-       │
-       ├─ .xxx      → 逐效果分类：
-       │    ├─ layoutManager.has() or stageManager.has()
-       │    │    → dotLineLayoutInstructions（行级排版）
-       │    │    ↓ 首 token 得 lineScope:"pre"，末 token 得 lineScope:"post"
-       │    │
-       │    └─ 其余（视觉特效/样式）
-       │         → dotVisualEffects（独立于 visualQueue，直接注入全部 visualTargets）
-       │
-       └─ 裸名     → lineLayoutInstructions → 挂在行首 token
+  ├─ applyBlockOptionCommands()
+  │    ├─ layout / stage          → paragraphEffects
+  │    ├─ 显式 :block 视觉命令     → paragraphEffects
+  │    └─ 其余视觉命令             → paragraph broadcast
+  │
+  └─ applyLineCommands()
+       ├─ f.xxx   → visualQueue（整条链与花括号组或 target 匹配）
+       ├─ .xxx    → dotVisualEffects / dotLineInstructions
+       └─ 裸名     → lineLayoutInstructions
 ```
 
 ## 视觉特效分配逻辑
 
-**两条独立管线**：
+**三条互相独立的路径**：
 
 ```
-dotVisualEffects（.xxx 点链视觉特效）:
-  → 直接注入全部 visualTargets 的 token.effects
-  → 不参与花括号匹配，不进入 visualQueue
-  → 保证 .shake 等特效作用于行内每一个 token
+dotVisualEffects（.xxx 行级视觉特效）:
+  → 直接注入当前行全部 visualTargets 的 token.effects
+  → 不参与花括号匹配
 
 visualQueue（f.xxx 特效链）:
   有花括号组时:
@@ -52,19 +63,24 @@ visualQueue（f.xxx 特效链）:
   无花括号组时:
     队列长度 === 1 → 全部 visualTargets 共享
     队列长度 >  1 → 首链给首 target，余链给末 target
+
+paragraph broadcast（block option 默认视觉语义）:
+  → 直接注入整段全部 visualTargets 的 token.effects
+  → 保留视觉命令的默认 target 语义
+  → 只有显式 :block 才进入 paragraph/container 路径
 ```
 
-## 行级排版的 lineScope 机制
+## 行级排版的 `lineScope` 机制
 
-**问题**：`.offset(100,0)` 需要 `pushDisplayOffset` 在首字符前、`popDisplayOffset` 在末字符后。
-但 token 级排版只包裹单个 token 的字符。
+**问题**：`.offset(100,0)` 需要在行首发出 `pushDisplayOffset`，在行尾发出 `popDisplayOffset`。
+如果只把指令挂在一个 token 上，就只会包裹局部字符。
 
-**解决**：`LayoutInstruction.lineScope` 字段
+**解决**：`LayoutInstruction.lineScope`
 
 ```
-Scanner:
-  首 token.layoutInstructions ← { type: "offset", lineScope: "pre" }
-  末 token.layoutInstructions ← { type: "offset", lineScope: "post" }
+lowering:
+  首 target.layoutInstructions ← { type: "offset", lineScope: "pre" }
+  末 target.layoutInstructions ← { type: "offset", lineScope: "post" }
 
 LayoutStreamBuilder:
   expander 返回 { pre, post } 时：
@@ -75,88 +91,75 @@ LayoutStreamBuilder:
 
 ## 消费路径对比
 
-### 排版指令 (goto, offset, mark...)
+### 排版指令 (`goto`, `offset`, `mark` ...)
 
 ```
 token.layoutInstructions
   → LayoutStreamBuilder: expander?
-     ├─ 有 expander (offset, up, markStart...) → pre/post LayoutCommand 包裹字符
-     └─ 无 expander → layoutManager.generate() → 直接 preCmds (operator)
+     ├─ 有 expander → pre/post LayoutCommand 包裹字符
+     └─ 无 expander → layoutManager.generate() → 直接进入 stream
   → TextLayoutEngine: 执行 operator，修改 cursor/markers
 ```
 
-### 视觉特效 (shake, wave, rainbow...)
+### 视觉特效 (`shake`, `wave`, `rainbow` ...)
 
 ```
 token.effects
   → EffectProcessor.partition() → visualConfigs
   → TextPlayer.buildTimeline() → unrollGroupChain()
-     ├─ meta.targetType === "char" → 逐字 effectManager.apply(char)
-     └─ meta.targetType === "group"/"both" → effectManager.apply(wrapper)
-  → 特效实现: target.addModifier(name, track, fn)
+     ├─ targetType === "char" → 逐字 apply
+     └─ targetType === "group"/"both" → group/container apply
 ```
 
-### 舞台指令 (cam.move, pause...)
+### 舞台指令 (`cam.move`, `pause` ...)
 
 ```
-token.layoutInstructions (stageManager.has() === true)
+token.layoutInstructions
   → LayoutStreamBuilder: stageInstructions[]
   → TextBuilder: charData.stageInstructions
   → TextPlayer.buildTimeline(): tl.call(() => stageManager.apply(...))
 ```
+
+### paragraph/global 特效（显式 `:block`）
+
+```
+pData.globalEffects
+  → ScriptPlayer.buildSegment()
+  → partition() → visualConfigs
+  → applyGroupEffects(kt, visualConfigs)
+```
+
+这里的 target 是 `KineticText` 容器。
+因此 char-only 特效只有在 paragraph broadcast 到 text targets 时才会保留逐字语义。
 
 ## 踩坑记录
 
 ### 1. `.xxx` 全部进 globalEffects → 标记前向引用失败
 
 **现象**：`.goto(center_point)` 跳转到不存在的标记。
-**原因**：`globalEffects` 在 `LayoutStreamBuilder` 中被推到 stream 头部（position 0），
-在 `mark(center_point)` 所在 token 之前执行。标记尚未写入。
-**修复**：`.xxx` 排版指令走 `lineLayoutInstructions`，保持在当前行的流位置。
+**原因**：如果 `.xxx` 排版指令被推到 paragraph/global 路径，它会早于行内 `mark(center_point)` 执行。
+**修复**：`.xxx` 排版指令保留在 line-scope 路径中。
 
 ### 2. `.xxx` 全部进 lineLayoutInstructions → offset 只包裹首 token
 
 **现象**：`.offset(100,0)` 只偏移第一个 token。
-**原因**：`lineLayoutInstructions` 只挂在 `primaryTarget`（首 token），
-expander 的 push/pop 只包裹该 token 的字符。
-**修复**：引入 `lineScope` 机制，pre 挂首 token，post 挂末 token。
+**原因**：push/pop 都落在同一个目标上，只包裹局部字符。
+**修复**：引入 `lineScope`，将 pre 挂在首 target，post 挂在末 target。
 
-### 3. `.rainbow` 进 globalEffects → 特效不生效
+### 3. `.rainbow` 进 paragraph/container 路径 → 特效不生效
 
 **现象**：`.rainbow` 无效果。
-**原因**：`globalEffects` 的视觉特效通过 `applyGroupEffects(kt, ...)` 应用到 KineticText 容器，
-但 `rainbow` 实现有 `if (target instanceof KineticChar)` 守卫 → 跳过。
-**修复**：`.xxx` 视觉特效走 `dotVisualEffects`，注入所有 token 的 `effects`，
-走正常的 `buildTimeline → unrollGroupChain → 逐字 apply` 路径。
+**原因**：char-only 特效在 `KineticText` 容器上会被 `instanceof KineticChar` 守卫跳过。
+**修复**：`.xxx` 视觉特效改为直接广播到当前行 `token.effects`。
 
-### 3b. `.shake` 进 visualQueue → 只应用于部分 token
+### 4. `f.` 与 `.` 共用同一条视觉队列 → 花括号匹配被污染
 
-**现象**：`{说吧}，... @ .offset(200,0).mark(left).shake` 中 shake 只对 `{说吧}` 生效。
-**原因**：`.xxx` 视觉特效被 push 进 `visualQueue`，与 `f.xxx` 共用花括号 1:1 匹配逻辑。
-`visualQueue = [[shake]]`，`bracedGroupIds = [0]`（`{说吧}`），队列长度 === 组数 → 1:1 分配。
-**修复**：`.xxx` 视觉特效不进 `visualQueue`，改用独立的 `dotVisualEffects` 数组，
-在花括号匹配之前直接注入全部 `visualTargets`。两条管线互不干扰。
+**现象**：`.shake` 只对某个花括号组生效。
+**原因**：如果 `.` 视觉链也进入 `visualQueue`，就会错误复用 `f.` 的 1:1 组匹配规则。
+**修复**：`f.` 和 `.` 在 `lowering.ts` 中分成两条独立路径。
 
-### 6. 非展开器指令忽略 lineScope → mark 位置覆写
+### 5. block option 视觉命令进入 globalEffects → char-only 特效失效
 
-**现象**：`.mark(left)` 标记位置在 `{说吧}` 尾部而非行首。
-**原因**：`dotLineLayoutInstructions` 将每条指令复制到首 token（lineScope "pre"）和末 token（lineScope "post"）。
-展开器分支正确过滤了 lineScope，但非展开器的 `else` 分支完全忽略了 lineScope —
-`mark(left)` 在两个 token 上都执行，末 token 的结果覆写了首 token 的结果。
-**修复**：`else` 分支中，`lineScope === "post"` 的非展开器指令直接跳过。
-单点操作（mark、stage 指令等）不像 offset 那样有 pre/post 成对结构，只需在行首执行一次。
-
-### 4. `isVisual()` 不区分 f. 和 .
-
-**现象**：`f.xxx` 和 `.xxx` 都被当作视觉特效，进入 visualQueue 做 1:1 匹配。
-**原因**：`KMDCommandParser.isVisual()` 只检查 `startsWith("f.") || startsWith(".")`。
-**修复**：在 `applyCommandsToTokens` 中用 `if/else if/else` 三路分流，
-不再依赖 `isVisual()` 做统一判断。
-
-### 5. ScriptPlayer 双次构建 + phantom pass 标记同步
-
-**现象**：`goto(p2)` 跳转到 (0,0) 而非 `markStart(p2)` 的位置。
-**原因**：ScriptPlayer 先用 `baseOffset: {0,0}` 构建，再用真实 baseOffset rebuild。
-Phantom pass 同步只检查 `!globalMarkers.has(k)` → rebuild 时跳过已存在的标记。
-**修复**：追踪 `writtenKeys`（本次 phantom pass 写入的标记），
-用 `phantomWrittenKeys.has(k)` 替代 `!globalMarkers.has(k)` 判断。
+**现象**：`[.wave]`、`[.rainbow]` 等段落视觉特效不生效。
+**原因**：旧路由会把它们提升为 paragraph/container effect，由 `KineticText` 执行。
+**修复**：block option 默认视觉命令改为 paragraph broadcast，仅显式 `:block` 时才保留 container 语义。

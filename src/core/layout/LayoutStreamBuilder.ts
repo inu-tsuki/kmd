@@ -1,7 +1,7 @@
 import { KineticChar } from "../KineticChar";
 import { TextStyle, CanvasTextMetrics } from "pixi.js";
 import type { LayoutStream, LayoutCommand } from "./types";
-import type { KMDToken, EffectConfig } from "../parser/types";
+import type { KMDInlineIR, ParagraphIR } from "../parser/types";
 import { EffectProcessor } from "../effects/EffectProcessor";
 import { layoutManager } from "./LayoutManager";
 import { stageManager } from "../stage/StageManager";
@@ -27,14 +27,14 @@ export class LayoutStreamBuilder {
   }
 
   public static build(
-    tokens: KMDToken[],
+    paragraph: ParagraphIR,
     baseStyle: TextStyle,
-    globalEffects: EffectConfig[],
   ): { stream: LayoutStream; allCharsData: any[] } {
     const stream: LayoutStream = [];
     const allCharsData: any[] = [];
+    const tokens = paragraph.inline as KMDInlineIR[];
 
-    const { layoutCmds: globalLayouts } = EffectProcessor.partition(globalEffects);
+    const { layoutCmds: globalLayouts } = EffectProcessor.partition(paragraph.paragraphEffects);
     globalLayouts.forEach((cmd) => stream.push(cmd));
 
     tokens.forEach((token, tokenIdx) => {
@@ -104,7 +104,7 @@ export class LayoutStreamBuilder {
         };
         allCharsData.push(charData);
         stream.push({ isCommand: false, width: 0, height: 0, charData });
-        return; 
+        return;
       }
 
       let tokenWidth = 0;
@@ -195,23 +195,23 @@ export class LayoutStreamBuilder {
         (char as any).baseStyleSnapshot.dropShadow = baseStyle.dropShadow;
         // 核心加固：无论来源如何，只要字符是 \n，就标记为 NewLine
         if (charText === "\n") char.isNewLine = true;
-        
+
         const isLastChar = i === chars.length - 1;
         const charEffects = [...visualConfigs];
         const timingSugars: any[] = [];
-        
+
         if (token.sugar) {
           // 这里的逻辑：如果是针对特定索引的，或者是全局针对该 Token 的（charIdx 为 undefined），都应用
           token.sugar.filter((s: any) => s.charIdx === i || s.charIdx === undefined).forEach((s: any) => {
             timingSugars.push({ name: s.name, params: s.params, level: s.level });
           });
         }
-        
+
         const charData = {
-          char, 
-          effects: charEffects, 
+          char,
+          effects: charEffects,
           timingSugars, // 独立存储时序糖衣
-          tokenIdx, 
+          tokenIdx,
           charIdx: i,
           width: charMetrics.width,
           height: charMetrics.ascent + charMetrics.descent, // 核心变更：使用物理字高而非行高

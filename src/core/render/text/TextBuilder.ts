@@ -9,7 +9,8 @@ import type { KMDParagraphData } from "../../parser/types";
 
 export class TextBuilder {
   public static async build(target: any, kmdString: string, startLine: number = 0) {
-    const { blockOptions, tokens, globalEffects } = parser.parseParagraph(kmdString, startLine) as KMDParagraphData;
+    const paragraph = parser.parseParagraph(kmdString, startLine) as KMDParagraphData;
+    const { blockOptions, globalEffects, ir } = paragraph;
     target._pendingGlobalEffects = globalEffects as any[];
     Object.assign(target._options, blockOptions);
 
@@ -21,7 +22,7 @@ export class TextBuilder {
         padding: 0
     });
 
-    const { stream: layoutStream } = LayoutStreamBuilder.build(tokens, baseStyle, globalEffects);
+    const { stream: layoutStream } = LayoutStreamBuilder.build(ir!, baseStyle);
     const layoutResults = TextLayoutEngine.calculate(layoutStream, {
       ...target._options,
       baseOffset: { x: target.x, y: target.y }

@@ -56,6 +56,22 @@ try {
     assert(!!pMulti, "Line 43: Should find multi-token paragraph");
     assert(pMulti.tokens.find(t => t.content.includes("多个"))?.effects.some(e => e.name === "red"), "Multi-mapping: '多个' should be red");
 
+    const paragraphBroadcast = parser.parse("[.wave]\n{AB}\nCD").paragraphs[0];
+    assert(paragraphBroadcast.globalEffects.every(e => e.name !== "wave"), "Paragraph [.wave] should not stay in globalEffects");
+    const visualTokens = paragraphBroadcast.tokens.filter(t => t.content.trim());
+    assert(visualTokens.length === 2, "Paragraph [.wave] should preserve both text tokens");
+    assert(visualTokens.every(t => t.effects.some(e => e.name === "wave")), "Paragraph [.wave] should broadcast wave to all text tokens");
+
+    assert(!!paragraphBroadcast.ast, "Paragraph parse should expose AST");
+    assert(!!paragraphBroadcast.ir, "Paragraph parse should expose IR");
+
+    const quotedParagraph = parser.parse("// quote\ntext1 >>> text1\n\ntext2").paragraphs[0];
+    assert(quotedParagraph.tokens[0]?.content !== "\n", "Pure comment line should not emit a leading newline token");
+    assert(quotedParagraph.tokens.every(t => t.line !== 0), "Pure comment line should not shift visible tokens onto a synthetic line");
+
+    const singleAtResult = parser.parse("@");
+    assert(singleAtResult.paragraphs.length === 0, "Standalone '@' line should be ignored as empty command-only input");
+
     fs.writeFileSync("parser-output.json", JSON.stringify(result, null, 2), "utf-8");
     console.log("\n🎊 Parser state validated against Report 5.x specifications.");
 } catch (e: any) {

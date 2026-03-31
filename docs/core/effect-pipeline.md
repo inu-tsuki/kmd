@@ -64,7 +64,7 @@ token.effects: EffectConfig[]
               └─ effectManager.apply(wrapper, ...)
 ```
 
-### 路径 B：globalEffects 特效 (`[.xxx]` block option)
+### 路径 B：paragraph/global 特效（显式 `:block` 或段落级布局/舞台）
 
 ```
 pData.globalEffects: EffectConfig[]
@@ -80,9 +80,10 @@ pData.globalEffects: EffectConfig[]
 ```
 
 **注意**：`applyGroupEffects(kt, ...)` 的 target 是 KineticText (Container)。
-`targetType: "char"` 的特效有 `instanceof KineticChar` 守卫会跳过！
-因此 `[.rainbow]` 在 block option 中**不会生效**——这是已知限制。
-行级 `.rainbow` 通过 visualQueue 注入 token.effects 走路径 A，正常工作。
+因此只有显式要求 paragraph/container 语义的命令才应该走这条路径，例如 `[.shake:block]` 或段落级布局/舞台命令。
+
+默认 block option 视觉命令（如 `[.rainbow]`、`[.wave]`）现在会在 `lowering.ts` 中先广播到整段 text targets，
+再走路径 A 的逐 token 路径，以保留 char/group 的默认 target 行为。
 
 ## 特效实现模式
 
@@ -115,7 +116,7 @@ EffectProcessor.applyStyleRecursively(target, styleName, params, force)
 
 - **`targetType: "both"` 的特效** (如 shake)：在 Container 上也能工作（修改 Container.position），
   但效果是整体移动而非逐字错开。
-- **globalEffects 中的 char 级特效**：不会生效（KineticText 不是 KineticChar）。
-  如需段落级 rainbow，用 `.rainbow` 行级语法。
+- **显式 paragraph/container 路径中的 char 级特效**：如果强制 `:block`，仍可能因为目标是 `KineticText` 而失效。
+  默认 block option 视觉命令不会走这条路径，只有显式 `:block` 时才需要注意这一点。
 - **特效的 `charIndex` 参数**：仅在 `unrollGroupChain` 逐字分发路径中注入。
   直接调用 `effectManager.apply(char, "wave", {})` 不会有 charIndex → 所有字符同相位。

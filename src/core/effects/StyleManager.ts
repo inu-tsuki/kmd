@@ -25,6 +25,10 @@ class StyleManager {
     return !!this.registry[name];
   }
 
+  public getMetadata(name: string) {
+    return this.registry[name]?.meta;
+  }
+
   /**
    * 应用样式
    * @param style 目标样式对象
