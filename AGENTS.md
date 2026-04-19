@@ -23,10 +23,8 @@ Write Vue SFCs and TypeScript modules with the existing style in each file: most
 
 There is no full unit-test suite or coverage gate yet. Add regression-oriented TypeScript scripts alongside the current parser tests when fixing engine bugs, and keep sample KMD inputs in `public/` or `public/tests/` when they help reproduce issues. Name ad hoc test files clearly, for example `test-variable-parser.ts` or `final-parser-test.ts`.
 
-## Commit & Pull Request Guidelines
-
-Recent history follows short Conventional Commit prefixes such as `feat:` plus a concise description; continue that pattern for `fix:`, `docs:`, and `refactor:` changes. Keep commits scoped to one concern. PRs should explain user-visible impact, list verification commands, link related issues, and include screenshots or GIFs for editor/UI changes. For parser or playback changes, include the KMD sample used to verify the behavior.
-
 ## Documentation & Architecture Notes
 
 Before changing command routing or the effect pipeline, read `docs/core/command-routing.md` and `docs/core/effect-pipeline.md`. If you add new commands, effects, or layout behavior, update the corresponding doc in the same change.
+
+将这一机制推广到整个`docs/`中。当认为某一改动、举措或错误尝试值得记录，在`docs/`中管理它们。

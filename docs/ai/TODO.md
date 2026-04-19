@@ -40,10 +40,36 @@
     - [x] 23 TS build errors → 0。
     - [x] Semantic refactors: wait → hold/pause, Monaco `---` highlighting, dynamic file discovery。
 
+### Phase A.R — Refactor Foundation（为 Phase B/C 铺路）— Current
+
+> 实施方案见 `docs/refactor/phase-1-implementation-plan.md`
+> 目标：先建立共享契约、parser 边界、layout preflight 与 execution adapter seam，再进入 Phase B 的 graph/state/control-flow 扩展。
+
+- [ ] **AR1. Shared Types Foundation**
+    - [ ] 建立 `src/core/types/` 共享契约入口
+    - [ ] 定义 `BaseCue`, `AnchorRef`, `ChainExecutionPlan`, `LayoutPreflightResult`, `DiagnosticEvent`
+- [ ] **AR2. Parser Boundary Extraction**
+    - [ ] 从 `lowering.ts` 中抽出 `ScopeRouter`
+    - [ ] 隔离 `CompatProjector`
+    - [ ] 让 parser 面向 `CommandRegistryView`
+- [ ] **AR3. Layout Preflight Formalization**
+    - [ ] 将 phantom pass 升级为正式的 `LayoutPreflightResult`
+    - [ ] 显式化 `AnchorState` / `LinePlan` / `estimatedBounds`
+    - [ ] 在不强拆 `LayoutStreamBuilder` 的前提下收缩双 pass 重复逻辑
+- [ ] **AR4. Execution Adapter Seed**
+    - [ ] 引入 `ParagraphExecutionPlan` / `ChainExecutionPlan` 适配层
+    - [ ] 让 `TextPlayer` 开始消费 plan-like input
+    - [ ] 将段落 placement 先收口到 `SegmentBuilder` 内部，而不是提前独立 coordinator
+- [ ] **AR5. Validation Gates**
+    - [ ] `pnpm test:parser`
+    - [ ] `pnpm build`
+    - [ ] 关键样例脚本回归检查（parser/layout/timeline）
+
 ### Phase B — Segment Graph、状态系统与语法演进
 
 > **核心理念**: Segment 内部仍为预烘焙 Timeline（确定性、可 seek），Segment 之间的边为运行时求值（条件分支、状态驱动）。
 > 控制流语法独立于特效链，使用行首 `@` 结构标记。状态层嵌入极简表达式求值器。
+> 默认建立在 **Phase A.R Refactor Foundation 完成** 的基础上推进。
 
 #### B0. 语法统一与增强
 
