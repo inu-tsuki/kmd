@@ -40,36 +40,61 @@
     - [x] 23 TS build errors → 0。
     - [x] Semantic refactors: wait → hold/pause, Monaco `---` highlighting, dynamic file discovery。
 
-### Phase A.R — Refactor Foundation（为 Phase B/C 铺路）— Current
+### Phase A.R — Refactor Foundation（为 Phase B/C 铺路）— DONE
 
 > 实施方案见 `docs/refactor/phase-1-implementation-plan.md`
 > 目标：先建立共享契约、parser 边界、layout preflight 与 execution adapter seam，再进入 Phase B 的 graph/state/control-flow 扩展。
 
-- [ ] **AR1. Shared Types Foundation**
-    - [ ] 建立 `src/core/types/` 共享契约入口
-    - [ ] 定义 `BaseCue`, `AnchorRef`, `ChainExecutionPlan`, `LayoutPreflightResult`, `DiagnosticEvent`
-- [ ] **AR2. Parser Boundary Extraction**
-    - [ ] 从 `lowering.ts` 中抽出 `ScopeRouter`
-    - [ ] 隔离 `CompatProjector`
-    - [ ] 让 parser 面向 `CommandRegistryView`
-- [ ] **AR3. Layout Preflight Formalization**
-    - [ ] 将 phantom pass 升级为正式的 `LayoutPreflightResult`
-    - [ ] 显式化 `AnchorState` / `LinePlan` / `estimatedBounds`
-    - [ ] 在不强拆 `LayoutStreamBuilder` 的前提下收缩双 pass 重复逻辑
-- [ ] **AR4. Execution Adapter Seed**
-    - [ ] 引入 `ParagraphExecutionPlan` / `ChainExecutionPlan` 适配层
-    - [ ] 让 `TextPlayer` 开始消费 plan-like input
-    - [ ] 将段落 placement 先收口到 `SegmentBuilder` 内部，而不是提前独立 coordinator
-- [ ] **AR5. Validation Gates**
-    - [ ] `pnpm test:parser`
-    - [ ] `pnpm build`
-    - [ ] 关键样例脚本回归检查（parser/layout/timeline）
+- [x] **AR1. Shared Types Foundation**
+    - [x] 建立 `src/core/types/` 共享契约入口
+    - [x] 定义 `BaseCue`, `AnchorRef`, `ChainExecutionPlan`, `LayoutPreflightResult`, `DiagnosticEvent`
+- [x] **AR2. Parser Boundary Extraction**
+    - [x] 从 `lowering.ts` 中抽出 `ScopeRouter`
+    - [x] 隔离 `CompatProjector`
+    - [x] 让 parser 面向 `CommandRegistryView`
+- [x] **AR3. Layout Preflight Formalization**
+    - [x] 将 phantom pass 升级为正式的 `LayoutPreflightResult`
+    - [x] 显式化 `AnchorState` / `LinePlan` / `estimatedBounds`
+    - [x] 在不强拆 `LayoutStreamBuilder` 的前提下收缩双 pass 重复逻辑
+- [x] **AR4. Execution Adapter Seed**
+    - [x] 引入 `ParagraphExecutionPlan` / `ChainExecutionPlan` 适配层
+    - [x] 让 `TextPlayer` 开始消费 plan-like input
+    - [x] 将段落 placement 先收口到 `SegmentBuilder` 内部，而不是提前独立 coordinator
+- [x] **AR5. Validation Gates**
+    - [x] `pnpm test:parser`
+    - [x] `pnpm build`
+    - [x] 关键样例脚本回归检查（parser/layout/timeline）
+
+### Phase A.E — Execution Consolidation（TextPlayer / ScriptPlayer 收口）— DONE
+
+> 实施方案见 `docs/refactor/phase-2-implementation-plan.md`
+> 目标：在不提前进入 Phase B graph/state/control-flow 的前提下，继续收口 execution 主链路，完成 `TextPlayer` planner 深化与 `ScriptPlayer` 的 `SegmentBuilder / PlaybackController` 拆分。
+
+- [x] **AE1. TextPlayer Planner Deepening**
+    - [x] 将稳定的 chain mode / lifecycle 语义前移到 plan 阶段
+    - [x] 为 `char_stagger` 缺 plan 场景增加 fallback diagnostics
+    - [x] 降低 `buildTimeline()` 对命令名热路径特判的依赖
+- [x] **AE2. ParagraphExecutionPlan Enrichment**
+    - [x] 补强 `ParagraphExecutionPlan` / `ChainExecutionPlan` 的执行契约
+    - [x] 显式区分 authored cue、lowered cue、generated lifecycle cue
+    - [x] 让 `TextPlayer` 通过 plan 稳定读取 token/stage/playback 绑定
+- [x] **AE3. SegmentBuilder Extraction**
+    - [x] 从 `ScriptPlayer.buildSegment()` 中提取 `SegmentBuilder`
+    - [x] 将 paragraph placement 先收口为 `SegmentBuilder` 内部方法
+    - [x] 保持段落 build / timeline attach / marker/checkpoint 收集的现有行为
+- [x] **AE4. PlaybackController Extraction**
+    - [x] 从 `ScriptPlayer` 中提取 seek / replay / behavior re-register / style replay 控制逻辑
+    - [x] 保持 `Segment` 结构和现有 player façade 兼容
+- [x] **AE5. Validation and Guard Rails**
+    - [x] `pnpm build`
+    - [x] `pnpm test:parser`
+    - [x] 关键样例脚本回归检查（parser/layout/timeline/seek）
 
 ### Phase B — Segment Graph、状态系统与语法演进
 
 > **核心理念**: Segment 内部仍为预烘焙 Timeline（确定性、可 seek），Segment 之间的边为运行时求值（条件分支、状态驱动）。
 > 控制流语法独立于特效链，使用行首 `@` 结构标记。状态层嵌入极简表达式求值器。
-> 默认建立在 **Phase A.R Refactor Foundation 完成** 的基础上推进。
+> 默认建立在 **Phase A.R Refactor Foundation** 与 **Phase A.E Execution Consolidation** 完成的基础上推进。
 
 #### B0. 语法统一与增强
 

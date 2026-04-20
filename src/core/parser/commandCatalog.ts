@@ -4,6 +4,12 @@ import { layoutManager } from "../layout/LayoutManager";
 import { stageManager } from "../stage/StageManager";
 import type { CommandFamily, ParsedCommand } from "./types";
 
+export interface CommandRegistryView {
+  has(name: string): boolean;
+  getFamily(name: string): CommandFamily;
+  getMetadata(name: string): Record<string, unknown> | undefined;
+}
+
 export interface CommandSemanticInfo {
   family: CommandFamily;
   targetType: "char" | "group" | "both" | "container" | "unknown";
@@ -12,16 +18,53 @@ export interface CommandSemanticInfo {
   known: boolean;
 }
 
-export function resolveCommandFamily(name: string): CommandFamily {
-  if (styleManager.has(name)) return "style";
-  if (effectManager.has(name)) return "effect";
-  if (layoutManager.has(name)) return "layout";
-  if (stageManager.has(name)) return "stage";
-  return "unknown";
+export function createRuntimeCommandRegistryView(): CommandRegistryView {
+  return {
+    has(name: string) {
+      return (
+        styleManager.has(name) ||
+        effectManager.has(name) ||
+        layoutManager.has(name) ||
+        stageManager.has(name)
+      );
+    },
+    getFamily(name: string): CommandFamily {
+      if (styleManager.has(name)) return "style";
+      if (effectManager.has(name)) return "effect";
+      if (layoutManager.has(name)) return "layout";
+      if (stageManager.has(name)) return "stage";
+      return "unknown";
+    },
+    getMetadata(name: string) {
+      const family = this.getFamily(name);
+      if (family === "style") return styleManager.getMetadata(name) as Record<string, unknown> | undefined;
+      if (family === "effect") return effectManager.getMetadata(name) as Record<string, unknown> | undefined;
+      return undefined;
+    },
+  };
 }
 
-export function getCommandSemanticInfo(name: string): CommandSemanticInfo {
-  const family = resolveCommandFamily(name);
+export const runtimeCommandRegistryView = createRuntimeCommandRegistryView();
+
+export function resolveCommandFamily(name: string, registryView: CommandRegistryView = runtimeCommandRegistryView): CommandFamily {
+  return registryView.getFamily(name);
+}
+
+export function getCommandSemanticInfo(
+  name: string,
+  registryView: CommandRegistryView = runtimeCommandRegistryView,
+): CommandSemanticInfo {
+  const family = resolveCommandFamily(name, registryView);
+  if (!registryView.has(name) || family === "unknown") {
+    return {
+      family: "unknown",
+      targetType: "unknown",
+      containerCompatible: false,
+      supportsBroadcast: false,
+      known: false,
+    };
+  }
+
   if (family === "layout") {
     return {
       family,
@@ -42,42 +85,24 @@ export function getCommandSemanticInfo(name: string): CommandSemanticInfo {
     };
   }
 
-  if (family === "style") {
-    const meta = styleManager.getMetadata(name);
-    const targetType = meta?.targetType ?? "char";
-    return {
-      family,
-      targetType,
-      containerCompatible: targetType === "group" || targetType === "both",
-      supportsBroadcast: true,
-      known: true,
-    };
-  }
-
-  if (family === "effect") {
-    const meta = effectManager.getMetadata(name);
-    const targetType = meta?.targetType ?? "unknown";
-    return {
-      family,
-      targetType,
-      containerCompatible: targetType === "group" || targetType === "both",
-      supportsBroadcast: true,
-      known: true,
-    };
-  }
+  const meta = registryView.getMetadata(name);
+  const targetType = (meta?.targetType as CommandSemanticInfo["targetType"] | undefined) ?? (family === "style" ? "char" : "unknown");
 
   return {
-    family: "unknown",
-    targetType: "unknown",
-    containerCompatible: false,
-    supportsBroadcast: false,
-    known: false,
+    family,
+    targetType,
+    containerCompatible: targetType === "group" || targetType === "both",
+    supportsBroadcast: true,
+    known: true,
   };
 }
 
-export function attachCommandFamily<T extends { name: string }>(command: T): T & Pick<ParsedCommand, "family"> {
+export function attachCommandFamily<T extends { name: string }>(
+  command: T,
+  registryView: CommandRegistryView = runtimeCommandRegistryView,
+): T & Pick<ParsedCommand, "family"> {
   return {
     ...command,
-    family: resolveCommandFamily(command.name),
+    family: resolveCommandFamily(command.name, registryView),
   };
 }

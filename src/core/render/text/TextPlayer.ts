@@ -7,6 +7,7 @@ import { useEditorStore } from "../../../store/editorStore";
 import { TokenWrapper } from "../../TokenWrapper";
 import { KineticChar } from "../../KineticChar";
 import type { EffectConfig } from "../../parser/types";
+import type { RuntimeParagraphExecutionPlan } from "../../execution/paragraphExecutionPlan";
 import gsap from "gsap";
 
 /**
@@ -60,8 +61,7 @@ export class TextPlayer {
    */
   public static buildTimeline(
     target: any, // KineticText
-    allChars: KineticChar[],
-    tokens: TokenWrapper[],
+    plan: RuntimeParagraphExecutionPlan,
     options: { speed?: number } = {}
   ): TimelineBuildResult {
     // 不设 paused:true —— 子 Timeline 由父 (segmentTl) 控制。
@@ -72,6 +72,17 @@ export class TextPlayer {
     // 基准揭示速度 (毫秒 → 秒)
     const baseSpeedMs = options.speed ?? target._options?.speed ?? 50;
     const baseSpeed = baseSpeedMs / 1000;
+    const allChars = plan.items.map(item => item.char);
+    const chainPlansByToken = new Map<number, RuntimeParagraphExecutionPlan["chainPlans"][number]>();
+    const tokenPlansByToken = new Map<number, RuntimeParagraphExecutionPlan["tokenPlans"][number]>();
+    plan.tokenPlans.forEach((tokenPlan) => {
+      tokenPlansByToken.set(tokenPlan.tokenIdx, tokenPlan);
+      if (tokenPlan.chainPlan) {
+        chainPlansByToken.set(tokenPlan.tokenIdx, tokenPlan.chainPlan);
+      }
+    });
+
+    this.reportPlanDiagnostics(plan);
 
     let cursor = 0; // 时间游标 (秒)
     let persistentSpeedMult = 1.0;
@@ -84,12 +95,12 @@ export class TextPlayer {
     let pauseCharOverride: number | undefined = undefined;
     // 当前 token 的阻塞推进量（pause / blocking stage cmds），延迟到 token 末尾一次性加到 cursor
     let deferredCursorAdvance = 0;
-    // 当前 token 第一字收集的舞台指令，延迟到 token 最后一字触发（与末字同时执行）
-    let deferredStageInstrs: any[] = [];
 
     for (let i = 0; i < allChars.length; i++) {
-      const char = allChars[i]!;
-      const isNewLine = char.isNewLine || char.text === "\n";
+      const item = plan.items[i]!;
+      const char = item.char;
+      const isNewLine = item.lifecycle.isLineBreak;
+      const tokenPlan = tokenPlansByToken.get(item.tokenIdx);
 
       // ── 1. 换行处理 ──
       if (isNewLine) {
@@ -109,31 +120,12 @@ export class TextPlayer {
 
       // ── 2. 时序糖衣 ──
 
-      const prevChar = allChars[i - 1];
-      const isTokenStart = i === 0 || !prevChar || prevChar.tokenIdx !== char.tokenIdx;
-      if (isTokenStart) {
+      if (item.lifecycle.isTokenStart) {
         deferredCursorAdvance = 0; // 新 token 重置
-        deferredStageInstrs = [];
-        // 找到当前 token 的最后一个 char
-        let lastInToken = char;
-        for (let j = i + 1; j < allChars.length; j++) {
-          if (allChars[j]!.tokenIdx === char.tokenIdx) lastInToken = allChars[j]!;
-          else break;
-        }
-        // pause:char 检测：同时支持 @ pause:char(1s) 路径和 @ f.pause:char(1s) 路径
-        const pauseCharInStage = lastInToken.stageInstructions.find(
-          (s: any) => s.type === "pause" && s.level === "char"
-        );
-        const pauseCharInVisual = !pauseCharInStage
-          ? lastInToken.visualEffects?.find((e: any) => e.name === "pause" && e.level === "char")
-          : null;
-        const pauseCharEffect = pauseCharInStage || pauseCharInVisual;
-        pauseCharOverride = pauseCharEffect
-          ? Number(pauseCharEffect.params?.duration ?? pauseCharEffect.params?.d ?? pauseCharEffect.params?.[0] ?? 1)
-          : undefined;
+        pauseCharOverride = tokenPlan?.pauseCharOverride;
       }
 
-      const timing = EffectProcessor.resolveTiming(char.timingSugars);
+      const timing = EffectProcessor.resolveTiming(item.timingSugars);
       if (timing.speedMultiplier !== undefined) {
         persistentSpeedMult = timing.speedMultiplier;
       }
@@ -161,7 +153,7 @@ export class TextPlayer {
       // ── 4. Stage 指令（仅空字符：管道符、场景清除等） ──
       // 非空字符的舞台指令见 §5.5（与字符同时触发，阻塞延迟到 token 末）
       if (!char.text.trim()) {
-        for (const instr of char.stageInstructions) {
+        for (const instr of item.stageInstructions) {
           if (instr.type === "pause") {
             if ((instr as any).level === "char") continue;
             const pauseDur = Number(instr.params?.duration ?? instr.params?.d ?? instr.params?.[0] ?? 1);
@@ -204,26 +196,27 @@ export class TextPlayer {
             if (!isInstantGo) {
               deferredCursorAdvance += pauseDur;
             }
-          } else {
-            deferredStageInstrs.push(instr);
           }
         }
       }
 
       // ── 6. 组特效时序链展开（Token 边界触发） ──
-      const nextChar = allChars[i + 1];
-      const isTokenEnd = !nextChar || nextChar.tokenIdx !== char.tokenIdx;
-      if (isTokenEnd && char.visualEffects.length > 0) {
-        const wrapper = tokens.find(t => t.tokenIdx === char.tokenIdx);
+      const isTokenEnd = item.lifecycle.isTokenEnd;
+      if (isTokenEnd && tokenPlan && tokenPlan.visualEffects.length > 0) {
+        const wrapper = tokenPlan.token;
+        const chainPlan = chainPlansByToken.get(item.tokenIdx);
         if (wrapper) {
-          const holdCharConfig = char.visualEffects.find(
+          const holdCharConfig = tokenPlan.visualEffects.find(
             e => e.name === "hold" && e.level === "char"
           );
-          if (holdCharConfig) {
-            this.unrollCharChain(tl, wrapper, char.visualEffects, cursor, behaviors, holdCharConfig, styleRecords);
+          if (holdCharConfig && (!chainPlan || chainPlan.mode === "char_stagger")) {
+            if (!chainPlan) {
+              this.warnMissingChainPlan(item.tokenIdx, item.line);
+            }
+            this.unrollCharChain(tl, wrapper, tokenPlan.visualEffects, cursor, behaviors, holdCharConfig, styleRecords);
           } else {
             // unrollGroupChain 返回 chain 内 pause 指令的累计时长，追加到 deferredCursorAdvance
-            const pauseFromChain = this.unrollGroupChain(tl, wrapper, char.visualEffects, cursor, behaviors, styleRecords);
+            const pauseFromChain = this.unrollGroupChain(tl, wrapper, tokenPlan.visualEffects, cursor, behaviors, styleRecords);
             if (pauseFromChain > 0) {
               deferredCursorAdvance += pauseFromChain;
             }
@@ -232,8 +225,8 @@ export class TextPlayer {
       }
 
       // ── 6.5. Token-end Stage 指令执行（与最后一字同时触发；blocking 追加到 §7.5） ──
-      if (isTokenEnd && deferredStageInstrs.length > 0) {
-        for (const instr of deferredStageInstrs) {
+      if (isTokenEnd && tokenPlan && tokenPlan.tokenEndStageInstructions.length > 0) {
+        for (const instr of tokenPlan.tokenEndStageInstructions) {
           if (MODIFIER_BASED_COMMANDS.has(instr.type)) {
             const instrCopy = { type: instr.type, params: { ...instr.params } };
             tl.call(() => {
@@ -247,7 +240,6 @@ export class TextPlayer {
             }
           }
         }
-        deferredStageInstrs = [];
       }
 
       // ── 7. 推进 cursor ──
@@ -282,6 +274,26 @@ export class TextPlayer {
     }
 
     return { timeline: tl, behaviors, styleRecords, duration: cursor, advanceTime };
+  }
+
+  private static reportPlanDiagnostics(plan: RuntimeParagraphExecutionPlan) {
+    for (const diagnostic of plan.diagnostics ?? []) {
+      const prefix = diagnostic.code ? `[${diagnostic.code}]` : "[ExecutionPlan]";
+      if (diagnostic.severity === "error") {
+        console.error(`${prefix} ${diagnostic.message}`, diagnostic.origin ?? {});
+      } else if (diagnostic.severity === "warning") {
+        console.warn(`${prefix} ${diagnostic.message}`, diagnostic.origin ?? {});
+      } else {
+        console.info(`${prefix} ${diagnostic.message}`, diagnostic.origin ?? {});
+      }
+    }
+  }
+
+  private static warnMissingChainPlan(tokenIdx: number, line?: number) {
+    console.warn(
+      `[ExecutionPlan] Missing chain plan for token ${tokenIdx}; falling back to char_stagger via hold:char`,
+      line !== undefined ? { line } : undefined,
+    );
   }
 
   /**

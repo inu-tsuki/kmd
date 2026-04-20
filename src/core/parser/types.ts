@@ -1,27 +1,24 @@
+import type {
+  DiagnosticEvent,
+  DiagnosticSeverity,
+  SourceRange,
+} from "../types";
+
 export type EffectParams = Record<string, any>;
 export type CommandLevel = "char" | "group" | "block";
-export type DiagnosticSeverity = "warning" | "error";
 export type CommandPrefix = "f" | "dot" | "bare";
 export type CommandFamily = "effect" | "style" | "layout" | "stage" | "unknown";
 export type CommandScope = "token" | "line" | "paragraph";
 export type InlineMark = "bold" | "italic";
-
-export interface SourceRange {
-  start: number;
-  end: number;
-}
+export type { DiagnosticSeverity, SourceRange };
 
 export interface SourceLocation {
   line: number;
   range: SourceRange;
 }
 
-export interface ParserDiagnostic {
-  severity: DiagnosticSeverity;
-  message: string;
+export interface ParserDiagnostic extends DiagnosticEvent {
   line: number;
-  range?: SourceRange;
-  code?: string;
 }
 
 export interface KMDMetadata {
@@ -32,6 +29,7 @@ export interface KMDMetadata {
   designHeight?: number;
   fontSize?: number;
   lineHeight?: number;
+  maxWidth?: number;
   speed?: number;
   variables?: Record<string, any>;
 }

@@ -1,5 +1,5 @@
 import { KMDCommandParser } from "./KMDCommandParser";
-import { attachCommandFamily } from "./commandCatalog";
+import { attachCommandFamily, runtimeCommandRegistryView, type CommandRegistryView } from "./commandCatalog";
 import type {
   BlockOptionAst,
   BlockOptionCommandAst,
@@ -30,7 +30,12 @@ export class KmdAstParser {
    * It preserves source structure as AST nodes and source ranges, but does not decide
    * final command scope or runtime track routing.
    */
-  public parseParagraph(source: string, lineOffset: number, diagnostics: ParserDiagnostic[]): ParagraphAst {
+  public parseParagraph(
+    source: string,
+    lineOffset: number,
+    diagnostics: ParserDiagnostic[],
+    registryView: CommandRegistryView = runtimeCommandRegistryView,
+  ): ParagraphAst {
     const lines = source.split("\n");
     const blockOptions: BlockOptionAst[] = [];
     const astLines: ParagraphLineAst[] = [];
@@ -50,7 +55,7 @@ export class KmdAstParser {
         const trimmed = rawLine.trim();
         const end = trimmed.indexOf("]");
         if (end !== -1) {
-          blockOptions.push(...this.parseBlockOptions(trimmed.slice(1, end), line, diagnostics));
+          blockOptions.push(...this.parseBlockOptions(trimmed.slice(1, end), line, diagnostics, registryView));
           rawLine = trimmed.slice(end + 1).trim();
           hasProcessedBlockOptions = true;
           if (!rawLine) {
@@ -114,7 +119,7 @@ export class KmdAstParser {
       const state: InlineParseState = { pos: 0, marks: new Set() };
       const body = this.parseInline(bodyText, line, state, diagnostics);
       const commandChains = commandText.trim()
-        ? this.parseCommandChains(commandText, line, atIndex + 1, diagnostics)
+        ? this.parseCommandChains(commandText, line, atIndex + 1, diagnostics, registryView)
         : [];
 
       astLines.push({
@@ -138,7 +143,12 @@ export class KmdAstParser {
     };
   }
 
-  private parseBlockOptions(content: string, line: number, diagnostics: ParserDiagnostic[]): BlockOptionAst[] {
+  private parseBlockOptions(
+    content: string,
+    line: number,
+    diagnostics: ParserDiagnostic[],
+    registryView: CommandRegistryView = runtimeCommandRegistryView,
+  ): BlockOptionAst[] {
     const parts = this.splitTopLevel(content);
     const results: BlockOptionAst[] = [];
 
@@ -163,6 +173,7 @@ export class KmdAstParser {
         line,
         part.start + 1,
         diagnostics,
+        registryView,
       );
       for (const chain of chains) {
         const node: BlockOptionCommandAst = {
@@ -183,6 +194,7 @@ export class KmdAstParser {
     line: number,
     offset: number,
     diagnostics: ParserDiagnostic[],
+    registryView: CommandRegistryView = runtimeCommandRegistryView,
   ): CommandChainAst[] {
     const parts = this.splitTopLevel(input);
     return parts
@@ -194,7 +206,7 @@ export class KmdAstParser {
             ...command,
             raw: part.text,
             prefix,
-          });
+          }, registryView);
           if (enriched.family === "unknown") {
             diagnostics.push({
               severity: "warning",

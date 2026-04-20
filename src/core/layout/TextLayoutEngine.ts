@@ -1,9 +1,21 @@
-import type { LayoutStream, LayoutContext, MarkerMap, LayoutItem, LayoutCommand, LayoutResult, LayoutAuditRecord, CursorState } from './types';
+import type {
+  LayoutStream,
+  LayoutContext,
+  MarkerMap,
+  LayoutItem,
+  LayoutCommand,
+  LayoutResult,
+  LayoutAuditRecord,
+  CursorState,
+  LayoutPreflightResult,
+  LinePlan,
+} from './types';
 import { layoutManager } from './LayoutManager';
 import type { FullOptions } from "../KineticText";
 
 export class TextLayoutEngine {
   public static lastAuditLog: LayoutAuditRecord[] = [];
+  public static lastPreflightResult: LayoutPreflightResult | null = null;
 
   private static toGlobal(ctx: { options: { baseOffset: CursorState } }, local: { x: number, y: number }): CursorState {
     return {
@@ -27,20 +39,74 @@ export class TextLayoutEngine {
     return { minX, maxX, minY, maxY, midX: (minX + maxX) / 2, midY: (minY + maxY) / 2 };
   }
 
-  /**
-     * 幻影预扫描：模拟完整路径，建立基于 Baseline 的标记图
-     */
-  private static runPhantomPass(stream: LayoutStream, options: FullOptions, globalMarkers: MarkerMap): { markers: Map<string, CursorState>, writtenKeys: Set<string> } {
-    // 找出第一行流内字符的最大 ascent，确保起始 y 坐标不会导致文字超出容器顶端
+  private static findFirstLineMaxAscent(stream: LayoutStream) {
     let firstLineMaxAscent = 0;
     for (const node of stream) {
       if (node.isCommand) continue;
       const item = node as LayoutItem;
-      if ((item as any).charData?.char?.text === '\n') break;
+      if ((item as any).charData?.char?.text === "\n") break;
       const ascent = (item as any).charData?.ascent || 0;
       if (ascent > firstLineMaxAscent) firstLineMaxAscent = ascent;
     }
+    return firstLineMaxAscent;
+  }
 
+  private static applyLineAlignment(
+    line: LayoutResult[],
+    options: FullOptions,
+    touchedMarkers?: string[],
+    markers?: Map<string, CursorState>,
+  ) {
+    if (line.length === 0 || options.align === "left") return;
+    const inFlows = line.filter(r => r.inFlow);
+    if (inFlows.length === 0) return;
+
+    const first = inFlows[0]!;
+    const last = inFlows[inFlows.length - 1]!;
+    const width = (last.x + last.item.width / 2) - (first.x - first.item.width / 2);
+    const correction =
+      (options.align === "center" ? (options.maxWidth - width) / 2 : options.maxWidth - width) -
+      (first.x - first.item.width / 2);
+
+    line.forEach(r => {
+      if (r.inFlow) r.x += correction;
+    });
+
+    if (touchedMarkers && markers) {
+      touchedMarkers.forEach(name => {
+        const marker = markers.get(name);
+        if (marker) marker.x += correction;
+      });
+    }
+  }
+
+  private static calculateEstimatedBounds(lines: LinePlan[]) {
+    const boundedLines = lines.filter(line => !!line.bounds);
+    if (boundedLines.length === 0) {
+      return { minX: 0, minY: 0, maxX: 0, maxY: 0 };
+    }
+
+    return boundedLines.reduce((acc, line) => {
+      const bounds = line.bounds!;
+      return {
+        minX: Math.min(acc.minX, bounds.minX),
+        minY: Math.min(acc.minY, bounds.minY),
+        maxX: Math.max(acc.maxX, bounds.maxX),
+        maxY: Math.max(acc.maxY, bounds.maxY),
+      };
+    }, {
+      minX: Infinity,
+      minY: Infinity,
+      maxX: -Infinity,
+      maxY: -Infinity,
+    });
+  }
+
+  /**
+     * 幻影预扫描：模拟完整路径，建立基于 Baseline 的标记图与行几何预检结果
+     */
+  public static preflight(stream: LayoutStream, options: FullOptions, globalMarkers: MarkerMap): LayoutPreflightResult {
+    const firstLineMaxAscent = this.findFirstLineMaxAscent(stream);
     const ctx: LayoutContext = {
       activeCursor: {
         x: options.indent * options.fontSize,
@@ -108,18 +174,17 @@ export class TextLayoutEngine {
       ctx.justMoved = false;
     }
 
+    const linePlans: LinePlan[] = [];
     lines.forEach((line, idx) => {
-      if (line.length > 0 && options.align !== 'left') {
-        const inFlows = line.filter(r => r.inFlow);
-        if (inFlows.length > 0) {
-          const first = inFlows[0]!, last = inFlows[inFlows.length - 1]!;
-          const w = (last.x + last.item.width / 2) - (first.x - first.item.width / 2);
-          const corr = (options.align === 'center' ? (options.maxWidth - w) / 2 : options.maxWidth - w) - (first.x - first.item.width / 2);
-          line.forEach(r => { if (r.inFlow) r.x += corr; });
-        }
-      }
+      this.applyLineAlignment(line, options);
       const bounds = this.calculateBounds(line);
       const baseline = lineBaseYs[idx] ?? (idx * options.lineHeight);
+      linePlans.push({
+        index: idx,
+        baselineY: baseline,
+        hasInFlow: line.some(r => r.inFlow),
+        bounds,
+      });
       ctx.markers.set(`phantom_${idx}.start`, { x: bounds ? bounds.minX : 0, y: baseline });
       ctx.markers.set(`phantom_${idx}.mid`, { x: bounds ? bounds.midX : options.maxWidth / 2, y: baseline });
       ctx.markers.set(`phantom_${idx}.end`, { x: bounds ? bounds.maxX : 0, y: baseline });
@@ -131,7 +196,14 @@ export class TextLayoutEngine {
 
     // 收集幻影扫描期间被写入的标记名（touchedMarkers 在幻影扫描中不会被重置）
     const writtenKeys = new Set(ctx.touchedMarkers);
-    return { markers: ctx.markers, writtenKeys };
+    const preflight: LayoutPreflightResult = {
+      lines: linePlans,
+      anchors: { markers: ctx.markers, writtenKeys },
+      diagnostics: [],
+      estimatedBounds: this.calculateEstimatedBounds(linePlans),
+    };
+    this.lastPreflightResult = preflight;
+    return preflight;
   }
 
   public static calculate(
@@ -140,18 +212,12 @@ export class TextLayoutEngine {
     globalMarkers: MarkerMap = options.externalMarkers
   ): LayoutResult[] {
 
-    const { markers: phantomMarkers, writtenKeys: phantomWrittenKeys } = this.runPhantomPass(stream, options, globalMarkers);
+    const preflight = this.preflight(stream, options, globalMarkers);
+    const phantomMarkers = preflight.anchors.markers;
+    const phantomWrittenKeys = preflight.anchors.writtenKeys;
     const results: LayoutResult[] = [];
 
-    // 找出第一行流内字符的最大 ascent，确保起始 y 坐标不会导致文字超出容器顶端
-    let firstLineMaxAscent = 0;
-    for (const node of stream) {
-      if (node.isCommand) continue;
-      const item = node as LayoutItem;
-      if ((item as any).charData?.char?.text === '\n') break;
-      const ascent = (item as any).charData?.ascent || 0;
-      if (ascent > firstLineMaxAscent) firstLineMaxAscent = ascent;
-    }
+    const firstLineMaxAscent = this.findFirstLineMaxAscent(stream);
 
     const context: LayoutContext = {
       activeCursor: { x: options.indent * options.fontSize, y: firstLineMaxAscent },
@@ -210,17 +276,7 @@ export class TextLayoutEngine {
         let hasInFlow = currentLine ? currentLine.some(r => r.inFlow) : false;
 
         if (currentLine) {
-          const inFlows = currentLine.filter(r => r.inFlow);
-          if (inFlows.length > 0 && options.align !== 'left') {
-            const first = inFlows[0]!, last = inFlows[inFlows.length - 1]!;
-            const w = (last.x + last.item.width / 2) - (first.x - first.item.width / 2);
-            const corr = (options.align === 'center' ? (options.maxWidth - w) / 2 : options.maxWidth - w) - (first.x - first.item.width / 2);
-            currentLine.forEach(r => { if (r.inFlow) r.x += corr; });
-            context.touchedMarkers.forEach(m => {
-              const v = context.markers.get(m);
-              if (v) v.x += corr;
-            });
-          }
+          this.applyLineAlignment(currentLine, options, context.touchedMarkers, context.markers);
           context.markers.set('prev.start', this.toGlobal(context, { x: 0, y: context.baselineY }));
           context.markers.set('prev.mid', this.toGlobal(context, { x: options.maxWidth / 2, y: context.baselineY }));
           context.markers.set('prev.end', this.toGlobal(context, { x: context.activeCursor.x, y: context.baselineY }));
@@ -297,17 +353,7 @@ export class TextLayoutEngine {
     }
     const finalLine = lines[currentLineIndex];
     if (finalLine && finalLine.length > 0) {
-      const inFlows = finalLine.filter(r => r.inFlow);
-      if (inFlows.length > 0 && options.align !== 'left') {
-        const first = inFlows[0]!, last = inFlows[inFlows.length - 1]!;
-        const w = (last.x + last.item.width / 2) - (first.x - first.item.width / 2);
-        const corr = (options.align === 'center' ? (options.maxWidth - w) / 2 : options.maxWidth - w) - (first.x - first.item.width / 2);
-        finalLine.forEach(r => { if (r.inFlow) r.x += corr; });
-        context.touchedMarkers.forEach(m => {
-          const v = context.markers.get(m);
-          if (v) v.x += corr;
-        });
-      }
+      this.applyLineAlignment(finalLine, options, context.touchedMarkers, context.markers);
     }
 
     return results;

@@ -1,6 +1,6 @@
 # Phase 1 Implementation Plan
 
-> 状态：待实施
+> 状态：已完成，进入 Phase 2 准备阶段
 > 目标：把当前重构方案压成第一批可落地的代码改动，并为 Phase B/C 的 graph/state/plugin 演进建立稳定契约
 > 对齐文档：`README.md`、`ir-refactor-outline.md`、`layout-refactor-outline.md`、`execution-refactor-outline.md`、`parser-adaptation-outline.md`
 
@@ -209,6 +209,17 @@ ParagraphAst
 3. `TextLayoutEngine` 能正式产出 `LayoutPreflightResult`
 4. `TextPlayer` 已开始消费 `ChainExecutionPlan` 或等价 adapter 输入
 5. `pnpm test:parser` 和 `pnpm build` 通过
+
+## 当前落地状态
+
+- `WP1 Shared Types Foundation`：已完成
+- `WP2 Parser Boundary Extraction`：已完成
+- `WP3 Layout Preflight Formalization`：已完成
+- `WP4 Execution Adapter Seed`：已完成
+- 验证进度：
+  - `pnpm build`：已通过
+  - `pnpm test:parser`：已通过
+  - 关键样例脚本回归检查：已通过
 
 ## 第一阶段之后再做什么
 

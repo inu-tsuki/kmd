@@ -1,6 +1,6 @@
 # Refactor Overview
 
-> 状态：第二轮审查前总览
+> 状态：Phase 1 与 Phase 2 已完成，当前进入下一阶段规划前的收口状态
 > 目标：统一 parser / IR / layout / execution 四篇方案的入口、术语与优先级
 
 ## 管线总览
@@ -40,6 +40,18 @@ ParagraphAst
 
 这些最痛的执行链问题收掉，再逐步把 document graph / state / segment graph 接进来。
 
+## 当前阶段
+
+```text
+Phase 1
+  -> Shared types / parser boundary / layout preflight / execution seam
+  -> DONE
+
+Phase 2
+  -> TextPlayer planner 深化 / SegmentBuilder 拆分 / PlaybackController 拆分
+  -> DONE
+```
+
 ## 文档导航
 
 - [ir-refactor-outline.md](./ir-refactor-outline.md)
@@ -52,10 +64,14 @@ ParagraphAst
   - `EffectProcessor -> TextPlayer -> ScriptPlayer -> StageManager` 的执行链
 - [phase-1-implementation-plan.md](./phase-1-implementation-plan.md)
   - 第一阶段实施范围、工作包、验收标准与风险控制
+- [phase-2-implementation-plan.md](./phase-2-implementation-plan.md)
+  - 第二阶段实施范围、TextPlayer planner 深化、SegmentBuilder / PlaybackController 拆分
 - [refactor-review.md](./refactor-review.md)
   - 第一轮外部审查意见
 - [refactor-review-v2.md](./refactor-review-v2.md)
   - 第二轮外部审查意见与落地建议
+- [phase2-code-review.md](./phase2-code-review.md)
+  - 第二阶段代码审查与收尾建议
 
 ## 术语约定
 
@@ -109,11 +125,11 @@ ParagraphAst
 
 ## 当前优先级
 
-1. Parser: `ScopeRouter` 提取 + `CompatProjector` 隔离
-2. Shared types: `BaseCue` / `AnchorRef` / `ChainExecutionPlan` / `LayoutPreflightResult` / `DiagnosticEvent`
-3. Layout: 双 pass 正式化
-4. Execution: `ChainExecutionPlan` 定义 + `TextPlayer` planner 提取
-5. Script orchestration: `SegmentBuilder` / `PlaybackController` 拆分
+1. Execution: `TextPlayer` planner 深化与 `ParagraphExecutionPlan` 补强
+2. Script orchestration: `SegmentBuilder` / `PlaybackController` 拆分
+3. Validation: lifecycle / chain mode / seek 回归护栏
+4. Stage host split: `ReaderHost / PresentationManager / StageRuntime`
+5. Phase B: graph / state / control-flow
 
 ## 延后目标
 

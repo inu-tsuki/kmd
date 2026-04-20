@@ -1,3 +1,10 @@
+import type {
+  AnchorState as SharedAnchorState,
+  DiagnosticEvent,
+  LayoutPreflightResult as SharedLayoutPreflightResult,
+} from "../types";
+export type { LinePlan } from "../types";
+
 export type LayoutCommandType =
   | "mark"
   | "markStart"
@@ -71,6 +78,10 @@ export interface CursorState {
   x: number;
   y: number;
 }
+
+export type AnchorState = SharedAnchorState<CursorState>;
+export type LayoutPreflightResult = SharedLayoutPreflightResult<CursorState>;
+export type LayoutDiagnostics = DiagnosticEvent[];
 
 // 排版结果项
 export interface LayoutResult {

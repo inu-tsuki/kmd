@@ -1,7 +1,11 @@
 import { KMDCommandParser } from "./KMDCommandParser";
 import { KmdAstParser } from "./AstParser";
 import { buildParagraphData } from "./lowering";
-import { getCommandSemanticInfo } from "./commandCatalog";
+import {
+  getCommandSemanticInfo,
+  runtimeCommandRegistryView,
+  type CommandRegistryView,
+} from "./commandCatalog";
 import { applyAstTransforms, builtInAstTransforms, builtInIrTransforms } from "./transforms";
 import type {
   KMDParseResult,
@@ -15,6 +19,7 @@ export class KMDParser {
   private astParser = new KmdAstParser();
   private astTransforms: ParserAstTransform[] = [...builtInAstTransforms];
   private irTransforms: ParserIrTransform[] = [...builtInIrTransforms];
+  private registryView: CommandRegistryView = runtimeCommandRegistryView;
 
   public registerAstTransform(transform: ParserAstTransform) {
     this.astTransforms.push(transform);
@@ -22,6 +27,10 @@ export class KMDParser {
 
   public registerIrTransform(transform: ParserIrTransform) {
     this.irTransforms.push(transform);
+  }
+
+  public setCommandRegistryView(registryView: CommandRegistryView) {
+    this.registryView = registryView;
   }
 
   public parse(input: any): KMDParseResult {
@@ -137,11 +146,11 @@ export class KMDParser {
   public parseParagraph(input: string, startLine: number = 0): KMDParagraphData {
     const diagnostics: ParserDiagnostic[] = [];
     const ast = applyAstTransforms(
-      this.astParser.parseParagraph(input, startLine, diagnostics),
+      this.astParser.parseParagraph(input, startLine, diagnostics, this.registryView),
       this.astTransforms,
       diagnostics,
     );
-    const paragraph = buildParagraphData(ast, diagnostics, this.irTransforms);
+    const paragraph = buildParagraphData(ast, diagnostics, this.irTransforms, this.registryView);
     paragraph.lineOffset = startLine;
     return paragraph;
   }
@@ -151,7 +160,7 @@ export class KMDParser {
     const errors: { message: string; line: number }[] = [];
 
     const pushUnknowns = (name: string, line: number) => {
-      const info = getCommandSemanticInfo(name);
+      const info = getCommandSemanticInfo(name, this.registryView);
       if (!info.known) {
         errors.push({
           message: `Unknown command: "${name}"`,
