@@ -72,6 +72,14 @@ try {
     const singleAtResult = parser.parse("@");
     assert(singleAtResult.paragraphs.length === 0, "Standalone '@' line should be ignored as empty command-only input");
 
+    const sceneClearParagraph = parser.parse("---").paragraphs[0];
+    const sceneClearToken = sceneClearParagraph?.tokens[0];
+    assert(sceneClearToken?.isSceneClear === true, "Scene clear sugar should still project as legacy scene-clear token");
+    assert(
+        sceneClearToken?.layoutInstructions.some(i => i.type === "scene.clear"),
+        "Scene clear sugar should lower to internal scene.clear stage cue"
+    );
+
     fs.writeFileSync("parser-output.json", JSON.stringify(result, null, 2), "utf-8");
     console.log("\n🎊 Parser state validated against Report 5.x specifications.");
 } catch (e: any) {

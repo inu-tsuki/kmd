@@ -4,7 +4,7 @@ import { styleManager } from "./StyleManager";
 import { stageManager } from "../stage/StageManager";
 import { TokenWrapper } from "../TokenWrapper";
 import { KineticText } from "../KineticText";
-import { layout } from "../layout/LayoutEngine";
+import { RuntimeValueResolver } from "../runtime/RuntimeValueResolver";
 import type { EffectConfig } from "../parser/types";
 import type { EffectTrack } from "./types";
 import { Container, TextStyle } from "pixi.js";
@@ -106,12 +106,8 @@ export class EffectProcessor {
     if (!params) return {};
     const resolved: any = {};
     Object.entries(params).forEach(([k, v]) => {
-      if (typeof v === 'string' && v.startsWith("var.")) {
-        const marker = layout.globalMarkers.get(v);
-        resolved[k] = marker ? marker.x : v;
-      } else {
-        resolved[k] = v;
-      }
+      const referenced = RuntimeValueResolver.resolveReference(v);
+      resolved[k] = referenced !== undefined ? referenced : v;
     });
     return resolved;
   }

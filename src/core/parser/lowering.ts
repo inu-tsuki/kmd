@@ -109,6 +109,13 @@ function buildInlineFromAst(paragraph: ParagraphAst, diagnostics: ParserDiagnost
     if (line.kind === "scene-clear") {
       const token = createEmptyToken("scene-clear", line.line, line.range);
       token.layoutInstructions.push({
+        type: "scene.clear",
+        params: {},
+        blocking: false,
+        line: line.line,
+        range: { start: 0, end: line.raw.length },
+      });
+      token.layoutInstructions.push({
         type: "pause",
         params: { 0: 0.5 },
         blocking: true,

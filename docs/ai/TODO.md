@@ -90,11 +90,77 @@
     - [x] `pnpm test:parser`
     - [x] 关键样例脚本回归检查（parser/layout/timeline/seek）
 
+### Phase A.S — Stage Host Split Preparation（StageManager 分层准备）— DONE
+
+> 实施方案见 `docs/refactor/phase-3-implementation-plan.md`
+> 目标：围绕 `StageManager` 建立 `StageRuntime / ReaderHost / PresentationManager / RuntimeValueResolver / Stage diagnostics` 的稳定边界，为真实拆分和 Phase B 接入做准备。
+
+- [x] **AS1. Stage Role Decomposition**
+    - [x] 正式命名 `StageRuntime / ReaderHost / PresentationManager / RuntimeValueResolver / StageAuditPort`
+    - [x] 建立最小的 adapter seam，不要求一次搬空 `StageManager.ts`
+- [x] **AS2. ReaderHost / Presentation Policy Seam**
+    - [x] 将 host 挂载与 mode/resize/viewport 规则从 stage cue 执行面中分离
+    - [x] 固定 `stage` / `scroll` / `page` 模式下的边界职责
+- [x] **AS3. RuntimeValueResolver Extraction**
+    - [x] 抽离 `resolveValue()` 共享接缝
+    - [x] 第一轮只覆盖 number / marker / `var.*` / fallback
+    - [x] `EffectProcessor.resolveParams()` 已接入同一 resolver；effect 参数现可解析 marker 坐标与 `var.*`
+- [x] **AS4. Stage Diagnostics / Audit Seed**
+    - [x] 建立 `StageConflictDiagnostics` 的最小落点
+    - [x] 建立 stage 侧 `AuditEvent` / collector 接口
+- [x] **AS5. `scene.clear` Migration Prep**
+    - [x] 固定 `---` -> `scene.clear` 的内部迁移目标
+    - [x] 为注册式 stage cue 承接预留路径
+    - [x] 保留 `SegmentBuilder` 兼容外壳，并明确与 `stagePresets["scene.clear"]` 的同步迁移关系
+
+### Phase A.T — Stage Runtime Extraction（StageRuntime 真拆）— DONE
+
+> 实施方案见 `docs/refactor/phase-4-implementation-plan.md`
+> 目标：在 Phase A.S 已建立的接缝上，真正切出 `StageRuntime`，收掉 `scene.clear` 的兼容双路径，并让 `StageManager` 收缩为 façade / composition root。
+
+- [x] **AT1. StageRuntime Extraction**
+    - [x] 从 `StageManager` 中切出 `camera / cameraOffset / buildMode / registry / apply / modifiers`
+    - [x] 保持对外 API 兼容，不要求一次改名所有调用点
+- [x] **AT2. `scene.clear` Single-Path Runtime Migration**
+    - [x] 让 `scene.clear` 成为唯一 runtime clear 行为路径
+    - [x] 将 `SegmentBuilder` 中基于 `isSceneClear` 的旧显隐逻辑降级为 parser discriminant / timeline marker 用途
+- [x] **AT3. StageManager Façade Cleanup**
+    - [x] 让 `StageManager` 主要保留 host / presentation / audit / compat façade 职责
+    - [x] 明显收缩其运行时执行面
+- [x] **AT4. ReaderHost Lifecycle Seam**
+    - [x] 为 host 绑定补齐最小 detach / dispose 契约
+- [x] **AT5. Validation and Guard Rails**
+    - [x] `pnpm build`
+    - [x] `pnpm test:parser`
+    - [x] 关键样例脚本回归检查（stage clear / page mode / seek）
+
+### Phase A.U — Layout Mainline Unification（单一语义源 / Builder 三角拆分起手）— Current
+
+> 实施方案见 `docs/refactor/phase-5-implementation-plan.md`
+> 目标：收掉 paragraph build 主链路里的双语义源，让 `LayoutStreamBuilder -> TextLayoutEngine -> TextBuilder` 这一段逐步变成 parser-side paragraph input 驱动的正式角色链，为 Phase B 建立稳定的 paragraph build boundary。
+
+- [ ] **AU1. Paragraph Single-Source Build Path**
+    - [ ] 引入 `ParagraphBuildInput` / compat loader，让 `SegmentBuilder` 主路径不再依赖 `KineticText.init(rawText)` 二次 parse
+    - [ ] 保留 editor / preview 所需的 source-driven compat path
+- [ ] **AU2. LayoutPlanner Extraction**
+    - [ ] 从 `LayoutStreamBuilder` 中抽出测量、initial style preview、指令展开、stage lane 收集
+    - [ ] 让 planner 输出 typed item/glyph plan，而不是直接创建 `KineticChar`
+- [ ] **AU3. DisplayAssembler / CompatBinder Split**
+    - [ ] 将 `KineticChar` / `TokenWrapper` 物化从 planner 中移出
+    - [ ] 收口 pending effects / timing sugars / stage instruction 绑定的兼容写回
+- [ ] **AU4. Paragraph Build Boundary Cleanup**
+    - [ ] 将 `TextBuilder` 从 parser 与 UI store 的直接依赖中收缩为 build-context 驱动
+    - [ ] 逐步解除 `TextLayoutEngine` 对 `KineticText.FullOptions` 的 host 类型依赖
+- [ ] **AU5. Validation and Guard Rails**
+    - [ ] `pnpm build`
+    - [ ] `pnpm test:parser`
+    - [ ] 关键样例脚本回归检查（scene.clear / page / seek / paragraph build parity）
+
 ### Phase B — Segment Graph、状态系统与语法演进
 
 > **核心理念**: Segment 内部仍为预烘焙 Timeline（确定性、可 seek），Segment 之间的边为运行时求值（条件分支、状态驱动）。
 > 控制流语法独立于特效链，使用行首 `@` 结构标记。状态层嵌入极简表达式求值器。
-> 默认建立在 **Phase A.R Refactor Foundation** 与 **Phase A.E Execution Consolidation** 完成的基础上推进。
+> 默认建立在 **Phase A.R Refactor Foundation**、**Phase A.E Execution Consolidation**、**Phase A.S Stage Host Split Preparation**、**Phase A.T Stage Runtime Extraction** 与 **Phase A.U Layout Mainline Unification** 完成的基础上推进。
 
 #### B0. 语法统一与增强
 

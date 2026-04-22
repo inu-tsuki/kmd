@@ -123,138 +123,157 @@ export class SegmentBuilder {
     const activeStageTweens = new Map<string, ActiveStageTweenEntry>();
     const virtualCam = { ...stageManager.camera };
     const virtualOff = { ...stageManager.cameraOffset };
+    // page mode and authored scene.clear now share one clear path through StageRuntime.
+    const clearActiveParagraphs = () => {
+      const clearTl = gsap.timeline();
+      for (const paragraphUnit of paragraphUnits) {
+        if (activeParagraphIndices.some((active) => active.index === paragraphUnit.paragraphIndex)) {
+          clearTl.set(paragraphUnit.kineticText, { visible: false }, 0);
+        }
+      }
+      activeParagraphIndices = [];
+      return clearTl;
+    };
 
-    for (let i = 0; i < context.paragraphs.length; i++) {
-      const pData = context.paragraphs[i];
-      const rawText = context.rawParagraphs[i];
-      if (!pData || rawText === undefined) continue;
+    stageManager.setSceneClearHandler(() => clearActiveParagraphs());
 
-      pData.snapshot = {
-        stage: stageManager.dumpState(),
-        layout: layout.dumpState(),
-        activeParagraphs: [...activeParagraphIndices],
-      };
+    try {
+      for (let i = 0; i < context.paragraphs.length; i++) {
+        const pData = context.paragraphs[i];
+        const rawText = context.rawParagraphs[i];
+        if (!pData || rawText === undefined) continue;
 
-      const isSceneClear = context.currentMode === "page" || pData.tokens.some((t) => t.isSceneClear);
-      if (isSceneClear) {
-        for (const paragraphUnit of paragraphUnits) {
-          if (activeParagraphIndices.some((active) => active.index === paragraphUnit.paragraphIndex)) {
-            segmentTl.set(paragraphUnit.kineticText, { visible: false }, segmentCursor);
+        pData.snapshot = {
+          stage: stageManager.dumpState(),
+          layout: layout.dumpState(),
+          activeParagraphs: [...activeParagraphIndices],
+        };
+
+        const hasSceneClearCue = pData.tokens.some((token) =>
+          token.layoutInstructions.some((instruction) => instruction.type === "scene.clear"),
+        );
+
+        // Page mode is treated as an implicit clear cue, but it still reuses the same runtime-owned hook.
+        if (context.currentMode === "page" && activeParagraphIndices.length > 0) {
+          const pageClearTl = clearActiveParagraphs();
+          if (pageClearTl.getChildren().length > 0) {
+            segmentTl.add(pageClearTl, segmentCursor);
           }
         }
-        activeParagraphIndices = [];
-      }
 
-      const paragraphText = await this.createParagraphText(context, pData, rawText);
-      const pos = await this.placeParagraph(paragraphText, context, pData);
+        const paragraphText = await this.createParagraphText(context, pData, rawText);
+        const pos = await this.placeParagraph(paragraphText, context, pData);
 
-      const { visualConfigs, stageConfigs } = EffectProcessor.partition(pData.globalEffects);
-      segmentCursor = this.applyStageConfigs(
-        segmentTl,
-        stageConfigs,
-        stageTweenRecords,
-        activeStageTweens,
-        virtualCam,
-        virtualOff,
-        segmentCursor,
-      );
+        const { visualConfigs, stageConfigs } = EffectProcessor.partition(pData.globalEffects);
+        segmentCursor = this.applyStageConfigs(
+          segmentTl,
+          stageConfigs,
+          stageTweenRecords,
+          activeStageTweens,
+          virtualCam,
+          virtualOff,
+          segmentCursor,
+        );
 
-      if (visualConfigs.length > 0) {
-        EffectProcessor.applyGroupEffects(paragraphText, [...visualConfigs]);
-      }
+        if (visualConfigs.length > 0) {
+          EffectProcessor.applyGroupEffects(paragraphText, [...visualConfigs]);
+        }
 
-      const paragraphExecutionPlan = createParagraphExecutionPlan(paragraphText._allCharsCached, paragraphText.tokens);
-      const buildResult = TextPlayer.buildTimeline(
-        paragraphText,
-        paragraphExecutionPlan,
-        { speed: context.metadata.speed },
-      );
+        const paragraphExecutionPlan = createParagraphExecutionPlan(paragraphText._allCharsCached, paragraphText.tokens);
+        const buildResult = TextPlayer.buildTimeline(
+          paragraphText,
+          paragraphExecutionPlan,
+          { speed: context.metadata.speed },
+        );
 
-      const childCount = buildResult.timeline.getChildren().length;
-      if (childCount > 0) {
-        segmentTl.add(buildResult.timeline, segmentCursor);
-      }
-      console.log(
-        `[BuildSegment] p[${i}] chars=${paragraphText._allCharsCached.length} ` +
-        `tlChildren=${childCount} dur=${buildResult.duration.toFixed(2)}s ` +
-        `offset=${segmentCursor.toFixed(2)}s behaviors=${buildResult.behaviors.length}`,
-      );
+        const childCount = buildResult.timeline.getChildren().length;
+        if (childCount > 0) {
+          segmentTl.add(buildResult.timeline, segmentCursor);
+        }
+        console.log(
+          `[BuildSegment] p[${i}] chars=${paragraphText._allCharsCached.length} ` +
+          `tlChildren=${childCount} dur=${buildResult.duration.toFixed(2)}s ` +
+          `offset=${segmentCursor.toFixed(2)}s behaviors=${buildResult.behaviors.length}`,
+        );
 
-      context.container.addChild(paragraphText);
-      activeTexts.push(paragraphText);
-      paragraphText._allCharsCached.forEach((char) => { char.visible = false; });
-      paragraphText.visible = true;
+        context.container.addChild(paragraphText);
+        activeTexts.push(paragraphText);
+        paragraphText._allCharsCached.forEach((char) => { char.visible = false; });
+        paragraphText.visible = true;
 
-      for (const behavior of buildResult.behaviors) {
-        const absTime = behavior.timePosition + segmentCursor;
-        allBehaviors.push({
-          ...behavior,
-          timePosition: absTime,
-        });
-        const behaviorChar = behavior.char;
-        const behaviorName = behavior.effectName;
-        const behaviorParams = { ...behavior.params };
-        segmentTl.call(() => {
-          if (!context.playbackState.isAutoPlaying) return;
-          effectManager.apply(behaviorChar, behaviorName, behaviorParams, true);
-          context.playbackState.activeBehaviorCleanups.push({
-            char: behaviorChar,
-            modName: behaviorName,
+        for (const behavior of buildResult.behaviors) {
+          const absTime = behavior.timePosition + segmentCursor;
+          allBehaviors.push({
+            ...behavior,
+            timePosition: absTime,
           });
-        }, [], absTime);
-      }
+          const behaviorChar = behavior.char;
+          const behaviorName = behavior.effectName;
+          const behaviorParams = { ...behavior.params };
+          segmentTl.call(() => {
+            if (!context.playbackState.isAutoPlaying) return;
+            effectManager.apply(behaviorChar, behaviorName, behaviorParams, true);
+            context.playbackState.activeBehaviorCleanups.push({
+              char: behaviorChar,
+              modName: behaviorName,
+            });
+          }, [], absTime);
+        }
 
-      for (const styleRecord of buildResult.styleRecords) {
-        allStyleRecords.push({
-          ...styleRecord,
-          timePosition: styleRecord.timePosition + segmentCursor,
-        });
-      }
-
-      paragraphUnits.push({
-        paragraphIndex: i,
-        kineticText: paragraphText,
-        offsetInSegment: segmentCursor,
-        behaviors: buildResult.behaviors,
-        duration: buildResult.duration,
-      });
-
-      const absStartMs = segmentCursor * 1000;
-      pData.absStartTime = absStartMs;
-      pData.estimatedDuration = buildResult.duration * 1000;
-      pData.tokens.forEach((token) => {
-        if (token.startTime !== undefined && (token.content.trim() || token.isSceneClear)) {
-          const absStart = absStartMs + token.startTime;
-          const nextToken = pData.tokens[pData.tokens.indexOf(token) + 1];
-          const endTime = nextToken
-            ? absStartMs + nextToken.startTime!
-            : absStartMs + buildResult.duration * 1000;
-
-          markers.push({
-            line: (token.line || 0) + 1,
-            startTime: absStart,
-            duration: Math.max(50, endTime - absStart),
-            content: token.isSceneClear ? "--- SCENE CLEAR ---" : token.content,
-            type: token.isSceneClear ? "scene" : "text",
+        for (const styleRecord of buildResult.styleRecords) {
+          allStyleRecords.push({
+            ...styleRecord,
+            timePosition: styleRecord.timePosition + segmentCursor,
           });
         }
-      });
 
-      activeParagraphIndices.push({ index: i, x: pos.x, y: pos.y });
-      const height = paragraphText.getLayoutHeight();
-      layout.currentY += height + 20;
+        paragraphUnits.push({
+          paragraphIndex: i,
+          kineticText: paragraphText,
+          offsetInSegment: segmentCursor,
+          behaviors: buildResult.behaviors,
+          duration: buildResult.duration,
+        });
 
-      if (buildResult.advanceTime !== undefined) {
-        segmentCursor += buildResult.advanceTime;
-      } else {
-        segmentCursor += buildResult.duration;
-        if (!isSceneClear) {
-          segmentCursor += 2;
+        const absStartMs = segmentCursor * 1000;
+        pData.absStartTime = absStartMs;
+        pData.estimatedDuration = buildResult.duration * 1000;
+        pData.tokens.forEach((token) => {
+          if (token.startTime !== undefined && (token.content.trim() || token.isSceneClear)) {
+            const absStart = absStartMs + token.startTime;
+            const nextToken = pData.tokens[pData.tokens.indexOf(token) + 1];
+            const endTime = nextToken
+              ? absStartMs + nextToken.startTime!
+              : absStartMs + buildResult.duration * 1000;
+
+            markers.push({
+              line: (token.line || 0) + 1,
+              startTime: absStart,
+              duration: Math.max(50, endTime - absStart),
+              content: token.isSceneClear ? "--- SCENE CLEAR ---" : token.content,
+              type: token.isSceneClear ? "scene" : "text",
+            });
+          }
+        });
+
+        activeParagraphIndices.push({ index: i, x: pos.x, y: pos.y });
+        const height = paragraphText.getLayoutHeight();
+        layout.currentY += height + 20;
+
+        if (buildResult.advanceTime !== undefined) {
+          segmentCursor += buildResult.advanceTime;
+        } else {
+          segmentCursor += buildResult.duration;
+          if (!(context.currentMode === "page" || hasSceneClearCue)) {
+            segmentCursor += 2;
+          }
         }
       }
+    } finally {
+      stageManager.setSceneClearHandler(undefined);
+      stageManager.buildMode = false;
     }
 
-    stageManager.buildMode = false;
     segmentTl.set({}, {}, segmentCursor);
 
     const inFlight = stageTweenRecords.filter((record) => {
@@ -392,6 +411,12 @@ export class SegmentBuilder {
       } else if (propKey) {
         const existing = activeStageTweens.get(propKey);
         if (existing) {
+          stageManager.reportConflictDiagnostic({
+            severity: "warning",
+            channel: propKey,
+            command: config.name,
+            message: `Trimmed active stage tween on channel "${propKey}" before applying "${config.name}".`,
+          });
           const cutValues = trimActiveStageTween(segmentTl, existing, cursor);
           if (cutValues) {
             Object.assign(propKey.startsWith("offset") ? virtualOff : virtualCam, cutValues);

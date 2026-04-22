@@ -1,27 +1,13 @@
 import { Container, Graphics } from "pixi.js";
-import { readerApp } from "../App";
 import { layout } from "../layout/LayoutEngine";
+import { RuntimeValueResolver } from "../runtime/RuntimeValueResolver";
+import { MemoryStageAuditPort, type StageAuditPort } from "./StageAudit";
+import { PresentationManager } from "./PresentationManager";
+import type { ReaderHost } from "./ReaderHost";
+import { stageRuntime } from "./StageRuntimeInstance";
+import type { CameraModifier, StageEffectFunction, StageSceneClearHandler } from "./StageRuntime";
 import gsap from "gsap";
-
-export interface CameraState {
-  x: number;
-  y: number;
-  zoom: number;
-  rotation: number;
-}
-
-export interface StageState {
-  camera: CameraState;
-  /** Timeline 驱动的叠加偏移层（cam.offset 的 Tween 目标） */
-  cameraOffset: CameraState;
-  designWidth: number;
-  designHeight: number;
-  isFixedRatio: boolean;
-  backgroundColor: string | number;
-}
-
-export type CameraModifier = (time: number) => Partial<CameraState>;
-export type StageEffectFunction = (params: any) => void | gsap.core.Tween | gsap.core.Timeline | Promise<void>;
+import type { CameraState, StageAuditEntry, StageConflictDiagnostic, StageMode, StageState } from "./types";
 
 class StageManager {
   public world: Container;
@@ -30,23 +16,12 @@ class StageManager {
   public uiLayer: Container;
   private letterbox: Graphics;
 
-  // 状态
-  public camera: CameraState = { x: 0, y: 0, zoom: 1, rotation: 0 };
-  /** Timeline 驱动的叠加偏移层 — cam.offset 的 Tween 目标，与 camera 独立避免属性冲突 */
-  public cameraOffset: CameraState = { x: 0, y: 0, zoom: 1, rotation: 0 };
-  /** Build 模式标志：buildSegment() 期间为 true，禁用 overwrite:"auto" 和 immediateRender */
-  public buildMode = false;
-  private modifiers: Map<string, CameraModifier> = new Map();
-
-  public designWidth: number = 1920;
-  public designHeight: number = 1080;
-  public isFixedRatio: boolean = false;
-  private _viewport = { offsetX: 0, offsetY: 0, baseScale: 1 };
+  private presentation = new PresentationManager();
+  private host: ReaderHost | null = null;
   private _bgColor: string | number = 0x000000;
-
-  private registry: Map<string, StageEffectFunction> = new Map();
-  public camAuditLog: any[] = [];
+  private auditPort: StageAuditPort = new MemoryStageAuditPort();
   private isInitialized = false;
+  private hostDisposers: Array<() => void> = [];
 
   constructor() {
     this.world = new Container();
@@ -56,18 +31,34 @@ class StageManager {
     this.letterbox = new Graphics();
     this.world.addChild(this.backgroundLayer);
     this.world.addChild(this.contentLayer);
+    stageRuntime.setDesignMetricsProvider(() => ({
+      width: this.presentation.designWidth,
+      height: this.presentation.designHeight,
+    }));
+    stageRuntime.setAuditPortProvider(() => this.auditPort);
   }
 
-  public init() {
-    if (this.isInitialized) return;
+  public attachHost(host: ReaderHost) {
+    this.clearHostBindings();
+    this.host = host;
+    this.host.setBackgroundColor(this._bgColor);
+    if (this.isInitialized) {
+      this.resize();
+      this.bindHostListeners();
+    }
+  }
 
-    const stage = readerApp.pixiApp.stage;
-    stage.addChild(this.world);
-    stage.addChild(this.uiLayer);
-    stage.addChild(this.letterbox);
+  public init(host?: ReaderHost) {
+    if (host) this.attachHost(host);
+    if (this.isInitialized) return;
+    if (!this.host) {
+      console.warn("[StageManager] init() called without a ReaderHost.");
+      return;
+    }
+
+    this.host.mountStage(this.world, this.uiLayer, this.letterbox);
     this.resize();
-    readerApp.pixiApp.renderer.on("resize", () => this.resize());
-    readerApp.pixiApp.ticker.add(this.update, this);
+    this.bindHostListeners();
 
     this.isInitialized = true;
   }
@@ -77,8 +68,8 @@ class StageManager {
    */
   public dumpState(): StageState {
     return {
-      camera: { ...this.camera },
-      cameraOffset: { ...this.cameraOffset },
+      camera: { ...stageRuntime.camera },
+      cameraOffset: { ...stageRuntime.cameraOffset },
       designWidth: this.designWidth,
       designHeight: this.designHeight,
       isFixedRatio: this.isFixedRatio,
@@ -90,15 +81,12 @@ class StageManager {
    * 加载状态快照
    */
   public loadState(state: StageState) {
-    this.camera = { ...state.camera };
-    this.cameraOffset = state.cameraOffset ? { ...state.cameraOffset } : { x: 0, y: 0, zoom: 1, rotation: 0 };
-    this.designWidth = state.designWidth;
-    this.designHeight = state.designHeight;
-    this.isFixedRatio = state.isFixedRatio;
+    stageRuntime.restoreState(state.camera, state.cameraOffset);
+    this.presentation.loadState(state);
     this.setBackgroundColor(state.backgroundColor);
 
-    gsap.killTweensOf(this.camera);
-    gsap.killTweensOf(this.cameraOffset);
+    gsap.killTweensOf(stageRuntime.camera);
+    gsap.killTweensOf(stageRuntime.cameraOffset);
     this.resize();
   }
 
@@ -106,118 +94,103 @@ class StageManager {
    * 暴露给插件的工具：获取当前状态副本
    */
   public getSnapshot(): CameraState {
-    return {
-      x: this.camera.x,
-      y: this.camera.y,
-      zoom: this.camera.zoom,
-      rotation: this.camera.rotation
-    };
+    return stageRuntime.getSnapshot();
   }
 
-  public addModifier(name: string, mod: CameraModifier) { this.modifiers.set(name, mod); }
-  public removeModifier(name: string) { this.modifiers.delete(name); }
-  public clearModifiers() { this.modifiers.clear(); }
+  public get camera() {
+    return stageRuntime.camera;
+  }
+
+  public get cameraOffset() {
+    return stageRuntime.cameraOffset;
+  }
+
+  public get buildMode() {
+    return stageRuntime.buildMode;
+  }
+
+  public set buildMode(value: boolean) {
+    stageRuntime.buildMode = value;
+  }
+
+  public addModifier(name: string, mod: CameraModifier) { stageRuntime.addModifier(name, mod); }
+  public removeModifier(name: string) { stageRuntime.removeModifier(name); }
+  public clearModifiers() { stageRuntime.clearModifiers(); }
+  public setSceneClearHandler(handler?: StageSceneClearHandler) { stageRuntime.setSceneClearHandler(handler); }
 
   public resolveValue(val: any, fallback: number): number {
-    if (typeof val === "number") return val;
-    if (typeof val !== "string") return fallback;
-    const markerMatch = val.match(/^([\w-]+)\.([\w-]+)\.([xy])$/);
-    if (markerMatch) {
-      const [_, name, type, coord] = markerMatch;
-      const marker = layout.globalMarkers.get(`${name}.${type}`);
-      if (marker) return coord === "x" ? marker.x : marker.y;
-    }
-    const varMatch = val.match(/^var\.([\w-]+)$/);
-    if (varMatch) {
-      const varKey = `var.${varMatch[1]}`;
-      const variable = layout.globalMarkers.get(varKey);
-      if (variable) return variable.x;
-    }
-    const num = parseFloat(val);
-    return isNaN(num) ? fallback : num;
+    return RuntimeValueResolver.resolveNumeric(val, fallback);
   }
 
-  public register(name: string, fn: StageEffectFunction) {
-    this.registry.set(name, fn);
+  public get designWidth() {
+    return this.presentation.designWidth;
   }
 
-  public registerBatch(presets: Record<string, StageEffectFunction>) {
-    Object.entries(presets).forEach(([k, v]) => this.register(k, v));
+  public get designHeight() {
+    return this.presentation.designHeight;
   }
 
-  public has(name: string): boolean {
-    return this.registry.has(name);
+  public get isFixedRatio() {
+    return this.presentation.isFixedRatio;
   }
 
-  public apply(name: string, params: any): any {
-    const fn = this.registry.get(name);
-    if (fn) {
-      const before = this.getSnapshot();
-
-      // 参数预解析
-      const resolvedParams: any = {};
-      Object.entries(params).forEach(([key, val]) => {
-        if (["duration", "d", "2"].includes(key) || (name !== "cam.move" && key === "1")) {
-          resolvedParams[key] = this.resolveValue(val, 0);
-        } else {
-          resolvedParams[key] = this.resolveValue(val, (before as any)[key] ?? 0);
-        }
-      });
-
-      // 简单的审计预测 (仅覆盖核心基础指令)
-      const target = { ...before };
-      if (name === "cam.move") {
-        target.x = resolvedParams.x ?? resolvedParams[0] ?? before.x;
-        target.y = resolvedParams.y ?? resolvedParams[1] ?? before.y;
-      } else if (name === "cam.zoom") {
-        target.zoom = resolvedParams.val ?? resolvedParams[0] ?? before.zoom;
-      }
-
-      this.camAuditLog.push({
-        time: new Date().toLocaleTimeString(),
-        effect: name,
-        params: { ...resolvedParams },
-        cameraBefore: before,
-        cameraTarget: target,
-        overwriteWarning: gsap.getTweensOf(this.camera).length > 0,
-        worldState: { centerX: this.designWidth / 2 + before.x, centerY: this.designHeight / 2 + before.y }
-      });
-
-      // 执行模块化的指令实现
-      return fn(resolvedParams);
-    }
+  public get viewport() {
+    return this.presentation.viewport;
   }
+
+  public get camAuditLog(): StageAuditEntry[] {
+    return this.auditPort.getEntries();
+  }
+
+  public get stageConflictDiagnostics(): StageConflictDiagnostic[] {
+    return this.auditPort.getConflicts();
+  }
+
+  public setAuditPort(port: StageAuditPort) {
+    this.auditPort = port;
+    stageRuntime.setAuditPortProvider(() => this.auditPort);
+  }
+
+  public reportConflictDiagnostic(diagnostic: StageConflictDiagnostic) {
+    this.auditPort.reportConflict(diagnostic);
+  }
+
+  public register(name: string, fn: StageEffectFunction) { stageRuntime.register(name, fn); }
+
+  public registerBatch(presets: Record<string, StageEffectFunction>) { stageRuntime.registerBatch(presets); }
+
+  public has(name: string): boolean { return stageRuntime.has(name); }
+
+  public apply(name: string, params: any): any { return stageRuntime.apply(name, params); }
 
   public setDesignResolution(width: number, height: number) {
-    this.designWidth = width;
-    this.designHeight = height;
+    this.presentation.setDesignResolution(width, height);
     this.resize();
   }
 
   public setBackgroundColor(color: string | number) {
     this._bgColor = color;
-    if (readerApp.pixiApp && readerApp.pixiApp.renderer) {
-      readerApp.pixiApp.renderer.background.color = color;
-    }
+    this.host?.setBackgroundColor(color);
   }
 
-  public setMode(mode: "stage" | "scroll") {
-    this.isFixedRatio = mode === "stage";
-    gsap.killTweensOf(this.camera);
-    gsap.killTweensOf(this.cameraOffset);
+  public setMode(mode: StageMode) {
+    this.presentation.setMode(mode);
+    gsap.killTweensOf(stageRuntime.camera);
+    gsap.killTweensOf(stageRuntime.cameraOffset);
     if (this.isFixedRatio) {
       layout.maxWidth = this.designWidth * 0.8;
-      this.camera.x = 0; this.camera.y = 0; this.camera.zoom = 1; this.camera.rotation = 0;
-      this.cameraOffset.x = 0; this.cameraOffset.y = 0; this.cameraOffset.zoom = 1; this.cameraOffset.rotation = 0;
+      stageRuntime.restoreState(
+        { x: 0, y: 0, zoom: 1, rotation: 0 },
+        { x: 0, y: 0, zoom: 1, rotation: 0 },
+      );
     } else {
-      gsap.to(this.camera, { x: 0, y: 0, zoom: 1, rotation: 0, duration: 0.5 });
-      this.cameraOffset.x = 0; this.cameraOffset.y = 0; this.cameraOffset.zoom = 1; this.cameraOffset.rotation = 0;
+      gsap.to(stageRuntime.camera, { x: 0, y: 0, zoom: 1, rotation: 0, duration: 0.5 });
+      stageRuntime.cameraOffset.x = 0;
+      stageRuntime.cameraOffset.y = 0;
+      stageRuntime.cameraOffset.zoom = 1;
+      stageRuntime.cameraOffset.rotation = 0;
     }
     this.resize();
-  }
-
-  public get viewport() {
-    return this._viewport;
   }
 
   public get config() {
@@ -228,7 +201,11 @@ class StageManager {
     };
   }
 
+  /**
+   * @deprecated 兼容期导出入口。未来应改走统一 AuditBus / DiagnosticsCollector。
+   */
   public dumpCamReport() {
+    console.warn("[StageManager] dumpCamReport() is deprecated; prefer unified audit export.");
     fetch("http://localhost:9999/cam", {
       method: "POST",
       body: JSON.stringify(this.camAuditLog, null, 2),
@@ -237,12 +214,13 @@ class StageManager {
   }
 
   private resize() {
+    if (!this.host) return;
+
     // 使用逻辑像素尺寸 (Screen)，它已经考虑了 resolution 和 autoDensity
-    const screenW = readerApp.pixiApp.screen.width;
-    const screenH = readerApp.pixiApp.screen.height;
+    const { width: screenW, height: screenH } = this.host.getScreenSize();
+    const viewport = this.presentation.updateViewport(screenW, screenH);
 
     if (!this.isFixedRatio) {
-      this._viewport = { offsetX: 0, offsetY: 0, baseScale: 1 };
       this.letterbox.clear();
       this.world.scale.set(1);
       this.world.position.set(0, 0);
@@ -250,10 +228,7 @@ class StageManager {
       return;
     }
 
-    const scale = Math.min(screenW / this.designWidth, screenH / this.designHeight);
-    const offsetX = (screenW - this.designWidth * scale) / 2;
-    const offsetY = (screenH - this.designHeight * scale) / 2;
-    this._viewport = { offsetX, offsetY, baseScale: scale };
+    const { offsetX, offsetY } = viewport;
 
     this.letterbox.clear().fill({ color: 0x000000 });
     if (offsetY > 0) {
@@ -268,33 +243,29 @@ class StageManager {
   }
 
   private updateWorldTransform() {
-    const { baseScale: vs, offsetX, offsetY } = this._viewport;
+    const { baseScale: vs, offsetX, offsetY } = this.viewport;
     if (!this.isFixedRatio) return;
 
-    // 三层合成：base camera + Timeline offset + Ticker modifiers
-    const co = this.cameraOffset;
-    let finalX = this.camera.x + co.x;
-    let finalY = this.camera.y + co.y;
-    let finalZoom = this.camera.zoom * co.zoom;
-    let finalRotation = this.camera.rotation + co.rotation;
-
-    const time = performance.now();
-
-    this.modifiers.forEach(mod => {
-      const offset = mod(time);
-      if (offset.x !== undefined) finalX += offset.x;
-      if (offset.y !== undefined) finalY += offset.y;
-      if (offset.zoom !== undefined) finalZoom *= offset.zoom;
-      if (offset.rotation !== undefined) finalRotation += offset.rotation;
-    });
+    const composed = stageRuntime.resolveComposedCameraState(performance.now());
 
     // 核心修正：缩放应该叠加基础比例和相机缩放
-    this.world.scale.set(vs * finalZoom);
-    this.world.rotation = finalRotation;
+    this.world.scale.set(vs * composed.zoom);
+    this.world.rotation = composed.rotation;
     // Pivot 依然在设计空间的中心
-    this.world.pivot.set((this.designWidth / 2) + finalX, (this.designHeight / 2) + finalY);
+    this.world.pivot.set((this.designWidth / 2) + composed.x, (this.designHeight / 2) + composed.y);
     // Position 始终对齐画布物理中心
     this.world.position.set(offsetX + (this.designWidth * vs) / 2, offsetY + (this.designHeight * vs) / 2);
+  }
+
+  private bindHostListeners() {
+    if (!this.host) return;
+    this.hostDisposers.push(this.host.onResize(() => this.resize()));
+    this.hostDisposers.push(this.host.addTicker(this.update, this));
+  }
+
+  private clearHostBindings() {
+    this.hostDisposers.forEach((dispose) => dispose());
+    this.hostDisposers = [];
   }
 
   private update() {
@@ -306,3 +277,5 @@ export const stageManager = new StageManager();
 
 import { stagePresets } from "./stagePresets";
 stageManager.registerBatch(stagePresets);
+export type { CameraState, StageAuditEntry, StageConflictDiagnostic, StageMode, StageState } from "./types";
+export type { CameraModifier, StageEffectFunction } from "./StageRuntime";

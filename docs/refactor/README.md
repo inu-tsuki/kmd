@@ -1,6 +1,6 @@
 # Refactor Overview
 
-> 状态：Phase 1 与 Phase 2 已完成，当前进入下一阶段规划前的收口状态
+> 状态：Phase 1 至 Phase 4 已完成，当前进入 Phase 5 规划
 > 目标：统一 parser / IR / layout / execution 四篇方案的入口、术语与优先级
 
 ## 管线总览
@@ -50,6 +50,18 @@ Phase 1
 Phase 2
   -> TextPlayer planner 深化 / SegmentBuilder 拆分 / PlaybackController 拆分
   -> DONE
+
+Phase 3
+  -> StageManager 分层准备 / ReaderHost-PresentationManager 边界 / RuntimeValueResolver / Stage diagnostics
+  -> DONE
+
+Phase 4
+  -> StageRuntime 真拆 / scene.clear 单路径迁移 / StageManager façade 收缩
+  -> DONE
+
+Phase 5
+  -> 单一语义源 / Layout mainline unification / LayoutPlanner-DisplayAssembler-CompatBinder 起手
+  -> PLANNED
 ```
 
 ## 文档导航
@@ -66,6 +78,16 @@ Phase 2
   - 第一阶段实施范围、工作包、验收标准与风险控制
 - [phase-2-implementation-plan.md](./phase-2-implementation-plan.md)
   - 第二阶段实施范围、TextPlayer planner 深化、SegmentBuilder / PlaybackController 拆分
+- [phase-3-implementation-plan.md](./phase-3-implementation-plan.md)
+  - 第三阶段实施范围、StageManager 分层准备、ReaderHost / PresentationManager / RuntimeValueResolver / Stage diagnostics
+- [phase-4-implementation-plan.md](./phase-4-implementation-plan.md)
+  - 第四阶段实施范围、StageRuntime 抽离、`scene.clear` 单路径迁移、StageManager façade 收缩
+- [phase4-code-review.md](./phase4-code-review.md)
+  - 第四阶段代码审查、文档漂移修正、下一阶段建议
+- [phase-5-implementation-plan.md](./phase-5-implementation-plan.md)
+  - 第五阶段实施范围、单一语义源、layout 主链路拆分、`TextBuilder`/`KineticText` build boundary 收束
+- [phase3-code-review.md](./phase3-code-review.md)
+  - 第三阶段代码审查、`scene.clear` 双路径风险与收尾建议
 - [refactor-review.md](./refactor-review.md)
   - 第一轮外部审查意见
 - [refactor-review-v2.md](./refactor-review-v2.md)
@@ -125,11 +147,9 @@ Phase 2
 
 ## 当前优先级
 
-1. Execution: `TextPlayer` planner 深化与 `ParagraphExecutionPlan` 补强
-2. Script orchestration: `SegmentBuilder` / `PlaybackController` 拆分
-3. Validation: lifecycle / chain mode / seek 回归护栏
-4. Stage host split: `ReaderHost / PresentationManager / StageRuntime`
-5. Phase B: graph / state / control-flow
+1. Phase 5 方案落地：paragraph build 单一语义源
+2. `LayoutPlanner / DisplayAssembler / CompatBinder` 拆分起手
+3. Phase B 最小骨架的前置边界准备
 
 ## 延后目标
 

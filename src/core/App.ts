@@ -1,4 +1,5 @@
 import { Application, Assets } from "pixi.js";
+import { PixiReaderHost } from "./stage/ReaderHost";
 import { stageManager } from "./stage/StageManager";
 
 declare global {
@@ -49,7 +50,7 @@ class ReaderApp {
     await this.loadFonts();
 
     // 初始化舞台管理器（预设已通过模块顶层自动注册）
-    stageManager.init();
+    stageManager.init(new PixiReaderHost(this.pixiApp));
 
     // 将 Canvas 添加到 DOM
     container.appendChild(this.pixiApp.canvas);

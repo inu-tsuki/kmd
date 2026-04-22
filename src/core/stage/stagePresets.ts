@@ -1,4 +1,5 @@
-import { stageManager, type StageEffectFunction } from "./StageManager";
+import { stageRuntime } from "./StageRuntimeInstance";
+import type { StageEffectFunction } from "./StageRuntime";
 import gsap from "gsap";
 
 /**
@@ -9,17 +10,26 @@ export const MODIFIER_BASED_COMMANDS = new Set(["cam.shake", "cam.drift"]);
 
 export const stagePresets: Record<string, StageEffectFunction> = {
   /**
+   * 段落清屏统一走 runtime hook。
+   * parser 仍可保留 `isSceneClear` 作为 discriminant/marker 信息，
+   * 但运行时显隐行为不再依赖 legacy 分支。
+   */
+  "scene.clear": () => {
+    return stageRuntime.runSceneClear();
+  },
+
+  /**
    * 基础位移组件
    */
   "cam.move": (p: any) => {
     const duration = p.duration ?? p.d ?? p[2] ?? 0;
-    return gsap.to(stageManager.camera, {
-      x: p.x ?? p[0] ?? stageManager.camera.x,
-      y: p.y ?? p[1] ?? stageManager.camera.y,
+    return gsap.to(stageRuntime.camera, {
+      x: p.x ?? p[0] ?? stageRuntime.camera.x,
+      y: p.y ?? p[1] ?? stageRuntime.camera.y,
       duration,
       ease: duration > 0 ? "power2.inOut" : "none",
-      overwrite: stageManager.buildMode ? false : "auto",
-      immediateRender: stageManager.buildMode ? false : undefined,
+      overwrite: stageRuntime.buildMode ? false : "auto",
+      immediateRender: stageRuntime.buildMode ? false : undefined,
     });
   },
 
@@ -28,12 +38,12 @@ export const stagePresets: Record<string, StageEffectFunction> = {
    */
   "cam.zoom": (p: any) => {
     const duration = p.duration ?? p.d ?? p[1] ?? 0;
-    return gsap.to(stageManager.camera, {
-      zoom: p.val ?? p[0] ?? stageManager.camera.zoom,
+    return gsap.to(stageRuntime.camera, {
+      zoom: p.val ?? p[0] ?? stageRuntime.camera.zoom,
       duration,
       ease: duration > 0 ? "power2.inOut" : "none",
-      overwrite: stageManager.buildMode ? false : "auto",
-      immediateRender: stageManager.buildMode ? false : undefined,
+      overwrite: stageRuntime.buildMode ? false : "auto",
+      immediateRender: stageRuntime.buildMode ? false : undefined,
     });
   },
 
@@ -42,12 +52,12 @@ export const stagePresets: Record<string, StageEffectFunction> = {
    */
   "cam.rotate": (p: any) => {
     const duration = p.duration ?? p.d ?? p[1] ?? 0;
-    return gsap.to(stageManager.camera, {
-      rotation: p.val ?? p[0] ?? stageManager.camera.rotation,
+    return gsap.to(stageRuntime.camera, {
+      rotation: p.val ?? p[0] ?? stageRuntime.camera.rotation,
       duration,
       ease: duration > 0 ? "power2.inOut" : "none",
-      overwrite: stageManager.buildMode ? false : "auto",
-      immediateRender: stageManager.buildMode ? false : undefined,
+      overwrite: stageRuntime.buildMode ? false : "auto",
+      immediateRender: stageRuntime.buildMode ? false : undefined,
     });
   },
 
@@ -59,8 +69,8 @@ export const stagePresets: Record<string, StageEffectFunction> = {
     const absY = p.y ?? p[1];
     const duration = p.duration ?? p.d ?? p[2] ?? 0;
 
-    const offX = absX - stageManager.designWidth / 2;
-    const offY = absY - stageManager.designHeight / 2;
+    const offX = absX - stageRuntime.designWidth / 2;
+    const offY = absY - stageRuntime.designHeight / 2;
 
     return stagePresets["cam.move"]!({ x: offX, y: offY, duration });
   },
@@ -70,13 +80,13 @@ export const stagePresets: Record<string, StageEffectFunction> = {
    */
   "cam.offset": (p: any) => {
     const duration = p.duration ?? p.d ?? p[2] ?? 0;
-    return gsap.to(stageManager.cameraOffset, {
-      x: p.x ?? p[0] ?? stageManager.cameraOffset.x,
-      y: p.y ?? p[1] ?? stageManager.cameraOffset.y,
+    return gsap.to(stageRuntime.cameraOffset, {
+      x: p.x ?? p[0] ?? stageRuntime.cameraOffset.x,
+      y: p.y ?? p[1] ?? stageRuntime.cameraOffset.y,
       duration,
       ease: duration > 0 ? "power2.inOut" : "none",
-      overwrite: stageManager.buildMode ? false : "auto",
-      immediateRender: stageManager.buildMode ? false : undefined,
+      overwrite: stageRuntime.buildMode ? false : "auto",
+      immediateRender: stageRuntime.buildMode ? false : undefined,
     });
   },
 
@@ -88,19 +98,19 @@ export const stagePresets: Record<string, StageEffectFunction> = {
     const resetTl = gsap.timeline();
     const tweenOpts = {
       ease: duration > 0 ? "power2.inOut" : "none",
-      overwrite: stageManager.buildMode ? false : ("auto" as gsap.TweenVars["overwrite"]),
-      immediateRender: stageManager.buildMode ? false : undefined,
+      overwrite: stageRuntime.buildMode ? false : ("auto" as gsap.TweenVars["overwrite"]),
+      immediateRender: stageRuntime.buildMode ? false : undefined,
     };
-    resetTl.to(stageManager.camera, { x: 0, y: 0, duration, ...tweenOpts }, 0);
-    resetTl.to(stageManager.camera, { zoom: 1, duration, ...tweenOpts }, 0);
-    resetTl.to(stageManager.camera, { rotation: 0, duration, ...tweenOpts }, 0);
-    resetTl.to(stageManager.cameraOffset, { x: 0, y: 0, duration, ...tweenOpts }, 0);
-    resetTl.to(stageManager.cameraOffset, { zoom: 1, duration, ...tweenOpts }, 0);
-    resetTl.to(stageManager.cameraOffset, { rotation: 0, duration, ...tweenOpts }, 0);
-    if (stageManager.buildMode) {
-      resetTl.call(() => stageManager.clearModifiers(), [], duration);
+    resetTl.to(stageRuntime.camera, { x: 0, y: 0, duration, ...tweenOpts }, 0);
+    resetTl.to(stageRuntime.camera, { zoom: 1, duration, ...tweenOpts }, 0);
+    resetTl.to(stageRuntime.camera, { rotation: 0, duration, ...tweenOpts }, 0);
+    resetTl.to(stageRuntime.cameraOffset, { x: 0, y: 0, duration, ...tweenOpts }, 0);
+    resetTl.to(stageRuntime.cameraOffset, { zoom: 1, duration, ...tweenOpts }, 0);
+    resetTl.to(stageRuntime.cameraOffset, { rotation: 0, duration, ...tweenOpts }, 0);
+    if (stageRuntime.buildMode) {
+      resetTl.call(() => stageRuntime.clearModifiers(), [], duration);
     } else {
-      stageManager.clearModifiers();
+      stageRuntime.clearModifiers();
     }
     return resetTl;
   },
@@ -113,14 +123,14 @@ export const stagePresets: Record<string, StageEffectFunction> = {
     const duration = p.duration ?? p.d ?? p[1] ?? 0.5;
     const state = { s: strength };
 
-    stageManager.addModifier("shake", () => ({
+    stageRuntime.addModifier("shake", () => ({
       x: (Math.random() - 0.5) * state.s * 2,
       y: (Math.random() - 0.5) * state.s * 2,
     }));
 
     return gsap.to(state, {
       s: 0, duration, ease: "power2.out",
-      onComplete: () => stageManager.removeModifier("shake")
+      onComplete: () => stageRuntime.removeModifier("shake")
     });
   },
 
@@ -132,11 +142,11 @@ export const stagePresets: Record<string, StageEffectFunction> = {
     const speed = p.speed ?? p[1] ?? 0.001;
 
     if (strength === 0) {
-      stageManager.removeModifier("drift");
+      stageRuntime.removeModifier("drift");
       return;
     }
 
-    stageManager.addModifier("drift", (time) => ({
+    stageRuntime.addModifier("drift", (time) => ({
       x: Math.sin(time * speed) * strength,
       y: Math.cos(time * speed * 0.8) * strength,
       rotation: Math.sin(time * speed * 0.5) * 0.01
