@@ -30,5 +30,4 @@ parser-output.json
 
 # Temporary sibling-style project folders if created inside this repo.
 # Keep these out of the KMD main repository; they should be their own Git repos.
-/android-reader/
-/kmd-reader-android/
+apps/android-reader/

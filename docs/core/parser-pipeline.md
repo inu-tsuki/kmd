@@ -82,11 +82,11 @@ AST 节点描述的是源码结构，例如：
 
 如果你要继续阅读解析器和后续模块，建议按这个顺序：
 
-1. `src/core/parser/Parser.ts`
-2. `src/core/parser/AstParser.ts`
-3. `src/core/parser/lowering.ts`
-4. `src/core/render/text/TextBuilder.ts`
-5. `src/core/layout/LayoutStreamBuilder.ts`
+1. `apps/editor/src/core/parser/Parser.ts`
+2. `apps/editor/src/core/parser/AstParser.ts`
+3. `apps/editor/src/core/parser/lowering.ts`
+4. `apps/editor/src/core/render/text/TextBuilder.ts`
+5. `apps/editor/src/core/layout/LayoutStreamBuilder.ts`
 
 一句话记忆：
 

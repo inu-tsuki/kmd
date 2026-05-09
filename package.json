@@ -4,30 +4,13 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vue-tsc -b && vite build",
-    "preview": "vite preview",
-    "test:parser": "node --import tsx src/final-parser-test.ts"
-  },
-  "dependencies": {
-    "gsap": "^3.14.2",
-    "monaco-editor": "^0.55.1",
-    "peggy": "^5.0.6",
-    "pinia": "^3.0.4",
-    "pixi.js": "^8.15.0",
-    "splitpanes": "^4.0.4",
-    "vscode-oniguruma": "^2.0.1",
-    "vscode-textmate": "^9.3.2",
-    "vue": "^3.5.24"
-  },
-  "devDependencies": {
-    "@types/node": "^24.10.1",
-    "@types/wicg-file-system-access": "^2023.10.7",
-    "@vitejs/plugin-vue": "^6.0.1",
-    "@vue/tsconfig": "^0.8.1",
-    "tsx": "^4.21.0",
-    "typescript": "~5.9.3",
-    "vite": "^7.2.4",
-    "vue-tsc": "^3.1.4"
+    "dev": "pnpm --filter @kmd/editor dev",
+    "build": "pnpm --filter @kmd/editor build",
+    "preview": "pnpm --filter @kmd/editor preview",
+    "test:parser": "pnpm --filter @kmd/editor test:parser",
+    "language:check": "node scripts/check-language-assets.mjs",
+    "editor:dev": "pnpm --filter @kmd/editor dev",
+    "editor:build": "pnpm --filter @kmd/editor build",
+    "editor:preview": "pnpm --filter @kmd/editor preview"
   }
 }

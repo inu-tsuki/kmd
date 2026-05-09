@@ -65,4 +65,16 @@ function kmdFileDiscovery(): Plugin {
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [vue(), kmdFileDiscovery()],
+  server: {
+    fs: {
+      allow: [
+        __dirname,
+        path.resolve(__dirname, '../..'),
+      ],
+    },
+  },
+  build: {
+    outDir: path.resolve(__dirname, '../../dist'),
+    emptyOutDir: true,
+  },
 })

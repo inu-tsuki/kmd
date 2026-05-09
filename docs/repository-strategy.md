@@ -9,7 +9,7 @@
 
 > KMD 主仓库，用于孵化 KMD 语言、核心 runtime 和第一批官方宿主应用。
 
-此阶段可以将 GitHub 仓库命名为 `kmd`，但不建议立刻进行大规模目录迁移。
+此阶段可以将 GitHub 仓库命名为 `kmd`。当前已经完成低风险 app-shell 迁移：Web 编辑器整体位于 `apps/editor/`，并新增 `packages/language/` 承接共享语言资产；核心 runtime 仍暂时保留在 `apps/editor/src/core/`，不提前抽包。
 
 ## 2. 整理原则
 
@@ -17,7 +17,8 @@
 - Android Reader、Web Reader、VS Code 扩展和未来社区 Web 都应复用核心 runtime，而不是复制 parser、layout 或 effect 语义。
 - 仓库可以逐步拆分，但核心 API 稳定之前，优先保持主仓库孵化。
 - 文档和产品计划应跟随主仓库维护，避免课程仓库成为唯一事实来源。
-- 大规模目录迁移应晚于第二阶段课程交付，避免把构建路径和正在进行的核心重构混在一起。
+- runtime 抽包应晚于第二阶段课程交付，避免把 package 边界和正在进行的核心重构混在一起。
+- grammar、language configuration 等低耦合语言资产可以先包化，作为未来多宿主共享的最小边界。
 
 ## 3. 推荐本地目录
 
@@ -98,10 +99,10 @@
 
 ```text
 kmd/
-  kmd-reader-android/   # 单独 git 仓库，主仓库通过 .gitignore 忽略
+  apps/android-reader/  # 单独 git 仓库，主仓库通过 .gitignore 忽略
 ```
 
-主仓库应通过根级 `.gitignore` 忽略 `/kmd-reader-android/` 或 `/android-reader/`。这样它在文件系统上可以靠近 KMD 主仓库，但 Git 历史仍然保持分离。
+主仓库应通过根级 `.gitignore` 忽略 `/apps/android-reader/`。这样它在文件系统上可以靠近 KMD 主仓库，但 Git 历史仍然保持分离。
 
 长期更推荐兄弟目录：
 
@@ -117,18 +118,22 @@ kmd/
 
 ```text
 kmd/
-  src/                     # 当前 Web editor 和 runtime 源码
+  apps/
+    editor/                # 当前 Web editor；runtime 暂留在 src/core/
+    android-reader/        # 可选本地 checkout，独立 git，主仓库忽略
+  packages/
+    language/              # 共享 KMD grammar / language configuration
   extensions/vscode-kmd/   # VS Code 扩展
   docs/
     core/
     android-reader/
     research/
     refactor/
-  public/
+  dist/                    # apps/editor 构建产物
   scripts/
 ```
 
-后续在边界稳定后，再演进为：
+后续在 runtime 边界稳定后，再演进为：
 
 ```text
 kmd/
@@ -136,6 +141,7 @@ kmd/
     editor/
     community-web/
   packages/
+    language/
     core/
     reader-runtime-web/
     language-service/
@@ -152,17 +158,17 @@ kmd/
 
 - GitHub 仓库命名为 `kmd`。
 - README 改为 KMD 主仓库定位。
-- 不移动 `src/`。
+- Web editor 整体迁入 `apps/editor/`。
 - 保留 `extensions/vscode-kmd/`。
 - Android Reader 继续作为单独课程仓库。
 
 ### 阶段 B：主仓库内抽包
 
-当核心 runtime 边界更稳定后，在主仓库内部抽出：
+`packages/language/` 已作为先行包承接低耦合语言资产。当核心 runtime 边界更稳定后，再从 `apps/editor/src/core/` 抽出：
 
 ```text
-apps/editor/
 apps/community-web/
+packages/language/
 packages/core/
 packages/reader-runtime-web/
 packages/language-service/
@@ -211,28 +217,29 @@ Android Reader 之后应依赖稳定构建产物或 release artifact，而不是
 
 ## 10. 当前建议
 
-现在可以开始整理，但仅做低风险整理：
+当前已经完成低风险 app-shell 迁移：
 
-- 更新 README 的项目定位。
-- 更新 docs 索引。
-- 新增仓库策略文档。
-- 保持核心代码和目录结构不动。
+- Web editor 位于 `apps/editor/`。
+- 根目录保留 pnpm workspace 与转发脚本。
+- `packages/language/` 提供共享 grammar/config 的包引用边界。
+- Android Reader 可以临时位于 `apps/android-reader/`，但保持独立 git 并被主仓库忽略。
+- `apps/editor/src/core/` 暂时仍是共享 runtime 的事实来源。
 
 第二阶段课程仓库初始化完成后，再考虑是否把本地主目录从 `playground/kmd` 移到 `projects/kmd/kmd`。
 
 ## 11. 目录迁移触发条件
 
-在以下条件同时满足前，不建议把当前 `src/` 直接搬进 `apps/editor/` 或把 `core/` 直接抽进 `packages/core/`：
+在以下条件同时满足前，不建议把 `apps/editor/src/core/` 抽进 `packages/core/`：
 
 - Android Reader 课程仓库已经初始化并能独立提交。
 - Phase B 的 `DocumentSemanticIR`、state/control-flow 和 segment graph 边界已经进入主线。
 - Web editor 与 runtime 的 import 边界足够清楚，能用 pnpm workspace 或 package export 表达。
-- VS Code 扩展和 Web editor 对 grammar/runtime 的引用路径可以一次性迁移。
+- VS Code 扩展、Web editor 和未来 language service 对 grammar/runtime 的共享策略已经明确；当前 grammar 已先通过 `packages/language/` 提供包引用，扩展打包复制流程仍待后续收敛。
 - `pnpm build`、`pnpm test:parser` 和 Android Reader 的基础构建 gate 都可在迁移后恢复。
 
-在触发条件满足前，推荐只做“规划性命名”和“文档归档”：
+在触发条件满足前，推荐只做“外壳级整理”和“文档归档”：
 
 - 主仓库继续叫 `kmd`。
 - Android 课程项目使用独立仓库 `kmd-reader-android`。
-- 当前主仓库内部继续保留 `src/`、`extensions/vscode-kmd/`、`docs/android-reader/`。
-- 如需把 Android 项目临时放在主仓库目录内，应使用被 `.gitignore` 忽略的 `/kmd-reader-android/` 或 `/android-reader/`。
+- 当前主仓库内部继续保留 `apps/editor/src/core/`、`packages/language/`、`extensions/vscode-kmd/`、`docs/android-reader/`。
+- 如需把 Android 项目临时放在主仓库目录内，应使用被 `.gitignore` 忽略的 `/apps/android-reader/`。

@@ -2,7 +2,7 @@ import { Registry, INITIAL } from 'vscode-textmate';
 import { createOnigScanner, createOnigString, loadWASM } from 'vscode-oniguruma';
 import type { IGrammar, StateStack } from 'vscode-textmate';
 import type * as monaco from 'monaco-editor';
-import kmdGrammarJson from '../../../extensions/vscode-kmd/syntaxes/kmd.tmLanguage.json';
+import kmdGrammarJson from '@kmd/language/syntaxes/kmd.tmLanguage.json';
 import onigurumaWasmUrl from 'vscode-oniguruma/release/onig.wasm?url';
 
 let grammarPromise: Promise<IGrammar | null> | null = null;
