@@ -51,13 +51,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/kmd-editor/kmd-editor.git",
+    "url": "https://github.com/inu-tsuki/kmd.git",
     "directory": "extensions/vscode-kmd"
   },
   "bugs": {
-    "url": "https://github.com/kmd-editor/kmd-editor/issues"
+    "url": "https://github.com/inu-tsuki/kmd/issues"
   },
-  "homepage": "https://github.com/kmd-editor/kmd-editor#readme",
+  "homepage": "https://github.com/inu-tsuki/kmd#readme",
   "devDependencies": {
     "sharp": "^0.34.5"
   }

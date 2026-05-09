@@ -1,7 +1,11 @@
 import gsap from "gsap";
 import { RuntimeValueResolver } from "../runtime/RuntimeValueResolver";
 import type { StageAuditPort } from "./StageAudit";
-import type { CameraState } from "./types";
+import type {
+  CameraState,
+  StageCommandMetadata,
+  StageCommandMetadataMap,
+} from "./types";
 
 export type CameraModifier = (time: number) => Partial<CameraState>;
 export type StageEffectFunction = (params: any) => void | gsap.core.Tween | gsap.core.Timeline | Promise<void>;
@@ -18,6 +22,7 @@ export class StageRuntime {
 
   private modifiers: Map<string, CameraModifier> = new Map();
   private registry: Map<string, StageEffectFunction> = new Map();
+  private metadataRegistry: Map<string, StageCommandMetadata> = new Map();
   private getDesignMetrics: () => StageDesignMetrics;
   private getAuditPort: () => StageAuditPort;
   private sceneClearHandler: StageSceneClearHandler | null = null;
@@ -82,8 +87,20 @@ export class StageRuntime {
     Object.entries(presets).forEach(([k, v]) => this.register(k, v));
   }
 
+  public registerMetadata(name: string, metadata: StageCommandMetadata) {
+    this.metadataRegistry.set(name, metadata);
+  }
+
+  public registerMetadataBatch(metadata: StageCommandMetadataMap) {
+    Object.entries(metadata).forEach(([k, v]) => this.registerMetadata(k, v));
+  }
+
   public has(name: string): boolean {
     return this.registry.has(name);
+  }
+
+  public getMetadata(name: string): StageCommandMetadata | null {
+    return this.metadataRegistry.get(name) ?? null;
   }
 
   public setSceneClearHandler(handler?: StageSceneClearHandler) {

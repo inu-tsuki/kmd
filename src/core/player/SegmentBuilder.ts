@@ -4,7 +4,6 @@ import { layout } from "../layout/LayoutEngine";
 import { TextPlayer } from "../render/text/TextPlayer";
 import { EffectProcessor } from "../effects/EffectProcessor";
 import { effectManager } from "../effects/EffectManager";
-import { MODIFIER_BASED_COMMANDS } from "../stage/stagePresets";
 import type { KMDMetadata, KMDParagraphData } from "../parser/types";
 import type { Checkpoint, InFlightAnimation, ParagraphUnit, Segment } from "../state/Segment";
 import type { BehaviorRecord, StyleRecord } from "../render/text/TextPlayer";
@@ -56,14 +55,20 @@ function extractTweenTargets(command: string, params: any): Record<string, numbe
 }
 
 function getStagePropertyKey(command: string): string | null {
-  switch (command) {
-    case "cam.move":
-    case "cam.focus": return "camera.xy";
-    case "cam.zoom": return "camera.zoom";
-    case "cam.rotate": return "camera.rotation";
-    case "cam.offset": return "offset.xy";
-    default: return null;
+  const propertyKey = stageManager.getCommandMetadata(command)?.propertyKey;
+  if (
+    propertyKey === "camera.xy" ||
+    propertyKey === "camera.zoom" ||
+    propertyKey === "camera.rotation" ||
+    propertyKey === "offset.xy"
+  ) {
+    return propertyKey;
   }
+  return null;
+}
+
+function isModifierBasedStageCommand(command: string): boolean {
+  return stageManager.getCommandMetadata(command)?.modifierBased === true;
 }
 
 function trimActiveStageTween(
@@ -384,7 +389,7 @@ export class SegmentBuilder {
         continue;
       }
 
-      if (MODIFIER_BASED_COMMANDS.has(config.name)) {
+      if (isModifierBasedStageCommand(config.name)) {
         const configCopy = { name: config.name, params: { ...(config.params || {}) } };
         segmentTl.call(() => {
           stageManager.apply(configCopy.name, configCopy.params);

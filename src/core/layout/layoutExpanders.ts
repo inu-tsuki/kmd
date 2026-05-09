@@ -1,4 +1,8 @@
-import type { LayoutExpander, TokenContext } from "./types";
+import type {
+  LayoutCommandMetadataMap,
+  LayoutExpander,
+  TokenContext,
+} from "./types";
 
 /**
  * 通用单位与变量解析工具 (不解析 Marker，留给 Operator 运行时处理)
@@ -115,3 +119,104 @@ export const flow: LayoutExpander = (p, ctx) => {
   if (p[1] !== undefined) params[1] = resolveValue(p[1], ctx, 'y');
   return { pre: [{ type: "flow", params, isCommand: true }] };
 };
+
+export const layoutExpanderMetadata = {
+  markStart: {
+    name: "markStart",
+    subsystem: "layout",
+    phase: "expander",
+    role: "anchor",
+    writesMarkers: true,
+    affectsFlow: false,
+    affectsDisplay: false,
+    description: "Expands token-scoped markStart sugar into a marker write.",
+  },
+  markEnd: {
+    name: "markEnd",
+    subsystem: "layout",
+    phase: "expander",
+    role: "anchor",
+    writesMarkers: true,
+    affectsFlow: false,
+    affectsDisplay: false,
+  },
+  markMiddle: {
+    name: "markMiddle",
+    subsystem: "layout",
+    phase: "expander",
+    role: "anchor",
+    writesMarkers: true,
+    affectsFlow: false,
+    affectsDisplay: false,
+  },
+  markChar: {
+    name: "markChar",
+    subsystem: "layout",
+    phase: "expander",
+    role: "anchor",
+    writesMarkers: true,
+    affectsFlow: false,
+    affectsDisplay: false,
+  },
+  left: {
+    name: "left",
+    subsystem: "layout",
+    phase: "expander",
+    role: "display-offset",
+    readsMarkers: true,
+    affectsFlow: false,
+    affectsDisplay: true,
+    description: "Token-scoped visual offset; expands to push/pop display offset.",
+  },
+  right: {
+    name: "right",
+    subsystem: "layout",
+    phase: "expander",
+    role: "display-offset",
+    affectsFlow: false,
+    affectsDisplay: true,
+  },
+  up: {
+    name: "up",
+    subsystem: "layout",
+    phase: "expander",
+    role: "display-offset",
+    affectsFlow: false,
+    affectsDisplay: true,
+  },
+  down: {
+    name: "down",
+    subsystem: "layout",
+    phase: "expander",
+    role: "display-offset",
+    affectsFlow: false,
+    affectsDisplay: true,
+  },
+  offset: {
+    name: "offset",
+    subsystem: "layout",
+    phase: "expander",
+    role: "display-offset",
+    readsMarkers: true,
+    affectsFlow: false,
+    affectsDisplay: true,
+  },
+  goto: {
+    name: "goto",
+    subsystem: "layout",
+    phase: "expander",
+    role: "cursor",
+    readsMarkers: true,
+    affectsFlow: true,
+    affectsDisplay: true,
+  },
+  flow: {
+    name: "flow",
+    subsystem: "layout",
+    phase: "expander",
+    role: "flow",
+    readsMarkers: true,
+    affectsFlow: true,
+    affectsDisplay: true,
+  },
+} satisfies LayoutCommandMetadataMap;

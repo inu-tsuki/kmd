@@ -142,7 +142,7 @@ export class LineAccumulator {
 
     lineResults.forEach((result) => {
       const halfW = result.item.width / 2;
-      const { ascent, descent } = (result.item as any).charData;
+      const { ascent = 0, descent = 0 } = result.item.charData ?? {};
       minX = Math.min(minX, result.x - halfW);
       maxX = Math.max(maxX, result.x + halfW);
       minY = Math.min(minY, result.y - ascent);

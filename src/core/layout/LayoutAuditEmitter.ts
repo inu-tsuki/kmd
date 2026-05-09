@@ -30,7 +30,7 @@ export class LayoutAuditEmitter {
     results: LayoutResult[],
   ): LayoutAuditRecord[] {
     return results.map((result) => {
-      const charText = (result.item as any).charData?.char?.text ?? "";
+      const charText = result.item.charData?.char?.text ?? "";
       const meta = (result as AnnotatedLayoutResult).__auditMeta;
       const local = {
         x: result.x + (result.displayOffsetX ?? 0),

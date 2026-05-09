@@ -35,8 +35,8 @@ export class LayoutPassRunner {
     for (const node of stream) {
       if (node.isCommand) continue;
       const item = node as LayoutItem;
-      if ((item as any).charData?.char?.text === "\n") break;
-      const ascent = (item as any).charData?.ascent || 0;
+      if (item.charData?.char?.text === "\n") break;
+      const ascent = item.charData?.ascent || 0;
       if (ascent > firstLineMaxAscent) firstLineMaxAscent = ascent;
     }
     return firstLineMaxAscent;
@@ -113,14 +113,25 @@ export class LayoutPassRunner {
   }
 
   private static measureItem(item: LayoutItem, options: LayoutEngineOptions): MeasuredLayoutItem {
-    const charText = (item as any).charData?.char?.text || "";
-    const charData = (item as any).charData;
-    const fontSize = charData.fontSize || charData.char?.style?.fontSize || options.fontSize;
+    const charText = item.charData?.char?.text || "";
+    const fontSize = this.resolveFontSize(
+      item.charData?.fontSize ?? item.charData?.char?.style?.fontSize,
+      options.fontSize,
+    );
     const tracking = fontSize * 0.02;
     return {
       item,
       charText,
       stepDistance: item.width + tracking + options.letterSpacing,
     };
+  }
+
+  private static resolveFontSize(value: unknown, fallback: number): number {
+    if (typeof value === "number" && Number.isFinite(value)) return value;
+    if (typeof value === "string") {
+      const parsed = Number.parseFloat(value);
+      if (Number.isFinite(parsed)) return parsed;
+    }
+    return fallback;
   }
 }

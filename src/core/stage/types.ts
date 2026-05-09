@@ -22,6 +22,35 @@ export interface StageViewport {
   baseScale: number;
 }
 
+export type StageCommandKind =
+  | "scene"
+  | "camera"
+  | "offset"
+  | "modifier"
+  | "playback";
+
+export type StagePropertyKey =
+  | "scene.lifecycle"
+  | "camera.xy"
+  | "camera.zoom"
+  | "camera.rotation"
+  | "camera.reset"
+  | "offset.xy"
+  | "playback.pause";
+
+export interface StageCommandMetadata {
+  name: string;
+  kind: StageCommandKind;
+  propertyKey?: StagePropertyKey;
+  modifierBased?: boolean;
+  sceneLifecycle?: boolean;
+  blockingDefault?: boolean;
+  capturesTween?: boolean;
+  description?: string;
+}
+
+export type StageCommandMetadataMap = Record<string, StageCommandMetadata>;
+
 export interface StageAuditEntry {
   time: string;
   effect: string;

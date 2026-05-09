@@ -1,6 +1,5 @@
 import { EffectProcessor } from "../../effects/EffectProcessor";
 import { stageManager } from "../../stage/StageManager";
-import { MODIFIER_BASED_COMMANDS } from "../../stage/stagePresets";
 import { effectManager } from "../../effects/EffectManager";
 import { styleManager } from "../../effects/StyleManager";
 import { useEditorStore } from "../../../store/editorStore";
@@ -351,7 +350,7 @@ export class TextPlayer {
         const dur = Number(config.params?.duration ?? config.params?.d ?? config.params?.[0] ?? 1);
         chainCursor += dur;
         totalPauseDur += dur;
-      } else if (MODIFIER_BASED_COMMANDS.has(config.name)) {
+      } else if (stageManager.getCommandMetadata(config.name)?.modifierBased) {
         const cfgCopy = { type: config.name, params: { ...(config.params || {}) } };
         tl.call(() => {
           stageManager.apply(cfgCopy.type, cfgCopy.params);
@@ -508,7 +507,7 @@ export class TextPlayer {
     for (const config of stageConfigs) {
       if (config.name === "pause") {
         // pause: 已在 Stage 指令阶段处理，这里忽略
-      } else if (MODIFIER_BASED_COMMANDS.has(config.name)) {
+      } else if (stageManager.getCommandMetadata(config.name)?.modifierBased) {
         const cfgCopy = { type: config.name, params: { ...(config.params || {}) } };
         tl.call(() => { stageManager.apply(cfgCopy.type, cfgCopy.params); }, [], startPosition);
       } else {

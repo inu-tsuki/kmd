@@ -32,6 +32,29 @@ export type LayoutCommandType =
   | "popDisplayOffset"
   | "flow";
 
+export type LayoutCommandPhase = "operator" | "expander";
+export type LayoutCommandRole =
+  | "anchor"
+  | "cursor"
+  | "flow"
+  | "display-offset"
+  | "internal";
+
+export interface LayoutCommandMetadata {
+  name: string;
+  subsystem: "layout";
+  phase: LayoutCommandPhase;
+  role: LayoutCommandRole;
+  affectsFlow?: boolean;
+  affectsDisplay?: boolean;
+  writesMarkers?: boolean;
+  readsMarkers?: boolean;
+  internal?: boolean;
+  description?: string;
+}
+
+export type LayoutCommandMetadataMap = Record<string, LayoutCommandMetadata>;
+
 // Token 的几何上下文，用于扩展器计算
 export interface TokenContext {
   width: number;
@@ -58,17 +81,34 @@ export const ReservedMarkers = {
   NEXT_END: "next.end",
 };
 
+export type ReservedAnchorScope = "prev" | "line" | "next";
+export type ReservedAnchorPoint = "start" | "mid" | "end";
+export type ReservedAnchorName = `${ReservedAnchorScope}.${ReservedAnchorPoint}`;
+
 export interface LayoutCommand {
   isCommand: true;
   type: LayoutCommandType;
   params: any;
 }
 
-export interface LayoutItem {
+export interface LayoutGlyphPayload {
+  char?: {
+    text?: string;
+    style?: {
+      fontSize?: unknown;
+    };
+  } | null;
+  fontSize?: number;
+  ascent?: number;
+  descent?: number;
+  [key: string]: any;
+}
+
+export interface LayoutItem<TGlyph extends LayoutGlyphPayload = LayoutGlyphPayload> {
   isCommand?: false; // 区分标志
   width: number;
   height: number;
-  [key: string]: any;
+  charData?: TGlyph;
 }
 export type LayoutStream = (LayoutItem | LayoutCommand)[];
 

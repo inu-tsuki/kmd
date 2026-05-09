@@ -4,6 +4,7 @@ import type {
   LayoutEngineOptions,
   LinePlan,
   MarkerMap,
+  ReservedAnchorName,
 } from "./types";
 
 type LineBounds = LinePlan["bounds"];
@@ -109,7 +110,7 @@ export class AnchorCoordinator {
     });
   }
 
-  private static writeGlobalMarker(context: LayoutContext, name: string, local: CursorState) {
+  private static writeGlobalMarker(context: LayoutContext, name: ReservedAnchorName, local: CursorState) {
     context.markers.set(name, this.toGlobal(context, local));
   }
 }

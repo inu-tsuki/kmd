@@ -66,6 +66,10 @@ Phase 5
 Phase 6
   -> Diagnostics/Audit 总线统一 / StageManager 第二轮瘦身 / layout-execution 剩余单体拆分 / legacy path tightening
   -> DONE
+
+Phase B Prep
+  -> effect/layout/stage/parser metadata / host boundary readiness
+  -> DONE
 ```
 
 ## 文档导航
@@ -94,6 +98,8 @@ Phase 6
   - 第六阶段实施范围、diagnostics/audit 总线统一、`StageManager` 第二轮瘦身、layout/execution 剩余单体收口
 - [phase6-code-review.md](./phase6-code-review.md)
   - 第六阶段代码审查、Phase A 完成判断与 Phase B 启动建议
+- [phase-b-prep-refactor-plan.md](./phase-b-prep-refactor-plan.md)
+  - Phase B 前置准备、effect/layout/stage/parser 元信息与 host 边界收口
 - [phase5-code-review.md](./phase5-code-review.md)
   - 第五阶段代码审查、风险分级与 WP5 回归建议
 - [phase3-code-review.md](./phase3-code-review.md)
@@ -158,8 +164,8 @@ Phase 6
 ## 当前优先级
 
 1. Phase B 最小骨架：`DocumentSemanticIR` / `StateMiddleware` / `ControlFlowMiddleware`
-2. plugin hook 与 backend 分叉的前置边界准备
-3. Phase 6 遗留卫生项按需穿插处理，不再作为主线重构推进
+2. B0 语法入口：并发链、续行符、文本插值的 syntax-only frontend
+3. plugin hook 与 backend 分叉的前置边界准备
 
 ## 延后目标
 

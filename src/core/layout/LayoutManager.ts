@@ -1,30 +1,60 @@
-import type { LayoutCommand, LayoutOperator, LayoutExpander } from "./types";
+import type {
+  LayoutCommand,
+  LayoutCommandMetadata,
+  LayoutCommandMetadataMap,
+  LayoutOperator,
+  LayoutExpander,
+} from "./types";
 import * as Presets from "./layoutPresets";
 import * as Expanders from "./layoutExpanders";
 
 class LayoutManager {
   private registry: Record<string, LayoutOperator> = {};
   private expanders: Record<string, LayoutExpander> = {};
+  private operatorMetadata: Record<string, LayoutCommandMetadata> = {};
+  private expanderMetadata: Record<string, LayoutCommandMetadata> = {};
 
   constructor() {
-    this.registerBatch(Presets as Record<string, LayoutOperator>);
-    this.registerExpanderBatch(Expanders as Record<string, LayoutExpander>);
+    this.registerBatch(Presets as Record<string, unknown>);
+    this.registerExpanderBatch(Expanders as Record<string, unknown>);
+    this.registerMetadataBatch(Presets.layoutPresetMetadata);
+    this.registerExpanderMetadataBatch(Expanders.layoutExpanderMetadata);
   }
 
   public register(name: string, operator: LayoutOperator) {
     this.registry[name] = operator;
   }
 
-  public registerBatch(presets: Record<string, LayoutOperator>) {
-    Object.entries(presets).forEach(([k, v]) => this.register(k, v));
+  public registerBatch(presets: Record<string, unknown>) {
+    Object.entries(presets).forEach(([k, v]) => {
+      if (typeof v === "function") this.register(k, v as LayoutOperator);
+    });
   }
 
   public registerExpander(name: string, expander: LayoutExpander) {
     this.expanders[name] = expander;
   }
 
-  public registerExpanderBatch(expanders: Record<string, LayoutExpander>) {
-    Object.entries(expanders).forEach(([k, v]) => this.registerExpander(k, v));
+  public registerExpanderBatch(expanders: Record<string, unknown>) {
+    Object.entries(expanders).forEach(([k, v]) => {
+      if (typeof v === "function") this.registerExpander(k, v as LayoutExpander);
+    });
+  }
+
+  public registerMetadata(name: string, metadata: LayoutCommandMetadata) {
+    this.operatorMetadata[name] = metadata;
+  }
+
+  public registerMetadataBatch(metadata: LayoutCommandMetadataMap) {
+    Object.entries(metadata).forEach(([k, v]) => this.registerMetadata(k, v));
+  }
+
+  public registerExpanderMetadata(name: string, metadata: LayoutCommandMetadata) {
+    this.expanderMetadata[name] = metadata;
+  }
+
+  public registerExpanderMetadataBatch(metadata: LayoutCommandMetadataMap) {
+    Object.entries(metadata).forEach(([k, v]) => this.registerExpanderMetadata(k, v));
   }
 
   public has(name: string): boolean {
@@ -38,6 +68,18 @@ class LayoutManager {
 
   public getExpander(name: string): LayoutExpander | null {
     return this.expanders[name] || null;
+  }
+
+  public getOperatorMetadata(name: string): LayoutCommandMetadata | null {
+    return this.operatorMetadata[name] || null;
+  }
+
+  public getExpanderMetadata(name: string): LayoutCommandMetadata | null {
+    return this.expanderMetadata[name] || null;
+  }
+
+  public getMetadata(name: string): LayoutCommandMetadata | null {
+    return this.getExpanderMetadata(name) || this.getOperatorMetadata(name);
   }
 
   public generate(name: string, params: any): LayoutCommand | null {

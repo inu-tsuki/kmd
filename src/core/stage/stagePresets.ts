@@ -1,12 +1,84 @@
 import { stageRuntime } from "./StageRuntimeInstance";
 import type { StageEffectFunction } from "./StageRuntime";
+import type { StageCommandMetadataMap } from "./types";
 import gsap from "gsap";
+
+export const stageCommandMetadata: StageCommandMetadataMap = {
+  "scene.clear": {
+    name: "scene.clear",
+    kind: "scene",
+    propertyKey: "scene.lifecycle",
+    sceneLifecycle: true,
+    capturesTween: false,
+    description: "Clears active paragraph display through the runtime scene-clear hook.",
+  },
+  "cam.move": {
+    name: "cam.move",
+    kind: "camera",
+    propertyKey: "camera.xy",
+    capturesTween: true,
+  },
+  "cam.zoom": {
+    name: "cam.zoom",
+    kind: "camera",
+    propertyKey: "camera.zoom",
+    capturesTween: true,
+  },
+  "cam.rotate": {
+    name: "cam.rotate",
+    kind: "camera",
+    propertyKey: "camera.rotation",
+    capturesTween: true,
+  },
+  "cam.focus": {
+    name: "cam.focus",
+    kind: "camera",
+    propertyKey: "camera.xy",
+    capturesTween: true,
+  },
+  "cam.offset": {
+    name: "cam.offset",
+    kind: "offset",
+    propertyKey: "offset.xy",
+    capturesTween: true,
+  },
+  "cam.reset": {
+    name: "cam.reset",
+    kind: "camera",
+    propertyKey: "camera.reset",
+    capturesTween: true,
+    description: "Resets camera, camera offset, and active camera modifiers.",
+  },
+  "cam.shake": {
+    name: "cam.shake",
+    kind: "modifier",
+    modifierBased: true,
+    capturesTween: true,
+  },
+  "cam.drift": {
+    name: "cam.drift",
+    kind: "modifier",
+    modifierBased: true,
+    capturesTween: false,
+  },
+  pause: {
+    name: "pause",
+    kind: "playback",
+    propertyKey: "playback.pause",
+    blockingDefault: true,
+    capturesTween: false,
+  },
+};
 
 /**
  * Modifier-based 指令列表（这些指令带有不可 Tween 化的副作用，
  * 在 Timeline build 模式下需要 tl.call() 兜底而非 captureTween）
  */
-export const MODIFIER_BASED_COMMANDS = new Set(["cam.shake", "cam.drift"]);
+export const MODIFIER_BASED_COMMANDS = new Set(
+  Object.entries(stageCommandMetadata)
+    .filter(([, metadata]) => metadata.modifierBased)
+    .map(([name]) => name)
+);
 
 export const stagePresets: Record<string, StageEffectFunction> = {
   /**

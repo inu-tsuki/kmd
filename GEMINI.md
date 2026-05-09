@@ -1,12 +1,12 @@
-# KMD Editor - Kinetic Markdown Context
+# KMD - Kinetic Markdown Context
 
 ## Project Overview
 
-**kmd-editor** 是一个针对 **Kinetic Markdown (KMD)** 的演出级渲染引擎。
+**kmd** 是 Kinetic Markdown (KMD) 的主孵化仓库，当前同时承载 Web 编辑器、核心 runtime、VS Code 扩展与 Android Reader 规划。
 
-*   **Core Engine:** Pixi.js (v8) GPU 加速渲染。
+*   **Core Engine:** Parser、layout、effect、stage 与 Pixi.js (v8) GPU 渲染桥接。
 *   **Animation System:** GSAP 深度驱动动画生命周期。
-*   **Framework:** Vue 3 + TypeScript。
+*   **Framework:** Vue 3 + TypeScript for the current Web editor host.
 *   **Version:** **v1.6.0 (Time Lord - Under Development)** - 正在实现全时序驱动架构、语义溯源与热重载跳转。
 
 ## Context Maintenance Protocol

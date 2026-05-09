@@ -1,11 +1,12 @@
 import { Container } from "pixi.js";
 import { auditBus } from "../diagnostics/AuditBus";
 import { KineticText } from "../KineticText";
-import { readerApp } from "../App";
 import type { KineticTextOptions } from "../KineticText";
 import type { MarkerMap, LayoutAuditRecord } from "./types";
 import { TextLayoutEngine } from "./TextLayoutEngine";
 import { stageManager } from "../stage/StageManager";
+import { readerLayoutHostView } from "./ReaderLayoutHostView";
+import type { LayoutHostView } from "./LayoutHostView";
 import gsap from "gsap";
 
 export interface LayoutState {
@@ -24,7 +25,13 @@ class LayoutEngine {
   public enableManualScroll = true;
   public globalMarkers: MarkerMap = new Map();
 
+  private hostView: LayoutHostView = readerLayoutHostView;
   private isEventsBound = false;
+
+  /** Replace the reader host before init when running layout outside the default Pixi app. */
+  public setHostView(hostView: LayoutHostView) {
+    this.hostView = hostView;
+  }
 
   public init(container: Container, startY: number = 100) {
     // 核心修复：如果容器已经一致，说明是布局重排，严禁重置状态
@@ -35,12 +42,12 @@ class LayoutEngine {
 
     this.container = container;
     this.startY = startY;
-    this.maxWidth = readerApp.pixiApp.screen.width * 0.8;
+    this.maxWidth = this.hostView.getScreenSize().width * 0.8;
     this.reset(); // 仅在初次或容器变更时重置
 
     if (!this.isEventsBound) {
-      readerApp.pixiApp.ticker.add(this.update, this);
-      readerApp.pixiApp.renderer.on("resize", () => {
+      this.hostView.onUpdate(() => this.update());
+      this.hostView.onResize(() => {
         this.recenterAll();
       });
       this.isEventsBound = true;
@@ -88,7 +95,7 @@ class LayoutEngine {
     if (stageManager.isFixedRatio) return;
 
     // 2. Scroll 模式：执行弹性流式布局 (Reflow)
-    const screenW = readerApp.pixiApp.screen.width;
+    const screenW = this.hostView.getScreenSize().width;
 
     // 计算新的最大宽度 (响应式)
     const newMaxWidth = screenW * 0.8;
@@ -173,13 +180,13 @@ class LayoutEngine {
   }
 
   public get remainingHeight(): number {
-    const screenHeight = stageManager.isFixedRatio ? stageManager.designHeight : readerApp.pixiApp.screen.height;
+    const screenHeight = stageManager.isFixedRatio ? stageManager.designHeight : this.hostView.getScreenSize().height;
     const bottomPadding = 100;
     return screenHeight - bottomPadding - this.currentY;
   }
 
   public async createLine(kmdString: string, options?: KineticTextOptions): Promise<KineticText> {
-    const logicalScreenWidth = stageManager.isFixedRatio ? stageManager.designWidth : readerApp.pixiApp.screen.width;
+    const logicalScreenWidth = stageManager.isFixedRatio ? stageManager.designWidth : this.hostView.getScreenSize().width;
     const posX = (logicalScreenWidth - this.maxWidth) / 2;
 
     this.updateLineMarkers(posX, this.currentY, this.maxWidth, false, true);
@@ -205,7 +212,7 @@ class LayoutEngine {
     if (!this.container) return;
 
     if (Math.abs(line.y - this.currentY) > 0.1) {
-      const logicalScreenWidth = stageManager.isFixedRatio ? stageManager.designWidth : readerApp.pixiApp.screen.width;
+      const logicalScreenWidth = stageManager.isFixedRatio ? stageManager.designWidth : this.hostView.getScreenSize().width;
       const posX = (logicalScreenWidth - this.maxWidth) / 2;
       line.x = posX;
       line.y = this.currentY;
@@ -242,7 +249,7 @@ class LayoutEngine {
 
   private update() {
     if (!this.container || stageManager.isFixedRatio) return;
-    const screenHeight = readerApp.pixiApp.screen.height;
+    const screenHeight = this.hostView.getScreenSize().height;
     const containerY = this.container.y;
     this.container.children.forEach((child) => {
       const absY = child.y + containerY;
@@ -257,7 +264,7 @@ class LayoutEngine {
       this.targetScrollY = this.container.y;
     }
     const newY = this.targetScrollY - delta;
-    const minY = -this.currentY + readerApp.pixiApp.screen.height;
+    const minY = -this.currentY + this.hostView.getScreenSize().height;
     const effectiveMin = Math.min(minY, 0);
     this.targetScrollY = Math.max(Math.min(newY, 0), effectiveMin);
     gsap.to(this.container, {

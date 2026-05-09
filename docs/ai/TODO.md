@@ -1,4 +1,4 @@
-# KMD Editor — Implementation Roadmap
+# KMD — Implementation Roadmap
 
 ## 1. 韵律标准与排版进化 (v1.1.0) — DONE
 
@@ -161,7 +161,7 @@
   - [x] `pnpm test:parser`
   - [x] 关键样例脚本回归检查（scene.clear / page / seek / paragraph build parity）
 
-### Phase A.V — Diagnostics / Host Tightening（审计总线、Stage façade、legacy 收口）— IN PROGRESS
+### Phase A.V — Diagnostics / Host Tightening（审计总线、Stage façade、legacy 收口）— DONE
 
 > 实施方案见 `docs/refactor/phase-6-implementation-plan.md`
 > 目标：统一 diagnostics / audit 总线，继续瘦身 `StageManager`，并拆掉 layout / execution 中残余的单体逻辑与旧导出路径，为 Phase B 提供更干净的 runtime surface。
@@ -193,11 +193,38 @@
   - [x] 让 display host 与 runtime execution entity 通过显式 assembly 结构连接，而不是共享 `KineticChar` 可变字段
   - [x] 为 legacy `play()/bakeTimeline()/skipToEnd()` 留下兼容层，但停止让新主路径继续依赖它们
 
+### Phase B Prep — Metadata / Host Boundary Readiness（Phase B 前置准备）— DONE
+
+> 实施方案见 `docs/refactor/phase-b-prep-refactor-plan.md`
+> 目标：在进入 state / control-flow / segment graph 前，补齐 effect、layout、stage、parser 的元信息入口和 host 边界，避免 Phase B 功能落到旧的隐式语义上。
+
+- [x] **BP0. Scope and Guard Rails**
+  - [x] 固定本阶段不实现用户可见 Phase B 语法
+  - [x] 明确 `pnpm build`、`pnpm test:parser`、关键样例人工回归 gate
+- [x] **BP1. Effect Metadata and Processor Slimming Prep**
+  - [x] 为 effect/style/stage/layout 分类结果补稳定 typed classification
+  - [x] 将 style preview helper、default-level、chain-hint 作为 middleware metadata seed
+- [x] **BP2. Layout Command Metadata**
+  - [x] 定义 `LayoutCommandMetadata`
+  - [x] 标记 layout command family、operator/expander phase、marker 写入与 flow/display 影响
+- [x] **BP3. Anchor and Layout Item Type Tightening**
+  - [x] 收紧 layout stream text item 类型，减少 `(item as any).charData`
+  - [x] 为 reserved anchor 名称补最小结构化类型
+- [x] **BP4. LayoutEngine Host Boundary Prep**
+  - [x] 抽出 scroll/reflow 所需 host view 接口
+  - [x] 收口 `readerApp` 直连，保持 `layout` singleton 兼容
+- [x] **BP5. Stage Preset Metadata**
+  - [x] 定义 `StageCommandMetadata`
+  - [x] 标记 camera property key、blocking、modifier-based、scene lifecycle cue
+- [x] **BP6. Parser Frontend B0 Readiness**
+  - [x] 明确 `+` 并发链、续行符、`{var.xxx}` 插值的 syntax-only AST 形状
+  - [x] 预留 line-head control-flow node 类型，不执行 runtime lowering
+
 ### Phase B — Segment Graph、状态系统与语法演进
 
 > **核心理念**: Segment 内部仍为预烘焙 Timeline（确定性、可 seek），Segment 之间的边为运行时求值（条件分支、状态驱动）。
 > 控制流语法独立于特效链，使用行首 `@` 结构标记。状态层嵌入极简表达式求值器。
-> 默认建立在 **Phase A.R Refactor Foundation**、**Phase A.E Execution Consolidation**、**Phase A.S Stage Host Split Preparation**、**Phase A.T Stage Runtime Extraction** 与 **Phase A.U Layout Mainline Unification** 完成的基础上推进；建议在 **Phase A.V Diagnostics / Host Tightening** 收口 diagnostics / host seams 后正式启动。
+> 默认建立在 **Phase A.R Refactor Foundation**、**Phase A.E Execution Consolidation**、**Phase A.S Stage Host Split Preparation**、**Phase A.T Stage Runtime Extraction**、**Phase A.U Layout Mainline Unification** 与 **Phase A.V Diagnostics / Host Tightening** 完成的基础上推进；建议在 **Phase B Prep** 收口 metadata / host boundary 后正式启动。
 
 #### B0. 语法统一与增强
 

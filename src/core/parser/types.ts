@@ -104,6 +104,21 @@ export interface CommandChainAst {
   range: SourceRange;
 }
 
+export interface CommandChainExpressionAst {
+  type: "command-chain-expression";
+  mode: "serial";
+  chains: CommandChainAst[];
+  line: number;
+  range: SourceRange;
+}
+
+export interface ParallelCommandChainAst {
+  type: "parallel-command-chain";
+  branches: CommandChainExpressionAst[];
+  line: number;
+  range: SourceRange;
+}
+
 export interface BlockOptionValueAst {
   type: "block-option-value";
   key: string;
@@ -126,6 +141,14 @@ export interface TextNodeAst {
   text: string;
   marks: InlineMark[];
   groupId?: number;
+  line: number;
+  range: SourceRange;
+}
+
+export interface TextInterpolationNodeAst {
+  type: "interpolation";
+  key: string;
+  raw: string;
   line: number;
   range: SourceRange;
 }
@@ -156,7 +179,20 @@ export interface PauseNodeAst {
   range: SourceRange;
 }
 
-export type InlineNodeAst = TextNodeAst | GroupNodeAst | SugarNodeAst | PauseNodeAst;
+export type InlineNodeAst =
+  | TextNodeAst
+  | TextInterpolationNodeAst
+  | GroupNodeAst
+  | SugarNodeAst
+  | PauseNodeAst;
+
+export interface ControlFlowLineAst {
+  type: "control-flow-line";
+  keyword: "if" | "else" | "endif" | "repeat" | "endrepeat";
+  raw: string;
+  line: number;
+  range: SourceRange;
+}
 
 export interface ParagraphLineAst {
   type: "line";
@@ -175,6 +211,14 @@ export interface ParagraphAst {
   source: string;
   blockOptions: BlockOptionAst[];
   lines: ParagraphLineAst[];
+}
+
+export interface DocumentAst {
+  type: "document";
+  metadata: KMDMetadata;
+  paragraphs: ParagraphAst[];
+  controlFlow: ControlFlowLineAst[];
+  diagnostics: ParserDiagnostic[];
 }
 
 export interface KMDInlineIR {

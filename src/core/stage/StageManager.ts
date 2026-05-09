@@ -13,6 +13,8 @@ import type {
   CameraState,
   StageAuditEntry,
   StageAuditSnapshot,
+  StageCommandMetadata,
+  StageCommandMetadataMap,
   StageConflictDiagnostic,
   StageMode,
   StageState,
@@ -174,7 +176,19 @@ class StageManager {
 
   public registerBatch(presets: Record<string, StageEffectFunction>) { stageRuntime.registerBatch(presets); }
 
+  public registerMetadata(name: string, metadata: StageCommandMetadata) {
+    stageRuntime.registerMetadata(name, metadata);
+  }
+
+  public registerMetadataBatch(metadata: StageCommandMetadataMap) {
+    stageRuntime.registerMetadataBatch(metadata);
+  }
+
   public has(name: string): boolean { return stageRuntime.has(name); }
+
+  public getCommandMetadata(name: string): StageCommandMetadata | null {
+    return stageRuntime.getMetadata(name);
+  }
 
   public apply(name: string, params: any): any { return stageRuntime.apply(name, params); }
 
@@ -238,7 +252,8 @@ class StageManager {
 
 export const stageManager = new StageManager();
 
-import { stagePresets } from "./stagePresets";
+import { stageCommandMetadata, stagePresets } from "./stagePresets";
 stageManager.registerBatch(stagePresets);
+stageManager.registerMetadataBatch(stageCommandMetadata);
 export type { CameraState, StageAuditEntry, StageAuditSnapshot, StageConflictDiagnostic, StageMode, StageState } from "./types";
 export type { CameraModifier, StageEffectFunction } from "./StageRuntime";

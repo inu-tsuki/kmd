@@ -1,6 +1,5 @@
 import gsap from "gsap";
 import { stageManager } from "../../stage/StageManager";
-import { MODIFIER_BASED_COMMANDS } from "../../stage/stagePresets";
 
 export interface ScheduledStageInstruction {
   type: string;
@@ -40,7 +39,7 @@ export class TextStageCueScheduler {
         continue;
       }
 
-      if (MODIFIER_BASED_COMMANDS.has(instr.type)) {
+      if (stageManager.getCommandMetadata(instr.type)?.modifierBased) {
         const instructionCopy = { type: instr.type, params: { ...(instr.params || {}) } };
         tl.call(() => {
           stageManager.apply(instructionCopy.type, instructionCopy.params);

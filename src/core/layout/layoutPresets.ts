@@ -1,4 +1,9 @@
-import type { LayoutOperator, LayoutContext, CursorState } from "./types";
+import type {
+  LayoutCommandMetadataMap,
+  LayoutOperator,
+  LayoutContext,
+  CursorState,
+} from "./types";
 
 const toGlobal = (ctx: LayoutContext, local: CursorState): CursorState => ({
   x: local.x + ctx.options.baseOffset.x,
@@ -198,3 +203,117 @@ export const flow: LayoutOperator = (ctx, p) => {
     }
   }
 };
+
+export const layoutPresetMetadata = {
+  mark: {
+    name: "mark",
+    subsystem: "layout",
+    phase: "operator",
+    role: "anchor",
+    writesMarkers: true,
+    affectsFlow: false,
+    affectsDisplay: false,
+    description: "Writes a marker at the current cursor plus optional offset.",
+  },
+  markStart: {
+    name: "markStart",
+    subsystem: "layout",
+    phase: "operator",
+    role: "anchor",
+    writesMarkers: true,
+    affectsFlow: false,
+    affectsDisplay: false,
+  },
+  markEnd: {
+    name: "markEnd",
+    subsystem: "layout",
+    phase: "operator",
+    role: "anchor",
+    writesMarkers: true,
+    affectsFlow: false,
+    affectsDisplay: false,
+  },
+  goto: {
+    name: "goto",
+    subsystem: "layout",
+    phase: "operator",
+    role: "cursor",
+    readsMarkers: true,
+    affectsFlow: true,
+    affectsDisplay: true,
+    description: "Moves the cursor and breaks normal flow.",
+  },
+  offset: {
+    name: "offset",
+    subsystem: "layout",
+    phase: "operator",
+    role: "cursor",
+    readsMarkers: true,
+    affectsFlow: true,
+    affectsDisplay: true,
+    description: "Moves the cursor relatively in block/operator scope.",
+  },
+  left: {
+    name: "left",
+    subsystem: "layout",
+    phase: "operator",
+    role: "cursor",
+    readsMarkers: true,
+    affectsFlow: true,
+    affectsDisplay: true,
+  },
+  up: {
+    name: "up",
+    subsystem: "layout",
+    phase: "operator",
+    role: "cursor",
+    readsMarkers: true,
+    affectsFlow: true,
+    affectsDisplay: true,
+  },
+  right: {
+    name: "right",
+    subsystem: "layout",
+    phase: "operator",
+    role: "cursor",
+    affectsFlow: true,
+    affectsDisplay: true,
+  },
+  down: {
+    name: "down",
+    subsystem: "layout",
+    phase: "operator",
+    role: "cursor",
+    affectsFlow: true,
+    affectsDisplay: true,
+  },
+  pushDisplayOffset: {
+    name: "pushDisplayOffset",
+    subsystem: "layout",
+    phase: "operator",
+    role: "display-offset",
+    readsMarkers: true,
+    affectsFlow: false,
+    affectsDisplay: true,
+    internal: true,
+  },
+  popDisplayOffset: {
+    name: "popDisplayOffset",
+    subsystem: "layout",
+    phase: "operator",
+    role: "display-offset",
+    affectsFlow: false,
+    affectsDisplay: true,
+    internal: true,
+  },
+  flow: {
+    name: "flow",
+    subsystem: "layout",
+    phase: "operator",
+    role: "flow",
+    readsMarkers: true,
+    affectsFlow: true,
+    affectsDisplay: true,
+    description: "Moves the cursor and keeps subsequent layout in the new flow.",
+  },
+} satisfies LayoutCommandMetadataMap;

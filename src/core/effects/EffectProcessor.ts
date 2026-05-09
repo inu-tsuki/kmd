@@ -5,7 +5,7 @@ import { stageManager } from "../stage/StageManager";
 import { TokenWrapper } from "../TokenWrapper";
 import { KineticText } from "../KineticText";
 import { RuntimeValueResolver } from "../runtime/RuntimeValueResolver";
-import type { EffectConfig } from "../parser/types";
+import type { CommandLevel, EffectConfig } from "../parser/types";
 import type { EffectTrack } from "./types";
 import { Container, TextStyle } from "pixi.js";
 import { layoutManager } from "../layout/LayoutManager";
@@ -29,7 +29,74 @@ export interface TrackClassifiedEffects {
   stage: EffectConfig[];      // 舞台指令 (cam.move 等)
 }
 
+export type EffectCommandLane =
+  | "layout"
+  | "stage"
+  | "style"
+  | "effect"
+  | "unknown";
+
+export type EffectChainHint =
+  | "group_sync"
+  | "char_stagger"
+  | "char_tween"
+  | "container_only"
+  | "graph_gate"
+  | "unknown";
+
+export interface EffectCommandClassification {
+  config: EffectConfig;
+  lane: EffectCommandLane;
+  track: EffectTrack | "stage" | "layout" | "unknown";
+  isStyle: boolean;
+  isLayout: boolean;
+  isStage: boolean;
+  participatesInStylePreview: boolean;
+  defaultLevel?: CommandLevel;
+  chainHint: EffectChainHint;
+}
+
 export class EffectProcessor {
+
+  public static classifyCommand(config: EffectConfig): EffectCommandClassification {
+    const isLayout = layoutManager.has(config.name);
+    const isStage = stageManager.has(config.name) && !effectManager.has(config.name);
+    const isStyle = styleManager.has(config.name);
+    const effectMeta = effectManager.getMetadata(config.name);
+    const effectRegistered = effectManager.has(config.name);
+
+    const lane: EffectCommandLane = isLayout
+      ? "layout"
+      : isStage
+        ? "stage"
+        : isStyle
+          ? "style"
+          : effectRegistered
+            ? "effect"
+            : "unknown";
+
+    const track: EffectCommandClassification["track"] = isLayout
+      ? "layout"
+      : isStage
+        ? "stage"
+        : effectMeta?.track ?? (isStyle ? "instant" : "unknown");
+
+    return {
+      config,
+      lane,
+      track,
+      isStyle,
+      isLayout,
+      isStage,
+      participatesInStylePreview: this.shouldApplyAsInitialStyle(config),
+      defaultLevel: this.inferDefaultLevel(config),
+      chainHint: this.inferChainHint(config),
+    };
+  }
+
+  public static classifyCommands(configs: EffectConfig[]): EffectCommandClassification[] {
+    return configs.map((config) => this.classifyCommand(config));
+  }
 
   /**
    * 按 track 对特效列表进行分类
@@ -41,27 +108,23 @@ export class EffectProcessor {
     };
 
     for (const cfg of configs) {
-      // 舞台指令优先判断（它们不在 effectManager 中注册）
-      if (stageManager.has(cfg.name) && !effectManager.has(cfg.name)) {
+      const classified = this.classifyCommand(cfg);
+      if (classified.lane === "stage") {
         result.stage.push(cfg);
         continue;
       }
 
-      // 查询特效元数据获取 track
-      const meta = effectManager.getMetadata(cfg.name);
-      if (meta?.track) {
-        result[meta.track].push(cfg);
+      if (
+        classified.track === "entrance" ||
+        classified.track === "behavior" ||
+        classified.track === "instant" ||
+        classified.track === "timing"
+      ) {
+        result[classified.track].push(cfg);
         continue;
       }
 
-      // 样式兜底：StyleManager 中的都是 instant
-      if (styleManager.has(cfg.name)) {
-        result.instant.push(cfg);
-        continue;
-      }
-
-      // 布局指令不归入任何 track（已在 partition 中处理）
-      if (layoutManager.has(cfg.name)) continue;
+      if (classified.lane === "layout") continue;
 
       // 未知特效默认归入 instant
       result.instant.push(cfg);
@@ -74,12 +137,12 @@ export class EffectProcessor {
    * 查询单个特效的 track 类型
    */
   public static getTrack(name: string): EffectTrack | "stage" | "unknown" {
-    if (stageManager.has(name) && !effectManager.has(name)) return "stage";
-    const meta = effectManager.getMetadata(name);
-    if (meta?.track) return meta.track;
-    if (styleManager.has(name)) return "instant";
-    return "unknown";
+    const track = this.classifyCommand({ name, params: {} }).track;
+    return track === "layout"
+      ? "unknown"
+      : track as EffectTrack | "stage" | "unknown";
   }
+
   public static partition(configs: EffectConfig[]): {
     layoutCmds: LayoutCommand[];
     visualConfigs: EffectConfig[];
@@ -90,9 +153,10 @@ export class EffectProcessor {
     const stageConfigs: EffectConfig[] = [];
 
     configs.forEach((cfg) => {
-      if (layoutManager.has(cfg.name)) {
+      const classified = this.classifyCommand(cfg);
+      if (classified.isLayout) {
         layoutCmds.push({ isCommand: true, type: cfg.name as any, params: cfg.params });
-      } else if (!effectManager.has(cfg.name) && stageManager.has(cfg.name)) {
+      } else if (classified.isStage) {
         stageConfigs.push(cfg);
       } else {
         visualConfigs.push(cfg);
@@ -127,7 +191,7 @@ export class EffectProcessor {
     for (const config of configs) {
       const isBlocking = config.name === "hold" || config.blocking || config.level === "group" || config.level === "block";
       if (isBlocking) break;
-      if (styleManager.has(config.name)) {
+      if (this.shouldApplyAsInitialStyle(config)) {
         const resolved = this.resolveParams(config.params);
         // 构建阶段强制为 false，防止冲突锁死后续动态修改
         styleManager.apply(style, config.name, resolved, false);
@@ -139,7 +203,7 @@ export class EffectProcessor {
     for (const config of configs) {
       const isBlocking = config.name === "hold" || config.blocking || config.level === "group" || config.level === "block";
       if (isBlocking) break;
-      if (styleManager.has(config.name)) {
+      if (this.shouldApplyAsInitialStyle(config)) {
         if (target instanceof KineticChar) {
           const resolved = this.resolveParams(config.params);
           styleManager.apply(target.style, config.name, resolved, false);
@@ -286,5 +350,37 @@ export class EffectProcessor {
       }
     }
     return finalRes;
+  }
+
+  public static shouldApplyAsInitialStyle(config: EffectConfig): boolean {
+    const isBlocking = config.name === "hold" ||
+      config.blocking ||
+      config.level === "group" ||
+      config.level === "block";
+    return !isBlocking && styleManager.has(config.name);
+  }
+
+  private static inferDefaultLevel(config: EffectConfig): CommandLevel | undefined {
+    if (config.level) return config.level;
+    const meta = effectManager.getMetadata(config.name);
+    if (meta?.targetType === "char" || meta?.targetType === "both") return "char";
+    if (meta?.targetType === "group") return "group";
+    return undefined;
+  }
+
+  private static inferChainHint(config: EffectConfig): EffectChainHint {
+    const meta = effectManager.getMetadata(config.name);
+    if (layoutManager.has(config.name) || (stageManager.has(config.name) && !effectManager.has(config.name))) {
+      return "graph_gate";
+    }
+    if (config.name === "hold" && config.level === "char") return "char_stagger";
+    if (config.name === "hold") return "group_sync";
+    if (config.level === "group" || config.level === "block" || meta?.targetType === "group") {
+      return "container_only";
+    }
+    if (meta?.track === "entrance" && (meta.targetType === "char" || meta.targetType === "both")) {
+      return "char_tween";
+    }
+    return "unknown";
   }
 }
