@@ -4,7 +4,7 @@
   "description": "Syntax highlighting, auto-completion and language support for Kinetic Markdown (.kmd) files",
   "version": "0.2.0",
   "publisher": "inu-tsuki",
-  "license": "MIT",
+  "license": "Apache-2.0",
   "engines": {
     "vscode": "^1.80.0"
   },

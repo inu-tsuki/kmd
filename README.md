@@ -85,4 +85,6 @@ KMD is under active exploration. APIs, syntax details, and runtime internals may
 
 ## License
 
-License pending. Do not assume production or redistribution rights until a license file is added.
+KMD code is licensed under the Apache License 2.0. See [LICENSE](LICENSE).
+
+Bundled fonts and other third-party assets remain under their own licenses. See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).

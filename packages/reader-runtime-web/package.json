@@ -2,6 +2,7 @@
   "name": "@kmd/reader-runtime-web",
   "private": true,
   "version": "0.0.0",
+  "license": "Apache-2.0",
   "type": "module",
   "scripts": {
     "build": "pnpm --dir ../../apps/editor exec vite build --config ../../packages/reader-runtime-web/vite.config.ts",
