@@ -1,0 +1,29 @@
+---
+title: Glass Rail
+mode: stage
+speed: 38
+designWidth: 1920
+designHeight: 1080
+var:
+  bridge_pan: 420
+---
+
+[align=center cam.zoom(0.82, 1.2s)!]
+{Glass Rail} @ f.blue.glow
+
+The train waits on a bridge made of winter glass.
+
+[cam.move(var.bridge_pan, 0, 14s)]
+A signal turns {green}. @ f.green.glow
+
+Steel, snow, and breath cross the same bright line. @ .offset(0, -90)
+
+The carriage windows hold | one second of every passenger.
+
+Then the bridge gives a small {silver shake}. @ f.cyan.shake(strength=1.5)
+
+At the far side, the rails disappear >> into blue light.
+We follow after them, | quiet enough not to break the ice. @ .blue
+
+[cam.reset(1s)!]
+Only the glass remembers where the train has been.

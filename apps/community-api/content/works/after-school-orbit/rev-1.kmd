@@ -1,0 +1,29 @@
+---
+title: After School Orbit
+mode: stage
+speed: 36
+designWidth: 1600
+designHeight: 1000
+var:
+  roof_y: -240
+---
+
+[align=center cam.zoom(0.88, 1s)!]
+{After School Orbit} @ f.yellow.glow
+
+The classroom is empty | after the last bell. @ .offset(0, -120)
+
+A {paper planet} turns slowly above the desk. @ f.yellow.float(height=8)
+
+If we follow its {shadow}, >> the roof becomes a small observatory. @ f.gray
+The stairwell answers in blue afternoon. @ .blue
+
+[cam.move(0, var.roof_y, 2s)!]
+Tonight, every ordinary sentence has a {secret orbit}. @ f.cyan.glow
+
+Choose later: | the window, the roof, or the planet string. @ .small
+
+For now, we stay where the chalk dust looks like stars. @ .fadeIn
+
+[cam.reset(1s)!]
+The last bell rings again, | but softer this time.

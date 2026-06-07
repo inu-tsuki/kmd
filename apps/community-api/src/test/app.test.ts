@@ -1,0 +1,96 @@
+import request from 'supertest';
+import { describe, expect, it } from 'vitest';
+import { createApp } from '../app.js';
+
+describe('kmd-community-api', () => {
+  it('returns health status', async () => {
+    const response = await request(createApp()).get('/health').expect(200);
+
+    expect(response.body).toEqual({
+      status: 'ok',
+      service: 'kmd-community-api'
+    });
+  });
+
+  it('lists works with filters', async () => {
+    const response = await request(createApp())
+      .get('/works')
+      .query({ mode: 'stage', status: 'submitted' })
+      .expect(200);
+
+    expect(response.body).toHaveLength(2);
+    expect(response.body.map((work: { id: string }) => work.id)).toEqual([
+      'glass-rail',
+      'final-test'
+    ]);
+    expect(response.body[0]).toMatchObject({
+      id: 'glass-rail',
+      presentationMode: 'stage',
+      lifecycleStatus: 'submitted'
+    });
+  });
+
+  it('returns work details and issues', async () => {
+    const app = createApp();
+    const detail = await request(app).get('/works/glass-rail').expect(200);
+    const issues = await request(app).get('/works/glass-rail/issues').expect(200);
+
+    expect(detail.body).toMatchObject({
+      id: 'glass-rail',
+      script: {
+        activeRevisionId: 'rev-1',
+        revisions: [{
+          id: 'rev-1',
+          sourceUrl: '/works/glass-rail/source',
+          mimeType: 'text/x-kmd'
+        }]
+      },
+      stats: {
+        scenes: 7
+      }
+    });
+    expect(issues.body.length).toBeGreaterThan(0);
+    expect(issues.body[0]).toHaveProperty('suggestion');
+  });
+
+  it('serves active KMD source for a work', async () => {
+    const response = await request(createApp())
+      .get('/works/glass-rail/source')
+      .expect(200);
+
+    expect(response.headers['content-type']).toContain('text/x-kmd');
+    expect(response.headers['x-kmd-work-id']).toBe('glass-rail');
+    expect(response.headers['x-kmd-revision-id']).toBe('rev-1');
+    expect(response.text).toContain('Glass Rail');
+  });
+
+  it('serves the final runtime integration KMD source', async () => {
+    const response = await request(createApp())
+      .get('/works/final-test/source')
+      .expect(200);
+
+    expect(response.headers['content-type']).toContain('text/x-kmd');
+    expect(response.headers['x-kmd-work-id']).toBe('final-test');
+    expect(response.text).toContain('最终集成全功能测试');
+    expect(response.text).toContain('cam.reset');
+  });
+
+  it('creates a review for an existing work', async () => {
+    const response = await request(createApp())
+      .post('/reviews')
+      .send({
+        workId: 'glass-rail',
+        reviewerName: 'demo-reviewer',
+        decision: 'needs_changes',
+        note: 'Mobile preview needs a softer default motion preset.'
+      })
+      .expect(201);
+
+    expect(response.body).toMatchObject({
+      id: 'review-001',
+      workId: 'glass-rail',
+      decision: 'needs_changes',
+      accepted: true
+    });
+  });
+});

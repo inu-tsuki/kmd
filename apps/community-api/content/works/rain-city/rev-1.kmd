@@ -1,0 +1,28 @@
+---
+title: Rain City Slow Motion
+mode: stage
+speed: 34
+designWidth: 1080
+designHeight: 1920
+var:
+  drift_y: -260
+---
+
+[align=center cam.zoom(0.92, 1s)!]
+{Rain City} @ f.cyan.glow
+
+The first street light opens | like a small moon. @ .offset(0, -260)
+
+[cam.move(0, var.drift_y, 12s)]
+Rain writes {silver lines} across the window. @ f.cyan.wave(height=6)
+
+The crosswalk waits. | Nobody hurries. @ .gray
+
+{A taxi} blinks once, then forgets us. @ f.yellow.hold(0.8s).dim(alpha=0.65)
+
+Every step becomes ~slower~.
+
+And the city learns | to breathe with us. @ .fadeIn
+
+[cam.reset(1s)!]
+When the light turns green, | the rain keeps its own time.
