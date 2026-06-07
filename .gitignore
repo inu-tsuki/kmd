@@ -13,7 +13,11 @@ debug/*
 node_modules
 dist
 dist-ssr
+coverage
+.nyc_output
+.vite
 *.local
+*.tsbuildinfo
 
 # Editor directories and files
 .vscode/*
@@ -31,4 +35,4 @@ parser-output.json
 # Temporary sibling-style project folders if created inside this repo.
 # Keep these out of the KMD main repository; they should be their own Git repos.
 apps/android-reader/
-apps/community-api/
+# apps/community-api is a tracked workspace app; its dist/node_modules are ignored above.
