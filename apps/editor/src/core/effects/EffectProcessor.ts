@@ -294,14 +294,31 @@ export class EffectProcessor {
       }
       else if (s.name === "slow") {
         res.speedMultiplier = s.params[0] ?? 2.0;
-        console.log(`[Timing-Trace] Sugar: slow, multiplier: ${res.speedMultiplier}`);
+        if (this.shouldLogTimingDiagnostics()) {
+          console.log(`[Timing-Trace] Sugar: slow, multiplier: ${res.speedMultiplier}`);
+        }
       }
       else if (s.name === "fast") {
         res.speedMultiplier = s.params[0] ?? 0.5;
-        console.log(`[Timing-Trace] Sugar: fast, multiplier: ${res.speedMultiplier}`);
+        if (this.shouldLogTimingDiagnostics()) {
+          console.log(`[Timing-Trace] Sugar: fast, multiplier: ${res.speedMultiplier}`);
+        }
       }
     }
     return res;
+  }
+
+  private static shouldLogTimingDiagnostics() {
+    try {
+      const runtimeConfig = (globalThis as any).KmdRuntimeConfig;
+      if (runtimeConfig?.debugOverlay === true || runtimeConfig?.settings?.debugOverlay === true) {
+        return true;
+      }
+      const params = new URLSearchParams(globalThis.location?.search ?? "");
+      return params.get("kmdDebugProbe") === "1" || params.get("kmdTimingDiag") === "1";
+    } catch {
+      return false;
+    }
   }
 
   public static async applyCharEffects(char: KineticChar, effects: EffectConfig[], charIndex: number): Promise<EffectLogicResult> {

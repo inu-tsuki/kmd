@@ -6,7 +6,7 @@ import type { MarkerMap, LayoutAuditRecord } from "./types";
 import { TextLayoutEngine } from "./TextLayoutEngine";
 import { stageManager } from "../stage/StageManager";
 import { readerLayoutHostView } from "./ReaderLayoutHostView";
-import type { LayoutHostView } from "./LayoutHostView";
+import type { LayoutHostDisposer, LayoutHostView } from "./LayoutHostView";
 import gsap from "gsap";
 
 export interface LayoutState {
@@ -27,10 +27,18 @@ class LayoutEngine {
 
   private hostView: LayoutHostView = readerLayoutHostView;
   private isEventsBound = false;
+  private hostDisposers: LayoutHostDisposer[] = [];
 
   /** Replace the reader host before init when running layout outside the default Pixi app. */
   public setHostView(hostView: LayoutHostView) {
+    if (this.hostView === hostView) return;
+    this.disposeHostBindings();
     this.hostView = hostView;
+    if (this.container) {
+      this.maxWidth = this.hostView.getScreenSize().width * 0.8;
+      this.bindHostEvents();
+      void this.recenterAll();
+    }
   }
 
   public init(container: Container, startY: number = 100) {
@@ -45,13 +53,37 @@ class LayoutEngine {
     this.maxWidth = this.hostView.getScreenSize().width * 0.8;
     this.reset(); // 仅在初次或容器变更时重置
 
-    if (!this.isEventsBound) {
-      this.hostView.onUpdate(() => this.update());
-      this.hostView.onResize(() => {
-        this.recenterAll();
-      });
-      this.isEventsBound = true;
-    }
+    this.bindHostEvents();
+  }
+
+  public detachHostView() {
+    this.disposeHostBindings();
+  }
+
+  public disposeSession() {
+    this.disposeHostBindings();
+    this.container = null;
+    this.reset(true);
+  }
+
+  private bindHostEvents() {
+    if (this.isEventsBound) return;
+
+    const updateDisposer = this.hostView.onUpdate(() => this.update());
+    if (updateDisposer) this.hostDisposers.push(updateDisposer);
+
+    const resizeDisposer = this.hostView.onResize(() => {
+      void this.recenterAll();
+    });
+    if (resizeDisposer) this.hostDisposers.push(resizeDisposer);
+
+    this.isEventsBound = true;
+  }
+
+  private disposeHostBindings() {
+    this.hostDisposers.forEach((dispose) => dispose());
+    this.hostDisposers = [];
+    this.isEventsBound = false;
   }
 
   /**

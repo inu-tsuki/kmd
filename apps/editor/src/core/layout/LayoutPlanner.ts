@@ -86,12 +86,13 @@ export class LayoutPlanner {
       const finalContent = this.resolveTokenContent(token.content);
       const measurementStyle = baseStyle.clone();
       EffectProcessor.applyInitialStylesToStyle(measurementStyle, visualConfigs);
-      console.log(
-        `[Layout-Diag] Measuring token "${finalContent.substring(0, 5)}" with style:`,
-        measurementStyle,
-      );
-
-      this.logMeasurementDiagnostics(token.content, measurementStyle);
+      if (this.isDiagnosticsEnabled()) {
+        console.log(
+          `[Layout-Diag] Measuring token "${finalContent.substring(0, 5)}" with style:`,
+          measurementStyle,
+        );
+        this.logMeasurementDiagnostics(token.content, measurementStyle);
+      }
 
       const safeGlobalMetrics = this.measureFontSafe(measurementStyle);
 
@@ -224,7 +225,10 @@ export class LayoutPlanner {
           line: token.line,
         };
 
-        if (token.content.includes("重音") || token.content.includes("轻声")) {
+        if (
+          this.isDiagnosticsEnabled() &&
+          (token.content.includes("重音") || token.content.includes("轻声"))
+        ) {
           console.log(
             `[LayoutPlanner-Trace] Char: "${measured.text}", width: ${glyphPlan.width}, ` +
             `ascent: ${glyphPlan.ascent}, descent: ${glyphPlan.descent}, font: ${glyphPlan.style.fontFamily}`,
@@ -333,6 +337,20 @@ export class LayoutPlanner {
         `loaded: ${isLoaded}, screenRes: ${currentResolution}, measureRes: ${measurementResolution}`,
       );
     }
+  }
+
+  private static isDiagnosticsEnabled() {
+    const runtimeConfig = (globalThis as any).KmdRuntimeConfig;
+    if (runtimeConfig?.debugOverlay === true || runtimeConfig?.settings?.debugOverlay === true) {
+      return true;
+    }
+
+    if (typeof window === "undefined") {
+      return false;
+    }
+
+    const params = new URLSearchParams(window.location.search);
+    return params.get("kmdDebugProbe") === "1" || params.get("kmdLayoutDiag") === "1";
   }
 
   private static measureTextSafe(text: string, style: TextStyle) {

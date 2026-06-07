@@ -76,15 +76,28 @@ class StyleManager {
     }
 
     try {
-      if (meta.mutexGroup === 'fontFamily') {
+      if (meta.mutexGroup === 'fontFamily' && this.shouldLogStyleDiagnostics()) {
         console.log(`[StyleManager] Applying font family: "${name}" | params:`, params);
       }
       fn(style, params);
-      if (meta.mutexGroup === 'fontFamily') {
+      if (meta.mutexGroup === 'fontFamily' && this.shouldLogStyleDiagnostics()) {
         console.log(`[StyleManager] Style object now has fontFamily: "${style.fontFamily}"`);
       }
     } catch (err) {
       console.error(`[StyleManager] Error applying style "${name}":`, err);
+    }
+  }
+
+  private shouldLogStyleDiagnostics() {
+    try {
+      const runtimeConfig = (globalThis as any).KmdRuntimeConfig;
+      if (runtimeConfig?.debugOverlay === true || runtimeConfig?.settings?.debugOverlay === true) {
+        return true;
+      }
+      const params = new URLSearchParams(globalThis.location?.search ?? "");
+      return params.get("kmdDebugProbe") === "1" || params.get("kmdStyleDiag") === "1";
+    } catch {
+      return false;
     }
   }
 }

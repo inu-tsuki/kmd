@@ -52,6 +52,15 @@ export const useEditorStore = defineStore('editor', () => {
   // --- 动作 (Actions) ---
   const setPlayer = (p: ScriptPlayer) => {
     player.value = p;
+    p.updateConfig({
+      mode: canvasConfig.value.mode,
+      designWidth: canvasConfig.value.width,
+      designHeight: canvasConfig.value.height,
+      typography: {
+        fill: canvasConfig.value.fontColor,
+        fontFamily: canvasConfig.value.fontFamily,
+      },
+    });
   };
 
   // 从编辑器文本解析并同步到 UI
@@ -268,7 +277,11 @@ export const useEditorStore = defineStore('editor', () => {
       player.value.updateConfig({
         mode: canvasConfig.value.mode,
         designWidth: canvasConfig.value.width,
-        designHeight: canvasConfig.value.height
+        designHeight: canvasConfig.value.height,
+        typography: {
+          fill: canvasConfig.value.fontColor,
+          fontFamily: canvasConfig.value.fontFamily,
+        },
       });
     }
     stageManager.setBackgroundColor(canvasConfig.value.bgColor);

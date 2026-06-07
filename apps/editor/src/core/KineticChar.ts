@@ -1,5 +1,6 @@
-import { Text, TextStyle, Ticker } from "pixi.js";
+import { Text, TextStyle } from "pixi.js";
 import type { EffectConfig } from "./parser/types";
+import gsap from "gsap";
 
 // 定义一个偏移量接口
 export interface TransformOffset {
@@ -59,7 +60,7 @@ export class KineticChar extends Text {
   constructor(text: string, style: TextStyle) {
     super({ text, style });
     this.anchor.set(0.5);
-    Ticker.shared.add(this.update, this);
+    gsap.ticker.add(this.update);
     this.baseStyleSnapshot = {
       fill: style.fill,
       fontWeight: style.fontWeight,
@@ -107,50 +108,7 @@ export class KineticChar extends Text {
   /**
    * 强制同步属性到 Pixi 对象，防止 Ticker 延迟导致的闪烁
    */
-  public syncProperties() {
-    let finalX = this.layoutX + this.displayOffset.x + this.animOffset.x;
-    let finalY = this.layoutY + this.displayOffset.y + this.animOffset.y;
-    let finalAlpha = this.animOffset.alpha;
-    let finalScaleX = this.animOffset.scaleX;
-    let finalScaleY = this.animOffset.scaleY;
-    let finalRotation = this.animOffset.rotation;
-
-    this.modifiers.forEach(mod => {
-      if (mod.type === 'behavior') {
-        const offset = mod.fn(Ticker.shared.lastTime);
-        if (offset.x) finalX += offset.x;
-        if (offset.y) finalY += offset.y;
-        if (offset.alpha !== undefined) finalAlpha *= offset.alpha;
-      }
-    });
-
-    this.x = finalX;
-    this.y = finalY;
-    this.alpha = finalAlpha;
-    this.scale.set(finalScaleX, finalScaleY);
-    this.rotation = finalRotation;
-  }
-
-  /**
-   * 注册修改器
-   * type: 'anim' 目前由 animOffset 接管逻辑，'behavior' 继续在 update 中逐帧计算
-   */
-  public addModifier(
-    id: string,
-    type: 'anim' | 'behavior' = 'behavior',
-    fn: (time: number) => Partial<TransformOffset>,
-  ) {
-    this.modifiers.set(id, { id, type, fn });
-  }
-
-  public removeModifier(id: string) {
-    this.modifiers.delete(id);
-  }
-
-  /**
-   * 每一帧调用的更新函数：三层属性融合
-   */
-  private update(ticker: Ticker) {
+  public syncProperties(time: number = this.getTickerTime()) {
     // 1. 起始于 Base 层 (排版坐标 + 视觉偏移)
     let finalX = this.layoutX + this.displayOffset.x;
     let finalY = this.layoutY + this.displayOffset.y;
@@ -170,7 +128,6 @@ export class KineticChar extends Text {
     if (this.animOffset.tint !== 0xffffff) finalTint = this.animOffset.tint;
 
     // 3. 融合 Behavior 层 (实时物理叠加)
-    const time = ticker.lastTime;
     this.modifiers.forEach((mod) => {
       if (mod.type === 'behavior') {
         const offset = mod.fn(time);
@@ -193,8 +150,39 @@ export class KineticChar extends Text {
     this.tint = finalTint;
   }
 
+  /**
+   * 注册修改器
+   * type: 'anim' 目前由 animOffset 接管逻辑，'behavior' 继续在 update 中逐帧计算
+   */
+  public addModifier(
+    id: string,
+    type: 'anim' | 'behavior' = 'behavior',
+    fn: (time: number) => Partial<TransformOffset>,
+  ) {
+    this.modifiers.set(id, { id, type, fn });
+  }
+
+  public removeModifier(id: string) {
+    this.modifiers.delete(id);
+  }
+
+  private getTickerTime() {
+    return gsap.ticker.time * 1000;
+  }
+
+  /**
+   * 每一帧调用的更新函数：三层属性融合。
+   *
+   * 使用 GSAP ticker 而不是 Pixi shared ticker，是为了让 animOffset 的同步
+   * 与 GSAP timeline 同源，避免 WebView 宿主中两个 ticker 生命周期不一致时
+   * 字符已经被 timeline 推进、但 Pixi Text 仍停留在 alpha=0 的状态。
+   */
+  private update = () => {
+    this.syncProperties(this.getTickerTime());
+  };
+
   public destroy(options?: any) {
-    Ticker.shared.remove(this.update, this);
+    gsap.ticker.remove(this.update);
     super.destroy(options);
   }
 }

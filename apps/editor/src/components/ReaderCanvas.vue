@@ -6,67 +6,57 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from "vue";
-import { readerApp } from "../core/App";
-import { scriptPlayer } from "../core/player/ScriptPlayer";
-import { layout } from "../core/layout/LayoutEngine";
-import { stageManager } from "../core/stage/StageManager";
+import { createReaderRuntime, type ReaderRuntimeWebSession } from "../core/runtime";
 import { useEditorStore } from "../store/editorStore";
+import {
+  createEditorRuntimeCallbacks,
+  createEditorRuntimeTypography,
+} from "../runtime/readerRuntimeEditorAdapter";
 
 const canvasContainer = ref<HTMLElement | null>(null);
 const isReady = ref(false);
 const store = useEditorStore();
-let resizeObserver: ResizeObserver | null = null;
+let runtime: ReaderRuntimeWebSession | null = null;
 
 onMounted(async () => {
   if (!canvasContainer.value) return;
-  await readerApp.init(canvasContainer.value);
-
-  // 关键：使用 ResizeObserver 监听容器尺寸变化
-  resizeObserver = new ResizeObserver(() => {
-    requestAnimationFrame(() => {
-      if (readerApp.pixiApp && readerApp.pixiApp.renderer) {
-        readerApp.pixiApp.resize();
-        // 强制渲染一帧
-        readerApp.pixiApp.render();
-      }
-    });
+  runtime = await createReaderRuntime(canvasContainer.value, {
+    assetBaseUrl: import.meta.env.BASE_URL,
+    callbacks: createEditorRuntimeCallbacks(store),
+    typography: createEditorRuntimeTypography(store),
   });
-  resizeObserver.observe(canvasContainer.value);
-
-  layout.init(stageManager.contentLayer, 100);
   // 同步单例 Player 到 Store
-  store.setPlayer(scriptPlayer);
+  store.setPlayer(runtime.getPlayer());
   isReady.value = true;
 });
 
 onUnmounted(async () => {
   // 核心修复：移除 stop() 调用。
   // 布局调整时组件会卸载重挂，但不应停止正在进行的演出。
-  if (resizeObserver) {
-    resizeObserver.disconnect();
-    resizeObserver = null;
-  }
+  runtime?.detach();
+  runtime = null;
 });
 
 const loadAndPlay = async (kmdSource: string) => {
-  await scriptPlayer.stop();
-  await scriptPlayer.load(kmdSource);
-  scriptPlayer.toggleAutoPlay(true);
+  if (!runtime) return;
+  await runtime.getPlayer().stop();
+  await runtime.loadSource(kmdSource, { id: "editor-script" });
+  runtime.play();
 };
 
 const stop = async () => {
-  await scriptPlayer.stop();
+  await runtime?.getPlayer().stop();
 };
 
 const next = () => {
-  scriptPlayer.next(true);
+  runtime?.getPlayer().next(true);
 };
 
 defineExpose({
   loadAndPlay,
   stop,
   next,
-  getPlayer: () => scriptPlayer,
+  getPlayer: () => runtime?.getPlayer() ?? null,
 });
 </script>
 

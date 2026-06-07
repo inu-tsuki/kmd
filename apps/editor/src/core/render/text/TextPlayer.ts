@@ -2,7 +2,6 @@ import { EffectProcessor } from "../../effects/EffectProcessor";
 import { stageManager } from "../../stage/StageManager";
 import { effectManager } from "../../effects/EffectManager";
 import { styleManager } from "../../effects/StyleManager";
-import { useEditorStore } from "../../../store/editorStore";
 import { TokenWrapper } from "../../TokenWrapper";
 import { KineticChar } from "../../KineticChar";
 import type { EffectConfig } from "../../parser/types";
@@ -47,6 +46,19 @@ export interface TimelineBuildResult {
   advanceTime?: number;
 }
 
+export interface TextTimelineBuildOptions {
+  speed?: number;
+  onLineUpdate?: (line: number) => void;
+}
+
+export interface LegacyTextPlaybackOptions {
+  speed?: number;
+  mode?: string;
+  onAdvance?: () => void;
+  onTimeUpdate?: (timeMs: number) => void;
+  onLineUpdate?: (line: number) => void;
+}
+
 export class TextPlayer {
   private static isNewLineItem(item: TextExecutionItemPayload) {
     return item.isNewLine || item.char.text === "\n";
@@ -78,7 +90,7 @@ export class TextPlayer {
   public static buildTimeline(
     target: any, // KineticText
     plan: RuntimeParagraphExecutionPlan,
-    options: { speed?: number } = {}
+    options: TextTimelineBuildOptions = {}
   ): TimelineBuildResult {
     // 不设 paused:true —— 子 Timeline 由父 (segmentTl) 控制。
     // GSAP 3 中 paused 子项不受父 Timeline 驱动。
@@ -144,8 +156,7 @@ export class TextPlayer {
         if (item.line !== undefined) {
           const lineNum = item.line + 1;
           tl.call(() => {
-            const store = useEditorStore();
-            store.currentLine = lineNum;
+            options.onLineUpdate?.(lineNum);
           }, [], timelineCursor.position);
         }
 
@@ -575,11 +586,10 @@ export class TextPlayer {
     target: any,
     assembly: Pick<ParagraphDisplayAssembly, "tokens" | "executionItems">,
     absStartTime: number,
-    options: { speed?: number; mode?: string; onAdvance?: () => void } = {}
+    options: LegacyTextPlaybackOptions = {}
   ): Promise<{ skipAutoPause?: boolean }> {
     const items = assembly.executionItems;
     const tokens = assembly.tokens;
-    const store = useEditorStore();
     let baseRevealSpeed = options.speed ?? target._options.speed ?? 50;
     let virtualElapsed = 0;
 
@@ -597,7 +607,7 @@ export class TextPlayer {
 
       // 1. 更新行号 (仅对可见字符)
       if (item.line !== undefined && char.text.trim()) {
-        store.currentLine = item.line + 1;
+        options.onLineUpdate?.(item.line + 1);
       }
 
       // 2. 处理行级重置
@@ -626,7 +636,7 @@ export class TextPlayer {
       }
 
       // 5. 更新同步时间
-      store.currentTime = absStartTime + virtualElapsed;
+      options.onTimeUpdate?.(absStartTime + virtualElapsed);
 
       // 6. 渲染触发与防闪烁
       if (char.text.trim()) {
@@ -759,12 +769,11 @@ export class TextPlayer {
     target: any,
     assembly: Pick<ParagraphDisplayAssembly, "chars" | "tokens" | "executionItems">,
     _absStartTime: number,
-    _options: { speed?: number } = {}
+    options: { speed?: number; onLineUpdate?: (line: number) => void } = {}
   ) {
     const items = assembly.executionItems;
     // 暂时通过将速度设为极小值并跳过所有等待来实现
     // 在这个模式下，setTimeout(0) 依然会有微小延迟，但在 JS 循环中足够快
-    const store = useEditorStore();
 
     for (let i = 0; i < items.length; i++) {
       const item = items[i]!;
@@ -781,7 +790,7 @@ export class TextPlayer {
       }
 
       if (item.line !== undefined && char.text.trim()) {
-        store.currentLine = item.line + 1;
+        options.onLineUpdate?.(item.line + 1);
       }
     }
 

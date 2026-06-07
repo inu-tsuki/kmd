@@ -43,6 +43,24 @@ export class StageHostSession {
     }
   }
 
+  public detachHost() {
+    this.clearHostBindings();
+    this.host = null;
+    auditBus.emit({
+      phase: "runtime",
+      subsystem: "stage_host",
+      severity: "info",
+      payload: {
+        event: "stage.host.detached",
+      },
+    });
+  }
+
+  public dispose() {
+    this.detachHost();
+    this.isInitialized = false;
+  }
+
   public init(host?: ReaderHost) {
     if (host) {
       this.attachHost(host);

@@ -1,4 +1,5 @@
 import { Container } from "pixi.js";
+import { readerApp } from "../App";
 import { parser } from "../parser/Parser";
 import { KineticText } from "../KineticText";
 import { layout } from "../layout/LayoutEngine";
@@ -7,10 +8,22 @@ import type { Segment, ParagraphUnit } from "../state/Segment";
 import { ScriptBuildReporter } from "./ScriptBuildReporter";
 import { ScriptSourceLoader } from "./ScriptSourceLoader";
 import { stageManager } from "../stage/StageManager";
-import { useEditorStore } from "../../store/editorStore";
 import { PlaybackController, type PlaybackRuntimeState } from "./PlaybackController";
 import { SegmentBuilder } from "./SegmentBuilder";
+import { TextBuildContextResolver } from "../render/text/TextBuildContextResolver";
+import type {
+  ReaderRuntimeCallbacks,
+  ReaderRuntimeTimelineMarker,
+  ReaderRuntimeTypography,
+} from "../runtime";
 import gsap from "gsap";
+
+export interface ScriptPlayerConfig {
+  mode?: string;
+  designWidth?: number;
+  designHeight?: number;
+  typography?: ReaderRuntimeTypography;
+}
 
 export class ScriptPlayer {
   private container: Container;
@@ -19,6 +32,9 @@ export class ScriptPlayer {
   public rawParagraphs: string[] = [];
   private activeTexts: KineticText[] = [];
   private currentMode: "stage" | "scroll" | "page" = "stage";
+  private config: ScriptPlayerConfig = {};
+  private runtimeCallbacks: ReaderRuntimeCallbacks = {};
+  private timelineMarkers: ReaderRuntimeTimelineMarker[] = [];
 
   // ═══════════════════════════════════════════════════════════
   //  Segment-based 播放引擎 (Phase A)
@@ -28,8 +44,13 @@ export class ScriptPlayer {
     isAutoPlaying: false,
     activeBehaviorCleanups: [],
     onTimeUpdate: (timeMs) => {
-      const store = useEditorStore();
-      store.currentTime = timeMs;
+      this.emitProgress({ timeMs });
+    },
+    onLineUpdate: (line) => {
+      this.emitProgress({ line });
+    },
+    onPlaybackComplete: () => {
+      this.emitPlaybackState("ended", false);
     },
   };
 
@@ -40,6 +61,142 @@ export class ScriptPlayer {
     this.container = container;
   }
 
+  public setRuntimeCallbacks(callbacks: ReaderRuntimeCallbacks = {}) {
+    this.runtimeCallbacks = callbacks;
+  }
+
+  private get workId() {
+    return this.metadata.title || "editor-script";
+  }
+
+  private emitProgress(update: { timeMs?: number; line?: number }) {
+    const durationMs = this.segment ? this.segment.duration * 1000 : undefined;
+    const progress = durationMs && update.timeMs !== undefined && durationMs > 0
+      ? Math.max(0, Math.min(1, update.timeMs / durationMs))
+      : 0;
+
+    this.runtimeCallbacks.onProgress?.({
+      workId: this.workId,
+      progress,
+      timeMs: update.timeMs,
+      durationMs,
+      line: update.line,
+    });
+  }
+
+  private emitPlaybackState(state: "idle" | "loading" | "ready" | "playing" | "paused" | "ended" | "error", isPlaying: boolean) {
+    this.runtimeCallbacks.onPlaybackStateChanged?.({
+      workId: this.workId,
+      isPlaying,
+      state,
+    });
+  }
+
+  private scheduleRenderDiagnostics(reason: string, delays: number[]) {
+    if (!this.shouldLogRenderDiagnostics()) return;
+    this.logRenderDiagnostics(`${reason}:now`);
+    delays.forEach((delay) => {
+      globalThis.setTimeout?.(() => {
+        this.logRenderDiagnostics(`${reason}:${delay}ms`);
+      }, delay);
+    });
+  }
+
+  private shouldLogRenderDiagnostics() {
+    const runtimeConfig = (globalThis as any).KmdRuntimeConfig;
+    if (runtimeConfig?.debugOverlay === true || runtimeConfig?.settings?.debugOverlay === true) {
+      return true;
+    }
+
+    try {
+      const params = new URLSearchParams(globalThis.location?.search ?? "");
+      return params.get("kmdDebugProbe") === "1" || params.get("kmdRuntimeDiag") === "1";
+    } catch {
+      return false;
+    }
+  }
+
+  private logRenderDiagnostics(reason: string) {
+    try {
+      const app = readerApp.pixiApp;
+      const renderer = app.renderer as any;
+      const canvas = app.canvas as HTMLCanvasElement | undefined;
+      const gl = renderer?.gl ?? renderer?.context?.gl;
+      const charGroups = this.activeTexts.map((text) => (
+        ((text as any)._displayAssembly?.chars ?? []) as any[]
+      ));
+      const chars = charGroups.flat();
+      const sampleChars = chars
+        .filter((char) => String(char.text ?? "").trim().length > 0)
+        .slice(0, 3)
+        .map((char) => ({
+          text: String(char.text ?? ""),
+          visible: Boolean(char.visible),
+          renderable: Boolean(char.renderable),
+          alpha: Number(char.alpha ?? 0).toFixed(3),
+          animAlpha: Number(char.animOffset?.alpha ?? 0).toFixed(3),
+          x: Number(char.x ?? 0).toFixed(1),
+          y: Number(char.y ?? 0).toFixed(1),
+          layoutX: Number(char.layoutX ?? 0).toFixed(1),
+          layoutY: Number(char.layoutY ?? 0).toFixed(1),
+          fill: String((char.style as any)?.fill ?? ""),
+        }));
+
+      const snapshot = {
+        reason,
+        workId: this.workId,
+        mode: this.currentMode,
+        durationMs: this.durationMs,
+        app: {
+          initialized: readerApp.isInitialized,
+          screen: {
+            width: app.screen.width,
+            height: app.screen.height,
+          },
+          canvas: {
+            width: canvas?.width,
+            height: canvas?.height,
+            cssWidth: canvas?.style.width,
+            cssHeight: canvas?.style.height,
+          },
+        },
+        renderer: {
+          type: renderer?.type,
+          name: renderer?.name,
+          webGLVersion: renderer?.context?.webGLVersion,
+          limits: {
+            maxTextures: renderer?.limits?.maxTextures,
+            maxBatchableTextures: renderer?.limits?.maxBatchableTextures,
+            maxUniformBindings: renderer?.limits?.maxUniformBindings,
+          },
+          maxTextureUnits: gl?.getParameter?.(gl.MAX_TEXTURE_IMAGE_UNITS),
+          maxCombinedTextureUnits: gl?.getParameter?.(gl.MAX_COMBINED_TEXTURE_IMAGE_UNITS),
+          contextLost: gl?.isContextLost?.(),
+        },
+        environment: {
+          userAgent: globalThis.navigator?.userAgent,
+          devicePixelRatio: globalThis.devicePixelRatio,
+        },
+        stage: {
+          stageChildren: app.stage.children.length,
+          contentLayerChildren: this.container.children.length,
+        },
+        text: {
+          activeTexts: this.activeTexts.length,
+          chars: chars.length,
+          visibleChars: chars.filter((char) => char.visible).length,
+          alphaChars: chars.filter((char) => Number(char.alpha ?? 0) > 0.01).length,
+          animAlphaChars: chars.filter((char) => Number(char.animOffset?.alpha ?? 0) > 0.01).length,
+          sampleChars,
+        },
+      };
+
+      console.info(`[KmdRuntimeDiag] ${JSON.stringify(snapshot)}`);
+    } catch (error) {
+      console.warn("[KmdRuntimeDiag] failed", error);
+    }
+  }
+
   // ═══════════════════════════════════════════════════════════
   //  Load & Build
   // ═══════════════════════════════════════════════════════════
@@ -47,14 +204,33 @@ export class ScriptPlayer {
   public async load(kmdSource: string) {
     ScriptBuildReporter.beginBuildSession();
     stageManager.clearAuditSnapshot();
+    this.emitPlaybackState("loading", false);
     let finalSource = kmdSource;
     try {
       finalSource = (await ScriptSourceLoader.resolve(kmdSource)).source;
     } catch (err) {
       ScriptBuildReporter.reportLoadFailure(kmdSource, err);
+      this.emitPlaybackState("error", false);
+      this.runtimeCallbacks.onError?.({
+        workId: this.workId,
+        code: "SOURCE_LOAD_FAILED",
+        message: err instanceof Error ? err.message : String(err),
+        recoverable: true,
+      });
       return;
     }
 
+    await this.loadFinalSource(finalSource);
+  }
+
+  public async loadSourceContent(source: string) {
+    ScriptBuildReporter.beginBuildSession();
+    stageManager.clearAuditSnapshot();
+    this.emitPlaybackState("loading", false);
+    await this.loadFinalSource(source);
+  }
+
+  private async loadFinalSource(finalSource: string) {
     const result = parser.parse(finalSource);
     ScriptBuildReporter.reportParseResult(result, result.metadata.mode ?? this.currentMode);
 
@@ -64,8 +240,8 @@ export class ScriptPlayer {
     if (this.metadata.mode) this.setMode(this.metadata.mode);
 
     stageManager.setDesignResolution(
-      this.metadata.designWidth || 1920,
-      this.metadata.designHeight || 1080
+      this.metadata.designWidth || this.config.designWidth || 1920,
+      this.metadata.designHeight || this.config.designHeight || 1080
     );
 
     if (this.metadata.variables) {
@@ -78,8 +254,15 @@ export class ScriptPlayer {
     // Phase A: 构建 Segment（替代旧的 bakeAll）
     this.segment = await this.buildSegment();
 
-    const store = useEditorStore();
-    store.totalDuration = this.segment.duration * 1000; // 秒→毫秒
+    const durationMs = this.segment.duration * 1000; // 秒→毫秒
+    this.runtimeCallbacks.onReady?.({
+      workId: this.workId,
+      durationMs,
+      timelineMarkers: this.timelineMarkers,
+    });
+    this.scheduleRenderDiagnostics("after-build", [250]);
+    this.emitProgress({ timeMs: 0 });
+    this.emitPlaybackState("ready", false);
     ScriptBuildReporter.reportSegmentBuilt(this.segment);
   }
 
@@ -105,8 +288,8 @@ export class ScriptPlayer {
       playbackState: this.playbackState,
     });
 
-    const store = useEditorStore();
-    store.timelineMarkers = buildResult.timelineMarkers;
+    this.timelineMarkers = buildResult.timelineMarkers;
+    this.runtimeCallbacks.onTimelineChanged?.(this.timelineMarkers);
     this.activeTexts = buildResult.activeTexts;
     return buildResult.segment;
   }
@@ -119,14 +302,19 @@ export class ScriptPlayer {
    * 开始/恢复播放
    */
   public playSegment() {
+    if (!this.segment) return;
     PlaybackController.playSegment(this.segment, this.playbackState);
+    this.scheduleRenderDiagnostics("after-play", [100, 500, 1500]);
+    this.emitPlaybackState("playing", true);
   }
 
   /**
    * 暂停播放
    */
   public pauseSegment() {
+    if (!this.segment) return;
     PlaybackController.pauseSegment(this.segment, this.playbackState);
+    this.emitPlaybackState("paused", false);
   }
 
   /**
@@ -153,7 +341,9 @@ export class ScriptPlayer {
     const unit = this.segment.paragraphs[index];
     if (!unit) return;
 
-    console.log(`[ScriptPlayer] seekTo(p[${index}]) → seekToTime(${unit.offsetInSegment.toFixed(2)}s)`);
+    if (this.shouldLogRenderDiagnostics()) {
+      console.log(`[ScriptPlayer] seekTo(p[${index}]) -> seekToTime(${unit.offsetInSegment.toFixed(2)}s)`);
+    }
     this.seekToTime(unit.offsetInSegment);
 
     // 如果之前在播放，继续播放
@@ -170,9 +360,24 @@ export class ScriptPlayer {
     return this.currentMode;
   }
 
-  public updateConfig(config: { mode?: string; designWidth?: number; designHeight?: number }) {
+  public get durationMs() {
+    return this.segment ? this.segment.duration * 1000 : 0;
+  }
+
+  public updateConfig(config: ScriptPlayerConfig) {
+    this.config = {
+      ...this.config,
+      ...config,
+      typography: {
+        ...this.config.typography,
+        ...config.typography,
+      },
+    };
     if (config.mode) {
       this.setMode(config.mode as any);
+    }
+    if (config.typography) {
+      TextBuildContextResolver.configure({ typography: config.typography });
     }
     if (config.designWidth || config.designHeight) {
       stageManager.setDesignResolution(
@@ -194,6 +399,7 @@ export class ScriptPlayer {
     if (this.segment) {
       this.segment.timeline.pause();
       this.segment.timeline.seek(0);
+      this.segment.timeline.kill();
 
       // F1: 重置 layout 和 stage 到入口状态，防止重播时 Y 偏移
       layout.reset();
@@ -206,6 +412,15 @@ export class ScriptPlayer {
     this.activeTexts.forEach(kt => kt.destroy({ children: true }));
     this.activeTexts = [];
     this.segment = null;
+    this.timelineMarkers = [];
+    this.runtimeCallbacks.onTimelineChanged?.([]);
+    this.emitProgress({ timeMs: 0 });
+    this.emitPlaybackState("idle", false);
+  }
+
+  public async dispose() {
+    await this.stop();
+    this.setRuntimeCallbacks({});
   }
 
   public async clearScreen() {
@@ -240,7 +455,9 @@ export class ScriptPlayer {
         this.playSegment();
       }
     } else {
-      console.log("[ScriptPlayer] No more paragraphs to advance to.");
+      if (this.shouldLogRenderDiagnostics()) {
+        console.log("[ScriptPlayer] No more paragraphs to advance to.");
+      }
     }
   }
 

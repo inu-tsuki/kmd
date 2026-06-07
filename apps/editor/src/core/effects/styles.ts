@@ -51,7 +51,9 @@ const _serif: StyleFunction = (style) => { style.fontFamily = "Times New Roman, 
 export const serif = defineStyle(_serif, { type: 'style', track: 'instant', targetType: 'char', mutexGroup: 'fontFamily' });
 
 const _special: StyleFunction = (style) => {
-  console.log("[Style-Trace] Applying 'special' preset to TextStyle");
+  if (shouldLogStylePresetDiagnostics()) {
+    console.log("[Style-Trace] Applying 'special' preset to TextStyle");
+  }
   style.fontFamily = ["Smiley Sans", "LXGW WenKai", "Georgia", "serif"];
   style.fontStyle = "normal"; // Smiley Sans Oblique 已经是斜的，不需要额外设置 italic
   style.fill = "#e0e0e0";
@@ -80,7 +82,9 @@ const _font: StyleFunction = (style, params) => {
   if (fontName) {
     // 核心修正：剥离可能的引号
     fontName = String(fontName).replace(/^['"](.*)['"]$/, '$1');
-    console.log(`[Style-Trace] Explicitly switching font to: ${fontName}`);
+    if (shouldLogStylePresetDiagnostics()) {
+      console.log(`[Style-Trace] Explicitly switching font to: ${fontName}`);
+    }
     style.fontFamily = fontName;
   }
 };
@@ -155,3 +159,16 @@ const _stroke: StyleFunction = (style) => {
   style.stroke = { color: "#000000", width: 2, join: "round" };
 };
 export const stroke = defineStyle(_stroke, { type: 'style', track: 'instant', targetType: 'char', mutexGroup: 'stroke' });
+
+function shouldLogStylePresetDiagnostics() {
+  try {
+    const runtimeConfig = (globalThis as any).KmdRuntimeConfig;
+    if (runtimeConfig?.debugOverlay === true || runtimeConfig?.settings?.debugOverlay === true) {
+      return true;
+    }
+    const params = new URLSearchParams(globalThis.location?.search ?? "");
+    return params.get("kmdDebugProbe") === "1" || params.get("kmdStyleDiag") === "1";
+  } catch {
+    return false;
+  }
+}

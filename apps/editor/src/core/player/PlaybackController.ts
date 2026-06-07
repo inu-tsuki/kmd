@@ -11,6 +11,8 @@ export interface PlaybackRuntimeState {
   isAutoPlaying: boolean;
   activeBehaviorCleanups: BehaviorCleanup[];
   onTimeUpdate?: (timeMs: number) => void;
+  onLineUpdate?: (line: number) => void;
+  onPlaybackComplete?: () => void;
 }
 
 export class PlaybackController {
@@ -39,7 +41,9 @@ export class PlaybackController {
     if (!segment) return 0;
     const clamped = Math.max(0, Math.min(seconds, segment.duration));
 
-    console.log(`[ScriptPlayer] seekToTime(${clamped.toFixed(2)}s)`);
+    if (this.shouldLogPlaybackDiagnostics()) {
+      console.log(`[ScriptPlayer] seekToTime(${clamped.toFixed(2)}s)`);
+    }
     segment.timeline.seek(clamped);
 
     this.registerBehaviors(segment, clamped, state);
@@ -83,6 +87,19 @@ export class PlaybackController {
       if (record.timePosition <= currentTime) {
         styleManager.apply(record.char.style, record.styleName, record.params, true);
       }
+    }
+  }
+
+  private static shouldLogPlaybackDiagnostics() {
+    try {
+      const runtimeConfig = (globalThis as any).KmdRuntimeConfig;
+      if (runtimeConfig?.debugOverlay === true || runtimeConfig?.settings?.debugOverlay === true) {
+        return true;
+      }
+      const params = new URLSearchParams(globalThis.location?.search ?? "");
+      return params.get("kmdDebugProbe") === "1" || params.get("kmdPlaybackDiag") === "1";
+    } catch {
+      return false;
     }
   }
 }

@@ -59,8 +59,26 @@ class StageManager {
     this.hostSession.attachHost(host);
   }
 
+  public detachHost() {
+    this.hostSession.detachHost();
+  }
+
   public init(host?: ReaderHost) {
     this.hostSession.init(host);
+  }
+
+  public disposeSession() {
+    gsap.killTweensOf(stageRuntime.camera);
+    gsap.killTweensOf(stageRuntime.cameraOffset);
+    stageRuntime.buildMode = false;
+    stageRuntime.clearModifiers();
+    stageRuntime.setSceneClearHandler(undefined);
+    stageRuntime.restoreState(
+      { x: 0, y: 0, zoom: 1, rotation: 0 },
+      { x: 0, y: 0, zoom: 1, rotation: 0 },
+    );
+    this.contentLayer.removeChildren();
+    this.hostSession.dispose();
   }
 
   /**

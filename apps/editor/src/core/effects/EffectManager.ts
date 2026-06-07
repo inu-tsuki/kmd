@@ -42,7 +42,9 @@ class EffectManager {
 
   // 应用特效的核心方法
   public apply(target: Container, name: string, params: EffectParams = {}, force: boolean = false) {
-    console.log(`[EffectManager] Applying effect: ${name}`, params);
+    if (this.shouldLogEffectDiagnostics()) {
+      console.log(`[EffectManager] Applying effect: ${name}`, params);
+    }
     const entry = this.registry[name];
     if (!entry) {
       console.warn(`[Effect] Unknown: ${name}`);
@@ -75,6 +77,19 @@ class EffectManager {
 
     // 执行
     return fn(target, params);
+  }
+
+  private shouldLogEffectDiagnostics() {
+    try {
+      const runtimeConfig = (globalThis as any).KmdRuntimeConfig;
+      if (runtimeConfig?.debugOverlay === true || runtimeConfig?.settings?.debugOverlay === true) {
+        return true;
+      }
+      const params = new URLSearchParams(globalThis.location?.search ?? "");
+      return params.get("kmdDebugProbe") === "1" || params.get("kmdEffectDiag") === "1";
+    } catch {
+      return false;
+    }
   }
 }
 

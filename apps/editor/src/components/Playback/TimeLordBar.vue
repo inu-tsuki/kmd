@@ -51,17 +51,16 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
 import { useEditorStore } from "../../store/editorStore";
-import { scriptPlayer } from "../../core/player/ScriptPlayer";
 
 const store = useEditorStore();
 const trackRef = ref<HTMLElement | null>(null);
 const isScrubbing = ref(false);
 const wasPlaying = ref(false);
 
-const isPlaying = computed(() => scriptPlayer.autoPlay);
+const isPlaying = computed(() => store.player?.autoPlay ?? false);
 
 const togglePlay = () => {
-  scriptPlayer.toggleAutoPlay();
+  store.player?.toggleAutoPlay();
 };
 
 const playheadPos = computed(() => {
@@ -90,8 +89,8 @@ const formatTime = (ms: number) => {
 const handleScrubStart = (e: MouseEvent) => {
   isScrubbing.value = true;
   // F7: 记录拖拽前播放状态，暂停 Timeline 避免 onUpdate 冲突
-  wasPlaying.value = scriptPlayer.autoPlay;
-  scriptPlayer.pauseSegment();
+  wasPlaying.value = store.player?.autoPlay ?? false;
+  store.player?.pauseSegment();
   updateScrub(e);
   window.addEventListener("mousemove", handleScrubMove);
   window.addEventListener("mouseup", handleScrubEnd);
@@ -123,9 +122,9 @@ const handleScrubEnd = () => {
   console.log(
     `[UI-Jump] Scrub ended at ${targetTime.toFixed(0)}ms → seekToTime(${targetSeconds.toFixed(2)}s)`,
   );
-  scriptPlayer.seekToTime(targetSeconds);
+  store.player?.seekToTime(targetSeconds);
   // F7: 恢复拖拽前的播放状态
-  if (wasPlaying.value) scriptPlayer.playSegment();
+  if (wasPlaying.value) store.player?.playSegment();
 };
 </script>
 

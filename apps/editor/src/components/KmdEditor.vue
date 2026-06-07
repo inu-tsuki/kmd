@@ -8,7 +8,6 @@ import * as monaco from "monaco-editor";
 import { registerKMDLanguage } from "../core/editor/kmd-lang";
 import { parser } from "../core/parser/Parser";
 import { useEditorStore } from "../store/editorStore";
-import { scriptPlayer } from "../core/player/ScriptPlayer";
 
 const props = defineProps<{
   modelValue: string;
@@ -124,8 +123,10 @@ onMounted(async () => {
   // Alt + 点击：跳转播放
   editor.onMouseDown((e) => {
     if (e.event.altKey && e.target.position) {
+      const player = store.player;
+      if (!player) return;
       const line = e.target.position.lineNumber;
-      const paragraphs = scriptPlayer.paragraphs;
+      const paragraphs = player.paragraphs;
 
       // 寻找该行所属的段落 (或之前的最后一个段落)
       let targetIdx = 0;
@@ -141,7 +142,7 @@ onMounted(async () => {
       console.log(
         `[Editor-Jump] Alt+Click at line ${line}, seeking to p[${targetIdx}]`,
       );
-      scriptPlayer.seekTo(targetIdx);
+      player.seekTo(targetIdx);
       store.isPlaying = true;
     }
   });

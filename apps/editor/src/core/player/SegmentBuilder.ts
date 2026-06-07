@@ -10,6 +10,7 @@ import type { BehaviorRecord, StyleRecord } from "../render/text/TextPlayer";
 import { stageManager } from "../stage/StageManager";
 import { createParagraphExecutionPlan } from "../execution/paragraphExecutionPlan";
 import type { PlaybackRuntimeState } from "./PlaybackController";
+import type { ReaderRuntimeTimelineMarker } from "../runtime";
 import gsap from "gsap";
 
 type ActiveStageTweenEntry = {
@@ -33,7 +34,7 @@ export interface SegmentBuildContext {
 
 export interface SegmentBuildResult {
   segment: Segment;
-  timelineMarkers: any[];
+  timelineMarkers: ReaderRuntimeTimelineMarker[];
   activeTexts: KineticText[];
 }
 
@@ -111,7 +112,7 @@ export class SegmentBuilder {
     const allBehaviors: BehaviorRecord[] = [];
     const allStyleRecords: StyleRecord[] = [];
     const paragraphUnits: ParagraphUnit[] = [];
-    const markers: any[] = [];
+    const markers: ReaderRuntimeTimelineMarker[] = [];
     const stageTweenRecords: InFlightAnimation[] = [];
     const activeTexts: KineticText[] = [];
 
@@ -189,7 +190,10 @@ export class SegmentBuilder {
         const buildResult = TextPlayer.buildTimeline(
           paragraphText,
           paragraphExecutionPlan,
-          { speed: context.metadata.speed },
+          {
+            speed: context.metadata.speed,
+            onLineUpdate: context.playbackState.onLineUpdate,
+          },
         );
 
         const childCount = buildResult.timeline.getChildren().length;
@@ -247,12 +251,19 @@ export class SegmentBuilder {
               ? absStartMs + nextToken.startTime!
               : absStartMs + buildResult.duration * 1000;
 
+            const line = (token.line || 0) + 1;
+            const duration = Math.max(50, endTime - absStart);
+            const content = token.isSceneClear ? "--- SCENE CLEAR ---" : token.content;
+            const type = token.isSceneClear ? "scene" : "text";
             markers.push({
-              line: (token.line || 0) + 1,
+              id: `p${i}-m${markers.length}`,
+              label: content,
+              line,
+              timeMs: absStart,
               startTime: absStart,
-              duration: Math.max(50, endTime - absStart),
-              content: token.isSceneClear ? "--- SCENE CLEAR ---" : token.content,
-              type: token.isSceneClear ? "scene" : "text",
+              duration,
+              content,
+              type,
             });
           }
         });
@@ -294,6 +305,7 @@ export class SegmentBuilder {
 
     segmentTl.eventCallback("onComplete", () => {
       context.playbackState.isAutoPlaying = false;
+      context.playbackState.onPlaybackComplete?.();
     });
 
     const segment: Segment = {
