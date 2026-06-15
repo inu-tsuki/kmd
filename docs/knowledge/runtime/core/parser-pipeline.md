@@ -1,5 +1,9 @@
 # 解析器管线：从源码到运行时
 
+> 文档状态：Active
+> 最近更新：2026-06-16
+> 权威范围：KMD 解析器主路径 `source -> KMDParser -> AstParser -> lowering -> ParagraphIR -> legacy projection -> runtime`，以及解析器源码阅读顺序
+
 > 本文档描述当前解析器主路径：`source -> AST -> IR -> legacy projection -> runtime`。
 > 阅读 `LayoutStreamBuilder`、`TextBuilder` 或 `ScriptPlayer` 前，建议先建立这套心智模型。
 
@@ -56,9 +60,9 @@ AST 节点描述的是源码结构，例如：
 - 把 block option 视觉命令改写为 paragraph broadcast 或 paragraph effect
 - 生成兼容旧运行时所需的 `tokens/globalEffects`
 
-注意：当前 `ParagraphIR` 仍是过渡态 IR。
+注意：`ParagraphIR` 当前仍是过渡态 IR。
 它已经把“语法解释权”从旧 scanner 中拿出来，但 layout / playback / stage 还没有彻底分 lane。
-例如 `pause`、`go/slow/fast` 仍然混在 inline 流里，方便兼容现有 runtime。
+例如 `pause`、`go/slow/fast` 仍然混在 inline 流里，与现有 runtime 兼容。
 
 ## 兼容层
 
@@ -76,7 +80,7 @@ AST 节点描述的是源码结构，例如：
 - Monaco 语义 token
 - 旧测试与调试工具
 
-这也是本次重构能相对平滑迁移的原因：解析器内部已经换成 AST/IR，但外部接口暂时仍兼容旧形状。
+这也是迁移相对平滑的原因：解析器内部已换成 AST/IR，外部接口仍兼容旧形状。
 
 ## 读码建议
 

@@ -1,24 +1,10 @@
 # Roadmap Index
 
-> 最近更新：2026-06-15
+> 最近更新：2026-06-16
 
 这里只放阶段级路线图。包级计划放 `../packages/`，应用级计划放 `../apps/`，跨生态策略放 `../ecosystem/`。
 
-## 当前决策
-
-Phase B 的语言与 Segment Graph 设计已经膨胀为一个完整新语法阶段，不适合作为 Android Reader runtime 交付的附带项。Phase R 已完成 R0-R7：`@kmd/reader-runtime-web` 已建立为 reader-only bundle 包，但纯 `packages/core` 仍后置。
-
-当前优先级为：
-
-```text
-Integration stabilization:
-  Android WebView smoke + reader-runtime-web artifact boundary
-  -> Phase B readiness review:
-       language design convergence + package boundary check
-  -> Phase B: Language / State / Control Flow / Segment Graph
-  -> Phase C: Interactive Runtime / Game-like Segments
-  -> v1.7+: Plugin and Tooling Ecosystem
-```
+> 当前阶段判断与阶段顺序以 [`implementation-roadmap.md`](./implementation-roadmap.md) 为准。
 
 ## 阶段文档
 

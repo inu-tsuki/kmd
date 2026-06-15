@@ -1,6 +1,8 @@
 # Work And KMD Content Model
 
-> 最近更新：2026-05-27
+> 文档状态：Active
+> 最近更新：2026-06-16
+> 权威范围：KMD 生态中 `Work`（平台作品实体）与 `.kmd`（可播放源文件）的关系、revision 模型、`Work.presentation` 生成链、API 形状、issue/discussion/reference 实体设计、frontmatter 语义、客户端存储边界
 
 本文固定 KMD 生态中 `Work` 与 `.kmd` 文件的关系。
 
@@ -125,7 +127,7 @@ Long-term, `Work.presentation` should be generated when a `.kmd` revision is imp
 
 This avoids two independent facts. If generated `Work.presentation` disagrees with the active `.kmd` revision, the revision is stale, the Work index is stale, or the importer has a bug. The app should treat that as a data consistency issue, not as an ordinary runtime choice.
 
-Before the Work generator exists, local mocks may temporarily duplicate the fields. In that temporary state, runtime-facing playback should prefer `.kmd` source metadata, while list and discovery UI may still use `Work.presentation` as an index fallback.
+Where `Work.presentation` has not been generated yet, mocks may duplicate the fields. Runtime playback then prefers `.kmd` source metadata; list and discovery UI may use `Work.presentation` as an index fallback.
 
 ## API Shape
 
@@ -159,7 +161,7 @@ runtime.loadScript({
 });
 ```
 
-The current Android reader only needs work metadata, active source, and issues. Community discussion endpoints can stay mock-only until web/editor community flows begin, but their identifiers should already be revision-aware.
+Discussion endpoints may remain mock-only early on, but their identifiers must already be revision-aware.
 
 ## KMD-To-KMD References
 

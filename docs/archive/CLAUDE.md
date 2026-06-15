@@ -1,5 +1,8 @@
 # CLAUDE.md
 
+> 文档状态：Archive / superseded
+> 这份旧版 CLAUDE.md 已被仓库根目录的 `CLAUDE.md` 取代。保留于此仅作历史背景，不作为当前协作指引。
+
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## Commands

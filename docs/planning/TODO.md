@@ -2,7 +2,7 @@
 
 > Roadmap authority：当前稳定路线已迁入 `docs/planning/roadmap/`。
 > 本文件保留为 AI 协作期任务池、历史执行记录和详细 backlog。
-> 当前实施阶段：Phase R 已完成 R0-R7；当前进入 Android artifact smoke / Phase B readiness。阶段权威见 `docs/planning/roadmap/implementation-roadmap.md`。
+> 本文件为历史任务池与执行记录，不作为阶段入口；当前阶段权威见 [`docs/planning/roadmap/implementation-roadmap.md`](roadmap/implementation-roadmap.md)。
 
 ## 1. 韵律标准与排版进化 (v1.1.0) — DONE
 
@@ -224,47 +224,9 @@
   - [x] 明确 `+` 并发链、续行符、`{var.xxx}` 插值的 syntax-only AST 形状
   - [x] 预留 line-head control-flow node 类型，不执行 runtime lowering
 
-### Phase R — Reader Runtime Web Extraction（Pre-Phase-B）— DONE
+### Phase R — Reader Runtime Web Extraction（已完成）
 
-> 实施方案见 `docs/planning/roadmap/phase-r-reader-runtime-web.md`
-> 背景审计见 `apps/android-reader/docs/knowledge/integration/core-portability-webview-feasibility.md`
-> 目标：在 Phase B 新语法和 Segment Graph 前，先形成 Android WebView 可宿主、无 Pinia/editor 耦合的 reader runtime。R0-R7 已完成，后续 gate 见 `phase-r-reader-runtime-web.md`。
-
-- [x] **R0. Scope, Inventory, And Android Contract Sync**
-  - [x] 固定本阶段不实现 Phase B 新语法
-  - [x] 列出 reader runtime 禁止导入项：Pinia、Vue components、Monaco、TextMate、editor views
-  - [x] 对齐 Android D0-D3 WebView 路线
-  - [x] 记录第一轮先在 editor 内部建立 reader runtime entry，不直接抽包
-  - [x] 记录 Phase R 暂缓处理的纯 core blocker
-- [x] **R1. Runtime Host Contract**
-  - [x] 定义 `ReaderRuntimeOptions` / `ReaderRuntimeCallbacks` / `ReaderRuntimeSession`
-  - [x] typography、viewport、assetBaseUrl、font manifest、presentation mode 改为 host config
-  - [x] progress、timeline、diagnostics、error 通过 callbacks 上报
-  - [x] 明确 Android bridge 命令/事件映射与真实 `loadScript` payload
-- [x] **R2. Remove Editor Store From Runtime Hot Path**
-  - [x] 从 `ScriptPlayer` / `TextPlayer` / `TextBuildContextResolver` 移除直接 `useEditorStore()`
-  - [x] editor 侧新增 adapter，将 runtime callbacks 写回 Pinia
-- [x] **R3. Runtime Session And Lifecycle**
-  - [x] 提供 `createReaderRuntime(container, options)`
-  - [x] 支持 `loadSource / play / pause / seek / setTimeScale / inspect / dispose`
-  - [x] 明确 ticker、GSAP tween、Pixi containers、active behaviors 的销毁流程
-  - [x] 将 `readerApp` / `scriptPlayer` / `stageManager` / layout host 收口到 session facade
-- [x] **R4. Source And Asset Host Policy**
-  - [x] 替换或包裹 `ScriptSourceLoader` 的自由 `fetch()` 路径策略
-  - [x] `loadScript` 支持 host-provided `source`，并限制 `sourceUrl`
-  - [x] 将 `/fonts/...` 改为 font manifest 或 `assetBaseUrl` 派生路径
-- [x] **R5. Reader-Only Web Bundle**
-  - [x] 建立 reader runtime entry，不复用 editor app shell
-  - [x] 排除 Vue、Pinia、Monaco、TextMate、editor panels
-  - [x] 通过 `assetBaseUrl` 或 manifest 注入 fonts/assets 路径
-- [x] **R6. Android Bridge Contract Hardening**
-  - [x] 消息信封包含 `version`、`id`、`type`、`payload`
-  - [x] 对齐 `ready / progressChanged / playbackStateChanged / inspectionReported / error`
-  - [x] 决定是否引入 command acknowledgement
-  - [x] 保留 fake bridge 用于 Android 单元测试
-- [x] **R7. Packaging Decision Point**
-  - [x] 判断是否落入 `packages/reader-runtime-web`
-  - [x] 记录 `packages/core` 的后续抽离条件
+> 执行记录见 [`docs/planning/roadmap/phase-r-reader-runtime-web.md`](roadmap/phase-r-reader-runtime-web.md)。R0–R7 已完成；当前阶段以 [`implementation-roadmap.md`](roadmap/implementation-roadmap.md) 为准。
 
 ### Phase B — Segment Graph、状态系统与语法演进（Roadmap / Deferred）
 

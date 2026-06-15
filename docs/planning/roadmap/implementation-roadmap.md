@@ -1,7 +1,8 @@
 # KMD Implementation Roadmap
 
-> 状态：Active
-> 最近更新：2026-06-15
+> 文档状态：Active
+> 最近更新：2026-06-16
+> 权威范围：KMD 当前主线判断与阶段顺序——已完成阶段、当前焦点、gated 下一阶段（Phase B 恢复条件）
 
 ## 当前判断
 

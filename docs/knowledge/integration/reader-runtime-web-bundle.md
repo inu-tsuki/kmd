@@ -1,8 +1,10 @@
 # Reader Runtime Web Bundle
 
-> 最近更新：2026-05-20
+> 文档状态：Active
+> 最近更新：2026-06-16
+> 权威范围：reader-runtime-web 的构建（`pnpm reader:build`）、`dist/reader-runtime/` 产物布局、Android Gradle 同步路径、`kmd-reader-runtime.local` 拦截、debug 探针、renderer crash 处理、bundle boundary、asset policy
 
-`reader-runtime-web` 是 Android WebView 与普通浏览器可加载的最小 KMD 播放器产物。包入口位于 `packages/reader-runtime-web/`。Phase R 期间它复用 `apps/editor/src/core/` 的 runtime closure，但不复用 Vue editor shell。
+`reader-runtime-web` 是 Android WebView 与普通浏览器可加载的最小 KMD 播放器产物。包入口位于 `packages/reader-runtime-web/`。在 `packages/core` 抽离前，它复用 `apps/editor/src/core/` 的 runtime closure，但不复用 Vue editor shell。
 
 ## Build
 
@@ -139,7 +141,7 @@ reader bundle 不应 import editor-only 模块：
 - Monaco、TextMate、Oniguruma。
 - editor panels 和 dock UI。
 
-当前允许的过渡依赖：
+`packages/core` 抽离前的过渡依赖（抽离条件见 [`planning/packages/reader-runtime-web.md`](../../planning/packages/reader-runtime-web.md) 的 Core Extraction Gate）：
 
 - `packages/reader-runtime-web/src/*` 可以引用 `apps/editor/src/core/runtime`。
 - 被 runtime closure 拉入的 parser/layout/effects/stage/render/player 仍暂存在 `apps/editor/src/core/`。

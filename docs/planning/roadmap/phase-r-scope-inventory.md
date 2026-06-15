@@ -1,8 +1,9 @@
 # Phase R R0 Scope And Inventory
 
-> 状态：Done
-> 最近更新：2026-05-19
+> 文档状态：Done record
+> 最近更新：2026-06-16
 > 对应工作包：`phase-r-reader-runtime-web.md` / R0
+> 权威范围：Phase R / R0 的范围锁定——目标边界、reader runtime 禁止导入清单、暂留 Web 依赖、editor 耦合点盘点、纯 core blocker
 
 ## 1. R0 决策
 
@@ -56,41 +57,7 @@ Phase R 不是纯算法 core，因此以下依赖可以暂时保留在 reader ru
 
 ## 4. Android Bridge 兼容目标
 
-Android 当前 D0 shell 已验证 WebView transport。Phase R 的真实 runtime 应兼容当前命令：
-
-```text
-loadScript
-play
-pause
-seek
-setInspectionEnabled
-updateSettings
-dispose
-```
-
-真实 runtime 应发出当前事件：
-
-```text
-runtimeReady
-ready
-progressChanged
-playbackStateChanged
-inspectionReported
-error
-```
-
-消息信封沿用：
-
-```ts
-{
-  version: 1,
-  id,
-  type,
-  payload
-}
-```
-
-协议细节以 `docs/knowledge/integration/android-webview-runtime-protocol.md` 为准。
+Android D0 shell 已验证 WebView transport。Phase R 真实 runtime 必须与既有 v1 命令、v1 事件和 `{ version, id, type, payload }` 信封兼容——命令、事件、信封、ack 策略与生命周期的完整定义见 [`android-webview-runtime-protocol.md`](../../knowledge/integration/android-webview-runtime-protocol.md)。
 
 ## 5. Editor Runtime 当前耦合点
 

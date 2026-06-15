@@ -1,10 +1,10 @@
 # Knowledge Base
 
-> 最近更新：2026-05-20
+> 最近更新：2026-06-16
 
 这里放长期机制、语言设计、研究资料和维护者需要反复查阅的上下文。它回答“系统实际上如何工作，以及为什么可以这样理解”。
 
-## 当前入口
+## 入口文档
 
 - `runtime/core/parser-pipeline.md`：`source -> AST -> IR -> runtime` 主路径。
 - `runtime/core/command-routing.md`：KMD 指令分类、路由与消费路径。

@@ -4,7 +4,7 @@
 
 这里放跨包、跨应用的 KMD 生态编排策略。它回答“这些仓库、包、应用如何一起演进”。
 
-## 当前入口
+## 入口文档
 
 - `repository-strategy.md`：KMD 主仓库、本地目录、Android Reader 协作和未来拆分策略。
 - `documentation-architecture-refactor-plan.md`：文档信息架构重构计划，目标是单一权威来源、索引瘦身和 planning / knowledge 边界收口。

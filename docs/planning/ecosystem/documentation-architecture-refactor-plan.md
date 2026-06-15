@@ -1,7 +1,8 @@
 # Documentation Architecture Refactor Plan
 
-> 文档状态：Active planning
+> 文档状态：Done record
 > 最近更新：2026-06-16
+> 权威范围：KMD 文档库的所有权规则、文档状态规范与重构执行记录（D0–D4 与协作指引同步于 2026-06-16 完成）
 
 ## 1. 背景
 
@@ -240,3 +241,36 @@ README 不保存阶段细项、Android UI 切片、bundle 路径细节或 Phase 
 - README / index 页只引用，不复制细节。
 - 搜索常见状态词不会出现过期“当前任务”。
 - 新任务完成后，维护者能按固定流程判断：更新任务文档、更新机制文档、还是归档旧文档。
+
+## 9. 执行结果（2026-06-16）
+
+D0–D4 已在 2026-06-16 执行完成，并在审查阶段同步收敛 `AGENTS.md` / `CLAUDE.md` 的长期指引边界。下列为实际落地的所有权映射与改动记录。
+
+### 所有权映射（D0 审计产出）
+
+| 事实 | 唯一权威 | 已降级为链接的复述方 |
+|---|---|---|
+| 当前主线/阶段顺序 | `planning/roadmap/implementation-roadmap.md` | `docs/README.md`、`planning/README.md`、`roadmap/README.md`、`TODO.md` |
+| reader bundle 路径链 | `knowledge/integration/reader-runtime-web-bundle.md` | `android-webview-runtime-protocol.md`、`phase-r-reader-runtime-web.md`、`packages/reader-runtime-web.md` |
+| bridge envelope/命令/事件 | `knowledge/integration/android-webview-runtime-protocol.md` | `phase-r-reader-runtime-web.md`、`packages/reader-runtime-web.md`、`phase-r-scope-inventory.md` |
+| Phase R 执行记录 | `planning/roadmap/phase-r-reader-runtime-web.md` | `TODO.md`（R0–R7 checklist 已删） |
+| reader build 命令/base/font | `knowledge/integration/reader-runtime-web-bundle.md` | `packages/reader-runtime-web.md` |
+| core 抽离 gate | `planning/packages/reader-runtime-web.md`（包边界） | `repository-strategy.md`（迁移维度保留） |
+| Work / .kmd 模型 | `knowledge/architecture/work-kmd-content-model.md` | community-api plans、Android product docs |
+| Android 当前路线 | `apps/android-reader/docs/planning/roadmap.md` | Android `planning/README.md`（`## 当前优先级` 已删） |
+| 协作指引与阶段状态边界 | `AGENTS.md` / `CLAUDE.md` 只保存长期协作规则与仓库地图；阶段状态仍由 `implementation-roadmap.md` 承接 | `AGENTS.md` / `CLAUDE.md` 中的 Phase current/done 文案已删除 |
+
+### 各阶段执行记录
+
+- **D0（已完成）**：完成 file:line 级 ownership 审计，建立上述映射表。
+- **D1（已完成）**：`docs/README.md`、`planning/README.md`、`roadmap/README.md` 删除“当前状态/当前入口/当前决策”块，改一行权威指针；二级索引中的“当前入口”统一改为“入口文档”；`packages/README.md` `@kmd/core` 条目改为链 gate；`apps/README.md` 补 editor DIP-FX 入口。Android `planning/README.md` 删“当前优先级”。
+- **D2（已完成）**：4 个 authority knowledge 文档补 `> 权威范围` 头并剥离任务态；`phase-r-reader-runtime-web.md` 改 Done record 并删路径/命令事件/build/gate 复述为链接；`packages/reader-runtime-web.md` 删 base/font/build 块；`TODO.md` R0–R7 checklist 折叠为指针；`implementation-roadmap.md` 补权威头。
+- **D3（已完成）**：Android `viewmodel-runtime-plan.md` §10 修 D0 自相矛盾、阶段 E 标已完成；`prd.md` 修“reader-runtime-web as future”；3 索引合并为 `roadmap.md` 权威；`core-portability-webview-feasibility.md` 加阶段命名消歧；`runtime-ui-extraction-plan.md` 标注 `ReaderPlaybackPosition` 未抽独立文件；`page-architecture.md` 修 ReviewOverlay 措辞。
+- **D4（已完成）**：`phase-a-refactor/README.md` 加“架构背景，非当前优先级”状态头；`archive/CLAUDE.md` 加 superseded 标注；根目录 `AGENTS.md` / `CLAUDE.md` 删除阶段性记录，保留长期事实、仓库地图和权威文档指针。
+
+### 未在本轮处理（刻意延后）
+
+- `knowledge/language/design.md` 的内容收敛（空标题段、与 `brainstorm.md` 重叠）按决定跳过；仅确保索引不把它当当前权威。它是后续语言设计收敛工作。
+- Android bundle 路径的零散提及（`runtime-implementation-plan`、`stage-5` 报告等）多为 Android 本地框架性引用，与主仓库一致，本轮未逐一降级，留待自然 drift 时处理。
+
+本文档自身现转为 Done record；后续若再发现 ownership 违规，按 §3 规则与本表执行。

@@ -1,16 +1,17 @@
 # Reader Runtime Web Package
 
-> 最近更新：2026-06-15
+> 文档状态：Active
+> 最近更新：2026-06-16
+> 权威范围：`@kmd/reader-runtime-web` 包的职责、禁止导入边界、build 命令、Core Extraction Gate（抽 `packages/core` 的触发条件）
 
 `@kmd/reader-runtime-web` 位于 `packages/reader-runtime-web/`，负责构建 Android WebView 与普通浏览器可加载的 KMD reader runtime 静态产物。
 
 ## 当前职责
 
 - 提供 reader-only HTML/bootstrap entry。
-- 构建 `dist/reader-runtime/`，供 Android Gradle 同步到 APK assets 的 `reader-runtime/` 目录。
-- 通过 `window.KmdRuntime.receive(message)` 接收宿主命令。
-- 通过 `window.KmdAndroid.postMessage(message)` 上报 runtime events。
-- 维持 `base: './'` 和 font asset copy，避免依赖站点根路径。
+- 构建 `dist/reader-runtime/` 产物（Android 消费方式见 [`reader-runtime-web-bundle.md`](../../knowledge/integration/reader-runtime-web-bundle.md)）。
+- 通过 `window.KmdRuntime.receive` / `window.KmdAndroid.postMessage` 与宿主交换消息（协议见 [`android-webview-runtime-protocol.md`](../../knowledge/integration/android-webview-runtime-protocol.md)）。
+- 不依赖站点根路径（`base`、font copy 细节见 bundle 文档）。
 
 ## 当前过渡依赖
 
@@ -30,7 +31,7 @@ R7 不移动整条 runtime closure。包入口允许引用 `apps/editor/src/core
 pnpm reader:build
 ```
 
-`@kmd/reader-runtime-web` 目前复用 editor 已安装的 Vite toolchain。Android 侧真实 bundle 路径是 generated assets 中的 `reader-runtime/`；源码树里的 `app/src/main/assets/kmd-runtime/index.html` 只是 D0 fallback shell。等 runtime closure 真正迁出 `apps/editor/src/core/` 后，再给该包补独立依赖声明和发布脚本。
+构建机制（`base`、font 复制、构建顺序、产物布局、Android Gradle 同步、generated assets 与 D0 fallback 关系）见 [`reader-runtime-web-bundle.md`](../../knowledge/integration/reader-runtime-web-bundle.md)。`@kmd/reader-runtime-web` 目前复用 editor 已安装的 Vite toolchain；runtime closure 迁出 `apps/editor/src/core/` 后再补独立依赖声明和发布脚本。
 
 ## Core Extraction Gate
 

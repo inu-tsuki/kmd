@@ -1,10 +1,10 @@
 # Runtime Knowledge
 
-> 最近更新：2026-05-19
+> 最近更新：2026-06-16
 
 这里解释 KMD 运行时链路如何工作，包括 parser、layout、effect、stage、playback 和 diagnostics。
 
-## 当前入口
+## 入口文档
 
 - `core/parser-pipeline.md`
 - `core/command-routing.md`

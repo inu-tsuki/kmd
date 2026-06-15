@@ -1,6 +1,8 @@
 # Refactor Overview
 
-> 状态：Phase 1 至 Phase 6 已完成，Phase A 收口完毕
+> 文档状态：Done record（架构背景）
+> 最近更新：2026-06-16
+> 权威范围：Phase A / Phase B Prep 重构的执行记录与架构术语。只解释现有架构为什么这样设计，不代表实施优先级；路线判断以 [`../implementation-roadmap.md`](../implementation-roadmap.md) 为准。
 > 目标：统一 parser / IR / layout / execution 四篇方案的入口、术语与优先级
 
 ## 管线总览
@@ -40,7 +42,7 @@ ParagraphAst
 
 这些最痛的执行链问题收掉，再逐步把 document graph / state / segment graph 接进来。
 
-## 当前阶段
+## 完成阶段记录
 
 ```text
 Phase 1
@@ -161,11 +163,11 @@ Phase B Prep
 - `KineticText` 作为 paragraph runtime host 的收缩方向
 - `KineticChar` 从 runtime entity 回归 display host 的瘦身路径
 
-## 当前关系
+## 与主路线的关系
 
 Phase A 与 Phase B Prep 的重构链路已经完成。本目录保留重构蓝图、阶段计划和审查记录，用于解释现有架构为什么变成现在这样。
 
-当前仓库实施优先级已经转移到 `../phase-r-reader-runtime-web.md`：先抽离 reader-runtime-web，再恢复 Phase B 语言与 Segment Graph 工作。
+仓库实施优先级见 [`../implementation-roadmap.md`](../implementation-roadmap.md)。本目录不复写阶段状态。
 
 如果后续 Phase B 重新启动，本目录中的 IR、layout、execution、parser 大纲仍是判断新改动是否滑回 legacy 热区的重要依据。
 

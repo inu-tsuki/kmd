@@ -1,10 +1,10 @@
 # Architecture Knowledge
 
-> 最近更新：2026-05-20
+> 最近更新：2026-06-16
 
 这里收纳系统分层、host/runtime 边界、长期架构记忆和跨模块设计原则。
 
-## 当前入口
+## 入口文档
 
 - `MEMORY.md`：AI 协作期沉淀的全景架构记忆。
 - `work-kmd-content-model.md`：`Work` 平台实体与 `.kmd` 可播放源文件的边界。
