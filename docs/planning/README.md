@@ -1,17 +1,23 @@
 # Development Planning
 
-> 最近更新：2026-05-27
+> 最近更新：2026-06-15
 
 这里放仍会影响开发顺序、任务拆分和生态编排的文档。它回答“下一步做什么、由哪个包或应用承接、做到什么程度算结束”。
 
 ## 当前入口
 
 - `roadmap/implementation-roadmap.md`：当前主路线摘要。
-- `roadmap/phase-r-reader-runtime-web.md`：Phase R reader-runtime-web 抽离路线。
-- `roadmap/phase-b/1.6-phase-b-plan.md`：Phase B 语言与 Segment Graph 功能路线，当前延后。
+- `roadmap/phase-r-reader-runtime-web.md`：Phase R reader-runtime-web 抽离执行记录与后续 gate。
+- `roadmap/phase-b/1.6-phase-b-plan.md`：Phase B 语言与 Segment Graph 功能路线，当前 gated by language review / integration stability。
 - `ecosystem/repository-strategy.md`：仓库、包边界与 Android Reader 协作策略。
 - `ecosystem/work-presentation-generation-draft.md`：`Work.presentation` 生态生成链草案，当前只作为远期对齐点。
 - `TODO.md`：AI 协作任务池和历史任务追踪。
+
+## 当前状态
+
+- Phase R 已完成 R0-R7，`@kmd/reader-runtime-web` 已接管 reader-only bundle。
+- 当前实施焦点是 Android WebView smoke、artifact 路径稳定、文档状态校准和 Phase B 语言设计收敛。
+- 不在当前阶段抽纯 `packages/core`。
 
 ## 子目录
 

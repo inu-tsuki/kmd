@@ -130,8 +130,8 @@ Copy the `vscode-kmd` folder to:
 
 ## Syntax Reference
 
-For complete KMD syntax documentation, see the main KMD repository README and `docs/core/`.
+For complete KMD syntax documentation, see the main KMD repository README plus `docs/knowledge/language/` and `docs/knowledge/runtime/`.
 
 ## License
 
-MIT
+Apache-2.0

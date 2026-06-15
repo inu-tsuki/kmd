@@ -1,6 +1,6 @@
 # 文档索引
 
-> 最近更新：2026-05-27
+> 最近更新：2026-06-15
 
 `docs/` 按用途分成三类：开发规划、知识库、归档。新增文档时先判断它是“接下来要做什么”“长期事实是什么”，还是“历史记录是什么”。
 
@@ -10,7 +10,7 @@
 
 - `roadmap/`：阶段路线，只放 Phase R、Phase B、Phase A refactor 等阶段级计划和审查。
 - `packages/`：KMD 生态包计划，例如 `language`、`reader-runtime-web`、未来 `core`。
-- `apps/`：KMD 生态应用计划，例如 editor、Android Reader、VS Code extension、community API。
+- `apps/`：KMD 生态应用计划，例如 editor、Android Reader、VS Code extension、community API；当前含 `apps/editor-dip-effect-library.md`（DIP 风格化滤镜库子项目）。
 - `ecosystem/`：跨包、跨应用的仓库编排和生态策略。
 - `TODO.md`：AI 协作期任务池和历史任务追踪；阶段权威以 `roadmap/` 为准。
 
@@ -18,7 +18,14 @@
 
 - `planning/roadmap/implementation-roadmap.md`
 - `planning/roadmap/phase-r-reader-runtime-web.md`
+- `planning/roadmap/phase-b/1.6-phase-b-plan.md`
 - `planning/ecosystem/repository-strategy.md`
+
+当前状态校准：
+
+- Phase R 已完成 reader-runtime-web 包边界建立，文档保留为执行记录和后续 gate。
+- 当前短线是 Android artifact smoke / package boundary 稳定，以及 Phase B 语言设计收敛审查。
+- 纯 `packages/core` 仍后置。
 
 远期生态草案：
 

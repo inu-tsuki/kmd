@@ -2,7 +2,7 @@
 
 > Roadmap authority：当前稳定路线已迁入 `docs/planning/roadmap/`。
 > 本文件保留为 AI 协作期任务池、历史执行记录和详细 backlog。
-> 当前实施阶段：`docs/planning/roadmap/phase-r-reader-runtime-web.md`（Phase R）。
+> 当前实施阶段：Phase R 已完成 R0-R7；当前进入 Android artifact smoke / Phase B readiness。阶段权威见 `docs/planning/roadmap/implementation-roadmap.md`。
 
 ## 1. 韵律标准与排版进化 (v1.1.0) — DONE
 
@@ -224,11 +224,11 @@
   - [x] 明确 `+` 并发链、续行符、`{var.xxx}` 插值的 syntax-only AST 形状
   - [x] 预留 line-head control-flow node 类型，不执行 runtime lowering
 
-### Phase R — Reader Runtime Web Extraction（Pre-Phase-B）— Current
+### Phase R — Reader Runtime Web Extraction（Pre-Phase-B）— DONE
 
 > 实施方案见 `docs/planning/roadmap/phase-r-reader-runtime-web.md`
 > 背景审计见 `apps/android-reader/docs/knowledge/integration/core-portability-webview-feasibility.md`
-> 目标：在 Phase B 新语法和 Segment Graph 前，先形成 Android WebView 可宿主、无 Pinia/editor 耦合的 reader runtime。
+> 目标：在 Phase B 新语法和 Segment Graph 前，先形成 Android WebView 可宿主、无 Pinia/editor 耦合的 reader runtime。R0-R7 已完成，后续 gate 见 `phase-r-reader-runtime-web.md`。
 
 - [x] **R0. Scope, Inventory, And Android Contract Sync**
   - [x] 固定本阶段不实现 Phase B 新语法
@@ -272,7 +272,7 @@
 > 控制流语法独立于特效链，使用行首 `@` 结构标记。状态层嵌入极简表达式求值器。
 > 默认建立在 **Phase A.R Refactor Foundation**、**Phase A.E Execution Consolidation**、**Phase A.S Stage Host Split Preparation**、**Phase A.T Stage Runtime Extraction**、**Phase A.U Layout Mainline Unification** 与 **Phase A.V Diagnostics / Host Tightening** 完成的基础上推进；建议在 **Phase B Prep** 收口 metadata / host boundary 后正式启动。
 > 正式功能规划见 `docs/planning/roadmap/phase-b/1.6-phase-b-plan.md`。Phase B 每个功能包都应绑定一个技术债偿还目标，避免新能力继续扩张 legacy `TextPlayer.play()`、core/store 耦合、`EffectProcessor` 大分流器和 `SegmentBuilder` 单体职责。
-> 2026-05-19 决策：Phase B 暂缓直接实施，先完成 Phase R reader-runtime-web 抽离。
+> 2026-06-15 状态校准：Phase R reader-runtime-web 包边界已完成；Phase B 仍需语言设计收敛审查与 Android artifact smoke 稳定后再实施。
 
 #### B0. 语法统一与增强
 

@@ -1,7 +1,7 @@
 # KMD 仓库与本地开发编排策略
 
 > 文档状态：草案
-> 最近更新：2026-05-19
+> 最近更新：2026-06-15
 
 ## 1. 当前判断
 
@@ -12,6 +12,8 @@
 此阶段可以将 GitHub 仓库命名为 `kmd`。当前已经完成低风险 app-shell 迁移：Web 编辑器整体位于 `apps/editor/`，并新增 `packages/language/` 承接共享语言资产。
 
 2026-05-19 调整：Phase B 语言设计暂缓直接实施，先插入 reader-runtime-web 抽离阶段。目标不是立刻抽纯 `packages/core`，而是先形成 Android WebView 可宿主、无 Pinia/editor shell 耦合的 reader runtime。
+
+2026-06-15 状态校准：Phase R 的 R0-R7 已完成，`packages/reader-runtime-web/` 已作为 workspace package 接管 reader-only bundle 构建。当前重点从“抽离 reader-runtime-web”转为“稳定 Android artifact 消费、保持包边界、审查 Phase B 语言设计”。纯 `packages/core` 仍后置。
 
 ## 2. 整理原则
 
@@ -245,7 +247,7 @@ Android Reader 之后应依赖稳定构建产物或 release artifact，而不是
 - Web editor 位于 `apps/editor/`。
 - 根目录保留 pnpm workspace 与转发脚本。
 - `packages/language/` 提供共享 grammar/config 的包引用边界。
-- 当前下一步是 Phase R：reader-runtime-web 抽离，而不是直接推进 Phase B 新语法。
+- Phase R 已完成 reader-runtime-web 包边界；当前下一步是 Android smoke / artifact 稳定与 Phase B 语言设计收敛，而不是直接抽纯 `packages/core`。
 - Android Reader 可以临时位于 `apps/android-reader/`，但保持独立 git 并被主仓库忽略。
 - `apps/editor/src/core/` 暂时仍是共享 runtime 的事实来源。
 
@@ -265,7 +267,7 @@ Android Reader 之后应依赖稳定构建产物或 release artifact，而不是
 
 例外：`packages/reader-runtime-web` 可以在上述条件完全满足前启动，因为它不是纯 core，而是 WebView 宿主运行时包。它必须明确保留 Web runtime 属性，不伪装成跨平台算法 core。
 
-在纯 core 触发条件满足前，推荐只做 Phase R 范围内的 reader runtime 抽离、外壳级整理和文档归档：
+在纯 core 触发条件满足前，推荐只做 reader-runtime-web 边界稳定、外壳级整理和文档归档：
 
 - 主仓库继续叫 `kmd`。
 - Android 课程项目使用独立仓库 `kmd-reader-android`。
