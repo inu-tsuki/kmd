@@ -243,29 +243,22 @@ export class SegmentBuilder {
         const absStartMs = segmentCursor * 1000;
         pData.absStartTime = absStartMs;
         pData.estimatedDuration = buildResult.duration * 1000;
-        pData.tokens.forEach((token) => {
-          if (token.startTime !== undefined && (token.content.trim() || token.isSceneClear)) {
-            const absStart = absStartMs + token.startTime;
-            const nextToken = pData.tokens[pData.tokens.indexOf(token) + 1];
-            const endTime = nextToken
-              ? absStartMs + nextToken.startTime!
-              : absStartMs + buildResult.duration * 1000;
-
-            const line = (token.line || 0) + 1;
-            const duration = Math.max(50, endTime - absStart);
-            const content = token.isSceneClear ? "--- SCENE CLEAR ---" : token.content;
-            const type = token.isSceneClear ? "scene" : "text";
-            markers.push({
-              id: `p${i}-m${markers.length}`,
-              label: content,
-              line,
-              timeMs: absStart,
-              startTime: absStart,
-              duration,
-              content,
-              type,
-            });
-          }
+        // 段落级 marker：每个段落生成一个可跳转锚点。
+        // 不再依赖 token.startTime（该字段由 parser 声明但 buildTimeline 从不回写，
+        // 导致旧条件 token.startTime !== undefined 几乎永假，markers 恒为空）。
+        // segmentCursor 在段落 build 前已确定，是可靠的时间来源。
+        const paragraphLine =
+          (pData.tokens.find((t) => t.line !== undefined && (t.content.trim() || t.isSceneClear))?.line ?? 0) + 1;
+        const paragraphLabel = rawText.trim().split("\n")[0]?.trim() || `段落 ${i + 1}`;
+        markers.push({
+          id: `p${i}`,
+          label: paragraphLabel,
+          line: paragraphLine,
+          timeMs: absStartMs,
+          startTime: absStartMs,
+          duration: Math.max(50, buildResult.duration * 1000),
+          content: paragraphLabel,
+          type: "paragraph",
         });
 
         activeParagraphIndices.push({ index: i, x: pos.x, y: pos.y });
