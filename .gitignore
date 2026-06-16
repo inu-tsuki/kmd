@@ -19,6 +19,9 @@ coverage
 *.local
 *.tsbuildinfo
 
+# Smoke / verification artifacts (screenshots, etc.)
+.smoke
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
