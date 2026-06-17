@@ -298,6 +298,9 @@ export class SegmentBuilder {
 
     segmentTl.eventCallback("onComplete", () => {
       context.playbackState.isAutoPlaying = false;
+      // 显式 pause：播完后 timeline 若不 pause，seek 到中间位置会从该处继续推进，
+      // 与状态机的 ended 不一致（BUG-14）。pause 后 seek 保持静态，播放需显式 play。
+      segmentTl.pause();
       context.playbackState.onPlaybackComplete?.();
     });
 
