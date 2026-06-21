@@ -1,7 +1,7 @@
 # Editor DIP Effect Library — Implementation Spec
 
 > 状态：Active planning（实现规格 / 交接稿）
-> 最近更新：2026-06-13
+> 最近更新：2026-06-22（M0 pixelate 落地：5 处漂移订正，见 §0.1）
 > 代号：DIP-FX
 > 上游：`docs/planning/apps/editor-dip-effect-library.md`（清单与设计纲领）
 
@@ -10,6 +10,18 @@
 本文档是**给代码编写者的实现规格**。规划与代码审查由本协作线负责，具体编码由代码编写者执行。规格的目标：照此实现一个滤镜无需反问，且审查有明确验收标准。
 
 每个滤镜的交付 = §2 通用契约 + §4 该滤镜的 spec 卡 + §5 验收。审查依据 §6 清单。
+
+### 0.1 实现真相核对增量（M0 落地时发现，已订正本 spec）
+
+M0（pixelate）实现期间对当前代码做了完整核对，发现并订正以下 5 处早期稿与现实的漂移：
+
+1. **`defineEffect` 是 `presets/filter.ts:7-9` 内联的本地 helper**，不从外部 import——新 preset 必须写进既有 filter 分类文件或新建文件并在 `index.ts` 加 `export *`。（§2.2 已补注）
+2. **`EffectMetadata` 无 `level` 字段**（`types.ts:11-19`）。`level` 属于 sugar 命令（`go`/`slow`/`fast`）的 `ParsedCommand.level`，与 meta 无关——meta 里别写。
+3. **`track: "instant"` 原是死桶**：`TextPlayer.placeCharOnTimeline` 只读 `.behavior`/`.entrance`，instant 滤镜 fn 永不执行。已修复（commit `ce647c3`）——非 style 的 instant 特效经 `InstantEffectRecord` 收集，seek 时 `registerInstantEffects` reset+replay。现有 blur/rgbShift/warp 因含可选 `addModifier` 动画仍填 `behavior`；纯静态滤镜用 `instant`。（§2.2 已补注）
+4. **group 作用域触发语法**：`{...} @ f.x` 默认仍逐字（char path），要容器级必须显式 `f.x:group`。早期稿把 braced group 当 group 触发语法有误。（§1.1 表已订正）
+5. **`visual.ts` 无颜色解析工具**：早期 §7.2 暗示“可参考 visual.ts”，已证伪——须在 filter 分类内置小工具。（§7.2 已订正）
+
+完整 filter 实现契约与 seek 幂等机制已沉淀至 `docs/knowledge/runtime/core/effect-pipeline.md` 的 Filter 特效模式段。
 
 ## 1. 实现真相核对（动手前必读，含两处对既有约定的纠正）
 
@@ -35,9 +47,11 @@
   | scope | 触发语法 | 目标容器 | 纹理范围 |
   |---|---|---|---|
   | `char` | `f.x`（默认逐字） | `KineticChar` | 单字小纹理 |
-  | `group` | `{...} @ f.x` | `TokenWrapper` | 一个花括号词组 |
+  | `group` | `f.x:group`（**显式**；`{...} @ f.x` 默认仍逐字） | `TokenWrapper` | 一个花括号词组 |
   | `block` | `[.x:block]` / 段落级 | `KineticText` | **整段**（path B：`applyGroupEffects(kt,…)`） |
   | `frame` | （无，见下） | `StageManager.world` / `contentLayer` | **整个已渲染场景**（相机合成后） |
+
+  > **【核对订正】** `targetType` 是能力描述，**不决定默认目标**：`"both"` 默认走逐字 char 路径（`{...} @ f.x` 仍逐字，见 `EffectProcessor.applyCharEffects` 的 `isBothCharMatch` 与 `11-mixed-levels.kmd:19-21` 注释）。要容器级必须显式 `:group`（`f.x:group`）或 `:block`（`[.x:block]`）。早期稿把 `{...} @ f.x` 当作 group 触发语法有误，已订正。
 
 - **`meta.targetType`（`char|group|both`）只回答“apply 时是否逐字下发”**。`EffectProcessor` 在 `level==="block"||"group"||targetType==="group"` 时走 `container_only`，即把 filter 直接挂到容器、不再逐字。所以滤镜的 `targetType` 取 `group` 或 `both` 即可让它在 group/block 两个作用域都按容器后处理；它不需要、也不可能有 `block`/`frame` 取值。
 - **block 不是被 group 覆盖，而是比 group 更大的容器**（整段 `KineticText` vs 单词组 `TokenWrapper`），且**今天就能用**——bloom/halftone/vignette/scanline 这类要“整段连续区域”的滤镜，推荐用法是 `[.bloom:block]`，而非 group。
@@ -48,9 +62,11 @@
 代码编写者对每个滤镜按此交付：
 
 1. **GLSL + Filter 类** → `core/filters/<Name>Filter.ts`，结构同 `RGBSplitFilter.ts`。命名 `name: "<kebab>-filter"`。
-2. **EffectFunction + meta** → 在 `presets/filter.ts` 用 `defineEffect(fn, meta)` 导出。
+2. **EffectFunction + meta** → 在 `presets/filter.ts` 用 `defineEffect(fn, meta)` 导出（`defineEffect` 是该文件内联的本地 helper，不从外部 import）。
    - `fn(target, params)`：构造 filter、按 spec 卡把 `params` 写入 uniform、push 进 `target.filters`；动画类再 `addModifier`。
    - 静态滤镜 `track: "instant"`；含逐帧动画的 `track: "behavior"`。`type: "filter"`。
+   - **instant filter 的 fn 必须 `return filter` 实例**：供 `PlaybackController.registerInstantEffects` 做 seek 幂等清理（从 `target.filters` 移除旧实例后重 apply）。behavior filter（靠 modifier）不需要返回。
+   - **instant track 依赖**：原 instant 桶是死桶（`placeCharOnTimeline` 不读 `.instant`），已修复（见 `effect-pipeline.md` 四轨分类说明）。纯静态滤镜用 `instant`；现有 blur/rgbShift/warp 因含可选 `addModifier` 动画仍填 `behavior`。
    - `mutexGroup` 命名 `filter_<name>`；可叠加的（如多个独立滤镜）`stackable: true`，互斥的省略。
 3. **参数默认值**：`fn` 内对每个参数取 `params.x ?? <default>`，默认值见 spec 卡，缺参也要出合理画面。
 4. **char 守卫**：`targetType` 含 `char` 且实现里用了 `addModifier` 或假定 KineticChar 时，加 `instanceof KineticChar` 守卫并对非匹配目标 `console.warn` 后 return（参考 `warp`）。
@@ -186,8 +202,8 @@
 
 ### 7.2 其他
 
-- **block 纹理范围实测**：bloom/halftone/vignette 走 `[.x:block]` 作用于 `KineticText` 时的纹理边界与 padding 行为，须在 M1 先用 `pixelate` 的 block 示例验证后再定稿这几个邻域滤镜的默认参数。
-- **颜色解析工具**：确认 `visual.ts` 是否已有 hex→rgb 工具可复用；若无，在 filter 分类内置一个小工具函数，避免每个滤镜各写一份。
+- **block 纹理范围实测**：bloom/halftone/vignette 走 `[.x:block]` 作用于 `KineticText` 时的纹理边界与 padding 行为，须在 M1 先用 `pixelate` 的 block 示例验证后再定稿这几个邻域滤镜的默认参数。**（M0 进展：`pixelate:block` 已打通，正向播放生效；但 block 经 `applyGroupEffects` build 时同步挂载，不经 `InstantEffectRecord`，seek 回退后 filter 不移除——已知缺口，待后续统一处理。char/group 两路径 seek 幂等已覆盖。）**
+- **颜色解析工具**：【已核对】`visual.ts` **没有** hex→rgb 工具（它只是 border/bg/dim/shift/glitch 等 style/behavior 特效集合，颜色直接用 `0xRRGGBB` 喂 Pixi Graphics）；`styles.ts` 里的 `toRgba` 是 `_glow` 闭包内本地函数、不可复用。故颜色滤镜（gray/duotone/edge/outline/vignette）须在 filter 分类内置一个小工具（`hexToVec3` + 预乘/解预乘 alpha 对偶），pixelate 不需要（纯下采样不碰 rgb）。
 - **dissolve 的 progress 来源**：静态参数 vs 与 entrance/timeline 协同推进，影响是否需要新 track 行为；M2 立项时定。
 
 ## 8. 推进顺序（与概览 §6 里程碑对应）
