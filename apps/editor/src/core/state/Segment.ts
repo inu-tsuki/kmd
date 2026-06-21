@@ -1,7 +1,7 @@
 import type { StageState } from "../stage/StageManager";
 import type { LayoutState } from "../layout/LayoutEngine";
 import type { KineticText } from "../KineticText";
-import type { BehaviorRecord, StyleRecord } from "../render/text/TextPlayer";
+import type { BehaviorRecord, StyleRecord, InstantEffectRecord } from "../render/text/TextPlayer";
 
 /**
  * 段落级别的 Timeline 构建产物
@@ -81,6 +81,8 @@ export interface Segment {
   behaviors: BehaviorRecord[];
   /** 所有 Style 变更记录（seek 时 reset + 重放到目标时间点） */
   styleRecords: StyleRecord[];
+  /** 所有 Instant 特效记录（静态 filter；seek 时从 target.filters 重置后重放） */
+  instantEffects: InstantEffectRecord[];
   /** 入口状态快照（seek 时先恢复到这里） */
   entryCheckpoint: Checkpoint;
   /** 出口状态快照（下一个 Segment 的起始状态） */
