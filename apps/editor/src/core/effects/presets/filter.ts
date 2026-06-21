@@ -2,6 +2,7 @@ import { BlurFilter } from "pixi.js";
 import { KineticChar } from "../../KineticChar";
 import { RGBSplitFilter } from "../../filters/RGBSplitFilter";
 import { WarpFilter } from "../../filters/WarpFilter";
+import { PixelateFilter } from "../../filters/PixelateFilter";
 import type { EffectFunction, EffectMetadata } from "../types";
 
 function defineEffect(fn: EffectFunction, meta: EffectMetadata) {
@@ -83,4 +84,23 @@ export const blur = defineEffect(_blur, {
   targetType: "both",
   mutexGroup: "filter_blur",
   stackable: true,
+});
+
+// 像素化 (Pixelate) —— DIP-FX M0 模板，静态 instant 滤镜
+// 纯下采样，char/group/block 皆可；作用域靠显式 :group/:block 路由
+// （默认 f.pixelate 走 char 逐字，{...} @ f.pixelate 仍逐字，要容器级须 f.pixelate:group）。
+// 返回 filter 实例供 PlaybackController.registerInstantEffects 做 seek 幂等清理。
+const _pixelate: EffectFunction = (target, params = {}) => {
+  const size = params.size ?? 8;
+  const filter = new PixelateFilter();
+  filter.size = size;
+  target.filters = [...(target.filters || []), filter];
+  return filter;
+};
+export const pixelate = defineEffect(_pixelate, {
+  type: "filter",
+  track: "instant",            // 静态滤镜；依赖 commit ce647c3 的 instant 桶生效
+  targetType: "both",
+  mutexGroup: "filter_pixelate",
+  stackable: true,             // 多次叠加加深像素化
 });
