@@ -10,7 +10,7 @@
 
 - `roadmap/`：阶段路线，只放 Phase R、Phase B、Phase A refactor 等阶段级计划和审查。
 - `packages/`：KMD 生态包计划，例如 `language`、`reader-runtime-web`、未来 `core`。
-- `apps/`：KMD 生态应用计划，例如 editor、Android Reader、VS Code extension、community API；当前含 `apps/editor-dip-effect-library.md`（DIP 风格化滤镜库子项目）。
+- `apps/`：KMD 生态应用计划，例如 editor、Android Reader、VS Code extension、community API；当前含 `apps/editor-dip-effect-library.md`（DIP 风格化滤镜库子项目，清单与纲领）及其 `editor-dip-effect-library-spec.md`（交接给代码编写者的实现规格）、`editor-dip-effect-library-review.md`（滤镜 PR 审查入口）。
 - `ecosystem/`：跨包、跨应用的仓库编排和生态策略。
 - `TODO.md`：AI 协作期任务池和历史任务追踪；阶段权威以 `roadmap/` 为准。
 

@@ -200,6 +200,8 @@ extensions/vscode/
 
 此阶段仍然可以使用 pnpm workspace 统一开发。
 
+> 候选拆分对象不止纯 core：镜头/电影感能力（`StageRuntime` 等）作为“形态专属能力”，是未来插件化的候选。其能力分层依据与三段演进路径见 `presentation-modes-and-capability-layering-draft.md`（草案）。物理拆分仍受本文件门槛约束（core API 稳定前不拆）。
+
 ### 阶段 C：独立发布
 
 当 API 和语义稳定后，再考虑拆为独立仓库或发布包：
