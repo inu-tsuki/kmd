@@ -504,17 +504,13 @@ export class TextPlayer {
               timePosition: chainCursor
             });
           } else {
-            // instant filter（非 entrance/behavior）：tl.call 在 chainCursor 触发 apply
-            const cfgName = config.name;
-            const cfgParams = { ...charResolved };
-            const charRef = char;
-            tl.call(() => {
-              effectManager.apply(charRef, cfgName, cfgParams, true);
-            }, [], chainCursor);
+            // instant filter（非 entrance/behavior）：只记录，apply 驱动交给
+            // SegmentBuilder 的 segmentTl.call（它有 cleanup 追踪 + isAutoPlaying 守卫）。
+            // 不在此 tl.call —— 否则与 SegmentBuilder 重复 apply（双滤镜 + 泄漏）。
             instantEffects.push({
-              target: charRef,
-              effectName: cfgName,
-              params: { ...cfgParams },
+              target: char,
+              effectName: config.name,
+              params: { ...charResolved },
               charIndex: idx,
               timePosition: chainCursor
             });
@@ -532,16 +528,11 @@ export class TextPlayer {
             effectManager.apply(wrapper, cfgName, cfgParams, true);
           }, [], chainCursor);
         } else {
-          // instant filter（组级容器）：tl.call 在 chainCursor 触发 apply
-          const cfgName = config.name;
-          const cfgParams = { ...resolved };
-          tl.call(() => {
-            effectManager.apply(wrapper, cfgName, cfgParams, true);
-          }, [], chainCursor);
+          // instant filter（组级容器）：只记录，apply 驱动交给 SegmentBuilder。
           instantEffects.push({
             target: wrapper,
-            effectName: cfgName,
-            params: { ...cfgParams },
+            effectName: config.name,
+            params: { ...resolved },
             charIndex: 0,
             timePosition: chainCursor
           });
@@ -623,17 +614,11 @@ export class TextPlayer {
             timePosition: charCursor
           });
         } else {
-          // instant filter（逐字）：tl.call 在 charCursor 触发 apply
-          const cfgName = config.name;
-          const cfgParams = { ...resolved };
-          const charRef = char;
-          tl.call(() => {
-            effectManager.apply(charRef, cfgName, cfgParams, true);
-          }, [], charCursor);
+          // instant filter（逐字）：只记录，apply 驱动交给 SegmentBuilder。
           instantEffects.push({
-            target: charRef,
-            effectName: cfgName,
-            params: { ...cfgParams },
+            target: char,
+            effectName: config.name,
+            params: { ...resolved },
             charIndex: wrapper.chars.indexOf(char),
             timePosition: charCursor
           });

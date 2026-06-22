@@ -77,15 +77,19 @@ export class PlaybackController {
   /**
    * 清除所有已挂载的 instant filter 实例。
    * 与 clearBehaviors 对称：behaviors 靠 removeModifier，instant filter 靠从 target.filters 移除。
+   *
+   * 不用 splice 原地改 Pixi 的 filters 数组（v8 下可能触发
+   * "Cannot delete property" —— 数组元素不可配置）；改为 filter 重建后整体赋值。
    */
   public static clearInstantEffects(state: PlaybackRuntimeState) {
     for (const cleanup of state.activeInstantCleanups) {
       const filters = cleanup.target.filters;
       if (filters) {
-        const idx = filters.indexOf(cleanup.filterInstance);
-        if (idx >= 0) filters.splice(idx, 1);
-        if (filters.length === 0) cleanup.target.filters = null;
+        const remaining = filters.filter((f: Filter) => f !== cleanup.filterInstance);
+        cleanup.target.filters = remaining.length > 0 ? remaining : null;
       }
+      // 释放 GPU 资源（GlProgram uniform group 等），避免频繁 seek churn Filter 对象。
+      cleanup.filterInstance.destroy();
     }
     state.activeInstantCleanups = [];
   }
