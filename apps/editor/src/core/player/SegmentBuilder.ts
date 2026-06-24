@@ -6,7 +6,7 @@ import { EffectProcessor } from "../effects/EffectProcessor";
 import { effectManager } from "../effects/EffectManager";
 import type { KMDMetadata, KMDParagraphData } from "../parser/types";
 import type { Checkpoint, InFlightAnimation, ParagraphUnit, Segment } from "../state/Segment";
-import type { BehaviorRecord, StyleRecord } from "../render/text/TextPlayer";
+import type { BehaviorRecord, StyleRecord, InstantEffectRecord } from "../render/text/TextPlayer";
 import { stageManager } from "../stage/StageManager";
 import { createParagraphExecutionPlan } from "../execution/paragraphExecutionPlan";
 import type { PlaybackRuntimeState } from "./PlaybackController";
@@ -111,6 +111,7 @@ export class SegmentBuilder {
     const segmentTl = gsap.timeline({ paused: true });
     const allBehaviors: BehaviorRecord[] = [];
     const allStyleRecords: StyleRecord[] = [];
+    const allInstantEffects: InstantEffectRecord[] = [];
     const paragraphUnits: ParagraphUnit[] = [];
     const markers: ReaderRuntimeTimelineMarker[] = [];
     const stageTweenRecords: InFlightAnimation[] = [];
@@ -232,6 +233,30 @@ export class SegmentBuilder {
           });
         }
 
+        // Instant 特效（静态 filter）：正向播放经 segmentTl.call 在 absTime 触发 apply；
+        // seek 时由 PlaybackController.registerInstantEffects reset+replay。
+        // 与 behavior 的两路径模型对称（behavior 既在此 tl.call，又靠 registerBehaviors seek 重注册）。
+        for (const instantRecord of buildResult.instantEffects) {
+          const absTime = instantRecord.timePosition + segmentCursor;
+          allInstantEffects.push({
+            ...instantRecord,
+            timePosition: absTime,
+          });
+          const instantTarget = instantRecord.target;
+          const instantName = instantRecord.effectName;
+          const instantParams = { ...instantRecord.params };
+          segmentTl.call(() => {
+            if (!context.playbackState.isAutoPlaying) return;
+            const filterInstance = effectManager.apply(instantTarget, instantName, instantParams, true);
+            if (filterInstance) {
+              context.playbackState.activeInstantCleanups.push({
+                target: instantTarget,
+                filterInstance,
+              });
+            }
+          }, [], absTime);
+        }
+
         paragraphUnits.push({
           paragraphIndex: i,
           kineticText: paragraphText,
@@ -310,6 +335,7 @@ export class SegmentBuilder {
       timeline: segmentTl,
       behaviors: allBehaviors,
       styleRecords: allStyleRecords,
+      instantEffects: allInstantEffects,
       stageTweenRecords,
       entryCheckpoint,
       exitCheckpoint,

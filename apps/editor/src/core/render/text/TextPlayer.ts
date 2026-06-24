@@ -10,6 +10,7 @@ import { TextPlanDiagnosticsSink } from "./TextPlanDiagnosticsSink";
 import { TextStageCueScheduler } from "./TextStageCueScheduler";
 import { TextTimelineCursor } from "./TextTimelineCursor";
 import type { ParagraphDisplayAssembly, TextExecutionItemPayload } from "./types";
+import type { Container } from "pixi.js";
 import gsap from "gsap";
 
 /**
@@ -35,12 +36,34 @@ export interface BehaviorRecord {
 }
 
 /**
+ * Instant 特效记录（如静态 filter），用于 seek 时从 target.filters 重置后重放。
+ *
+ * 与 BehaviorRecord / StyleRecord 并列：
+ * - behavior 靠 modifier（registerBehaviors/clearBehaviors 管 addModifier/removeModifier）
+ * - style 靠 TextStyle 快照（replayStyles 先 resetStyle 再 apply）
+ * - instant filter 是一次性挂载（push 进 target.filters），seek 重播前必须先移除旧实例，
+ *   否则会随 seek 次数累积。record.apply 回调返回新建的 filter 实例，由 SegmentBuilder
+ *   落入 activeInstantCleanups，clearInstantEffects 据此从 target.filters splice 掉。
+ *
+ * target 在 char 级是 KineticChar，group 级是 TokenWrapper（整词组容器）。
+ * block 级不经 TextPlayer（走 EffectProcessor.applyGroupEffects，build 时同步挂载）。
+ */
+export interface InstantEffectRecord {
+  target: Container;
+  effectName: string;
+  params: Record<string, any>;
+  charIndex: number;
+  timePosition: number; // 在 Timeline 上的时间位置 (秒)
+}
+
+/**
  * buildTimeline 的返回结果
  */
 export interface TimelineBuildResult {
   timeline: gsap.core.Timeline;
   behaviors: BehaviorRecord[];
   styleRecords: StyleRecord[];
+  instantEffects: InstantEffectRecord[];
   duration: number; // 秒
   /** >>> 触发的时间点 (秒)。ScriptPlayer 应在此位置启动下一段落的子 Timeline。undefined 表示无提前推进。 */
   advanceTime?: number;
@@ -97,6 +120,7 @@ export class TextPlayer {
     const tl = gsap.timeline();
     const behaviors: BehaviorRecord[] = [];
     const styleRecords: StyleRecord[] = [];
+    const instantEffects: InstantEffectRecord[] = [];
     // 基准揭示速度 (毫秒 → 秒)
     const baseSpeedMs = options.speed ?? target._options?.speed ?? 50;
     const baseSpeed = baseSpeedMs / 1000;
@@ -150,7 +174,7 @@ export class TextPlayer {
 
       // ── 5. 放置字符（入场动画 + 行为收集） ──
       if (char.text.trim()) {
-        this.placeCharOnTimeline(tl, item, i, timelineCursor.position, behaviors, styleRecords);
+        this.placeCharOnTimeline(tl, item, i, timelineCursor.position, behaviors, styleRecords, instantEffects);
 
         // 编辑器行号同步
         if (item.line !== undefined) {
@@ -179,10 +203,10 @@ export class TextPlayer {
             if (!chainPlan) {
               TextPlanDiagnosticsSink.warnMissingChainPlan(item.tokenIdx, item.line);
             }
-            this.unrollCharChain(tl, wrapper, tokenPlan.visualEffects, timelineCursor.position, behaviors, holdCharConfig, styleRecords);
+            this.unrollCharChain(tl, wrapper, tokenPlan.visualEffects, timelineCursor.position, behaviors, holdCharConfig, styleRecords, instantEffects);
           } else {
             // unrollGroupChain 返回 chain 内 pause 指令的累计时长，追加到 deferredCursorAdvance
-            const pauseFromChain = this.unrollGroupChain(tl, wrapper, tokenPlan.visualEffects, timelineCursor.position, behaviors, styleRecords);
+            const pauseFromChain = this.unrollGroupChain(tl, wrapper, tokenPlan.visualEffects, timelineCursor.position, behaviors, styleRecords, instantEffects);
             if (pauseFromChain > 0) {
               timelineCursor.addDeferredAdvance(pauseFromChain);
             }
@@ -221,6 +245,7 @@ export class TextPlayer {
       timeline: tl,
       behaviors,
       styleRecords,
+      instantEffects,
       duration: timelineCursor.position,
       advanceTime: timelineCursor.advanceTime,
     };
@@ -235,7 +260,8 @@ export class TextPlayer {
     charIndex: number,
     cursor: number,
     behaviors: BehaviorRecord[],
-    styleRecords: StyleRecord[]
+    styleRecords: StyleRecord[],
+    instantEffects: InstantEffectRecord[]
   ) {
     const char = item.char;
     const visualEffects = item.visualEffects;
@@ -266,6 +292,24 @@ export class TextPlayer {
       for (const cfg of classified.behavior) {
         behaviors.push({
           char,
+          effectName: cfg.name,
+          params: { ...EffectProcessor.resolveParams(cfg.params), charIndex },
+          charIndex,
+          timePosition: cursor
+        });
+      }
+
+      // 收集 instant 特效（静态 filter 等一次性挂载）。
+      // classified.instant 在修复前是死桶——placeCharOnTimeline 只读 .behavior/.entrance，
+      // 导致 track:"instant" 的 filter fn 永不执行。这里与 behavior 对称收集，
+      // 由 SegmentBuilder 在 cursor 时刻 tl.call 触发 apply；seek 时由
+      // PlaybackController.registerInstantEffects reset+replay 实现幂等。
+      // style 特效跳过（styleManager.has gate）——它们由 applyInitialStyles 预应用、
+      // 经 styleRecords 重放，不挂 target.filters。
+      for (const cfg of classified.instant) {
+        if (styleManager.has(cfg.name)) continue;
+        instantEffects.push({
+          target: char,
           effectName: cfg.name,
           params: { ...EffectProcessor.resolveParams(cfg.params), charIndex },
           charIndex,
@@ -347,7 +391,8 @@ export class TextPlayer {
     effects: EffectConfig[],
     startPosition: number,
     behaviors: BehaviorRecord[],
-    styleRecords: StyleRecord[]
+    styleRecords: StyleRecord[],
+    instantEffects: InstantEffectRecord[]
   ): number {
     const { visualConfigs, stageConfigs } = EffectProcessor.partition(effects);
     let chainCursor = startPosition;
@@ -459,12 +504,16 @@ export class TextPlayer {
               timePosition: chainCursor
             });
           } else {
-            const cfgName = config.name;
-            const cfgParams = { ...charResolved };
-            const charRef = char;
-            tl.call(() => {
-              effectManager.apply(charRef, cfgName, cfgParams, true);
-            }, [], chainCursor);
+            // instant filter（非 entrance/behavior）：只记录，apply 驱动交给
+            // SegmentBuilder 的 segmentTl.call（它有 cleanup 追踪 + isAutoPlaying 守卫）。
+            // 不在此 tl.call —— 否则与 SegmentBuilder 重复 apply（双滤镜 + 泄漏）。
+            instantEffects.push({
+              target: char,
+              effectName: config.name,
+              params: { ...charResolved },
+              charIndex: idx,
+              timePosition: chainCursor
+            });
           }
         });
       } else {
@@ -479,11 +528,14 @@ export class TextPlayer {
             effectManager.apply(wrapper, cfgName, cfgParams, true);
           }, [], chainCursor);
         } else {
-          const cfgName = config.name;
-          const cfgParams = { ...resolved };
-          tl.call(() => {
-            effectManager.apply(wrapper, cfgName, cfgParams, true);
-          }, [], chainCursor);
+          // instant filter（组级容器）：只记录，apply 驱动交给 SegmentBuilder。
+          instantEffects.push({
+            target: wrapper,
+            effectName: config.name,
+            params: { ...resolved },
+            charIndex: 0,
+            timePosition: chainCursor
+          });
         }
       }
     }
@@ -509,7 +561,8 @@ export class TextPlayer {
     startPosition: number,
     behaviors: BehaviorRecord[],
     holdConfig: EffectConfig,
-    styleRecords: StyleRecord[]
+    styleRecords: StyleRecord[],
+    instantEffects: InstantEffectRecord[]
   ) {
     const { visualConfigs, stageConfigs } = EffectProcessor.partition(effects);
     const holdDelay = Number(holdConfig.params?.duration ?? holdConfig.params?.d ?? holdConfig.params?.[0] ?? 0.5);
@@ -561,12 +614,14 @@ export class TextPlayer {
             timePosition: charCursor
           });
         } else {
-          const cfgName = config.name;
-          const cfgParams = { ...resolved };
-          const charRef = char;
-          tl.call(() => {
-            effectManager.apply(charRef, cfgName, cfgParams, true);
-          }, [], charCursor);
+          // instant filter（逐字）：只记录，apply 驱动交给 SegmentBuilder。
+          instantEffects.push({
+            target: char,
+            effectName: config.name,
+            params: { ...resolved },
+            charIndex: wrapper.chars.indexOf(char),
+            timePosition: charCursor
+          });
         }
       }
 

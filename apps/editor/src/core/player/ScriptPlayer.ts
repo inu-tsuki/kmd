@@ -43,6 +43,7 @@ export class ScriptPlayer {
   private playbackState: PlaybackRuntimeState = {
     isAutoPlaying: false,
     activeBehaviorCleanups: [],
+    activeInstantCleanups: [],
     onTimeUpdate: (timeMs) => {
       this.emitProgress({ timeMs });
     },

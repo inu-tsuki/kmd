@@ -153,8 +153,13 @@ export class KmdAstParser {
     const results: BlockOptionAst[] = [];
 
     for (const part of parts) {
-      if (part.text.includes("=")) {
-        const eq = part.text.indexOf("=");
+      // value 形式（如 align=center）vs 命令链形式（如 pixelate:block(size=16)）：
+      // 只有顶层（括号深度 0）的 '=' 才算 key-value 分隔符。命令参数里的 '='
+      //（嵌在 (…) 内，如 size=16）属于命令，不应短路到 value 分支——否则
+      // pixelate:block(size=16) 会被错切成 key=".pixelate:block(size" value="16)"，
+      // 整条命令静默丢失。
+      const eq = this.topLevelEqualsIndex(part.text);
+      if (eq !== -1) {
         const key = part.text.slice(0, eq).trim();
         const value = KMDCommandParser.autoConvert(part.text.slice(eq + 1).trim());
         const node: BlockOptionValueAst = {
@@ -441,6 +446,21 @@ export class KmdAstParser {
     }
 
     return parts;
+  }
+
+  /**
+   * 返回括号深度 0 处第一个 '=' 的索引；若 '=' 只出现在括号内（命令参数）则返回 -1。
+   * 用于区分 block option 的 value 形式（align=center）与命令链形式（pixelate:block(size=16)）。
+   */
+  private topLevelEqualsIndex(text: string): number {
+    let depth = 0;
+    for (let idx = 0; idx < text.length; idx++) {
+      const char = text[idx]!;
+      if (char === "(") depth++;
+      else if (char === ")") depth = Math.max(0, depth - 1);
+      else if (char === "=" && depth === 0) return idx;
+    }
+    return -1;
   }
 
   private stripComment(line: string): string {

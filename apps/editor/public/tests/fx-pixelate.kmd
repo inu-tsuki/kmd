@@ -1,0 +1,26 @@
+---
+title: fx - pixelate 滤镜三作用域
+mode: stage
+speed: 50
+designWidth: 1920
+designHeight: 1080
+---
+
+// char 作用域（默认逐字）：每字独立像素化，小 size 出小马赛克
+{逐字像素} @ f.pixelate(size=4)
+
+---
+
+// group 作用域：显式 :group，整词组共用一张 TokenWrapper 容器纹理
+{词组像素化} @ f.pixelate:group(size=10)
+
+---
+
+// block 作用域：整段 KineticText 共用一张纹理，验证 §7.2 纹理范围
+[.pixelate:block(size=16)]
+整段文字一起像素化。
+
+---
+
+// 改参 + 与 behavior 组合（spec §2.5）：滤镜静态挂载，wave 逐字波动
+{像素加波浪} @ f.pixelate(size=6).wave
