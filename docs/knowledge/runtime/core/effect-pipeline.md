@@ -62,7 +62,7 @@ token.effects: EffectConfig[]
           │      根据 track:
           │        entrance → gsap Tween 挂到 tl
           │        behavior → behaviors[] (后续 registerBehaviors)
-          │        instant  → instantEffects[] (tl.call 触发 apply；seek 时 registerInstantEffects 重放)
+          │        instant  → instantEffects[] (SegmentBuilder.segmentTl.call 按 record 触发 apply；seek 时 registerInstantEffects 重放)
           │
           └─ 容器级 (显式 :group / :block，或 targetType === "group" / type === "action"):
               └─ effectManager.apply(wrapper, ...)

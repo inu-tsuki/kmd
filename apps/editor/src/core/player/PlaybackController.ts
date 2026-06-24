@@ -33,7 +33,12 @@ export class PlaybackController {
     const tl = segment.timeline;
 
     this.registerBehaviors(segment, tl.time(), state);
-    this.registerInstantEffects(segment, tl.time(), state);
+    // instant filter：仅从非零位恢复播放时需要重放（seek/暂停后 resume）。
+    // 从 0 全新播放时，正向 segmentTl.call 已覆盖 timePosition===0 的记录，
+    // 此处再 apply 会与 segmentTl.call 重叠导致首字符双滤镜。
+    if (tl.time() > 0) {
+      this.registerInstantEffects(segment, tl.time(), state);
+    }
 
     if (tl.progress() >= 1) {
       tl.restart();
