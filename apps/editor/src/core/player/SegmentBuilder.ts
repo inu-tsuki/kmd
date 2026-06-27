@@ -183,7 +183,48 @@ export class SegmentBuilder {
         );
 
         if (visualConfigs.length > 0) {
-          EffectProcessor.applyGroupEffects(paragraphText, [...visualConfigs]);
+          // block 作用域 instant filter（静态 filter，如 [.gray:block] / [.bloom:block]）
+          // 从同步 applyGroupEffects 路径分离，路由进 InstantEffectRecord + segmentTl.call，
+          // 与 char/group 路径（L239-258）对称——seek 回退时 clearInstantEffects 能移除旧实例。
+          // 修复 spec §7.2 已知缺口：原先同步挂载不经 record，seek 回退后 filter 堆叠泄漏。
+          const blockInstant: typeof visualConfigs = [];
+          const blockRemaining: typeof visualConfigs = [];
+          for (const cfg of visualConfigs) {
+            const meta = effectManager.getMetadata(cfg.name);
+            if (meta && meta.type === "filter" && meta.track === "instant") {
+              blockInstant.push(cfg);
+            } else {
+              blockRemaining.push(cfg);
+            }
+          }
+
+          if (blockRemaining.length > 0) {
+            EffectProcessor.applyGroupEffects(paragraphText, [...blockRemaining]);
+          }
+
+          for (const cfg of blockInstant) {
+            const resolved = EffectProcessor.resolveParams(cfg.params);
+            allInstantEffects.push({
+              target: paragraphText,
+              effectName: cfg.name,
+              params: resolved,
+              charIndex: 0,
+              timePosition: segmentCursor,
+            });
+            const instantTarget = paragraphText;
+            const instantName = cfg.name;
+            const instantParams = { ...resolved };
+            segmentTl.call(() => {
+              if (!context.playbackState.isAutoPlaying) return;
+              const filterInstance = effectManager.apply(instantTarget, instantName, instantParams, true);
+              if (filterInstance) {
+                context.playbackState.activeInstantCleanups.push({
+                  target: instantTarget,
+                  filterInstance,
+                });
+              }
+            }, [], segmentCursor);
+          }
         }
 
         const displayAssembly = paragraphText._displayAssembly;
