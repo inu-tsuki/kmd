@@ -1,0 +1,31 @@
+---
+title: fx - threshold 阈值滤镜
+mode: stage
+speed: 50
+designWidth: 1920
+designHeight: 1080
+---
+
+// 逐字（笔画级风格化）：luma 高于 0.5 变白，低于变黑
+{黑白分明} @ f.threshold
+
+---
+
+// 逐字改参：高阈值 + 宽软带，只有很亮的字变白
+{柔和阈值} @ f.threshold(level=0.7, soft=0.1)
+
+---
+
+// group 作用域：整词组一起阈值化
+{词组阈值} @ f.threshold:group
+
+---
+
+// block 作用域（连续色调表面，教科书用法）：整段一起阈值化
+[.threshold:block(level=0.5, soft=0.02)]
+整段文字阈值化，连续色调表面下黑白分界更清晰。
+
+---
+
+// 与 behavior 组合：滤镜静态挂载，wave 逐字波动
+{阈值加波浪} @ f.threshold.wave

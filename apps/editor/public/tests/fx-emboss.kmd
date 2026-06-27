@@ -1,0 +1,39 @@
+---
+mode: stage
+designWidth: 1920
+designHeight: 1080
+bgColor: "#2a2a3e"
+fontColor: "#ffcc66"
+fontFamily: Sasara Regular
+---
+
+// 逐字（笔画级风格化）：alpha 梯度浮雕，width=3 斜坡延伸到笔画内部
+{立体浮雕} @ f.emboss.bloom(threshold=0.5, strength=1.5, radius=4).big.big
+
+---
+
+// 逐字改参：宽斜坡（width=6）让浮雕更圆润，mix=0.3 更柔和
+{圆润浮雕} @ f.emboss(width=6, strength=1.5, mix=0.3)
+
+---
+
+// 链式组合：blur 先软化 alpha 边缘 → emboss 在更宽斜坡上计算梯度
+// 产生更饱满的 3D 受光面（方法 A：滤镜链生成 heightmap）
+{模糊浮雕链} @ f.blur.emboss
+
+---
+
+// block 作用域（连续色调表面，教科书用法）：整段一起浮雕
+[.emboss:block(width=4, strength=1.5)]
+整段文字呈现浮雕效果，连续色调表面下浮雕感更连贯。
+
+---
+
+// block 纯浮雕（mix=1）：整体替换为灰阶浮雕，验证"替换 vs 叠加"差异
+[.emboss:block(width=3, mix=1)]
+mix=1 时原色完全丢弃，只剩浮雕灰阶——对比看叠加与替换的区别。
+
+---
+
+// 与 behavior 组合：滤镜静态挂载，wave 逐字波动
+{浮雕加波浪} @ f.emboss.wave

@@ -1,0 +1,36 @@
+---
+title: fx - posterize 色调分离滤镜
+mode: stage
+speed: 50
+designWidth: 1920
+designHeight: 1080
+---
+
+// 逐字（笔画级风格化）：每个通道只剩 4 个离散值，出现色带
+{四色分离} @ f.posterize
+
+---
+
+// 逐字改参：2 级极端分离（接近 threshold 但保留各通道独立）
+{二色分离} @ f.posterize(levels=2)
+
+---
+
+// 逐字改参：开启 Bayer 抖动，4×4 矩阵减弱色带
+{抖动分离} @ f.posterize(levels=4, dither=true)
+
+---
+
+// group 作用域：整词组一起量化
+{词组分离} @ f.posterize:group
+
+---
+
+// block 作用域（连续色调表面，教科书用法）：整段一起量化
+[.posterize:block(levels=4, dither=true)]
+整段文字色调分离，连续色调表面下色带/抖动效果更明显。
+
+---
+
+// 与 behavior 组合：滤镜静态挂载，wave 逐字波动
+{分离加波浪} @ f.posterize(levels=6).wave
