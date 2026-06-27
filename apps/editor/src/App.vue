@@ -33,6 +33,10 @@ const isEditorFocused = () => {
 };
 
 const handleKeydown = (e: KeyboardEvent) => {
+  if (e.key === "Escape" && store.isPreviewMaximized) {
+    store.togglePreviewMaximized();
+    return;
+  }
   if (e.ctrlKey && e.key === "Enter") {
     store.runScript();
     return;
@@ -106,6 +110,9 @@ const exportKmd = () => {
       </div>
 
       <div class="right-group">
+        <button @click="store.togglePreviewMaximized" class="tool-btn" :title="store.isPreviewMaximized ? '退出最大化预览' : '最大化预览'">
+          {{ store.isPreviewMaximized ? '🗗' : '🗗' }} 预览
+        </button>
         <LayoutManager />
       </div>
     </header>

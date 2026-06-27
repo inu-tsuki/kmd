@@ -9,6 +9,7 @@ export const useEditorStore = defineStore('editor', () => {
   // --- 状态 (State) ---
   const kmdContent = ref("");
   const isPlaying = ref(false);
+  const isPreviewMaximized = ref(false);  // 预览最大化 toggle（CSS overlay，不卸载 canvas）
   const player = shallowRef<ScriptPlayer | null>(null);
 
   // 锁，防止双向同步死循环
@@ -73,7 +74,11 @@ export const useEditorStore = defineStore('editor', () => {
         const [key, ...valParts] = line.split(':');
         if (key && valParts.length > 0) {
           const k = key.trim();
-          const v = valParts.join(':').trim();
+          // 去除 YAML 值两端的引号（bgColor: "#0a0a1a" → #0a0a1a）
+          let v = valParts.join(':').trim();
+          if ((v.startsWith('"') && v.endsWith('"')) || (v.startsWith("'") && v.endsWith("'"))) {
+            v = v.slice(1, -1);
+          }
           if (k === 'mode') canvasConfig.value.mode = v;
           else if (k === 'designWidth') canvasConfig.value.width = parseInt(v);
           else if (k === 'designHeight') canvasConfig.value.height = parseInt(v);
@@ -92,13 +97,13 @@ export const useEditorStore = defineStore('editor', () => {
     const endMarker = "---";
     const content = kmdContent.value;
 
-    // 构造新的 YAML 字符串
+    // 构造新的 YAML 字符串（hex 值含 # 须引号，否则 # 被视为 YAML 注释）
     const newYaml = [
       `mode: ${canvasConfig.value.mode}`,
       `designWidth: ${canvasConfig.value.width}`,
       `designHeight: ${canvasConfig.value.height}`,
-      `bgColor: ${canvasConfig.value.bgColor}`,
-      `fontColor: ${canvasConfig.value.fontColor}`,
+      `bgColor: "${canvasConfig.value.bgColor}"`,
+      `fontColor: "${canvasConfig.value.fontColor}"`,
       `fontFamily: ${canvasConfig.value.fontFamily}`,
     ].join('\n');
 
@@ -554,6 +559,8 @@ export const useEditorStore = defineStore('editor', () => {
   return {
     kmdContent,
     isPlaying,
+    isPreviewMaximized,
+    togglePreviewMaximized: () => { isPreviewMaximized.value = !isPreviewMaximized.value; },
     player,
     canvasConfig,
     currentTime,
