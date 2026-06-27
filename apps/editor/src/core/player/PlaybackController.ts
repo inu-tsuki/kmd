@@ -11,11 +11,16 @@ export interface BehaviorCleanup {
 /**
  * Instant 特效（静态 filter）的 seek 清理记录。
  * apply 时 effectManager.apply 返回 filter 实例（fn 内 return filter），
- * clearInstantEffects 据此从 target.filters 数组中 splice 掉，保证 seek 幂等。
+ * clearInstantEffects 据此从 target.filters 数组中移除，保证 seek 幂等。
+ *
+ * filterInstance 支持单个 Filter 或 Filter[]：
+ * - 单 shader 滤镜（gray/bloom/…）return 单个实例。
+ * - 组合预设（M2 underwater 串联 displace + tint + blur）return Filter[]，
+ *   清理时全部从 target.filters 移除并逐个 destroy。
  */
 export interface InstantCleanup {
   target: any;
-  filterInstance: Filter;
+  filterInstance: Filter | Filter[];
 }
 
 export interface PlaybackRuntimeState {
@@ -32,11 +37,25 @@ export class PlaybackController {
     if (!segment) return;
     const tl = segment.timeline;
 
-    this.registerBehaviors(segment, tl.time(), state);
-    // instant filter：仅从非零位恢复播放时需要重放（seek/暂停后 resume）。
-    // 从 0 全新播放时，正向 segmentTl.call 已覆盖 timePosition===0 的记录，
-    // 此处再 apply 会与 segmentTl.call 重叠导致首字符双滤镜。
+    // 结尾重播：先清理所有效果（behavior modifier + instant filter），
+    // 再 seek 回 0，避免结尾效果残留到重播开头。
+    if (tl.progress() >= 1) {
+      this.clearBehaviors(state);
+      this.clearInstantEffects(state);
+      tl.seek(0);
+    }
+
+    // behavior + instant filter：
+    // - time===0：不调 register*，让 tl.play() 同步触发的 0 秒 segmentTl.call
+    //   唯一负责 apply（isAutoPlaying 已设 true 放行 guard）。
+    //   若此处也 register → 0 秒 tl.call 再 apply 一次 → 双滤镜/双 modifier。
+    //   behavior filter（blur/rgbShift/warp）尤其严重：双 push filter 且
+    //   clearBehaviors 只 remove modifier 不移除 filter → 泄漏。
+    // - time>0（暂停后 resume）：GSAP tl.play() 不重触发已过去的 tl.call，
+    //   故需 register* 恢复当前时间的效果。
+    state.isAutoPlaying = true;
     if (tl.time() > 0) {
+      this.registerBehaviors(segment, tl.time(), state);
       this.registerInstantEffects(segment, tl.time(), state);
     }
 
@@ -45,8 +64,6 @@ export class PlaybackController {
     } else {
       tl.play();
     }
-
-    state.isAutoPlaying = true;
   }
 
   public static pauseSegment(segment: Segment | null, state: PlaybackRuntimeState) {
@@ -89,12 +106,15 @@ export class PlaybackController {
   public static clearInstantEffects(state: PlaybackRuntimeState) {
     for (const cleanup of state.activeInstantCleanups) {
       const filters = cleanup.target.filters;
+      const instances = Array.isArray(cleanup.filterInstance)
+        ? cleanup.filterInstance
+        : [cleanup.filterInstance];
       if (filters) {
-        const remaining = filters.filter((f: Filter) => f !== cleanup.filterInstance);
+        const remaining = filters.filter((f: Filter) => !instances.includes(f));
         cleanup.target.filters = remaining.length > 0 ? remaining : null;
       }
       // 释放 GPU 资源（GlProgram uniform group 等），避免频繁 seek churn Filter 对象。
-      cleanup.filterInstance.destroy();
+      for (const inst of instances) inst.destroy();
     }
     state.activeInstantCleanups = [];
   }

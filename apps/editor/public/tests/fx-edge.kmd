@@ -1,0 +1,38 @@
+---
+title: fx - edge 描边滤镜
+mode: stage
+speed: 50
+designWidth: 1920
+designHeight: 1080
+bgColor: "#0d0d0d"
+fontColor: "#00ffcc"
+---
+
+// 逐字（笔画级风格化）：默认 width 自适应字号（36px → ~2px），mix=0.9
+{白色描边} @ f.edge(color="#ffffff")
+
+---
+
+// 逐字改参：显式宽描边 + 红色（大字可容纳）
+{红色宽描边} @ f.edge(width=3, color="#ff2bd6")
+
+---
+
+// 逐字改参：柔和描边 mix=0.5
+{柔和描边} @ f.edge(color="#ffcc00", mix=0.5)
+
+---
+
+// block 作用域（连续色调表面，教科书用法）：整段一起描边
+[.edge:block(color="#ffffff")]
+整段文字内描边，白色描边叠加在青色字身上。
+
+---
+
+// group 作用域：整词组共用容器纹理一起描边
+{词组描边} @ f.edge(color="#00ffcc")
+
+---
+
+// 与 behavior 组合：滤镜静态挂载，wave 逐字波动
+{描边加波浪} @ f.edge.wave

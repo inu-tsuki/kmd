@@ -408,6 +408,9 @@ export class ScriptPlayer {
     }
 
     PlaybackController.clearBehaviors(this.playbackState);
+    // 先销毁 instant filter 实例（释放 GPU 资源），再 destroy 文本容器
+    // （Pixi Container.destroy 不自动销毁 target.filters 中的 filter）
+    PlaybackController.clearInstantEffects(this.playbackState);
 
     // 清理显示对象
     this.activeTexts.forEach(kt => kt.destroy({ children: true }));
@@ -426,6 +429,8 @@ export class ScriptPlayer {
 
   public async clearScreen() {
     if (this.activeTexts.length === 0) return;
+    // 先清理 instant filter（destroy 文本容器前释放 GPU 资源）
+    PlaybackController.clearInstantEffects(this.playbackState);
     this.activeTexts.forEach(kt => kt.stop());
     await Promise.all(this.activeTexts.map(kt =>
       gsap.to(kt, { alpha: 0, duration: 0.3 }).then(() => kt.destroy({ children: true }))

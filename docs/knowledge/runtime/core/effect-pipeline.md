@@ -33,7 +33,7 @@ export const wave = defineEffect(_wave, {
 | `instant` | 立即执行 (一次性) | style 经 `StyleRecord` 重放；filter 经 `InstantEffectRecord` 重放 | red, bold, font (style) / pixelate (filter) |
 | `timing` | cursor 控制 | Timeline 位置隐含 | hold, pause |
 
-> **`instant` track 说明**：原是“死桶”——`TextPlayer.placeCharOnTimeline` 只读 `.behavior`/`.entrance`，`instant` 滤镜 fn 永不执行。现已修复：非 style 的 instant 特效（如静态 filter）经 `InstantEffectRecord` 收集，seek 时由 `PlaybackController.registerInstantEffects` 从 `target.filters` 重置后 force 重 apply，靠 fn 返回的 filter 实例做幂等清理。现有 blur/rgbShift/warp 因含可选 `addModifier` 动画仍填 `behavior`；纯静态滤镜（pixelate 及后续 gray/threshold/posterize 等）用 `instant`。
+> **`instant` track 说明**：原是“死桶”——`TextPlayer.placeCharOnTimeline` 只读 `.behavior`/`.entrance`，`instant` 滤镜 fn 永不执行。现已修复：非 style 的 instant 特效（如静态 filter）经 `InstantEffectRecord` 收集，seek 时由 `PlaybackController.registerInstantEffects` 从 `target.filters` 重置后 force 重 apply，靠 fn 返回的 filter 实例做幂等清理。`InstantCleanup.filterInstance` 支持 `Filter | Filter[]`（组合预设 return 数组）。现有 blur/rgbShift/warp 因含可选 `addModifier` 动画仍填 `behavior`；纯静态滤镜（pixelate 及 M1 的 gray/threshold/posterize/duotone/sharpen/emboss/edge/outline/bloom/halftone）用 `instant`。**block 作用域 instant filter 也经 `SegmentBuilder` 路由进 `InstantEffectRecord` + `segmentTl.call`**（与 char/group 路径对称，非 `applyGroupEffects` 同步挂载），char/group/block 三路径 seek 幂等均覆盖。
 
 ## 三路分流 (`EffectProcessor.partition`)
 
@@ -150,9 +150,30 @@ export const xxx = defineEffect(_xxx, { type: "filter", track: "instant"|"behavi
 - **GLSL**：`#version 300 es` + `defaultFilterVert`（不自写顶点）；`uInputSize.zw` 自动注入为 `(1/width, 1/height)`。
 - **静态滤镜 `track: "instant"`**；含逐帧动画的（用 `addModifier` 驱动 uniform）`track: "behavior"`。
 - **char 守卫**：`targetType` 含 char 且实现用 `addModifier`/假定 KineticChar 时，加 `instanceof KineticChar` 守卫 + 非匹配 `console.warn` 后 return。
-- **卷积/邻域类必须设 `filter.padding`**（否则邻域采样取透明边）；纯逐像素/点运算类（pixelate/gray）不需要。
-- **预乘 alpha**：颜色/点运算类对 `c.rgb` 操作前需 `c.rgb/max(c.a,1e-4)` 再写回乘 alpha（审查重点）。
-- **seek 幂等**：instant filter 的 fn 返回 filter 实例 → SegmentBuilder 记入 `activeInstantCleanups` → seek 时 `clearInstantEffects` 从 `target.filters` 移除后重 apply。block 作用域（经 `applyGroupEffects` build 时同步挂载）当前不经此机制，seek 幂等为已知缺口。
+- **卷积/邻域类必须设 `filter.padding`**（否则邻域采样取透明边）；纯逐像素/点运算类（pixelate/gray/threshold/duotone/posterize）不需要。卷积模板见 `SharpenFilter.ts`：padding 匹配 kernel 步长（`Math.ceil(radius)`），在 `radius` setter 内同步更新。
+- **预乘 alpha**：颜色/点运算类对 `c.rgb` 操作前需 `c.rgb/max(c.a,1e-4)` 再写回乘 alpha（审查重点）。点运算模板见 `GrayFilter.ts`。
+- **vec3/vec4 uniform 值格式**：Pixi v8 的 GL uniform setter（`UNIFORM_TO_SINGLE_SETTERS`）对 `vec3<f32>`/`vec4<f32>` 使用数组索引 `v[0],v[1],v[2]`，不是 `.x/.y/.z` 属性。故 vec3/vec4 uniform 值**必须用 `Float32Array`**（如 `new Float32Array([r,g,b])`），不能用 `{x,y,z}` 对象——否则 `v[0]=undefined→0`，颜色 uniform 全变黑色。`vec2<f32>` 走另一条 setter 路径用 `v.x/v.y`，`{x,y}` 可用（RGBSplitFilter 即如此），但为一致性建议 vec2 也用 Float32Array。`hexToVec3`（`filters/colorUtils.ts`）已返回 Float32Array。
+- **bloom 辉光需扩展 alpha**：辉光要扩散到文字外区域（alpha=0），不能只乘原图 alpha。bloom shader 取 `outAlpha = max(c.a, bloomAlpha * strength)`，让亮部 tap 的 alpha 扩散到邻域。
+- **seek 幂等**：instant filter 的 fn 返回 filter 实例 → SegmentBuilder 记入 `activeInstantCleanups` → seek 时 `clearInstantEffects` 从 `target.filters` 移除后重 apply。`InstantCleanup.filterInstance` 支持 `Filter | Filter[]`：组合预设（M2 underwater）return `Filter[]`，清理时全部移除+destroy。**block 作用域（`[.x:block]`）经 Commit 1 修复后也走 `InstantEffectRecord` + `segmentTl.call`**（与 char/group 路径对称），不再同步挂载于 `applyGroupEffects`，seek 回退能正确移除。
+
+### 已注册 filter 清单
+
+| name | track | targetType | mutexGroup | padding | 说明 |
+|---|---|---|---|---|---|
+| `rgbShift` | behavior | both | filter_rgb | — | RGB 通道偏移（可选 anim） |
+| `warp` | behavior | char | filter_warp | 20 | 正弦扭曲（addModifier 驱动 uTime） |
+| `blur` | behavior | both | filter_blur | — | Pixi BlurFilter（可选 anim） |
+| `pixelate` | instant | both | filter_pixelate | — | 下采样马赛克（M0 模板） |
+| `gray` | instant | both | filter_color | — | 灰度点运算（M1 premult-alpha 模板） |
+| `threshold` | instant | both | filter_color | — | alpha 软阈值二值化边缘（M1 点运算） |
+| `duotone` | instant | both | filter_color | — | alpha→shadow/highlight 渐变（M1，hexToVec3） |
+| `posterize` | instant | both | filter_color | — | alpha 量化+可选 Bayer 4×4 抖动（M1 点运算） |
+| `sharpen` | instant | both | filter_conv | ceil(radius) | alpha unsharp mask 3×3（M1 卷积模板） |
+| `emboss` | instant | both | filter_conv | ceil(width) | alpha 梯度浮雕 + 多步长斜坡（M1，可链 f.blur.emboss） |
+| `edge` | instant | both | filter_conv | ceil(width) | alpha 内描边（M1，hexToVec3，类似 CSS text-stroke） |
+| `outline` | instant | both | filter_outline | ceil(width*2) | alpha 膨胀描边 + 可选发光（M1 形态学，hexToVec3） |
+| `bloom` | instant | both | filter_bloom | ceil(radius*2) | 多通道辉光 extract→BlurFilter→composite + 曝光混合（M1，推荐 :block） |
+| `halftone` | instant | both | filter_halftone | ceil(scale) | 网格网点 dot/line + invert（M1，推荐 :block） |
 
 ## 已知边界
 
@@ -162,4 +183,4 @@ export const xxx = defineEffect(_xxx, { type: "filter", track: "instant"|"behavi
   默认 block option 视觉命令不会走这条路径，只有显式 `:block` 时才需要注意这一点。
 - **特效的 `charIndex` 参数**：仅在 `unrollGroupChain` 逐字分发路径中注入。
   直接调用 `effectManager.apply(char, "wave", {})` 不会有 charIndex → 所有字符同相位。
-- **block 作用域 filter 的纹理范围**：`[.x:block]` 走 `applyGroupEffects(kt, ...)`，target 是整段 `KineticText`（持有所有 TokenWrapper），filter 覆盖整段合成纹理。邻域类滤镜（bloom/halftone/vignette）推荐此作用域。但 build 时同步挂载，不经 `InstantEffectRecord`，seek 回退后 filter 不移除——已知缺口，待后续统一处理。
+- **block 作用域 filter 的纹理范围**：`[.x:block]` 走 `applyGroupEffects(kt, ...)` → SegmentBuilder 路由 instant filter 进 `InstantEffectRecord` + `segmentTl.call`，target 是整段 `KineticText`（持有所有 TokenWrapper），filter 覆盖整段合成纹理。邻域类滤镜（bloom/halftone/vignette）推荐此作用域。seek 幂等已覆盖（Commit 1 修复）。

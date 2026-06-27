@@ -1,0 +1,42 @@
+---
+title: fx - halftone 半调滤镜
+mode: stage
+speed: 50
+designWidth: 1920
+designHeight: 1080
+bgColor: "#1a1a2e"
+fontColor: "#ffcc66"
+---
+
+// block 作用域：暖色字上网点（invert 默认=暗部大点，彩色字上有效）
+[.halftone:block(scale=6, angle=0, shape=dot)]
+亮部网点小、暗部网点大，整段文字呈现报纸印刷感。
+
+---
+
+// 白字黑底场景：invert=true 让亮部（白字）出大点
+[.halftone:block(scale=6, angle=0, shape=dot, invert=true)]
+invert=true 时白字出大网点——白字黑底场景用此模式。
+
+---
+
+// 改参线条半调（shape=line）
+[.halftone:block(scale=8, angle=45, shape=line)]
+45 度旋转的线条半调，模拟雕版印刷质感。
+
+---
+
+// 改参大网格 + 旋转
+[.halftone:block(scale=12, angle=15, shape=dot)]
+更大网格出更粗犷的网点，15 度旋转避免水平摩尔纹。
+
+---
+
+// group 作用域：词组级网点
+{词组半调} @ f.halftone:group
+
+---
+
+// 与 behavior 组合：滤镜静态挂载，wave 逐字波动
+[.halftone:block(scale=6)]
+半调加波浪，整段网点同时逐字波动。

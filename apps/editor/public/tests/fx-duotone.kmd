@@ -1,0 +1,34 @@
+---
+title: fx - duotone 双色滤镜
+mode: stage
+speed: 50
+designWidth: 1920
+designHeight: 1080
+bgColor: "#1a1a2e"
+fontColor: "#e94560"
+---
+
+// 逐字（笔画级风格化）：珊瑚红字 → duotone 映射 shadow→highlight
+{夜色霓虹} @ f.duotone
+
+---
+
+// 逐字改参：青→金 双色（原色被映射到新双色）
+{青金渐变} @ f.duotone(shadow="#0d1b2a", highlight="#f4a261")
+
+---
+
+// 白字场景：白色映射到 shadow→highlight 渐变
+[.duotone:block(shadow="#1a1a2e", highlight="#e94560")]
+整段文字呈现双色调，连续色调表面下暗部到亮部的渐变更连贯。
+
+---
+
+// 浅底深字场景：对比看双色在反差背景上的表现
+[.duotone:block(shadow="#0d1b2a", highlight="#ffd700")]
+金色高调双色，暗部深蓝亮部金黄。
+
+---
+
+// 与 behavior 组合：滤镜静态挂载，wave 逐字波动
+{双色加波浪} @ f.duotone.wave

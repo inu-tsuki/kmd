@@ -1,6 +1,7 @@
 <template>
-  <div ref="canvasContainer" class="canvas-container">
+  <div ref="canvasContainer" class="canvas-container" :class="{ 'maximized': store.isPreviewMaximized }">
     <div v-if="!isReady" class="loading">Engine Loading...</div>
+    <button v-if="store.isPreviewMaximized" class="maximize-close" @click="store.togglePreviewMaximized" title="退出最大化 (Esc)">✕</button>
   </div>
 </template>
 
@@ -68,6 +69,11 @@ defineExpose({
   overflow: hidden;
   position: relative;
 }
+.canvas-container.maximized {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+}
 .canvas-container :deep(canvas) {
   display: block;
   width: 100%;
@@ -79,5 +85,25 @@ defineExpose({
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+}
+.maximize-close {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 10000;
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.maximize-close:hover {
+  background: rgba(255, 255, 255, 0.2);
 }
 </style>
