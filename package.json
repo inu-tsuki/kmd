@@ -9,6 +9,7 @@
     "build": "pnpm --filter @kmd/editor build",
     "preview": "pnpm --filter @kmd/editor preview",
     "test:parser": "pnpm --filter @kmd/editor test:parser",
+    "test:shaders": "pnpm --filter @kmd/editor test:shaders",
     "language:check": "node scripts/check-language-assets.mjs",
     "editor:dev": "pnpm --filter @kmd/editor dev",
     "editor:build": "pnpm --filter @kmd/editor build",

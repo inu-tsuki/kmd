@@ -14,9 +14,10 @@ Use `pnpm` throughout.
 - `pnpm build` - run `vue-tsc` type-checking, then produce a production build in `dist/`.
 - `pnpm preview` - serve the built app locally for verification.
 - `pnpm test:parser` - run the parser integration regression in `apps/editor/src/final-parser-test.ts`.
+- `pnpm test:shaders` - compile every `*Filter.ts` fragment shader with `glslangValidator` (catches GLSL syntax/scope errors that `vue-tsc` cannot see). Requires `glslangValidator` on PATH.
 - `pnpm language:check` - verify `@kmd/language` assets match the VS Code extension packaged copies.
 
-When working on parser, layout, effect routing, or shared runtime behavior, validate with `pnpm build` and `pnpm test:parser` before opening a PR.
+When working on parser, layout, effect routing, or shared runtime behavior, validate with `pnpm build` and `pnpm test:parser` before opening a PR. When adding or modifying any `*Filter.ts`, also run `pnpm test:shaders` — `pnpm build` does not compile GLSL strings and will pass even when a shader fails to compile.
 
 ## Coding Style & Naming Conventions
 
@@ -24,10 +25,10 @@ Write Vue SFCs and TypeScript modules with the existing style in each file: most
 
 ## Testing Guidelines
 
-There is no full unit-test suite or coverage gate yet. Add regression-oriented TypeScript scripts alongside the current parser tests when fixing engine bugs, and keep sample KMD inputs in `apps/editor/public/` or `apps/editor/public/tests/` when they help reproduce issues. Name ad hoc test files clearly, for example `test-variable-parser.ts` or `final-parser-test.ts`.
+There is no full unit-test suite or coverage gate yet. Add regression-oriented TypeScript scripts alongside the current parser tests when fixing engine bugs, and keep sample KMD inputs in `apps/editor/public/` or `apps/editor/public/tests/` when they help reproduce issues. Name ad hoc test files clearly, for example `test-variable-parser.ts` or `final-parser-test.ts`. GLSL fragment shaders in `*Filter.ts` are validated by `pnpm test:shaders` (glslangValidator); `vue-tsc` does not compile GLSL template strings, so shader syntax/scope errors (e.g. nested function definitions, which GLSL ES 3.00 forbids) are invisible to `pnpm build` — always run the shader gate when touching filters.
 
 ## Documentation & Architecture Notes
 
-Before changing command routing or the effect pipeline, read `docs/knowledge/runtime/core/command-routing.md` and `docs/knowledge/runtime/core/effect-pipeline.md`. Before changing repository layout, Android Reader integration, or package boundaries, read `docs/planning/ecosystem/repository-strategy.md`, the relevant package plan under `docs/planning/packages/`, and the relevant integration authority under `docs/knowledge/integration/`. For current phase and sequencing, read `docs/planning/roadmap/implementation-roadmap.md` instead of copying roadmap state into this file. If you add new commands, effects, layout behavior, or repository-level conventions, update the corresponding doc in the same change and place it under `planning/`, `knowledge/`, or `archive/` according to `docs/README.md`.
+Before changing command routing or the effect pipeline, read `docs/knowledge/runtime/core/command-routing.md` and `docs/knowledge/runtime/core/effect-pipeline.md`. Before changing timeline/animation/easing behavior, read `docs/knowledge/runtime/core/timeline-and-easing.md`. Before changing repository layout, Android Reader integration, or package boundaries, read `docs/planning/ecosystem/repository-strategy.md`, the relevant package plan under `docs/planning/packages/`, and the relevant integration authority under `docs/knowledge/integration/`. For current phase and sequencing, read `docs/planning/roadmap/implementation-roadmap.md` instead of copying roadmap state into this file. If you add new commands, effects, layout behavior, or repository-level conventions, update the corresponding doc in the same change and place it under `planning/`, `knowledge/`, or `archive/` according to `docs/README.md`.
 
 将这一机制推广到整个`docs/`中。当认为某一改动、举措或错误尝试值得记录，在`docs/`中管理它们。
