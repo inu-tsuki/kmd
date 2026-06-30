@@ -206,6 +206,10 @@ export class ScriptPlayer {
     ScriptBuildReporter.beginBuildSession();
     stageManager.clearAuditSnapshot();
     this.emitPlaybackState("loading", false);
+    // 先清旧 segment（INV-4: stop-before-build）。editorStore.ts:140 外部已 stop，
+    // 但 runtime 公共入口不保证——ScriptPlayer 层兜底。loadSourceContent 同理。
+    // suppressIdle：stop 会发 idle，但 load 流程已发 loading → idle → ready 会让宿主 UI 闪烁。
+    await this.stop({ suppressIdle: true });
     let finalSource = kmdSource;
     try {
       finalSource = (await ScriptSourceLoader.resolve(kmdSource)).source;
@@ -228,6 +232,12 @@ export class ScriptPlayer {
     ScriptBuildReporter.beginBuildSession();
     stageManager.clearAuditSnapshot();
     this.emitPlaybackState("loading", false);
+    // 先清旧 segment：释放旧 timeline、显示对象、behavior ticker/filter、entrance filter、
+    // stage modifier。若不先清，连续两次 loadScript 会让旧 timeline/对象/资源残留 stage/GPU/ticker。
+    // 编辑器包装层（ReaderCanvas.vue）在调用前已 stop，但 runtime 公共入口（loadScript/loadSource
+    // 经 protocol dispatch）不保证——此处在 ScriptPlayer 层兜底，保证"先清旧再建新"不变量。
+    // suppressIdle：stop 会发 idle，但 load 流程已发 loading → idle → ready 会让宿主 UI 闪烁。
+    await this.stop({ suppressIdle: true });
     await this.loadFinalSource(source);
   }
 
@@ -324,9 +334,48 @@ export class ScriptPlayer {
    * Timeline.seek() 让 GSAP 自动插值所有动画到目标时间的中间状态，
    * 包括字符入场、舞台 Tween (cam.move 等)。
    * Behavior 特效通过 registerBehaviors() 重新注册。
+   * Stage modifier（cam.shake/cam.drift）在 seek 前清掉——cam.drift 无 tween、
+   * modifier 永久残留，seek 离开后不清会持续（INV: stage modifier 在 seek 清理）。
+   * 注意：seek 不调 loadState——camera position 由时间线插值恢复，不应重置。
    */
   public seekToTime(seconds: number) {
+    stageManager.clearModifiers();
     PlaybackController.seekToTime(this.segment, seconds, this.playbackState);
+    // R7-1：seek 落点 = ended（progress>=1）必须落地 ended 状态，而非只"读"判定阻止 resume。
+    // F-2 的 derivePhase 只识别"现在哪种状态"，没有路径把识别出的 ended 写回——
+    // isAutoPlaying 仍 true（§B-bis：GSAP seek(duration) 不触发 onComplete 不改它）、
+    // segmentTl 不 pause、emitPlaybackState("ended") 不发 → UI/宿主以为还在播。
+    // settled ended 后：onPlaybackComplete 复用自然播完的链路（设 isAutoPlaying=false + pause + emit ended）。
+    const phase = PlaybackController.derivePhase(this.segment, this.playbackState);
+    if (phase === "ended") {
+      this.settleEnded();
+      return;
+    }
+    // F-2：resume 条件过 derivePhase 单一真相源（phase === "playing" = isAutoPlaying && progress<1），
+    // 不散落 `isAutoPlaying && progress<1` 字面量。
+    // - playing（isAutoPlaying && progress<1）：seek 落在播放中 → resume playSegment（live replay，R5-1）。
+    // - paused（!isAutoPlaying && progress<1）：不 resume，seek 停留（暂停态）。
+    if (phase === "playing") {
+      this.playSegment();
+    }
+  }
+
+  /**
+   * R7-1：把"已达结尾"状态落地为 ended（seek 到尾、自然播完共用）。
+   *
+   * 与 SegmentBuilder 的 segmentTl.onComplete 对称（自然播完路径）：设 isAutoPlaying=false、
+   * 显式 pause（BUG-14：播完不 pause 则 seek 后会从该处继续推进）、emit ended。
+   * seek 到尾时 §B-bis：GSAP seek(duration) 不触发 onComplete，故需此路径显式落地——
+   * 否则 derivePhase 识别出 ended 但状态没写回，isAutoPlaying 仍 true、不发 ended，
+   * 后续 playSegment（对 ended 是 restart 语义）会从 0 重播。
+   *
+   * 集中此逻辑避免 seek 路径与 onComplete 路径各写一份 ended 落地（INV-7 同构：状态落地单一真相源）。
+   */
+  private settleEnded() {
+    if (!this.segment) return;
+    this.playbackState.isAutoPlaying = false;
+    this.segment.timeline.pause();
+    this.emitPlaybackState("ended", false);
   }
 
   // ═══════════════════════════════════════════════════════════
@@ -347,10 +396,7 @@ export class ScriptPlayer {
     }
     this.seekToTime(unit.offsetInSegment);
 
-    // 如果之前在播放，继续播放
-    if (this.playbackState.isAutoPlaying) {
-      this.playSegment();
-    }
+    // seekToTime 内部已按 isAutoPlaying 恢复 playSegment（R5-1），此处不再重复 resume。
   }
 
   public get getMetadata() {
@@ -393,7 +439,7 @@ export class ScriptPlayer {
     stageManager.setMode(mode === "stage" ? "stage" : "scroll");
   }
 
-  public async stop() {
+  public async stop(options?: { suppressIdle?: boolean }) {
     this.playbackState.isAutoPlaying = false;
     clearTimeout(this.autoPlayTimer);
 
@@ -405,12 +451,18 @@ export class ScriptPlayer {
       // F1: 重置 layout 和 stage 到入口状态，防止重播时 Y 偏移
       layout.reset();
       stageManager.loadState(this.segment.entryCheckpoint.stage);
+      // 清理 stage modifier（cam.shake/cam.drift 等）：loadState 只 restore camera +
+      // killTweensOf，不 clearModifiers。cam.shake 的 modifier 靠 tween onComplete 移除，
+      // kill timeline 后 onComplete 不触发 → 残留；cam.drift 无 tween、modifier 永久残留。
+      stageManager.clearModifiers();
     }
 
     PlaybackController.clearBehaviors(this.playbackState);
     // 先销毁 instant filter 实例（释放 GPU 资源），再 destroy 文本容器
-    // （Pixi Container.destroy 不自动销毁 target.filters 中的 filter）
+    // （§B-bis：Pixi v8 Container.destroy 不自动销毁 target.filters 中的 filter）
     PlaybackController.clearInstantEffects(this.playbackState);
+    // 入场特效 filter（blurIn 等）：从 segment.entranceFilters 清理，必须在 segment = null 之前。
+    PlaybackController.clearEntranceFilters(this.segment);
 
     // 清理显示对象
     this.activeTexts.forEach(kt => kt.destroy({ children: true }));
@@ -419,7 +471,11 @@ export class ScriptPlayer {
     this.timelineMarkers = [];
     this.runtimeCallbacks.onTimelineChanged?.([]);
     this.emitProgress({ timeMs: 0 });
-    this.emitPlaybackState("idle", false);
+    // suppressIdle：load/loadSourceContent 在 stop 前已发 loading，stop 的 idle 会让宿主 UI
+    // 闪烁（loading → idle → ready）。非 load 路径正常发 idle。
+    if (!options?.suppressIdle) {
+      this.emitPlaybackState("idle", false);
+    }
   }
 
   public async dispose() {
@@ -429,13 +485,41 @@ export class ScriptPlayer {
 
   public async clearScreen() {
     if (this.activeTexts.length === 0) return;
-    // 先清理 instant filter（destroy 文本容器前释放 GPU 资源）
+    // 与 stop 对称：先 kill 时间线（释放入场 tween + 防止 orphan tween 动画已 destroy
+    // 的 target），再清理 behavior/instant/entrance filter，最后 fade destroy 文本容器。
+    // 置空 segment——clearScreen 已 kill timeline + destroy 所有显示对象，segment 引用的
+    // 是死对象，后续 playSegment/seekToTime/next 用它会崩。与 stop 对齐。
+    if (this.segment) {
+      this.segment.timeline.pause();
+      this.segment.timeline.kill();
+      // F1: 重置 layout 和 stage 到入口状态（与 stop 对称）
+      layout.reset();
+      stageManager.loadState(this.segment.entryCheckpoint.stage);
+      stageManager.clearModifiers();
+    }
+
+    PlaybackController.clearBehaviors(this.playbackState);
+    // 先销毁 instant filter 实例（释放 GPU 资源），再 destroy 文本容器
+    // （§B-bis：Pixi v8 Container.destroy 不自动销毁 target.filters 中的 filter）
     PlaybackController.clearInstantEffects(this.playbackState);
+    // 入场特效 filter（blurIn 等）：从 segment.entranceFilters 清理。
+    PlaybackController.clearEntranceFilters(this.segment);
+
     this.activeTexts.forEach(kt => kt.stop());
     await Promise.all(this.activeTexts.map(kt =>
-      gsap.to(kt, { alpha: 0, duration: 0.3 }).then(() => kt.destroy({ children: true }))
+      gsap.to(kt, { alpha: 0, duration: 0.3 })
+        .then(() => {
+          // killTweensOf 兜底：防止 fade tween 被 stop()/clearScreen() 并发打断后 orphan。
+          gsap.killTweensOf(kt);
+          kt.destroy({ children: true });
+        })
     ));
     this.activeTexts = [];
+    this.segment = null;
+    this.timelineMarkers = [];
+    this.runtimeCallbacks.onTimelineChanged?.([]);
+    this.emitProgress({ timeMs: 0 });
+    this.emitPlaybackState("idle", false);
   }
 
   /**
