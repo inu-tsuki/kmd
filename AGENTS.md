@@ -8,20 +8,55 @@ This repository is the KMD main incubation repo, not only the Web editor. `apps/
 
 ## Build, Test, and Development Commands
 
-Use `pnpm` throughout.
+Use `pnpm` throughout. `dev`, `build`, `preview`, `test:parser`, `test:shaders`, and `language:check` run from the repo root (the root `package.json` proxies them). `test:playback` and `test:invariants` live in the editor package only — run them from `apps/editor/`, or from the root as `pnpm --filter @kmd/editor test:playback` / `test:invariants`.
 
 - `pnpm dev` - start the Vite dev server for the editor.
 - `pnpm build` - run `vue-tsc` type-checking, then produce a production build in `dist/`.
 - `pnpm preview` - serve the built app locally for verification.
 - `pnpm test:parser` - run the parser integration regression in `apps/editor/src/final-parser-test.ts`.
+- `pnpm test:playback` - run the playback state-machine regression in `apps/editor/src/final-playback-test.ts` (seek/phase/resume semantics, effect lifecycle, baseline/record ownership). **Required gate for any playback, effect, timeline, or seek change.**
+- `pnpm test:invariants` - run the INV-7/INV-8 structural guard in `apps/editor/src/test-invariants.ts` (no inline effect-track special-casing; no unverified boundary-behavior claims). **Required gate for any effect-routing or playback change.**
 - `pnpm test:shaders` - compile every `*Filter.ts` fragment shader with `glslangValidator` (catches GLSL syntax/scope errors that `vue-tsc` cannot see). Requires `glslangValidator` on PATH.
 - `pnpm language:check` - verify `@kmd/language` assets match the VS Code extension packaged copies.
 
-When working on parser, layout, effect routing, or shared runtime behavior, validate with `pnpm build` and `pnpm test:parser` before opening a PR. When adding or modifying any `*Filter.ts`, also run `pnpm test:shaders` — `pnpm build` does not compile GLSL strings and will pass even when a shader fails to compile.
+### Gate requirements by change scope
+
+| Change touches | Required gates (all must pass) |
+|---|---|
+| parser, layout, or shared runtime | `pnpm build` + `pnpm test:parser` |
+| playback, seek, effect pipeline, timeline/easing, stage modifiers | `pnpm build` + `pnpm test:parser` + `pnpm test:playback` + `pnpm test:invariants` |
+| any `*Filter.ts` | also run `pnpm test:shaders` (see below) |
+| `@kmd/language` or VS Code extension assets | `pnpm language:check` |
+
+`pnpm build` does not compile GLSL template strings, so it passes even when a shader fails to compile — always run the shader gate when touching any `*Filter.ts`.
 
 ## Coding Style & Naming Conventions
 
 Write Vue SFCs and TypeScript modules with the existing style in each file: most code uses 2-space indentation, semicolons, and single quotes in `.ts` files. Name Vue components in PascalCase (`KmdEditor.vue`), stores and utilities in camelCase (`editorStore.ts`), and keep core engine folders grouped by subsystem (`parser/`, `layout/`, `effects/`). Prefer small, focused modules and update nearby docs when behavior changes are non-obvious. Do not extract `apps/editor/src/core/` into `packages/` until the repository strategy explicitly calls for runtime package extraction.
+
+## Working Principles
+
+These are stable, agent-actionable runtime principles. The case-by-case audit record belongs in `docs/knowledge/runtime/core/lifecycle-invariants.md`; this section keeps only the operational shortlist.
+
+### Verify-then-write (探针先于写代码)
+
+When a fix hinges on a behavior of an underlying library or runtime surface (GSAP, Pixi, glslang, tsx, the DOM), **verify the premise with a one-shot probe before writing production code that depends on it**. Code comments that assert runtime behavior must be probe-verified, not inferred. Run the probe in the same environment as the relevant test or production path, and record the result in the commit message or planning note.
+
+### Construction over runtime-dedup, with a stated exception
+
+The runtime deliberately avoids runtime dedup guards (Set/cursor/epsilon) when ownership can be established at construction time: baseline vs record, timeline segment boundaries, and shared helper outputs should make only one apply driver own any given moment. **Exception:** when two drivers share a runtime event that construction cannot separate, a minimal stateful ownership flag is the accepted escape hatch. Document the exception next to the state that implements it. Decision rule: if the trigger moments are separable at build time, fix construction; if they share one runtime event, use a narrow documented runtime flag.
+
+### Regression must cover the full semantic surface, not just the reproducing side
+
+When fixing a playback/effect bug, regression coverage must include both directions, every operation path that touches the affected resource, every build-time write path, and degenerate/empty cases. The playback regression suite is the persistence layer for this; new fixes should add focused cases there instead of only covering the side that reproduced.
+
+### Do not let the test harness mask production behavior
+
+Test harnesses can hide production behavior, especially around tickers, schedulers, timers, browser APIs, and mocked loaders. When a fix targets such behavior, the suite may only be able to verify the *mechanism* rather than the *fired outcome*. Document that limit honestly in the test, and use a real-environment probe for any load-bearing library assumption.
+
+### Resolve effect parameters once at build time, share across both apply paths
+
+When a resource has two apply paths, such as natural play and seek replay, both must consume the **same pre-resolved parameters**. Resolve variable references and fallback-sensitive numeric fields once at build time, store the result in the record, and replay that object on both paths. Do not let one path re-resolve at runtime with a different fallback convention; fallback values must stay single-sourced or the two paths will diverge.
 
 ## Testing Guidelines
 

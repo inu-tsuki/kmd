@@ -1,6 +1,6 @@
 # 文档索引
 
-> 最近更新：2026-06-16
+> 最近更新：2026-06-30
 
 `docs/` 按用途分成三类：开发规划、知识库、归档。新增文档时先判断它是“接下来要做什么”“长期事实是什么”，还是“历史记录是什么”。
 
@@ -12,6 +12,7 @@
 - `packages/`：KMD 生态包计划，例如 `language`、`reader-runtime-web`、未来 `core`。
 - `apps/`：KMD 生态应用计划，例如 editor、Android Reader、VS Code extension、community API；当前含 `apps/editor-dip-effect-library.md`（DIP 风格化滤镜库子项目，清单与纲领）及其 `editor-dip-effect-library-spec.md`（交接给代码编写者的实现规格）、`editor-dip-effect-library-review.md`（滤镜 PR 审查入口）。
 - `ecosystem/`：跨包、跨应用的仓库编排和生态策略。
+- `runtime/`：运行链路审查-修复轮次的自审计与修复笔记（R13–R22），记录每轮的探针、修复、回归集与方法论提炼。具体 SA 记录与检查清单在 `knowledge/runtime/core/lifecycle-invariants.md`，此目录放轮次级的自审计/修复过程文档。
 - `TODO.md`：AI 协作期任务池和历史任务追踪；阶段权威以 `roadmap/` 为准。
 
 > 当前阶段与下一步以 `planning/roadmap/implementation-roadmap.md` 为准。
