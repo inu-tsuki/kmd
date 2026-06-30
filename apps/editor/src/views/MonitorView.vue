@@ -43,9 +43,9 @@
               <span class="value-box">{{ store.currentLine }}</span>
             </div>
             <div class="debug-row">
-              <span>Is Playing</span>
-              <span class="value-box" :class="{ active: store.isPlaying }">{{
-                store.isPlaying
+              <span>Playback State</span>
+              <span class="value-box" :class="{ active: store.playbackState === 'playing' }">{{
+                store.playbackState
               }}</span>
             </div>
           </div>

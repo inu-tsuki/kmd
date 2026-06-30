@@ -57,7 +57,9 @@ const trackRef = ref<HTMLElement | null>(null);
 const isScrubbing = ref(false);
 const wasPlaying = ref(false);
 
-const isPlaying = computed(() => store.player?.autoPlay ?? false);
+// SA-22：播放状态读 store.playbackState（单一真相源），不再直读 player.autoPlay
+// （后者与 store.isPlaying 是两个不同步的真相源，Alt+Click 等路径会让它们漂移）。
+const isPlaying = computed(() => store.playbackState === "playing");
 
 const togglePlay = () => {
   store.player?.toggleAutoPlay();
@@ -88,8 +90,9 @@ const formatTime = (ms: number) => {
 
 const handleScrubStart = (e: MouseEvent) => {
   isScrubbing.value = true;
-  // F7: 记录拖拽前播放状态，暂停 Timeline 避免 onUpdate 冲突
-  wasPlaying.value = store.player?.autoPlay ?? false;
+  // F7: 记录拖拽前播放状态，暂停 Timeline 避免 onUpdate 冲突。
+  // SA-22：读 store.playbackState（单一真相源）而非 player.autoPlay。
+  wasPlaying.value = store.playbackState === "playing";
   store.player?.pauseSegment();
   updateScrub(e);
   window.addEventListener("mousemove", handleScrubMove);
@@ -123,8 +126,12 @@ const handleScrubEnd = () => {
     `[UI-Jump] Scrub ended at ${targetTime.toFixed(0)}ms → seekToTime(${targetSeconds.toFixed(2)}s)`,
   );
   store.player?.seekToTime(targetSeconds);
-  // F7: 恢复拖拽前的播放状态
-  if (wasPlaying.value) store.player?.playSegment();
+  // F7: 恢复拖拽前的播放状态。
+  // R7-2/SA-22：wasPlaying 只反映"拖拽前在播"的意图，而非 seek 后的实际状态。
+  // seek 落在末尾时 seekToTime 已 settle 为 ended（adapter 据此设 playbackState="ended"），
+  // 此时不应 resume——playSegment 对 ended 是 restart 语义会从 0 重播。
+  // 用"拖拽前在播 且 seek 后未 ended"判定：playbackState 是 settle 后的真实状态（单一真相源）。
+  if (wasPlaying.value && store.playbackState !== "ended") store.player?.playSegment();
 };
 </script>
 

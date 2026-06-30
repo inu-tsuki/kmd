@@ -252,7 +252,6 @@ class LayoutEngine {
     }
 
     this.container.addChild(line);
-    // line.applyParagraphEffects(); // 由策略模式调用
 
     const logicalHeight = line.getLayoutHeight();
     line.logicalHeight = logicalHeight; // 持久化
