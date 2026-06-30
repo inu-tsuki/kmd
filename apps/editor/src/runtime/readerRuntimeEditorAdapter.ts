@@ -1,6 +1,7 @@
 import type {
   ReaderRuntimeCallbacks,
   ReaderRuntimeEditorStateAdapter,
+  ReaderRuntimePlaybackState,
   ReaderRuntimeTimelineMarker,
   ReaderRuntimeTypography,
 } from "../core/runtime";
@@ -11,6 +12,13 @@ export interface EditorRuntimeAdapterStore {
   currentLine: number;
   timelineMarkers: ReaderRuntimeTimelineMarker[];
   isPlaying: boolean;
+  /**
+   * 完整播放生命周期态（idle/loading/ready/playing/paused/ended/error）。
+   * SA-22：原本 adapter 的 setPlaybackState 只写 event.isPlaying，把 7 值 union 塌缩成布尔，
+   * UI 无法区分 ended/paused/loading 等。playbackState 保留完整态作为单一真相源，
+   * isPlaying 保留为派生布尔（=== state==="playing"）供旧消费者读。
+   */
+  playbackState: ReaderRuntimePlaybackState;
   canvasConfig: {
     fontColor: string;
     fontFamily: string;
@@ -47,6 +55,9 @@ export function createEditorRuntimeStateAdapter(store: EditorRuntimeAdapterStore
       }
     },
     setPlaybackState(event) {
+      // SA-22：保留完整 state（原塌缩为布尔导致 UI 无法区分 ended/paused 等）。
+      // playbackState 是单一真相源；isPlaying 作为派生布尔同步写（兼容旧消费者）。
+      store.playbackState = event.state;
       store.isPlaying = event.isPlaying;
     },
     reportDiagnostic(diagnostic) {

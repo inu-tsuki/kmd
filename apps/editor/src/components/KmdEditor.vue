@@ -63,11 +63,13 @@ watch(
   },
 );
 
-// 监听播放状态，停止时清除高亮
+// 监听播放状态，停止时清除高亮。
+// SA-22：读 store.playbackState（单一真相源）。playing 以外的态（paused/ended/idle/loading 等）
+// 都清高亮——原 isPlaying 布尔无法区分这些，但语义上"非 playing 就该清高亮"。
 watch(
-  () => store.isPlaying,
-  (playing) => {
-    if (!playing) updatePlayingLine(0);
+  () => store.playbackState,
+  (state) => {
+    if (state !== "playing") updatePlayingLine(0);
   },
 );
 
@@ -142,8 +144,10 @@ onMounted(async () => {
       console.log(
         `[Editor-Jump] Alt+Click at line ${line}, seeking to p[${targetIdx}]`,
       );
+      // SA-22：Alt+Click 是 seek 不是 play，不乐观声明播放态。
+      // seekTo → seekToTime 会据 derivePhase 决定：正在播则 resume（发 "playing" 事件，adapter 设态），
+      // 暂停则停留 paused。原 store.isPlaying = true 会与实际播放态漂移（Source A=true / Source B 不变）。
       player.seekTo(targetIdx);
-      store.isPlaying = true;
     }
   });
 
