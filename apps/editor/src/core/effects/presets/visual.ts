@@ -1,4 +1,5 @@
 import { KineticChar } from "../../KineticChar";
+import { Container } from "pixi.js";
 import type { EffectFunction, EffectMetadata } from "../types";
 
 function defineEffect(fn: EffectFunction, meta: EffectMetadata) {
@@ -20,9 +21,11 @@ const _border: EffectFunction = (target, params = {}) => {
   const bounds = t.getContentBounds();
   const g = t.getGraphicsLayer("border");
   g.clear();
+  // 补 bounds 原点：getContentBounds() 对 align:center/right 或 indent>0 返回非零 x/y（基于段落 layout
+  // 坐标，addChars 死代码后不再 token-local 归零），原画在 (-pad,-pad) 会偏在内容左侧。以 bounds.x/y 起画。
   g.rect(
-    -padding,
-    -padding,
+    bounds.x - padding,
+    bounds.y - padding,
     bounds.width + padding * 2,
     bounds.height + padding * 2,
   );
@@ -49,9 +52,10 @@ const _bg: EffectFunction = (target, params = {}) => {
   const bounds = t.getContentBounds();
   const g = t.getGraphicsLayer("bg");
   g.clear();
+  // 补 bounds 原点（见 _border 同理注释）：align:center/right 或 indent>0 时 bounds.x/y 非零。
   g.roundRect(
-    -padding,
-    -padding,
+    bounds.x - padding,
+    bounds.y - padding,
     bounds.width + padding * 2,
     bounds.height + padding * 2,
     radius,
@@ -65,13 +69,20 @@ export const bg = defineEffect(_bg, {
   mutexGroup: "bg",
 });
 
-// 变暗 (Dim) — 通过 addModifier 设置 alpha，与 animOffset.alpha 乘法叠加
+// 变暗 (Dim) — 通过 addModifier/属性恢复设置 alpha
+// char 级：addModifier 返回 { alpha }，syncProperties 每帧 finalAlpha *= alpha，removeModifier 后归零。
+// 容器级：一次性写 target.alpha = alpha，返回 { restoreProps } 让 cleanup 记录原始 alpha、
+//   seek 回退时 clearBehaviors 恢复。**不用 ContainerBehaviorOffset ticker 叠加 alpha**——
+//   ticker 每帧覆盖 target.alpha 会与 timeline alpha 动画（如 blurIn 0→1）冲突。
+//   restoreProps 是一次性属性写入 + 一次性恢复，不持续驱动，不与 timeline 冲突。
 const _dim: EffectFunction = (target, params = {}) => {
   const alpha = params.alpha ?? params[0] ?? 0.5;
   if (target instanceof KineticChar) {
     target.addModifier("dim", 'behavior', () => ({ alpha }));
-  } else {
-    target.alpha = alpha; // Container 降级
+  } else if (target instanceof Container) {
+    const baseAlpha = target.alpha;
+    target.alpha = alpha;
+    return { restoreProps: { target, props: { alpha: baseAlpha } } };
   }
 };
 export const dim = defineEffect(_dim, {

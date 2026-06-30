@@ -19,7 +19,7 @@ void main(void)
 {
     vec4 c = texture(uTexture, vTextureCoord);
 
-    // 预乘 alpha 对偶：Pixi 输出可能是预乘格式，
+    // 预乘 alpha 对偶：Pixi 输出可能是预乘格式（§B-bis 待验证 TODO——node 无 WebGL，未确证是否预乘），
     // 对 rgb 运算前先除以 alpha 还原线性 rgb，运算后再乘回。
     vec3 rgb = c.a > 0.001 ? c.rgb / c.a : vec3(0.0);
 

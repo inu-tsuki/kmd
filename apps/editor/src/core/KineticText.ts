@@ -1,10 +1,8 @@
-import { Container, Rectangle } from "pixi.js";
-import { EffectProcessor } from "./effects/EffectProcessor";
+import { Container, Graphics, Rectangle } from "pixi.js";
 import { TokenWrapper } from "./TokenWrapper";
 import { KineticChar } from "./KineticChar";
 import { TextBuilder } from "./render/text/TextBuilder";
 import { TextBuildContextResolver } from "./render/text/TextBuildContextResolver";
-import { TextPlayer } from "./render/text/TextPlayer";
 
 import type { BlockOptions } from "./parser/types";
 import type { MarkerMap } from "./layout/types";
@@ -41,6 +39,11 @@ export class KineticText extends Container {
 
   public logicalHeight: number = 0;
   public isAutoLayout: boolean = true;
+
+  // Graphics 样式层（bg/border 等 instant style 特效画此处，非 filter）。
+  // 与 TokenWrapper.getGraphicsLayer 同构：按名复用、addChildAt 底层。seek 回退靠 g.clear() 重画
+  // （幂等，无 destroy 需求）；rebuild 的 removeChildren() 会移除 Graphics 子节点，故 rebuild 前清 Map。
+  private graphicsLayers: Map<string, Graphics> = new Map();
 
   constructor(baseOptions: KineticTextOptions) {
     super();
@@ -82,10 +85,6 @@ export class KineticText extends Container {
     await TextBuilder.buildFromParagraph(this, input, TextBuildContextResolver.fromTarget);
   }
 
-  public async applyParagraphEffects() {
-    await EffectProcessor.applyGroupEffects(this as any, this._pendingGlobalEffects);
-  }
-
   public async rebuild(newOptions?: any) {
     this._currentOptions = { ...this._currentOptions, ...newOptions };
     this._options = {
@@ -95,6 +94,8 @@ export class KineticText extends Container {
     } as FullOptions;
 
     this.tokens.forEach((t) => t.destroy({ children: true }));
+    // removeChildren() 会移除 Graphics 层子节点，先清 Map 防止 getGraphicsLayer 返回已脱离容器的旧引用。
+    this.graphicsLayers.clear();
     this.removeChildren();
     this._displayAssembly = createEmptyParagraphDisplayAssembly();
     this.tokens = this._displayAssembly.tokens;
@@ -107,26 +108,8 @@ export class KineticText extends Container {
     await TextBuilder.build(this, this._sourceKMD, this._sourceStartLine, TextBuildContextResolver.fromTarget);
   }
 
-  public async play(absStartTime: number, options: { speed?: number; mode?: string; onAdvance?: () => void } = {}): Promise<{ skipAutoPause?: boolean }> {
-    this._stopRequested = false;
-    return TextPlayer.play(this, this._displayAssembly, absStartTime, options);
-  }
-
-  public bakeTimeline(baseSpeed: number): number {
-    return TextPlayer.bakeTimeline(this, this._displayAssembly, baseSpeed);
-  }
-
   public stop() {
     this._stopRequested = true;
-  }
-
-  /**
-   * 瞬间跳到演出结束态
-   * 用于跳转后瞬间回归的存量文字
-   */
-  public skipToEnd() {
-    this._stopRequested = true;
-    TextPlayer.skipToEnd(this, this._displayAssembly);
   }
 
   public getLayoutHeight(): number {
@@ -171,5 +154,16 @@ export class KineticText extends Container {
       maxY = Math.max(maxY, top + h);
     });
     return new Rectangle(minX, minY, maxX - minX, maxY - minY);
+  }
+
+  // 获取指定名字的 Graphics 层，不存在则创建并置于底层。与 TokenWrapper.getGraphicsLayer 同构。
+  // bg/border 等 instant style 特效经此画框/底；seek 回退调 g.clear() 重画。
+  public getGraphicsLayer(name: string): Graphics {
+    if (!this.graphicsLayers.has(name)) {
+      const g = new Graphics();
+      this.addChildAt(g, 0); // 始终放在最底层，不遮文字
+      this.graphicsLayers.set(name, g);
+    }
+    return this.graphicsLayers.get(name)!;
   }
 }

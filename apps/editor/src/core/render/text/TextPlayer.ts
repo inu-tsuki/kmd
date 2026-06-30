@@ -9,9 +9,10 @@ import type { RuntimeParagraphExecutionPlan } from "../../execution/paragraphExe
 import { TextPlanDiagnosticsSink } from "./TextPlanDiagnosticsSink";
 import { TextStageCueScheduler } from "./TextStageCueScheduler";
 import { TextTimelineCursor } from "./TextTimelineCursor";
-import type { ParagraphDisplayAssembly, TextExecutionItemPayload } from "./types";
-import type { Container } from "pixi.js";
+import type { Container, Filter } from "pixi.js";
 import gsap from "gsap";
+import type { StageModifierRecord } from "../../state/Segment";
+import { buildStageModifierRecord, buildStageModifierApplyParams } from "../../stage/stagePresets";
 
 /**
  * Style 变更记录，用于 seek 时 reset + 重放到正确时间点
@@ -28,7 +29,12 @@ export interface StyleRecord {
  * Behavior 特效记录，用于 seek 时重新注册到 Ticker
  */
 export interface BehaviorRecord {
-  char: KineticChar;
+  /** removeModifier 目标。char 级 = KineticChar（有 removeModifier）；容器级 = TokenWrapper/KineticText。
+   *  字段名保留 `char` 以兼容既有调用点；类型放宽为 Container 以承载 group/block 作用域。 */
+  char: Container;
+  /** filter 所在容器。char 级与 char 同一对象；容器级 = wrapper/KineticText。
+   *  behavior-track filter 的 cleanup 据此从 target.filters 移除。 */
+  target: Container;
   effectName: string;
   params: Record<string, any>;
   charIndex: number;
@@ -57,6 +63,34 @@ export interface InstantEffectRecord {
 }
 
 /**
+ * 入场特效返回值（当 fn 创建持久 filter 时）。
+ * 普通入场特效只 return Tween/Timeline（captureTween 入时间线）；
+ * blurIn 等创建 BlurFilter 的入场特效 return 此结构，entrance 分支解包：
+ * - tween → captureTween 入时间线（strength 动画靠时间线 kill 释放）
+ * - filter → entranceFilters（EntranceFilterRecord），filter 生命周期交
+ *   clearEntranceFilters（destroyFilterDeep），与 blur/bloom 等 instant filter 对称。
+ * 分离 tween 与 filter 生命周期后，stop kill 时间线不再泄漏 filter（原 onComplete 不触发）。
+ */
+export interface EntranceFilterResult {
+  tween: gsap.core.Tween | gsap.core.Timeline;
+  filter: Filter | Filter[];
+}
+
+/**
+ * 入场特效 filter 清理记录。与 InstantEffectRecord 区别：
+ * - InstantEffectRecord：seek 时 registerInstantEffects **重 apply fn**（静态 filter 幂等）。
+ * - EntranceFilterRecord：seek 时 **不重 apply**——entrance tween 靠时间线插值到正确状态，
+ *   filter 已在 build 期创建并 push 进 target.filters，只需 stop/clearScreen 时清理。
+ *   若走 instantEffects 路径会重 apply blurIn → gsap.set(alpha=0) 重置 + rogue tween +
+ *   destroy() 对 {tween,filter} 对象崩溃。
+ */
+export interface EntranceFilterRecord {
+  target: Container;
+  filter: Filter | Filter[];
+  timePosition: number;
+}
+
+/**
  * buildTimeline 的返回结果
  */
 export interface TimelineBuildResult {
@@ -64,6 +98,8 @@ export interface TimelineBuildResult {
   behaviors: BehaviorRecord[];
   styleRecords: StyleRecord[];
   instantEffects: InstantEffectRecord[];
+  entranceFilters: EntranceFilterRecord[];
+  stageModifierRecords: StageModifierRecord[];
   duration: number; // 秒
   /** >>> 触发的时间点 (秒)。ScriptPlayer 应在此位置启动下一段落的子 Timeline。undefined 表示无提前推进。 */
   advanceTime?: number;
@@ -72,31 +108,15 @@ export interface TimelineBuildResult {
 export interface TextTimelineBuildOptions {
   speed?: number;
   onLineUpdate?: (line: number) => void;
-}
-
-export interface LegacyTextPlaybackOptions {
-  speed?: number;
-  mode?: string;
-  onAdvance?: () => void;
-  onTimeUpdate?: (timeMs: number) => void;
-  onLineUpdate?: (line: number) => void;
+  /**
+   * R22/SA-37：playback runtime state，供 unroll*Chain / TextStageCueScheduler.schedule 的
+   * style / stage-modifier tl.call 读 lastSeekTime 做 exact-boundary 抑制。可选——构建期
+   * （如测试/独立 buildTimeline 调用）不传时 guard 读 undefined，恒不跳过（等价旧行为）。
+   */
+  playbackState?: { lastSeekTime?: number };
 }
 
 export class TextPlayer {
-  private static isNewLineItem(item: TextExecutionItemPayload) {
-    return item.isNewLine || item.char.text === "\n";
-  }
-
-  private static sliceLegacyPlaybackAssembly(
-    assembly: Pick<ParagraphDisplayAssembly, "tokens" | "executionItems">,
-    executionItems: TextExecutionItemPayload[],
-  ): Pick<ParagraphDisplayAssembly, "tokens" | "executionItems"> {
-    return {
-      tokens: assembly.tokens,
-      executionItems,
-    };
-  }
-
   // ═══════════════════════════════════════════════════════════════
   //  Phase A: Timeline 构建器 (替代 setTimeout 驱动的 play)
   // ═══════════════════════════════════════════════════════════════
@@ -116,11 +136,13 @@ export class TextPlayer {
     options: TextTimelineBuildOptions = {}
   ): TimelineBuildResult {
     // 不设 paused:true —— 子 Timeline 由父 (segmentTl) 控制。
-    // GSAP 3 中 paused 子项不受父 Timeline 驱动。
+    // GSAP 3 中 paused 子项不受父 Timeline 驱动（§B-bis）。
     const tl = gsap.timeline();
     const behaviors: BehaviorRecord[] = [];
     const styleRecords: StyleRecord[] = [];
     const instantEffects: InstantEffectRecord[] = [];
+    const entranceFilters: EntranceFilterRecord[] = [];
+    const stageModifierRecords: StageModifierRecord[] = [];
     // 基准揭示速度 (毫秒 → 秒)
     const baseSpeedMs = options.speed ?? target._options?.speed ?? 50;
     const baseSpeed = baseSpeedMs / 1000;
@@ -167,6 +189,8 @@ export class TextPlayer {
           item.stageInstructions,
           timelineCursor.position,
           this.captureTween,
+          stageModifierRecords,
+          options.playbackState,
         );
         timelineCursor.addDeferredAdvance(blockingAdvance);
         timelineCursor.flushTokenAdvance(true);
@@ -174,7 +198,7 @@ export class TextPlayer {
 
       // ── 5. 放置字符（入场动画 + 行为收集） ──
       if (char.text.trim()) {
-        this.placeCharOnTimeline(tl, item, i, timelineCursor.position, behaviors, styleRecords, instantEffects);
+        this.placeCharOnTimeline(tl, item, i, timelineCursor.position, behaviors, styleRecords, instantEffects, entranceFilters);
 
         // 编辑器行号同步
         if (item.line !== undefined) {
@@ -203,10 +227,10 @@ export class TextPlayer {
             if (!chainPlan) {
               TextPlanDiagnosticsSink.warnMissingChainPlan(item.tokenIdx, item.line);
             }
-            this.unrollCharChain(tl, wrapper, tokenPlan.visualEffects, timelineCursor.position, behaviors, holdCharConfig, styleRecords, instantEffects);
+            this.unrollCharChain(tl, wrapper, tokenPlan.visualEffects, timelineCursor.position, behaviors, holdCharConfig, styleRecords, instantEffects, entranceFilters, stageModifierRecords, options.playbackState);
           } else {
             // unrollGroupChain 返回 chain 内 pause 指令的累计时长，追加到 deferredCursorAdvance
-            const pauseFromChain = this.unrollGroupChain(tl, wrapper, tokenPlan.visualEffects, timelineCursor.position, behaviors, styleRecords, instantEffects);
+            const pauseFromChain = this.unrollGroupChain(tl, wrapper, tokenPlan.visualEffects, timelineCursor.position, behaviors, styleRecords, instantEffects, entranceFilters, stageModifierRecords, options.playbackState);
             if (pauseFromChain > 0) {
               timelineCursor.addDeferredAdvance(pauseFromChain);
             }
@@ -222,6 +246,8 @@ export class TextPlayer {
             tokenPlan.tokenEndStageInstructions,
             timelineCursor.position,
             this.captureTween,
+            stageModifierRecords,
+            options.playbackState,
           ),
         );
       }
@@ -246,6 +272,8 @@ export class TextPlayer {
       behaviors,
       styleRecords,
       instantEffects,
+      entranceFilters,
+      stageModifierRecords,
       duration: timelineCursor.position,
       advanceTime: timelineCursor.advanceTime,
     };
@@ -260,27 +288,25 @@ export class TextPlayer {
     charIndex: number,
     cursor: number,
     behaviors: BehaviorRecord[],
-    styleRecords: StyleRecord[],
-    instantEffects: InstantEffectRecord[]
+    // R15：pre-hold 样式不再在此注册（已在 baseline），styleRecords 在 placeCharOnTimeline 内
+    // 不再写入。参数保留以维持调用签名（callers 仍传），标记 _ 前缀示刻意未用。
+    _styleRecords: StyleRecord[],
+    instantEffects: InstantEffectRecord[],
+    entranceFilters: EntranceFilterRecord[]
   ) {
     const char = item.char;
     const visualEffects = item.visualEffects;
     // 分类该字符的视觉特效
     const classified = EffectProcessor.classifyByTrack(visualEffects);
 
-    // 捕获 pre-hold 样式为 StyleRecord（在字符揭示时间点），供 seek 时重放
-    // 镜像 applyInitialStyles 的逻辑：遇到第一个 hold/blocking 就停止
-    for (const eff of visualEffects) {
-      if (eff.name === "hold" || eff.blocking) break;
-      if (styleManager.has(eff.name)) {
-        styleRecords.push({
-          char,
-          styleName: eff.name,
-          params: EffectProcessor.resolveParams(eff.params || {}),
-          timePosition: cursor
-        });
-      }
-    }
+    // R15/SA-30：pre-hold 初始样式不再注册为 StyleRecord。
+    // 构建期 LayoutPlanner.applyInitialStylesToStyle 已把 pre-hold 样式烘焙进 glyphPlan.style
+    //（= KineticChar 构造 style），且 R15 把 baseStyleSnapshot 改成这个烘焙态。于是：
+    //   - seek reset：resetStyle() 回 baseline（已含 pre-hold），不需要 record 重放；
+    //   - 自然播放：pre-hold 样式构建期已生效，无独立 tl.call，删除 record 不影响。
+    // 旧逻辑在此把 pre-hold 样式当 record 注册（timePosition=cursor），seek 重放时会从
+    // baseline 再 apply 一次——绝对样式（red）幂等无害，相对样式（big: 36→54）双重放大。
+    // 删除整段注册，styleRecords 只保留 post-hold / hold-chain 动态样式（site 2/3 的 post-hold 部分）。
 
     // 收集 behavior 特效（F4: resolveParams 解析变量引用）
     // - hold:char 链：全部跳过（unrollCharChain 以错开时序逐字处理）
@@ -292,6 +318,7 @@ export class TextPlayer {
       for (const cfg of classified.behavior) {
         behaviors.push({
           char,
+          target: char,
           effectName: cfg.name,
           params: { ...EffectProcessor.resolveParams(cfg.params), charIndex },
           charIndex,
@@ -304,10 +331,10 @@ export class TextPlayer {
       // 导致 track:"instant" 的 filter fn 永不执行。这里与 behavior 对称收集，
       // 由 SegmentBuilder 在 cursor 时刻 tl.call 触发 apply；seek 时由
       // PlaybackController.registerInstantEffects reset+replay 实现幂等。
-      // style 特效跳过（styleManager.has gate）——它们由 applyInitialStyles 预应用、
-      // 经 styleRecords 重放，不挂 target.filters。
+      // style 特效跳过——它们由 applyInitialStylesToStyle 预应用、经 styleRecords 重放，不挂 target.filters。
+      // R17/SA-32：isStyle 经 classifyStyleWrite 单一真相源（统一所有 style 判定入口）。
       for (const cfg of classified.instant) {
-        if (styleManager.has(cfg.name)) continue;
+        if (EffectProcessor.classifyStyleWrite(cfg).isStyle) continue;
         instantEffects.push({
           target: char,
           effectName: cfg.name,
@@ -340,7 +367,7 @@ export class TextPlayer {
         { ...(enterConfig.params || {}), delay: 0 },
         true
       );
-      this.captureTween(tl, tween, cursor);
+      this.captureEntrance(tl, tween, cursor, char, entranceFilters);
     } else {
       // 默认 fadeIn
       char.animOffset.alpha = 0;
@@ -353,13 +380,13 @@ export class TextPlayer {
     // 其他入场级特效（如 punch，非 "enter" 互斥组）
     for (const cfg of otherEntrance) {
       const tween = effectManager.apply(char, cfg.name, cfg.params || {}, true);
-      this.captureTween(tl, tween, cursor);
+      this.captureEntrance(tl, tween, cursor, char, entranceFilters);
     }
   }
 
   /**
    * 捕获特效函数返回的 Tween/Timeline，挂到父 Timeline
-   * 不 pause —— GSAP 3 中 paused 子项不受父 Timeline 驱动
+   * 不 pause —— GSAP 3 中 paused 子项不受父 Timeline 驱动（§B-bis：paused child 不被父 timeline 驱动）
    */
   private static captureTween(
     tl: gsap.core.Timeline,
@@ -368,6 +395,36 @@ export class TextPlayer {
   ) {
     if (result instanceof gsap.core.Tween || result instanceof gsap.core.Timeline) {
       tl.add(result, position);
+    }
+  }
+
+  /**
+   * 捕获入场特效返回值。与 captureTween 对称，但额外处理 EntranceFilterResult
+   * （blurIn 等创建持久 filter 的入场特效）：
+   * - tween → captureTween 入时间线
+   * - filter → push 进 entranceFilters（EntranceFilterRecord），filter 生命周期交
+   *   clearEntranceFilters（destroyFilterDeep）。**不进 instantEffects**——instantEffects
+   *   会被 registerInstantEffects 在 seek 时重 apply fn（blurIn 重 apply 会 gsap.set(alpha=0)
+   *   重置 + rogue tween + destroy() 对 {tween,filter} 崩溃）。entranceFilters 仅用于
+   *   stop/clearScreen 清理，seek 时不重 apply（entrance tween 靠时间线插值到正确状态）。
+   */
+  private static captureEntrance(
+    tl: gsap.core.Timeline,
+    result: any,
+    position: number,
+    target: Container,
+    entranceFilters: EntranceFilterRecord[]
+  ) {
+    if (result && typeof result === 'object' && 'tween' in result && 'filter' in result) {
+      const efr = result as EntranceFilterResult;
+      this.captureTween(tl, efr.tween, position);
+      entranceFilters.push({
+        target,
+        filter: efr.filter,
+        timePosition: position,
+      });
+    } else {
+      this.captureTween(tl, result, position);
     }
   }
 
@@ -392,7 +449,10 @@ export class TextPlayer {
     startPosition: number,
     behaviors: BehaviorRecord[],
     styleRecords: StyleRecord[],
-    instantEffects: InstantEffectRecord[]
+    instantEffects: InstantEffectRecord[],
+    entranceFilters: EntranceFilterRecord[],
+    stageModifierRecords: StageModifierRecord[],
+    playbackState?: { lastSeekTime?: number },
   ): number {
     const { visualConfigs, stageConfigs } = EffectProcessor.partition(effects);
     let chainCursor = startPosition;
@@ -403,19 +463,41 @@ export class TextPlayer {
     for (const config of stageConfigs) {
       if (config.name === "pause") {
         if ((config as any).level === "char") continue;
-        const dur = Number(config.params?.duration ?? config.params?.d ?? config.params?.[0] ?? 1);
+        const dur = EffectProcessor.resolvePauseDuration(config.params, 1);
         chainCursor += dur;
         totalPauseDur += dur;
-      } else if (stageManager.getCommandMetadata(config.name)?.modifierBased) {
-        const cfgCopy = { type: config.name, params: { ...(config.params || {}) } };
-        tl.call(() => {
-          stageManager.apply(cfgCopy.type, cfgCopy.params);
-        }, [], chainCursor);
       } else {
-        const result = stageManager.apply(config.name, config.params || {});
-        TextPlayer.captureTween(tl, result, chainCursor);
-        if (config.blocking && (result instanceof gsap.core.Tween || result instanceof gsap.core.Timeline)) {
-          chainCursor += result.duration();
+        // 单一真相源：buildStageModifierRecord 决定 cam.reset（clear boundary）/ modifierBased /
+        // 可 seek tween 的分流（与 global applyStageConfigs、inline TextStageCueScheduler 对称）。
+        // SA-12 根本修复：上一版只判 modifierBased，effect chain 里的 cam.reset 落 else 只 captureTween，
+        // 不写 StageModifierRecord → seek 到 reset 后 replayStageModifiers 找不到边界。
+        const record = buildStageModifierRecord(config.name, config.params);
+        if (record) {
+          stageModifierRecords.push({ ...record, timePosition: chainCursor });
+          if (record.isClearBoundary) {
+            // cam.reset：可 seek tween（reset timeline），走 apply + captureTween。
+            const result = stageManager.apply(config.name, config.params || {});
+            TextPlayer.captureTween(tl, result, chainCursor);
+            if (config.blocking && (result instanceof gsap.core.Tween || result instanceof gsap.core.Timeline)) {
+              chainCursor += result.duration();
+            }
+          } else {
+            // modifierBased（cam.shake/cam.drift）：经 tl.call 延迟 apply。
+            const cfgCopy = { type: config.name, params: buildStageModifierApplyParams(config.name, config.params) };
+            // R22/SA-37：exact-boundary guard（见 SegmentBuilder 同类注释）。
+            // R22-followup：params 经 buildStageModifierApplyParams 预解析（与 seek 重放同源）。
+            const modRecTime = chainCursor;
+            tl.call(() => {
+              if (playbackState?.lastSeekTime === modRecTime) return;
+              stageManager.apply(cfgCopy.type, cfgCopy.params);
+            }, [], chainCursor);
+          }
+        } else {
+          const result = stageManager.apply(config.name, config.params || {});
+          TextPlayer.captureTween(tl, result, chainCursor);
+          if (config.blocking && (result instanceof gsap.core.Tween || result instanceof gsap.core.Timeline)) {
+            chainCursor += result.duration();
+          }
         }
       }
     }
@@ -428,8 +510,14 @@ export class TextPlayer {
 
     for (const config of visualConfigs) {
       const meta = effectManager.getMetadata(config.name);
-      const isStyle = styleManager.has(config.name);
-      const isBlocking = config.name === "hold" || config.blocking;
+      // R17/SA-32 + R19/SA-33：isStyle + isBlocking 都经 classifyStyleWrite 单一真相源。
+      // site2 的 pre-hold 跳过（shouldExecute 里 `if (isStyle) return false`）与 helper 的 isInitial
+      // 语义对齐——pre-hold 样式已在 baseline（P1/P2 烘焙），site2 只处理 post-hold 动态样式（进 record）。
+      // **R19**：显式 group/block style（`f.red:group` / token 级 `f.red:block`）的 pre-hold 部分现由
+      // P1 烘焙进 baseline（classifyStyleWrite 对 style 解耦 level 边界），site2 仍按 `if(isStyle) return
+      // false` 跳过——避免双重应用。post-hold 的 group/block style（链中 hold 之后）才经此处的
+      // tl.call + styleRecords 注册（groupHoldEncountered=true → shouldExecute=true）。
+      const { isStyle, isBlocking } = EffectProcessor.classifyStyleWrite(config);
 
       // f.pause:char → pauseCharOverride 已处理
       if (isBlocking && config.level === "char") continue;
@@ -437,7 +525,7 @@ export class TextPlayer {
       // hold → 推进链游标（链末尾无后续效果时为 no-op，外层暂停请用 pause 或 |）
       if (isBlocking) {
         if (config.name === "hold") {
-          const dur = Number(config.params?.duration ?? config.params?.d ?? config.params?.[0] ?? 1);
+          const dur = EffectProcessor.resolvePauseDuration(config.params, 1);
           chainCursor += dur;
         }
         groupHoldEncountered = true;
@@ -445,18 +533,14 @@ export class TextPlayer {
       }
 
       // ── 目标粒度判断 ──
-      // isCharLevel：效果应逐字独立应用（而非作用于整个 wrapper 容器）
-      // 规则：无显式 level 时，targetType="char" 和 targetType="both" 均默认字符路径
-      //       （targetType 描述能力，不决定默认目标；想要容器路径请显式写 :group / :block）
-      // 样式统一走 applyStyleRecursively，不走 isCharLevel 分支
-      const isCharLevel = !isStyle && (
-        config.level === "char" ||
-        (!config.level && meta && (meta.targetType === "char" || meta.targetType === "both"))
-      );
+      // isCharLevel：效果应逐字独立应用（而非作用于整个 wrapper 容器）。
+      // INV-7（SA-18）：经 EffectProcessor.isCharLevelEffect 单一真相源判定（含 action 排除）。
+      // 样式统一走 applyStyleRecursively，不走 isCharLevel 分支（前置 !isStyle gate）。
+      const isCharLevel = !isStyle && EffectProcessor.isCharLevelEffect(config);
 
       // ── shouldExecute 判断 ──
       // pre-hold 阶段：
-      //   - 样式 → 跳过（TextBuilder/applyInitialStyles 已在构建期处理）
+      //   - 样式 → 跳过（TextBuilder/applyInitialStylesToStyle 已在构建期处理）
       //   - char-level (char/both, 无显式 level) + 有组级 hold → 执行（placeCharOnTimeline 已跳过）
       //   - char-level + 无组级 hold → 跳过（placeCharOnTimeline 已处理）
       //   - 容器级 (explicit group/block / targetType="group" / action) → 执行
@@ -479,7 +563,11 @@ export class TextPlayer {
         // 样式：applyStyleRecursively 内部已递归到每字
         const cfgName = config.name;
         const cfgParams = { ...resolved };
+        // R22/SA-37：exact-boundary guard（见 SegmentBuilder 同类注释）。防 big/small 等
+        // 相对样式双 mutate（×1.5 两次 = ×2.25 几何错）。
+        const styleRecTime = chainCursor;
         tl.call(() => {
+          if (playbackState?.lastSeekTime === styleRecTime) return;
           EffectProcessor.applyStyleRecursively(wrapper, cfgName, cfgParams, true);
         }, [], chainCursor);
         // StyleRecord：逐字记录（供 seek 时 reset+重放）
@@ -494,10 +582,11 @@ export class TextPlayer {
           const charResolved = { ...resolved, charIndex: idx };
           if (track === "entrance") {
             const tween = effectManager.apply(char, config.name, { ...charResolved, delay: 0 }, true);
-            TextPlayer.captureTween(tl, tween, chainCursor);
+            TextPlayer.captureEntrance(tl, tween, chainCursor, char, entranceFilters);
           } else if (track === "behavior") {
             behaviors.push({
               char,
+              target: char,
               effectName: config.name,
               params: charResolved,
               charIndex: idx,
@@ -520,13 +609,19 @@ export class TextPlayer {
         // 组级特效：应用到 wrapper 容器
         if (track === "entrance") {
           const tween = effectManager.apply(wrapper, config.name, resolved, true);
-          this.captureTween(tl, tween, chainCursor);
+          this.captureEntrance(tl, tween, chainCursor, wrapper, entranceFilters);
         } else if (track === "behavior") {
-          const cfgName = config.name;
-          const cfgParams = { ...resolved };
-          tl.call(() => {
-            effectManager.apply(wrapper, cfgName, cfgParams, true);
-          }, [], chainCursor);
+          // 容器级 behavior：经 behaviors[] → SegmentBuilder segmentTl.call 统一 apply +
+          // cleanup 追踪（与 char 级对称）。target = wrapper，char = wrapper（容器无
+          // removeModifier，clearBehaviors 守卫跳过 modifier 清理，靠 filterInstance + tickerFn）。
+          behaviors.push({
+            char: wrapper,
+            target: wrapper,
+            effectName: config.name,
+            params: { ...resolved },
+            charIndex: 0,
+            timePosition: chainCursor
+          });
         } else {
           // instant filter（组级容器）：只记录，apply 驱动交给 SegmentBuilder。
           instantEffects.push({
@@ -562,52 +657,107 @@ export class TextPlayer {
     behaviors: BehaviorRecord[],
     holdConfig: EffectConfig,
     styleRecords: StyleRecord[],
-    instantEffects: InstantEffectRecord[]
+    instantEffects: InstantEffectRecord[],
+    entranceFilters: EntranceFilterRecord[],
+    stageModifierRecords: StageModifierRecord[],
+    playbackState?: { lastSeekTime?: number },
   ) {
     const { visualConfigs, stageConfigs } = EffectProcessor.partition(effects);
-    const holdDelay = Number(holdConfig.params?.duration ?? holdConfig.params?.d ?? holdConfig.params?.[0] ?? 0.5);
+    const holdDelay = EffectProcessor.resolvePauseDuration(holdConfig.params, 0.5);
 
     // 1. Stage 指令只执行一次
     for (const config of stageConfigs) {
       if (config.name === "pause") {
         // pause: 已在 Stage 指令阶段处理，这里忽略
-      } else if (stageManager.getCommandMetadata(config.name)?.modifierBased) {
-        const cfgCopy = { type: config.name, params: { ...(config.params || {}) } };
-        tl.call(() => { stageManager.apply(cfgCopy.type, cfgCopy.params); }, [], startPosition);
       } else {
-        const result = stageManager.apply(config.name, config.params || {});
-        TextPlayer.captureTween(tl, result, startPosition);
+        // 单一真相源：buildStageModifierRecord 决定 cam.reset（clear boundary）/ modifierBased /
+        // 可 seek tween 的分流（与 global applyStageConfigs、inline TextStageCueScheduler、
+        // unrollGroupChain 对称）。SA-12 根本修复：char-chain 里的 cam.reset 现在也写 boundary record。
+        const record = buildStageModifierRecord(config.name, config.params);
+        if (record) {
+          stageModifierRecords.push({ ...record, timePosition: startPosition });
+          if (record.isClearBoundary) {
+            // cam.reset：可 seek tween（reset timeline），走 apply + captureTween。
+            const result = stageManager.apply(config.name, config.params || {});
+            TextPlayer.captureTween(tl, result, startPosition);
+          } else {
+            // modifierBased（cam.shake/cam.drift）：经 tl.call 延迟 apply。
+            const cfgCopy = { type: config.name, params: buildStageModifierApplyParams(config.name, config.params) };
+            // R22/SA-37：exact-boundary guard（见 SegmentBuilder 同类注释）。
+            // R22-followup：params 经 buildStageModifierApplyParams 预解析（与 seek 重放同源）。
+            const modRecTime = startPosition;
+            tl.call(() => {
+              if (playbackState?.lastSeekTime === modRecTime) return;
+              stageManager.apply(cfgCopy.type, cfgCopy.params);
+            }, [], startPosition);
+          }
+        } else {
+          const result = stageManager.apply(config.name, config.params || {});
+          TextPlayer.captureTween(tl, result, startPosition);
+        }
       }
     }
 
-    // 2. 过滤掉 hold:char 本身，得到实际效果链
-    const activeEffects = visualConfigs.filter(c => !(c.name === "hold" && c.level === "char"));
+    // 2. 过滤掉 hold:char 本身（它是 stagger 间距参数 holdDelay，不是链步骤），
+    //    但保留每个 effect 在【原始 visualConfigs】中的 origIdx。
+    //    R20/SA-35：pre-hold 边界必须在原始链上判定（含 hold:char）——hold:char 是 name==="hold"
+    //    → classifyStyleWrite.isBlocking=true，是边界触发点。若先滤掉 hold:char 再算边界（旧行为），
+    //    边界循环找不到 blocking → firstBlockingOrigIdx=末尾 → 所有剩余 style 被当 pre-hold 跳过 →
+    //    post-hold style（如 f.hold:char.red 的 red）被吞（既不进 baseline 也不进 record）。
+    const activeEffects: { config: EffectConfig; origIdx: number }[] = [];
+    visualConfigs.forEach((c, idx) => {
+      if (!(c.name === "hold" && c.level === "char")) {
+        activeEffects.push({ config: c, origIdx: idx });
+      }
+    });
+
+    // R20/SA-35：pre-hold 边界在【原始 visualConfigs】上算（含 hold:char），与构建期
+    // applyInitialStylesToStyle（P1）对齐——P1 在 hold:char 处 break，故 hold:char 之前的 style
+    // 进 baseline（pre-hold），之后的 style 是 post-hold（应进 record，site3 tl.call + styleRecords）。
+    // 旧逻辑在过滤后的 activeEffects 上算，hold:char 已被滤掉 → 边界失效（见上注释）。
+    let firstBlockingOrigIdx = visualConfigs.length;
+    for (let i = 0; i < visualConfigs.length; i++) {
+      if (EffectProcessor.classifyStyleWrite(visualConfigs[i]!).isBlocking) {
+        firstBlockingOrigIdx = i;
+        break;
+      }
+    }
 
     // 3. 逐字应用
     let charCursor = startPosition;
     for (const char of wrapper.chars) {
       if (!char.text.trim()) { charCursor += holdDelay; continue; }
 
-      for (const config of activeEffects) {
+      for (let i = 0; i < activeEffects.length; i++) {
+        const { config, origIdx } = activeEffects[i]!;
         const track = EffectProcessor.getTrack(config.name);
-        const isStyle = styleManager.has(config.name);
+        // R17/SA-32：isStyle 经 classifyStyleWrite 单一真相源。
+        const isStyle = EffectProcessor.classifyStyleWrite(config).isStyle;
         const resolved = EffectProcessor.resolveParams(config.params);
 
         if (isStyle) {
+          // R20/SA-35：pre-hold 样式已在 baseline（P1 烘焙），跳过（避免双重应用 big/small）。
+          // 边界用 origIdx（原始链位置）判，与 P1 的 break 位置对齐。
+          if (origIdx < firstBlockingOrigIdx) continue;
           const cfgName = config.name;
           const cfgParams = { ...resolved };
           const charRef = char;
+          // R22/SA-37：exact-boundary guard（见 SegmentBuilder 同类注释）。防 big/small 等
+          // 相对样式双 mutate。charCursor 是循环内 let（每字推进），闭包内须捕获为常量。
+          const styleRecTime = charCursor;
           tl.call(() => {
+            if (playbackState?.lastSeekTime === styleRecTime) return;
             styleManager.apply(charRef.style, cfgName, cfgParams, true);
           }, [], charCursor);
           styleRecords.push({ char, styleName: cfgName, params: { ...cfgParams }, timePosition: charCursor });
         } else if (track === "entrance") {
           const tween = effectManager.apply(char, config.name, { ...resolved, delay: 0 }, true);
-          TextPlayer.captureTween(tl, tween, charCursor);
+          TextPlayer.captureEntrance(tl, tween, charCursor, char, entranceFilters);
         } else if (track === "behavior") {
           const cIdx = wrapper.chars.indexOf(char);
           behaviors.push({
             char,
+            target: char,
             effectName: config.name,
             params: { ...resolved, charIndex: cIdx },
             charIndex: cIdx,
@@ -627,317 +777,5 @@ export class TextPlayer {
 
       charCursor += holdDelay;
     }
-  }
-
-
-  // ═══════════════════════════════════════════════════════════════
-  //  Legacy: setTimeout 驱动的播放 (保留向后兼容)
-  // ═══════════════════════════════════════════════════════════════
-
-  /**
-   * 核心重构：带时间上报的播放逻辑
-   */
-  public static async play(
-    target: any,
-    assembly: Pick<ParagraphDisplayAssembly, "tokens" | "executionItems">,
-    absStartTime: number,
-    options: LegacyTextPlaybackOptions = {}
-  ): Promise<{ skipAutoPause?: boolean }> {
-    const items = assembly.executionItems;
-    const tokens = assembly.tokens;
-    let baseRevealSpeed = options.speed ?? target._options.speed ?? 50;
-    let virtualElapsed = 0;
-
-    let lastWasInstantGo = false;
-    let persistentSpeedMultiplier = 1.0;
-    let groupSpeedMultiplier = 1.0;
-
-    for (let i = 0; i < items.length; i++) {
-      if (target._stopRequested) return { skipAutoPause: true };
-
-      const item = items[i]!;
-      const char = item.char;
-      const realIdx = i;
-      const isNewLine = this.isNewLineItem(item);
-
-      // 1. 更新行号 (仅对可见字符)
-      if (item.line !== undefined && char.text.trim()) {
-        options.onLineUpdate?.(item.line + 1);
-      }
-
-      // 2. 处理行级重置
-      if (isNewLine) {
-        persistentSpeedMultiplier = 1.0;
-        groupSpeedMultiplier = 1.0;
-        lastWasInstantGo = false;
-      }
-
-      // 3. 检查节奏糖衣
-      const timing = EffectProcessor.resolveTiming(item.timingSugars);
-      if (timing.speedMultiplier !== undefined) {
-        persistentSpeedMultiplier = timing.speedMultiplier;
-      }
-
-      const delayOverride = timing.delayOverride;
-      const advanceLevel = timing.advanceLevel;
-
-      const isSugarGo = (delayOverride === 0);
-      const isInstantGo = isSugarGo || lastWasInstantGo;
-
-      // 4. 执行指令并捕获速度变化
-      const charEffectRes = await EffectProcessor.applyCharEffects(char, item.visualEffects, realIdx);
-      if (charEffectRes.speedMultiplier !== undefined) {
-        persistentSpeedMultiplier = charEffectRes.speedMultiplier;
-      }
-
-      // 5. 更新同步时间
-      options.onTimeUpdate?.(absStartTime + virtualElapsed);
-
-      // 6. 渲染触发与防闪烁
-      if (char.text.trim()) {
-        char.visible = true;
-
-        // 核心修复：无论是 instant 还是 normal，都触发 applyEffect
-        // 但通过 syncProperties 确保特效中的初始状态（如 alpha=0, scale=0）立即生效
-        const applyEffect = () => {
-          if (char.pendingEnterConfig) {
-            effectManager.apply(char, char.pendingEnterConfig.name, char.pendingEnterConfig.params);
-          } else {
-            effectManager.apply(char, "fadeIn", { duration: 0.3 });
-          }
-          char.syncProperties(); // 强制立即同步一次，让特效设置的 Initial State (t=0) 生效
-        };
-
-        applyEffect();
-      }
-
-      // 7. 执行演出 (Stage & Group Effects)
-      const perfTask = this.executePerformance(target, item, isInstantGo, realIdx, tokens, items);
-
-      // 核心修复：如果是并发模式，不等待演出完成，直接进入下一个循环
-      if (!isInstantGo) {
-        const perfRes = await perfTask;
-        if (target._stopRequested) return { skipAutoPause: true };
-        if (perfRes && perfRes.speedMultiplier !== undefined) groupSpeedMultiplier = perfRes.speedMultiplier;
-      } else {
-        perfTask.catch(() => { });
-      }
-
-      // 8. 信号分流
-      if (advanceLevel === "block" && options.onAdvance) {
-        options.onAdvance();
-        options.onAdvance = undefined;
-      } else if (advanceLevel === "group") {
-        let nextLineIdx = -1;
-        for (let j = i + 1; j < items.length; j++) {
-          const nextItem = items[j];
-          if (nextItem && this.isNewLineItem(nextItem)) { nextLineIdx = j; break; }
-        }
-        if (nextLineIdx !== -1) {
-          if (target._stopRequested) return { skipAutoPause: true };
-          void this.play(
-            target,
-            this.sliceLegacyPlaybackAssembly(assembly, items.slice(nextLineIdx + 1)),
-            absStartTime + virtualElapsed,
-            { ...options, onAdvance: undefined },
-          );
-          const thisLineRemaining = items.slice(i + 1, nextLineIdx + 1);
-          return this.play(
-            target,
-            this.sliceLegacyPlaybackAssembly(assembly, thisLineRemaining),
-            absStartTime + virtualElapsed,
-            { ...options, onAdvance: undefined },
-          );
-        }
-      }
-
-      // 9. 步进虚拟时间并物理等待
-      if (!isInstantGo) {
-        let waitTime = 0;
-        if (delayOverride !== undefined && delayOverride > 0) {
-          waitTime = delayOverride * 1000;
-        } else if (delayOverride === undefined && char.text !== "") {
-          const isPunctuation = /[，。！？]/.test(char.text);
-          const speed = baseRevealSpeed * persistentSpeedMultiplier * groupSpeedMultiplier;
-          waitTime = isPunctuation ? speed * 5 : speed;
-        }
-
-        if (waitTime > 0) {
-          virtualElapsed += waitTime;
-          await new Promise(resolve => setTimeout(resolve, waitTime));
-        }
-      }
-
-      if (isNewLine && !isInstantGo) {
-        const breathingDelay = baseRevealSpeed * 10;
-        virtualElapsed += breathingDelay;
-        await new Promise(resolve => setTimeout(resolve, breathingDelay));
-      }
-
-      // 10. 状态流转准备
-      lastWasInstantGo = isSugarGo;
-      if (delayOverride !== undefined && delayOverride > 0) {
-        lastWasInstantGo = false;
-      }
-
-      const nextItem = items[i + 1];
-      if (!nextItem || nextItem.tokenIdx !== item.tokenIdx) {
-        groupSpeedMultiplier = 1.0;
-      }
-    }
-    return { skipAutoPause: lastWasInstantGo };
-  }
-
-  /**
-   * 瞬间跳到演出结束态
-   * 用于跳转后恢复"正在场上"的文字状态
-   */
-  public static skipToEnd(target: any, assembly: Pick<ParagraphDisplayAssembly, "chars" | "tokens">) {
-    target._stopRequested = true;
-
-    assembly.chars.forEach(char => {
-      gsap.killTweensOf(char.animOffset);
-
-      // 恢复到标准显示态
-      char.animOffset.alpha = 1;
-      char.animOffset.scaleX = 1;
-      char.animOffset.scaleY = 1;
-      char.animOffset.x = 0;
-      char.animOffset.y = 0;
-      char.animOffset.rotation = 0;
-
-      char.visible = true;
-      char.syncProperties();
-    });
-
-    // 瞬间应用所有组特效的最终态 (TODO: 如果有复杂的组特效可能需要特殊处理)
-    assembly.tokens.forEach(_token => {
-      // 目前组特效多为动画，killTweensOf 已经覆盖了大部分情况
-    });
-  }
-
-  /**
-   * 静默快进模式 (Warp Mode)
-   * 以极速运行 play 逻辑，不进行物理等待，但保留逻辑状态流转
-   */
-  public static async fastForward(
-    target: any,
-    assembly: Pick<ParagraphDisplayAssembly, "chars" | "tokens" | "executionItems">,
-    _absStartTime: number,
-    options: { speed?: number; onLineUpdate?: (line: number) => void } = {}
-  ) {
-    const items = assembly.executionItems;
-    // 暂时通过将速度设为极小值并跳过所有等待来实现
-    // 在这个模式下，setTimeout(0) 依然会有微小延迟，但在 JS 循环中足够快
-
-    for (let i = 0; i < items.length; i++) {
-      const item = items[i]!;
-      const char = item.char;
-      if (char.text.trim()) {
-        char.visible = true;
-        char.animOffset.alpha = 1;
-        char.syncProperties();
-      }
-
-      // 执行指令但不等待结果
-      for (const instr of item.stageInstructions) {
-        stageManager.apply(instr.type, instr.params);
-      }
-
-      if (item.line !== undefined && char.text.trim()) {
-        options.onLineUpdate?.(item.line + 1);
-      }
-    }
-
-    this.skipToEnd(target, assembly);
-  }
-
-  /**
-   * 离线时长预演算
-   */
-  public static bakeTimeline(
-    _target: any,
-    assembly: Pick<ParagraphDisplayAssembly, "executionItems">,
-    baseSpeed: number,
-  ): number {
-    const items = assembly.executionItems;
-    let virtualTime = 0;
-    let persistentSpeedMultiplier = 1.0;
-    let groupSpeedMultiplier = 1.0;
-    let lastWasInstantGo = false;
-
-    for (let i = 0; i < items.length; i++) {
-      const item = items[i]!;
-      const char = item.char;
-      const isNewLine = this.isNewLineItem(item);
-
-      if (isNewLine) {
-        persistentSpeedMultiplier = 1.0;
-        groupSpeedMultiplier = 1.0;
-        lastWasInstantGo = false;
-      }
-
-      const timing = EffectProcessor.resolveTiming(item.timingSugars);
-      if (timing.speedMultiplier !== undefined) persistentSpeedMultiplier = timing.speedMultiplier;
-
-      if (timing.advanceLevel === "block") return virtualTime;
-      else if (timing.advanceLevel === "group") return virtualTime;
-
-      const isSugarGo = (timing.delayOverride === 0);
-      const isInstantGo = isSugarGo || lastWasInstantGo;
-
-      if (item.stageInstructions.length > 0) {
-        for (const instr of item.stageInstructions) {
-          if (instr.type === "pause") {
-            virtualTime += Number(instr.params.duration ?? instr.params.d ?? instr.params[0] ?? 1) * 1000;
-          }
-        }
-      }
-
-      const delayOverride = timing.delayOverride;
-      if (!isInstantGo && (delayOverride === undefined || delayOverride > 0)) {
-        if (char.text !== "") {
-          const wait = delayOverride !== undefined ? delayOverride * 1000 :
-            (/[，。！？]/.test(char.text) ? baseSpeed * persistentSpeedMultiplier * groupSpeedMultiplier * 5 : baseSpeed * persistentSpeedMultiplier * groupSpeedMultiplier);
-          virtualTime += wait;
-        }
-      }
-
-      if (isNewLine && !isInstantGo) virtualTime += baseSpeed * 10;
-
-      lastWasInstantGo = isSugarGo;
-      if (delayOverride !== undefined && delayOverride > 0) lastWasInstantGo = false;
-
-      const nextItem = items[i + 1];
-      if (!nextItem || nextItem.tokenIdx !== item.tokenIdx) groupSpeedMultiplier = 1.0;
-    }
-    return virtualTime;
-  }
-
-  private static async executePerformance(
-    _target: any,
-    item: TextExecutionItemPayload,
-    isInstantGo: boolean,
-    charIdx: number,
-    tokens: TokenWrapper[],
-    items: TextExecutionItemPayload[],
-  ): Promise<{ speedMultiplier?: number }> {
-    let speedMultiplier: number | undefined = undefined;
-    for (const instr of item.stageInstructions) {
-      const result = stageManager.apply(instr.type, instr.params);
-      if (!isInstantGo && (instr.type === "pause" || instr.blocking) && result) await result;
-    }
-    if (item.visualEffects.length > 0) {
-      const nextItem = items[charIdx + 1];
-      const isTokenEnd = !nextItem || nextItem.tokenIdx !== item.tokenIdx;
-      if (isTokenEnd) {
-        const wrapper = tokens.find(t => t.tokenIdx === item.tokenIdx);
-        if (wrapper) {
-          const groupRes = await EffectProcessor.applyGroupEffects(wrapper, item.visualEffects);
-          speedMultiplier = groupRes.speedMultiplier;
-        }
-      }
-    }
-    return { speedMultiplier };
   }
 }

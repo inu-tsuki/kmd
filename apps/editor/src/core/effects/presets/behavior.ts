@@ -1,6 +1,7 @@
 import gsap from "gsap";
 import { Container } from "pixi.js";
 import { KineticChar } from "../../KineticChar";
+import { addContainerOffset } from "../../ContainerBehaviorOffset";
 import type { EffectFunction, EffectMetadata } from "../types";
 
 function defineEffect(fn: EffectFunction, meta: EffectMetadata) {
@@ -16,13 +17,17 @@ const _shake: EffectFunction = (target, params = {}) => {
       y: (Math.random() - 0.5) * strength,
     }));
   } else if (target instanceof Container) {
-    gsap.to(target.pivot, {
-      x: () => (Math.random() - 0.5) * strength,
-      y: () => (Math.random() - 0.5) * strength,
-      duration: 0.05,
-      repeat: -1,
-      yoyo: true,
-    });
+    // 容器级用 ContainerBehaviorOffset 叠加 offset 到 position（与 char 级 addModifier
+    // 返回 {x,y} 叠加到 layoutX/Y 同构），不 tween pivot——pivot 是布局中心值，tween 污染
+    // 后 kill 不恢复会导致永久错位。返回 { tickerFn } 纳入 BehaviorFilterResult ticker
+    // cleanup 路径（gsap.ticker.remove）；per-EffectId 清理由 removeContainerOffset 负责
+    // （modifier id = effectName = "shake"），clearBehaviors 的 removeModifier 守卫对容器
+    // 跳过，故需在 cleanup 时显式 removeContainerOffset（见 BehaviorCleanup.offsetTarget）。
+    const tickerFn = addContainerOffset(target, "shake", () => ({
+      x: (Math.random() - 0.5) * strength,
+      y: (Math.random() - 0.5) * strength,
+    }));
+    return { tickerFn };
   }
 };
 export const shake = defineEffect(_shake, {
@@ -156,7 +161,9 @@ const _gravity: EffectFunction = (target, params = {}) => {
     const bounce = params.bounce || 0.6;
     let currentY = 0;
 
-    target.addModifier("physics", 'behavior', () => {
+    // modifier id 必须等于 effectName：PlaybackController.clearBehaviors 用
+    // removeModifier(effectName) 精确删除。原 "physics" 命中失败 → modifier 残留。
+    target.addModifier("gravity", 'behavior', () => {
       velocityY += gravity;
       currentY += velocityY;
 
@@ -187,7 +194,10 @@ const _fadeShake: EffectFunction = (target, params = {}) => {
     const delay = params.delay || 0;
     const state = { strength: 0 };
 
-    target.addModifier("shake", 'behavior', () => ({
+    // modifier id 必须等于 effectName（见 gravity 注释）。原用 "shake" 与 shake
+    // effect 共用 id → 同 char 共存时 Map.set 互相覆盖 + removeModifier("fadeShake")
+    // 命中失败。改为 fadeShake 后两者独立 tick 叠加，不再互斥。
+    target.addModifier("fadeShake", 'behavior', () => ({
       x: (Math.random() - 0.5) * state.strength,
       y: (Math.random() - 0.5) * state.strength,
     }));

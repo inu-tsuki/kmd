@@ -23,6 +23,10 @@ export class StageRuntime {
   private modifiers: Map<string, CameraModifier> = new Map();
   private registry: Map<string, StageEffectFunction> = new Map();
   private metadataRegistry: Map<string, StageCommandMetadata> = new Map();
+  // R6-2：modifier-based stage 特效的衰减 tween（如 cam.shake 的 state.s→0 tween）。
+  // clearModifiers 须一并 kill，否则旧 tween 的 onComplete（removeModifier）会在新 modifier
+  // 注册后误删它。key = modifier name，value = gsap tween（§B-bis：kill 释放逐帧驱动 + 阻止 onComplete）。
+  private modifierTweens: Map<string, gsap.core.Tween | gsap.core.Timeline> = new Map();
   private getDesignMetrics: () => StageDesignMetrics;
   private getAuditPort: () => StageAuditPort;
   private sceneClearHandler: StageSceneClearHandler | null = null;
@@ -71,12 +75,36 @@ export class StageRuntime {
     this.modifiers.set(name, mod);
   }
 
+  /**
+   * R6-2：注册 modifier 衰减 tween，clearModifiers 时一并 kill。cam.shake 的衰减 tween 的
+   * onComplete 会 removeModifier——若不清 tween，旧 tween 完成时会误删 seek/resume 后新建的
+   * 同名 modifier。key = modifier name（与 addModifier 对齐），同 name 的新 tween 覆盖旧（kill 旧的）。
+   */
+  public registerModifierTween(name: string, tween: gsap.core.Tween | gsap.core.Timeline) {
+    const existing = this.modifierTweens.get(name);
+    if (existing) existing.kill();
+    this.modifierTweens.set(name, tween);
+  }
+
   public removeModifier(name: string) {
     this.modifiers.delete(name);
+    // R6-2：removeModifier（含 cam.shake tween onComplete 自删）时一并 kill + 清 tween 记录，
+    // 防止已完成的 tween 记录残留 / 仍在跑的 tween 在 modifier 已移除后继续驱动 state.s。
+    const tween = this.modifierTweens.get(name);
+    if (tween) {
+      tween.kill();
+      this.modifierTweens.delete(name);
+    }
   }
 
   public clearModifiers() {
     this.modifiers.clear();
+    // R6-2：清 modifier 时 kill 所有衰减 tween。不 kill 则旧 tween 的 onComplete 会在
+    // clearModifiers 后（新 modifier 已注册）误删它。kill 阻止 onComplete + 释放逐帧驱动。
+    for (const tween of this.modifierTweens.values()) {
+      tween.kill();
+    }
+    this.modifierTweens.clear();
   }
 
   public register(name: string, fn: StageEffectFunction) {
@@ -122,10 +150,17 @@ export class StageRuntime {
     const before = this.getSnapshot();
     const resolvedParams: any = {};
     Object.entries(params || {}).forEach(([key, val]) => {
-      if (["duration", "d", "2"].includes(key) || (name !== "cam.move" && key === "1")) {
-        resolvedParams[key] = this.resolveValue(val, 0);
+      // 非数值参数（如 cam.shake 的 static:true、嵌套对象）原样透传，不走 resolveNumeric——
+      // R3 修复：原逻辑对**所有** params 调 resolveValue，boolean true → fallback 0 →
+      // `p.static === true` 恒为 false（seek 静态重放失效）。仅数值/字符串参数才数值化。
+      if (typeof val === "number" || typeof val === "string") {
+        if (["duration", "d", "2"].includes(key) || (name !== "cam.move" && key === "1")) {
+          resolvedParams[key] = this.resolveValue(val, 0);
+        } else {
+          resolvedParams[key] = this.resolveValue(val, (before as any)[key] ?? 0);
+        }
       } else {
-        resolvedParams[key] = this.resolveValue(val, (before as any)[key] ?? 0);
+        resolvedParams[key] = val;
       }
     });
 
