@@ -4,12 +4,14 @@ import { layout } from "../layout/LayoutEngine";
 import { TextPlayer } from "../render/text/TextPlayer";
 import { EffectProcessor } from "../effects/EffectProcessor";
 import { effectManager } from "../effects/EffectManager";
-import type { KMDMetadata, KMDParagraphData } from "../parser/types";
-import type { Checkpoint, InFlightAnimation, ParagraphUnit, Segment } from "../state/Segment";
-import type { BehaviorRecord, StyleRecord, InstantEffectRecord } from "../render/text/TextPlayer";
+import type { EffectConfig, KMDMetadata, KMDParagraphData } from "../parser/types";
+import type { Checkpoint, InFlightAnimation, ParagraphUnit, Segment, StageModifierRecord } from "../state/Segment";
+import type { BehaviorRecord, StyleRecord, InstantEffectRecord, EntranceFilterRecord } from "../render/text/TextPlayer";
 import { stageManager } from "../stage/StageManager";
+import { buildStageModifierRecord, buildStageModifierApplyParams } from "../stage/stagePresets";
 import { createParagraphExecutionPlan } from "../execution/paragraphExecutionPlan";
 import type { PlaybackRuntimeState } from "./PlaybackController";
+import { PlaybackController } from "./PlaybackController";
 import type { ReaderRuntimeTimelineMarker } from "../runtime";
 import gsap from "gsap";
 
@@ -68,10 +70,6 @@ function getStagePropertyKey(command: string): string | null {
   return null;
 }
 
-function isModifierBasedStageCommand(command: string): boolean {
-  return stageManager.getCommandMetadata(command)?.modifierBased === true;
-}
-
 function trimActiveStageTween(
   tl: gsap.core.Timeline,
   entry: ActiveStageTweenEntry,
@@ -112,6 +110,8 @@ export class SegmentBuilder {
     const allBehaviors: BehaviorRecord[] = [];
     const allStyleRecords: StyleRecord[] = [];
     const allInstantEffects: InstantEffectRecord[] = [];
+    const allEntranceFilters: EntranceFilterRecord[] = [];
+    const allStageModifierRecords: StageModifierRecord[] = [];
     const paragraphUnits: ParagraphUnit[] = [];
     const markers: ReaderRuntimeTimelineMarker[] = [];
     const stageTweenRecords: InFlightAnimation[] = [];
@@ -180,26 +180,150 @@ export class SegmentBuilder {
           virtualCam,
           virtualOff,
           segmentCursor,
+          allStageModifierRecords,
+          context.playbackState,
         );
 
         if (visualConfigs.length > 0) {
-          // block 作用域 instant filter（静态 filter，如 [.gray:block] / [.bloom:block]）
-          // 从同步 applyGroupEffects 路径分离，路由进 InstantEffectRecord + segmentTl.call，
-          // 与 char/group 路径（L239-258）对称——seek 回退时 clearInstantEffects 能移除旧实例。
-          // 修复 spec §7.2 已知缺口：原先同步挂载不经 record，seek 回退后 filter 堆叠泄漏。
+          // block 作用域 filter（char/group 路径 L251-315 的对称）：
+          // 从同步 applyGroupEffects 路径分离，路由进 record + segmentTl.call。
+          // - instant track（静态 filter，如 [.gray:block] / [.bloom:block]）→ InstantEffectRecord +
+          //   activeInstantCleanups，seek 回退时 clearInstantEffects 移除旧实例。
+          // - behavior track（含动画的 filter，如 [.blur:block(anim=true)] / M2 [.displace:block] /
+          //   [.underwater:block]）→ BehaviorRecord + activeBehaviorCleanups，seek 时 registerBehaviors
+          //   重 apply、clearBehaviors 移除 filter + ticker + modifier。
+          // 修复两个已知缺口：
+          // - spec §7.2（M1 已修）：instant filter 原同步挂载不经 record，seek 回退 filter 堆叠。
+          // - M2 review（behavior audit）：behavior filter 原落 blockRemaining → 同步 applyGroupEffects
+          //   执行但 fn 返回的 { filters, tickerFn } 被 applyGroupEffects 丢弃，不进 cleanup →
+          // block 作用域 filter/behavior（char/group 路径 L251-315 的对称）：
+          // 从同步 applyGroupEffects 路径分离，路由进 record + segmentTl.call。
+          // - instant track（静态 filter，如 [.gray:block] / [.bloom:block]）→ InstantEffectRecord +
+          //   activeInstantCleanups，seek 回退时 clearInstantEffects 移除旧实例。
+          // - behavior track（含动画的 filter 或纯位移 behavior）→ BehaviorRecord +
+          //   activeBehaviorCleanups，seek 时 registerBehaviors 重 apply、clearBehaviors 移除
+          //   filter + ticker + modifier + offset。
+          //   覆盖两类：type:"filter"+track:"behavior"（blur/rgbShift/warp/M2 displace/underwater）
+          //   和 type:"behavior"+track:"behavior"（shake:block 用 ContainerBehaviorOffset 返回
+          //   { tickerFn }）。原条件只认 type:"filter" → shake:block 落 blockRemaining →
+          //   applyGroupEffects 同步执行但 { tickerFn } 被丢弃 → ticker 泄漏（审计修复）。
+          //   dim/shift/glitch 也 track:"behavior" 但容器分支不 return 资源（dim 一次性 alpha 写、
+          //   shift/glitch 对容器跳过），进 record 后解包 result=undefined 不进 cleanup，安全。
+          // 修复已知缺口：
+          // - spec §7.2（M1 已修）：instant filter 原同步挂载不经 record，seek 回退 filter 堆叠。
+          // - M2 review（behavior audit）：behavior filter/位移原落 blockRemaining → 同步
+          //   applyGroupEffects 执行但返回值被丢弃，不进 cleanup → seek/stop/clearScreen 清不到。
           const blockInstant: typeof visualConfigs = [];
+          const blockBehavior: typeof visualConfigs = [];
+          const blockEntrance: typeof visualConfigs = [];
           const blockRemaining: typeof visualConfigs = [];
+          // INV-7（SA-17）：block 路径过 EffectProcessor.getTrack 单一真相源，不再 inline 读 meta.type/track。
+          // 与 char 路径（placeCharOnTimeline 用 classifyByTrack）+ group/char-chain 路径（用 getTrack）对齐。
+          // R17/SA-32：style 判定经 classifyStyleWrite 单一真相源（替代 styleManager.has 直调）。
+          // block 路径语义：全部 block 样式经 applyGroupEffects 同步应用（isContainerLevel=true 一律执行，
+          // 不分 pre/post-hold）→ 全进 baseline（R16 recapture）。helper 只统一 isStyle 判定入口。
           for (const cfg of visualConfigs) {
-            const meta = effectManager.getMetadata(cfg.name);
-            if (meta && meta.type === "filter" && meta.track === "instant") {
+            if (EffectProcessor.classifyStyleWrite(cfg).isStyle) {
+              blockRemaining.push(cfg);
+              continue;
+            }
+            const track = EffectProcessor.getTrack(cfg.name);
+            if (track === "instant") {
               blockInstant.push(cfg);
+            } else if (track === "behavior") {
+              blockBehavior.push(cfg);
+            } else if (track === "entrance") {
+              blockEntrance.push(cfg);
             } else {
               blockRemaining.push(cfg);
             }
           }
 
           if (blockRemaining.length > 0) {
-            EffectProcessor.applyGroupEffects(paragraphText, [...blockRemaining]);
+            // R21/SA-36：block/global style 链按 pre-hold / post-hold 边界拆分（镜像 site2
+            // unrollGroupChain + site3 的 hold:char 模型），不再整条经 applyGroupEffects。
+            //
+            // **R21 修复的 bug**：原代码把 blockRemaining（style + hold + timing/unknown）整条丢给
+            // applyGroupEffects 且**不 await**（旧 line 242）。applyGroupEffects 内 hold:block 返回
+            // gsap.delayedCall promise → await result（EffectProcessor.ts:280）→ 函数挂起，构建期
+            // 同步的 recaptureBaseStyleSnapshot 跑在 hold resolve **之前**（post-hold style 漏 baseline），
+            // 且 applyGroupEffects 无 styleRecords 概念 → post-hold style 既不进 baseline 也不进 record，
+            // hold 到点后 applyStyleRecursively 作为**墙钟副作用**触发（不播不 seek 自己染红，seek/reset 管不住）。
+            //
+            // **修复模型**（与 site2/site3 同源，classifyStyleWrite 单一真相源判 pre-hold 边界）：
+            //   - pre-hold style → applyGroupEffects 同步应用 + recapture baseline（R16/P2 模型不变）
+            //   - hold → 推进 chainCursor（构建期不真等，与 site2 `chainCursor += dur` 一致）
+            //   - post-hold style → segmentTl.call + allStyleRecords（seek 由 replayStyles 重放，与 site2 P3 同构）
+            //   - 非 style 非 timing 残留（unknown）→ 仍经 applyGroupEffects（保持既有行为；hold 已抽走不阻塞）
+            const blockStylePreHold: typeof visualConfigs = [];
+            const blockStylePostHold: { config: EffectConfig; time: number }[] = [];
+            const blockNonStyleRemaining: typeof visualConfigs = [];
+            let blockHoldEncountered = false;
+            let chainCursor = segmentCursor;
+            for (const cfg of blockRemaining) {
+              const { isStyle, isBlocking } = EffectProcessor.classifyStyleWrite(cfg);
+              if (isStyle) {
+                if (blockHoldEncountered) {
+                  blockStylePostHold.push({ config: cfg, time: chainCursor });
+                } else {
+                  blockStylePreHold.push(cfg);
+                }
+                continue;
+              }
+              // hold 是 cursor 推进器（stagger/timing），构建期不真等——抽走不进 applyGroupEffects。
+              if (cfg.name === "hold" && isBlocking) {
+                chainCursor += EffectProcessor.resolvePauseDuration(cfg.params, 1);
+                blockHoldEncountered = true;
+                continue;
+              }
+              // 其余非 style（timing sugar slow/fast/go、unknown）→ 保持原 applyGroupEffects 路径。
+              blockNonStyleRemaining.push(cfg);
+              if (isBlocking) blockHoldEncountered = true;
+            }
+
+            // pre-hold style：applyGroupEffects 同步写 + recapture baseline（R16/P2 模型，含 big/small 测量）。
+            if (blockStylePreHold.length > 0) {
+              EffectProcessor.applyGroupEffects(paragraphText, [...blockStylePreHold]);
+              // R16/SA-31：applyGroupEffects 在 KineticChar 构造**之后**同步写 char.style（force=true），
+              // 但 baseStyleSnapshot 已在构造时固化（R15 pre-hold 烘焙态）。重新捕获 baseline = 当前
+              // style（含 block 样式），避免 replayStyles reset 回无 block 样式的 baseline 丢样式。
+              // 初始样式只进 baseline 不进 record，避免相对样式 big/small 双重放大。
+              for (const token of paragraphText.tokens) {
+                for (const c of token.chars) {
+                  c.recaptureBaseStyleSnapshot();
+                }
+              }
+            }
+
+            // 非 style 残留（timing/unknown，hold 已抽走）：保持原 applyGroupEffects 同步路径。
+            if (blockNonStyleRemaining.length > 0) {
+              EffectProcessor.applyGroupEffects(paragraphText, [...blockNonStyleRemaining]);
+            }
+
+            // post-hold style：record + segmentTl.call（R21/SA-36，镜像 site2 P3）。
+            // seek 时 replayStyles 消费 record（segment.timeline.seek 默认 suppressEvents，tl.call 不触发，
+            // 由 replayStyles 按 timePosition<=currentTime 重放）；正向播放 segmentTl.call 触发 apply。
+            // R22/SA-37：加 exact-boundary 所有权 guard——seek 落在 record.timePosition 上、随后 play 时，
+            // deferred tick 跨越会重触发此 tl.call（与 seek 的 replayStyles 双 apply，big ×1.5 两次=×2.25
+            // 几何错）。guard 检查 record.timePosition === lastSeekTime 则跳过：seek 已应用过此 record，
+            // play 的 tl.call 让位给快照消费者。原「不加守卫——style 不创建资源」注释废止：双 apply 是
+            // mutation 双（不是资源泄漏），guard 现为防 mutation 双。
+            for (const { config, time } of blockStylePostHold) {
+              const resolved = EffectProcessor.resolveParams(config.params);
+              const cfgName = config.name;
+              const cfgParams = { ...resolved };
+              const recTime = time;
+              segmentTl.call(() => {
+                if (context.playbackState.lastSeekTime === recTime) return;
+                EffectProcessor.applyStyleRecursively(paragraphText, cfgName, cfgParams, true);
+              }, [], recTime);
+              for (const token of paragraphText.tokens) {
+                for (const c of token.chars) {
+                  if (!c.text.trim()) continue;
+                  allStyleRecords.push({ char: c, styleName: cfgName, params: { ...cfgParams }, timePosition: recTime });
+                }
+              }
+            }
           }
 
           for (const cfg of blockInstant) {
@@ -214,17 +338,97 @@ export class SegmentBuilder {
             const instantTarget = paragraphText;
             const instantName = cfg.name;
             const instantParams = { ...resolved };
+            // R12：预查 meta——void result 的 Graphics 特效（bg/border）push graphicsLayer cleanup。
+            const instantMeta = effectManager.getMetadata(instantName);
+            // R22/SA-37：exact-boundary guard——seek 落在 segmentCursor 上、随后 play 时 deferred
+            // tick 跨越会重触发（与 seek 的 registerInstantEffects 双 push filter，cleanup 总数错）。
+            const instantRecTime = segmentCursor;
             segmentTl.call(() => {
               if (!context.playbackState.isAutoPlaying) return;
+              if (context.playbackState.lastSeekTime === instantRecTime) return;
               const filterInstance = effectManager.apply(instantTarget, instantName, instantParams, true);
               if (filterInstance) {
                 context.playbackState.activeInstantCleanups.push({
                   target: instantTarget,
                   filterInstance,
                 });
+              } else if (instantMeta?.mutexGroup && typeof (instantTarget as any).getGraphicsLayer === "function") {
+                // R12：Graphics 特效（bg/border 画 Graphics 非 filter，返回 void）——seek 回退清该层防残留。
+                context.playbackState.activeInstantCleanups.push({
+                  target: instantTarget,
+                  filterInstance: undefined as any,
+                  graphicsLayer: instantMeta.mutexGroup,
+                });
               }
             }, [], segmentCursor);
           }
+
+          // block 作用域 behavior filter（blur/rgbShift/warp 容器级 + M2 displace/underwater 等）。
+          // 与 char/group behavior 路径（下方 segmentTl.call）同构：push BehaviorRecord 供
+          // registerBehaviors seek 重 apply，segmentTl.call 正向触发 + 捕获 cleanup。
+          // target = char = paragraphText（容器级无 removeModifier，clearBehaviors 守卫跳过 modifier
+          // 分支；filter + ticker 经 BehaviorFilterResult 解包记录，与 registerBehaviors 一致）。
+          for (const cfg of blockBehavior) {
+            const resolved = EffectProcessor.resolveParams(cfg.params);
+            const behaviorRecord: BehaviorRecord = {
+              target: paragraphText,
+              char: paragraphText,
+              effectName: cfg.name,
+              params: resolved,
+              charIndex: 0,
+              timePosition: segmentCursor,
+            };
+            allBehaviors.push(behaviorRecord);
+            const behaviorChar = paragraphText;
+            const behaviorTarget = paragraphText;
+            const behaviorName = cfg.name;
+            const behaviorParams = { ...resolved };
+            // R22/SA-37：exact-boundary guard——与 instant 同源。
+            const behaviorRecTime = segmentCursor;
+            segmentTl.call(() => {
+              if (!context.playbackState.isAutoPlaying) return;
+              if (context.playbackState.lastSeekTime === behaviorRecTime) return;
+              const result = effectManager.apply(behaviorChar, behaviorName, behaviorParams, true);
+              // INV-7（SA-16）：解包经 PlaybackController.unpackBehaviorResult 单一真相源
+              // （与 group 路径、registerBehaviors 共用，新增返回 shape 只改一处）。
+              const unpacked = PlaybackController.unpackBehaviorResult(result, behaviorTarget);
+              context.playbackState.activeBehaviorCleanups.push({
+                char: behaviorChar,
+                modName: behaviorName,
+                target: behaviorTarget,
+                ...unpacked,
+              });
+            }, [], segmentCursor);
+          }
+
+        // block 作用域 entrance 特效（如 blurIn:block）：build 期 apply 创建 filter + tween，
+        // tween 入 segment timeline（seek 插值 + stop kill 释放），filter 进 entranceFilters
+        // （clearEntranceFilters 在 stop/clearScreen 移除 + destroyFilterDeep）。
+        // **不进 instantEffects**（seek 重 apply blurIn 会 gsap.set(alpha=0) 重置 + 崩溃），
+        // **不落 blockRemaining**（applyGroupEffects 丢弃 {tween,filter} → filter+tween 泄漏）。
+        // 与 TextPlayer.captureEntrance 语义同构，但在 SegmentBuilder 层直接处理（block 分流
+        // 在 buildTimeline 之前，captureEntrance 不可用）。
+        for (const cfg of blockEntrance) {
+          const resolved = EffectProcessor.resolveParams(cfg.params);
+          const entranceTarget = paragraphText;
+          const entranceName = cfg.name;
+          const entranceParams = { ...resolved };
+          // build 期同步 apply：fn 创建 filter push 进 target.filters + 返回 {tween, filter}
+          const result = effectManager.apply(entranceTarget, entranceName, entranceParams, true);
+          if (result && typeof result === 'object' && 'tween' in result && 'filter' in result) {
+            const efr = result as any;
+            // tween 入 segment timeline（与 captureTween 同构）
+            if (efr.tween instanceof gsap.core.Tween || efr.tween instanceof gsap.core.Timeline) {
+              segmentTl.add(efr.tween, segmentCursor);
+            }
+            // filter 进 entranceFilters（clearEntranceFilters 在 stop/clearScreen 移除 + destroyFilterDeep）
+            allEntranceFilters.push({
+              target: entranceTarget,
+              filter: efr.filter,
+              timePosition: segmentCursor,
+            });
+          }
+        }
         }
 
         const displayAssembly = paragraphText._displayAssembly;
@@ -235,6 +439,7 @@ export class SegmentBuilder {
           {
             speed: context.metadata.speed,
             onLineUpdate: context.playbackState.onLineUpdate,
+            playbackState: context.playbackState,
           },
         );
 
@@ -255,14 +460,24 @@ export class SegmentBuilder {
             timePosition: absTime,
           });
           const behaviorChar = behavior.char;
+          const behaviorTarget = behavior.target;
           const behaviorName = behavior.effectName;
           const behaviorParams = { ...behavior.params };
+          // R22/SA-37：exact-boundary guard——absTime 已是 const（let 重新赋值的局部），但为 guard
+          // 显式捕获。seek 落在 absTime 上、随后 play 时 deferred tick 跨越双 push filter。
+          const behaviorRecTime = absTime;
           segmentTl.call(() => {
             if (!context.playbackState.isAutoPlaying) return;
-            effectManager.apply(behaviorChar, behaviorName, behaviorParams, true);
+            if (context.playbackState.lastSeekTime === behaviorRecTime) return;
+            const result = effectManager.apply(behaviorChar, behaviorName, behaviorParams, true);
+            // INV-7（SA-16）：解包经 PlaybackController.unpackBehaviorResult 单一真相源
+            // （与 block 路径、registerBehaviors 共用，新增返回 shape 只改一处）。
+            const unpacked = PlaybackController.unpackBehaviorResult(result, behaviorTarget);
             context.playbackState.activeBehaviorCleanups.push({
               char: behaviorChar,
               modName: behaviorName,
+              target: behaviorTarget,
+              ...unpacked,
             });
           }, [], absTime);
         }
@@ -286,16 +501,58 @@ export class SegmentBuilder {
           const instantTarget = instantRecord.target;
           const instantName = instantRecord.effectName;
           const instantParams = { ...instantRecord.params };
+          // R12：预查 meta——void result 的 Graphics 特效（bg/border）push graphicsLayer cleanup。
+          const instantMeta = effectManager.getMetadata(instantName);
+          // R22/SA-37：exact-boundary guard。
+          const instantRecTime = absTime;
           segmentTl.call(() => {
             if (!context.playbackState.isAutoPlaying) return;
+            if (context.playbackState.lastSeekTime === instantRecTime) return;
             const filterInstance = effectManager.apply(instantTarget, instantName, instantParams, true);
             if (filterInstance) {
               context.playbackState.activeInstantCleanups.push({
                 target: instantTarget,
                 filterInstance,
               });
+            } else if (instantMeta?.mutexGroup && typeof (instantTarget as any).getGraphicsLayer === "function") {
+              // R12：Graphics 特效（bg/border 画 Graphics 非 filter，返回 void）——seek 回退清该层防残留。
+              context.playbackState.activeInstantCleanups.push({
+                target: instantTarget,
+                filterInstance: undefined as any,
+                graphicsLayer: instantMeta.mutexGroup,
+              });
             }
           }, [], absTime);
+        }
+
+        // 入场特效 filter（blurIn 等）：filter 已在 build 期由 captureEntrance 创建并 push 进
+        // target.filters，tween 已由 captureTween 入时间线。此处只聚合进 segment 供 stop/clearScreen
+        // 清理（clearEntranceFilters 移除 + destroyFilterDeep）。**不 segmentTl.call 重 apply**——
+        // entrance tween 靠时间线插值到正确状态，重 apply blurIn 会 gsap.set(alpha=0) 重置 + rogue tween。
+        // 与 instantEffects 区别：instantEffects seek 时 registerInstantEffects 重 apply（静态 filter 幂等），
+        // entranceFilters seek 时不重 apply（entrance 靠时间线，不靠 record）。
+        for (const entranceRecord of buildResult.entranceFilters) {
+          allEntranceFilters.push({
+            target: entranceRecord.target,
+            filter: entranceRecord.filter,
+            timePosition: entranceRecord.timePosition + segmentCursor,
+          });
+        }
+
+        // inline/token 级 stage modifier 记录（cam.reset/cam.drift/cam.shake 在文字 @ cam.xxx 或
+        // effect chain 里触发）：与 global 路径（applyStageConfigs 经 buildStageModifierRecord）共用同一
+        // allStageModifierRecords，seek 时 replayStageModifiers 按 timePosition + duration + isClearBoundary 重放。
+        // 必须 spread 全部片段字段——上一版只拷 command/params/timePosition/duration，漏掉 isClearBoundary，
+        // 导致 inline/token 级 cam.reset 边界丢失。
+        // R11：分配 sequence = allStageModifierRecords.length（build/push 顺序，表达 GSAP callback 执行序）。
+        //   不是 ordered 索引——>>> overlap 时不同 timePosition 的 push 顺序会被排序打乱
+        //   （p1 drift@2 先 push、p2 reset@1 后 push，reset effective@2 clear 时 drift 已 apply）。
+        for (const modRecord of buildResult.stageModifierRecords) {
+          allStageModifierRecords.push({
+            ...modRecord,
+            timePosition: modRecord.timePosition + segmentCursor,
+            sequence: allStageModifierRecords.length,
+          });
         }
 
         paragraphUnits.push({
@@ -377,6 +634,8 @@ export class SegmentBuilder {
       behaviors: allBehaviors,
       styleRecords: allStyleRecords,
       instantEffects: allInstantEffects,
+      entranceFilters: allEntranceFilters,
+      stageModifierRecords: allStageModifierRecords,
       stageTweenRecords,
       entryCheckpoint,
       exitCheckpoint,
@@ -454,33 +713,76 @@ export class SegmentBuilder {
     virtualCam: Record<string, number>,
     virtualOff: Record<string, number>,
     segmentCursor: number,
+    stageModifierRecords: StageModifierRecord[],
+    playbackState?: { lastSeekTime?: number },
   ) {
     let cursor = segmentCursor;
 
     for (const config of stageConfigs) {
       if (config.name === "pause") {
-        const duration = Number(config.params?.duration ?? config.params?.d ?? config.params?.[0] ?? 1);
+        const duration = EffectProcessor.resolvePauseDuration(config.params, 1);
         cursor += duration;
         continue;
       }
 
-      if (isModifierBasedStageCommand(config.name)) {
-        const configCopy = { name: config.name, params: { ...(config.params || {}) } };
+      // 单一真相源：buildStageModifierRecord 决定 cam.reset（clear boundary）、modifierBased
+      // （cam.shake/cam.drift，duration 按命令语义）与可 seek tween 命令的分流。
+      // 三路径（global/inline/token-chain）共用此 helper，SA-12 cam.reset boundary 在 inline/token-chain
+      // 的分裂由此从根上消除（`文字 @ cam.reset!` 与全局 cam.reset 现在同一处理）。
+      const stageRecord = buildStageModifierRecord(config.name, config.params);
+
+      if (stageRecord && !stageRecord.isClearBoundary) {
+        // modifierBased（cam.shake/cam.drift）：经 tl.call 延迟 apply（modifier 在 timeline 时间触发），
+        // 不在 build 期 apply。propertyKey 可能与活跃 tween 冲突（当前 modifierBased 命令均无 propKey，
+        // 但保留 trim 对称——若未来加 modifierBased+propertyKey 命令也能正确 trim）。
+        const propKey = getStagePropertyKey(config.name);
+        if (propKey) {
+          const existing = activeStageTweens.get(propKey);
+          if (existing) {
+            stageManager.reportConflictDiagnostic({
+              severity: "warning",
+              channel: propKey,
+              command: config.name,
+              message: `Trimmed active stage tween on channel "${propKey}" before applying "${config.name}".`,
+            });
+            const cutValues = trimActiveStageTween(segmentTl, existing, cursor);
+            if (cutValues) {
+              Object.assign(propKey.startsWith("offset") ? virtualOff : virtualCam, cutValues);
+            }
+            activeStageTweens.delete(propKey);
+          }
+        }
+        const configCopy = { name: config.name, params: buildStageModifierApplyParams(config.name, config.params) };
+        stageModifierRecords.push({ ...stageRecord, timePosition: cursor, sequence: stageModifierRecords.length });
+        // R22/SA-37：exact-boundary guard——seek 落在 cursor 上、随后 play 时 deferred tick 跨越会
+        // 重触发此 tl.call（与 seek 的 replayStageModifiers 双 apply，cam.shake 满强度覆盖中途剩余强度）。
+        // 检查 timePosition === lastSeekTime 则跳过，让 replayStageModifiers 单一拥有当前态。
+        // R22-followup（stage 默认参数对齐）：configCopy.params 是 buildStageModifierApplyParams
+        // 预解析的（缺失变量按命令预设默认值，与 seek 重放同源），不再传 raw params 让
+        // StageRuntime.apply fallback 0——自然播放与 seek 重放现在走同一份解析。
+        const modRecTime = cursor;
         segmentTl.call(() => {
+          if (playbackState?.lastSeekTime === modRecTime) return;
           stageManager.apply(configCopy.name, configCopy.params);
         }, [], cursor);
         continue;
       }
 
-      const propKey = getStagePropertyKey(config.name);
-      if (config.name === "cam.reset") {
+      if (stageRecord?.isClearBoundary) {
+        // cam.reset：记 clear boundary + 立即 trim active tween + 重置 virtualCam/Off。
+        // reset timeline 是可 seek tween，与 cam.move 等对称——落下方通用 apply + capture +
+        // stageTweenRecords（保留原行为：reset tween 仍计入 inFlight for Phase B 跨 Segment 衔接）。
         for (const [, entry] of activeStageTweens) {
           trimActiveStageTween(segmentTl, entry, cursor);
         }
         activeStageTweens.clear();
         Object.assign(virtualCam, { x: 0, y: 0, zoom: 1, rotation: 0 });
         Object.assign(virtualOff, { x: 0, y: 0, zoom: 1, rotation: 0 });
-      } else if (propKey) {
+        stageModifierRecords.push({ ...stageRecord, timePosition: cursor, sequence: stageModifierRecords.length });
+      }
+
+      const propKey = getStagePropertyKey(config.name);
+      if (propKey) {
         const existing = activeStageTweens.get(propKey);
         if (existing) {
           stageManager.reportConflictDiagnostic({

@@ -87,6 +87,30 @@ export class KineticChar extends Text {
     st.stroke = s.stroke;
   }
 
+  /**
+   * 从当前 style 重新捕获 baseStyleSnapshot（R16/SA-31）。
+   *
+   * 用途：block/global 初始样式经 SegmentBuilder 的 applyGroupEffects 在 KineticChar 构造**之后**
+   * 同步写入 char.style（SegmentBuilder.ts:242），但此时 baseStyleSnapshot 已在构造时固化
+   *（R15 的 pre-hold 烘焙态）。若不重新捕获，block 样式（如 [.red:block]）只在 char.style 里、
+   * 不在 baseline、不在 styleRecords → 后续动态样式 record 触发 replayStyles 时 resetStyle()
+   * 回 baseline（无 block 样式）→ block 样式丢失。
+   *
+   * 与 R15 同模型：构建期已应用的初始样式进 baseline（而非 record 重放），避免相对样式
+   * big/small 重复放大。字段集与构造函数/resetStyle 完全一致。
+   */
+  public recaptureBaseStyleSnapshot() {
+    const st = this.style as any;
+    const s = this.baseStyleSnapshot;
+    s.fill = st.fill;
+    s.fontWeight = st.fontWeight;
+    s.fontStyle = st.fontStyle;
+    s.fontSize = st.fontSize;
+    s.fontFamily = st.fontFamily;
+    s.dropShadow = st.dropShadow;
+    s.stroke = st.stroke;
+  }
+
   private createDefaultOffset(): TransformOffset {
     // 默认 alpha 为 0，确保在入场特效开始前字符是不可见的
     return { x: 0, y: 0, rotation: 0, scaleX: 1, scaleY: 1, alpha: 0, tint: 0xffffff };

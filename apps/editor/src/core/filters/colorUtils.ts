@@ -10,7 +10,7 @@
 
 /**
  * 把 hex 字符串（"#fff" / "#aabbcc"）或 0xRRGGBB 数值转成 0..1 归一化
- * Float32Array([r, g, b])，匹配 Pixi v8 vec3<f32> uniform 值格式。
+ * Float32Array([r, g, b])，匹配 Pixi v8 vec3<f32> uniform 值格式（§B-bis：vec3 setter 用 v[0]/v[1]/v[2] 数组索引）。
  * 非法输入回退白色 (1,1,1)。
  */
 export function hexToVec3(color: string | number): Float32Array {

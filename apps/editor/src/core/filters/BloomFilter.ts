@@ -166,7 +166,7 @@ export class BloomFilter extends Filter {
 
   // override destroy：seek/stop 清理只 destroy 外层 BloomFilter，
   // 内部 _extractFilter / _blurFilter 的 shader/bind group 需显式销毁。
-  // Pixi v8 BlurFilter 持有 blurXFilter/blurYFilter 且未 override destroy()，
+  // Pixi v8 BlurFilter 持有 blurXFilter/blurYFilter 且未 override destroy()（§B-bis：BlurFilter.destroy 不递归子 pass），
   // 需先销毁这两个内部 pass 再销毁 _blurFilter 自身。
   destroy(destroyPrograms = false) {
     this._extractFilter.destroy(destroyPrograms);

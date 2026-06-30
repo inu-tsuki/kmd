@@ -1,3 +1,4 @@
+import gsap from "gsap";
 import { BlurFilter } from "pixi.js";
 import { KineticChar } from "../../KineticChar";
 import { RGBSplitFilter } from "../../filters/RGBSplitFilter";
@@ -20,7 +21,10 @@ function defineEffect(fn: EffectFunction, meta: EffectMetadata) {
   return { fn, meta };
 }
 
-// RGB偏移 (RGB Shift)
+// RGB偏移 (RGB Shift) —— behavior-track filter。
+// char 级：addModifier 驱动 offset 动画 + return filter（cleanup 靠 removeModifier + 移除 filter）。
+// 容器级（:group/:block）：ticker 回调驱动 offset + return BehaviorFilterResult（cleanup 靠
+//   gsap.ticker.remove + 移除 filter）。无 anim 时静态 filter 仍 return filter 供 cleanup。
 const _rgbShift: EffectFunction = (target, params = {}) => {
   const distance = params.dist || 5;
   const filter = new RGBSplitFilter();
@@ -29,12 +33,25 @@ const _rgbShift: EffectFunction = (target, params = {}) => {
 
   if (params.anim) {
     if (target instanceof KineticChar) {
-      target.addModifier("rgbAnim", 'behavior', (t) => {
+      // modifier id 必须等于 effectName：PlaybackController.clearBehaviors 用
+      // removeModifier(effectName) 精确删除（Map.delete）。原 "rgbAnim" 命中失败
+      // → modifier 残留继续 tick、写已 destroy 的 filter uniform。
+      target.addModifier("rgbShift", 'behavior', (t) => {
         filter.offset = { x: Math.sin(t * 0.05) * distance, y: Math.cos(t * 0.03) * distance };
         return {};
       });
+      return filter;
+    } else {
+      // 容器级无 addModifier → ticker 回调驱动。
+      const tickFn = () => {
+        const t = gsap.ticker.time * 1000;
+        filter.offset = { x: Math.sin(t * 0.05) * distance, y: Math.cos(t * 0.03) * distance };
+      };
+      gsap.ticker.add(tickFn);
+      return { filters: filter, tickerFn: tickFn };
     }
   }
+  return filter;
 };
 export const rgbShift = defineEffect(_rgbShift, {
   type: "filter",
@@ -43,7 +60,8 @@ export const rgbShift = defineEffect(_rgbShift, {
   mutexGroup: "filter_rgb",
 });
 
-// 扭曲 (Warp)
+// 扭曲 (Warp) —— behavior-track filter，char 专有（addModifier 驱动 uTime）。
+// return filter 供 seek cleanup 移除（modifier 靠 modName 经 removeModifier 清理）。
 const _warp: EffectFunction = (target, params = {}) => {
   if (!(target instanceof KineticChar)) {
     console.warn("[Effect] warp effect requires KineticChar");
@@ -60,10 +78,12 @@ const _warp: EffectFunction = (target, params = {}) => {
 
   target.filters = [...(target.filters || []), filter];
 
-  target.addModifier("warpAnim", 'behavior', (time: number) => {
+  // modifier id = effectName（见 rgbShift 注释）。
+  target.addModifier("warp", 'behavior', (time: number) => {
     filter.time = time * speed;
     return {};
   });
+  return filter;
 };
 export const warp = defineEffect(_warp, {
   type: "filter",
@@ -72,7 +92,10 @@ export const warp = defineEffect(_warp, {
   mutexGroup: "filter_warp",
 });
 
-// 模糊 (Blur)
+// 模糊 (Blur) —— behavior-track filter。
+// char 级：addModifier 驱动 strength 动画 + return filter。
+// 容器级（:group/:block）：ticker 回调驱动 + return BehaviorFilterResult。
+// 无 anim 时静态 filter 仍 return filter 供 cleanup（behavior track 下 seek 仍需移除）。
 const _blur: EffectFunction = (target, params = {}) => {
   const strength = params.strength || 4;
   const filter = new BlurFilter();
@@ -82,12 +105,22 @@ const _blur: EffectFunction = (target, params = {}) => {
 
   if (params.anim) {
     if (target instanceof KineticChar) {
-      target.addModifier("blurAnim", 'behavior', (time: number) => {
+      // modifier id = effectName（见 rgbShift 注释）。
+      target.addModifier("blur", 'behavior', (time: number) => {
         filter.strength = (Math.sin(time * 0.005) + 1) * strength;
         return {};
       });
+      return filter;
+    } else {
+      const tickFn = () => {
+        const t = gsap.ticker.time * 1000;
+        filter.strength = (Math.sin(t * 0.005) + 1) * strength;
+      };
+      gsap.ticker.add(tickFn);
+      return { filters: filter, tickerFn: tickFn };
     }
   }
+  return filter;
 };
 export const blur = defineEffect(_blur, {
   type: "filter",

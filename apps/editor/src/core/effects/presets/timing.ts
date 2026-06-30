@@ -1,12 +1,13 @@
 import gsap from "gsap";
 import type { EffectFunction, EffectMetadata } from "../types";
+import { EffectProcessor } from "../EffectProcessor";
 
 function defineEffect(fn: EffectFunction, meta: EffectMetadata) {
   return { fn, meta };
 }
 
 export const go = defineEffect((_target, params = {}) => ({
-  type: "delay", value: Number(params.duration ?? params.d ?? params[0] ?? 0)
+  type: "delay", value: EffectProcessor.resolvePauseDuration(params, 0)
 }), {
   type: "action",
   track: "timing",
@@ -30,7 +31,7 @@ export const fast = defineEffect((_target, params = {}) => ({
 });
 
 export const hold = defineEffect((_target, params = {}) => new Promise<void>(resolve => {
-  gsap.delayedCall(Number(params.duration ?? params.d ?? params[0] ?? 1), resolve);
+  gsap.delayedCall(EffectProcessor.resolvePauseDuration(params, 1), resolve);
 }), {
   type: "action",
   track: "timing",

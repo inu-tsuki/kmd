@@ -110,7 +110,15 @@ export class DisplayAssembler {
     }
 
     const char = new KineticChar(glyphPlan.text, glyphPlan.style);
-    Object.assign((char as any).baseStyleSnapshot, glyphPlan.baseStyleSnapshot);
+    // R15/SA-30：baseStyleSnapshot 必须等于构建期烘焙后的真实起始态，而非原始 base。
+    // glyphPlan.style（= measurementStyle）已含 pre-hold 初始样式（LayoutPlanner:88
+    // applyInitialStylesToStyle 烘焙）。KineticChar 构造时已用 glyphPlan.style 初始化
+    // baseStyleSnapshot（KineticChar 构造函数从 style 字段捕获），但此处旧代码又用
+    // glyphPlan.baseStyleSnapshot（LayoutPlanner:70 在 applyInitialStylesToStyle 之前捕获的原始 base）
+    // 覆盖回 raw base → resetStyle() 会清回原始 base 而丢失 pre-hold 烘焙样式。
+    // 修复：不再用 glyphPlan.baseStyleSnapshot 覆盖——保留 KineticChar 构造时从 glyphPlan.style
+    // 捕获的快照（= pre-hold 烘焙态）。glyphPlan.baseStyleSnapshot 字段保留不删（避免改
+    // LayoutPlanner 类型 + 多分支涟漪），仅在此处停止用作 reset baseline。
     if (glyphPlan.text === "\n") char.isNewLine = true;
 
     return {

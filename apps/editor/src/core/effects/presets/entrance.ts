@@ -121,6 +121,12 @@ export const jumpIn = defineEffect(_jumpIn, {
 });
 
 // 模糊进场 (BlurIn)
+// filter 生命周期交 clearEntranceFilters（stop/clearScreen 时移除 + destroyFilterDeep），
+// 不再用 tween onComplete 移除——stop kill 时间线时 onComplete 不触发会泄漏 GPU。
+// fn 返回 { tween, filter }（EntranceFilterResult），captureEntrance 解包：
+// tween 入时间线（captureTween），filter 进 entranceFilters（EntranceFilterRecord）。
+// **不进 instantEffects**——instantEffects seek 时重 apply fn（registerInstantEffects），
+// blurIn 重 apply 会 gsap.set(alpha=0) 重置 + rogue tween + destroy({tween,filter}) 崩溃。
 const _blurIn: EffectFunction = (target, params = {}) => {
   const duration = params.duration || 1;
   const blurFilter = new BlurFilter();
@@ -131,16 +137,16 @@ const _blurIn: EffectFunction = (target, params = {}) => {
     gsap.set(target.animOffset, { alpha: 0 });
     const tl = gsap.timeline();
     tl.to(target.animOffset, { alpha: 1, duration: duration })
-      .to(blurFilter, {
-        strength: 0, duration: duration, ease: "power2.out", onComplete: () => {
-          target.filters = (target.filters || []).filter(f => f !== blurFilter);
-          if (target.filters!.length === 0) target.filters = null;
-        }
-      }, "<");
-    return tl;
+      .to(blurFilter, { strength: 0, duration: duration, ease: "power2.out" }, "<");
+    return { tween: tl, filter: blurFilter };
   } else {
     target.alpha = 0;
-    return gsap.to(target, { alpha: 1, duration: duration });
+    // 容器级：alpha + strength 动画并入同一 timeline，避免 timeline 外 tween
+    // （原 gsap.to(blurFilter) 不入 segment timeline → seek 无法插值、kill 杀不到 → orphan）。
+    const tl = gsap.timeline();
+    tl.to(target, { alpha: 1, duration: duration })
+      .to(blurFilter, { strength: 0, duration: duration, ease: "power2.out" }, "<");
+    return { tween: tl, filter: blurFilter };
   }
 };
 export const blurIn = defineEffect(_blurIn, {
