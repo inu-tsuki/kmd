@@ -138,10 +138,10 @@ export const registerKMDLanguage = async () => {
           return { suggestions };
       }
 
-      const allEffects = Object.keys((effectManager as any).registry);
-      const allStyles = Object.keys((styleManager as any).registry);
-      const allStage = Array.from((stageManager as any).registry.keys()) as string[];
-      const allLayout = Object.keys((layoutManager as any).registry || {});
+      const allEffects = effectManager.getRegisteredNames();
+      const allStyles = styleManager.getRegisteredNames();
+      const allStage = stageManager.getRegisteredNames();
+      const allLayout = layoutManager.getRegisteredNames();
 
       if (textBefore.endsWith('f.')) {
         allEffects.concat(allStyles).forEach(name => suggestions.push({ label: name, kind: monaco.languages.CompletionItemKind.Function, insertText: name, range }));

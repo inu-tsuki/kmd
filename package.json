@@ -14,6 +14,7 @@
     "editor:dev": "pnpm --filter @kmd/editor dev",
     "editor:build": "pnpm --filter @kmd/editor build",
     "editor:preview": "pnpm --filter @kmd/editor preview",
+    "reader:typecheck": "pnpm --filter @kmd/reader-runtime-web typecheck",
     "reader:build": "pnpm --filter @kmd/reader-runtime-web build",
     "reader:preview": "pnpm --filter @kmd/reader-runtime-web preview",
     "community-api:dev": "pnpm --filter @kmd/community-api dev",

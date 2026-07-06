@@ -62,6 +62,11 @@ class LayoutManager {
     return (name in this.registry) || (name in this.expanders);
   }
 
+  // 供 IntelliSense/诊断枚举命令名；operator 与 expander 都是可用命令，合并去重
+  public getRegisteredNames(): string[] {
+    return [...new Set([...Object.keys(this.registry), ...Object.keys(this.expanders)])];
+  }
+
   public getOperator(name: string): LayoutOperator | null {
     return this.registry[name] || null;
   }

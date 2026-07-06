@@ -37,8 +37,8 @@ export function createRuntimeCommandRegistryView(): CommandRegistryView {
     },
     getMetadata(name: string) {
       const family = this.getFamily(name);
-      if (family === "style") return styleManager.getMetadata(name) as Record<string, unknown> | undefined;
-      if (family === "effect") return effectManager.getMetadata(name) as Record<string, unknown> | undefined;
+      if (family === "style") return styleManager.getMetadata(name) as unknown as Record<string, unknown> | undefined;
+      if (family === "effect") return effectManager.getMetadata(name) as unknown as Record<string, unknown> | undefined;
       return undefined;
     },
   };

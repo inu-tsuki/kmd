@@ -127,6 +127,11 @@ export class StageRuntime {
     return this.registry.has(name);
   }
 
+  // 供 IntelliSense/诊断枚举命令名，避免外部强转访问私有 registry
+  public getRegisteredNames(): string[] {
+    return Array.from(this.registry.keys());
+  }
+
   public getMetadata(name: string): StageCommandMetadata | null {
     return this.metadataRegistry.get(name) ?? null;
   }

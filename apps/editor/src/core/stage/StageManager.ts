@@ -204,6 +204,8 @@ class StageManager {
 
   public has(name: string): boolean { return stageRuntime.has(name); }
 
+  public getRegisteredNames(): string[] { return stageRuntime.getRegisteredNames(); }
+
   public getCommandMetadata(name: string): StageCommandMetadata | null {
     return stageRuntime.getMetadata(name);
   }
