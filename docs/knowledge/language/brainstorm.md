@@ -1,9 +1,70 @@
 # Language Brainstorm
 
-> 最近更新：2026-05-27
+> 最近更新：2026-07-08
 > 状态：Brainstorm / Not Implemented
 
 这里收纳尚未收敛、但可能影响 Phase B 语言形状的想法。本文不是当前 runtime 契约，也不是 parser 已支持语法。
+
+## Pharo / Smalltalk 作为参照系而非依赖
+
+> 来源：2026-07 语言设计收敛讨论。结论：**不接 headless Pharo 进运行时**——镜像式 VM 与"自足 JS bundle 跑在浏览器/WebView"的宿主形态冲突（离线 reader、`RuntimeAssetPolicy`），PharoJS/WASM 均不成熟。持续偷师的三件事：
+
+- **消息统一性**：主谓模型（链头 = receiver）本身就是 Smalltalk 的看法，已进封盘规范（D1）。
+- **doesNotUnderstand → 诊断**：链头查找失败不是 parse error，走诊断总线给建议。已写进 `scope-and-lifetime.md`。
+- **Inspector 活性愿景**：选中任何正在播放的 char / obj / flow，看到完整状态并现场改参数回写脚本——把 Pharo 的镜像式 liveness 转写成编辑器原生需求（编辑器路线图项，非语言项）。
+
+## 裸文本匹配（内容选择器二期）
+
+一期内容选择器只匹配括号组（`{真相}`，D16）。二期愿景：允许选中**未加括号**的正文子串，正文完全零污染。代价是"哪些字被特效罩住"失去正文侧视觉痕迹，与"正文里应该看得出哪里有戏"（公理 1）冲突——需要真实创作语料再裁决。与前缀模糊匹配目标不同（表达力扩张 vs 书写便利），互不许诺。
+
+## 期望 Demo（新语法的验收样例）
+
+封盘规范落地后，以下 demo 应能按字面写法运行，作为验收锚点（完整写法见 `selection-model.md`）：
+
+1. **回转文字**（流游标低阶词汇）：`flow.turn(15deg/char).scale(0.98/char)`。
+2. **文字树**（多流共享锚点）：`flow.dir(up).mark(fork)` + 两个 `[flow.from(fork).dir(...)]` 围栏。
+3. **斩断文字流**（围栏对象 + 并联句子）：两个 `:::` 围栏 + `upobj.powerIn(0.5s).left(0.5line).up(1char) + downobj....`。
+
+## 控制流特性缺口清单
+
+> 来源：2026-07 语言收敛二轮讨论（loop/wait 除名后对 Ink/Ren'Py/Twine 特性谱的盘点）。
+> 按"演出价值 ÷ 设计成本"排序，未封盘。
+
+1. **选择肢**（头号缺口，值得单独一轮设计讨论）：交互作品的心脏。KMD 的天然优势是**文字本身就是按钮**——
+   动态排版的选项不需要 UI 控件。直觉形态（未定）：括号组挂导向谓语 + 事件停表：
+   `{留下} {离开} @ {留下}.choice(-> #stay)  {离开}.choice(-> #leave)` 配 `pause(choice)`。
+2. **回访计数**：Ink 的 knot 读取计数。给 `#` 锚点挂内建计数进文档作用域，
+   `{=seen(#真相) > 0 ? 你又来了 : 你好}`。叙事刚需，实现便宜。
+3. **导向后返回**（Ink tunnel `-> sub ->`）：副歌/重复段落复用后回原处。中等价值，可后置。
+4. **种子化随机变体**：`{=}` 里的 shuffle/cycle。与"状态是脚本位置纯函数"（D20）有张力——
+   随机种子必须存进 `var` 才能 seek 安全，设计时须小心。
+5. **内建 `#end` 锚点**：`-> #end` 显式收束。一行决议的事，攒到下轮一起封。
+
+## 游戏化 TS Segment 宿主契约（草图）
+
+> 来源：2026-07 讨论"用 TS 写游戏脚本、留出与 KMD 播放器/segment 宿主接口"的可行性评估。
+> 结论：**可行**，架构座位已留好（`InteractiveRuntimePlan`、`SegmentGraphEdge.moduleId`、wait-gate）。Phase C 实施。
+
+**核心形态**：游戏 segment = 一个**不透明的 graph 节点**。
+
+```
+KMD 侧（形态待定）：  [game(./pong.ts) -> #win | lose -> #lose]
+宿主给游戏的最小 API：
+  read/write 文档级 var    // 游戏结局写 var，出边照常按条件求值——复用全部现有 graph 机制
+  受控显示层               // 自己的 canvas layer 或受限的文字对象生成，不给 Pixi 场景树直接访问
+  complete(outcome)        // 通知 GraphRuntimeCoordinator 求值出边
+```
+
+三个要扛的风险（按重量排）：
+
+1. **沙箱**（最重）：社区平台上跑不可信 TS = reader WebView 内执行任意代码。iframe/worker 隔离 +
+   能力制 API（`RuntimeAssetPolicy` 同一哲学），游戏模块走 assetManifest 加载。工程量大头在此，不在接口设计。
+2. **seek 语义**：游戏非确定性 → 定为**原子节点**，seek 到它即停在入口快照；已通关的重放用记录的结局
+   （var diff）沿出边走。graph 草案的 static 快照哲学直接覆盖。
+3. **接口纪律**：v1 只给"var 读写 + 独立显示层 + complete"。API 给小了好加，给大了收不回；
+   深度整合（游戏操纵正文排版、镜头）留给真实需求证明。
+
+语言侧成本最小：只需要"外部模块节点 + 结局边"一个形态，连新词性都不用。
 
 ## Cross-KMD References
 

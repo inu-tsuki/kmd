@@ -1,8 +1,25 @@
 # Segment Graph Runtime Draft
 
 > 文档状态：草案 / 未实施 / 未立项
-> 最近更新：2026-06-30
+> 最近更新：2026-07-08
 > 触发来源：Phase B 控制流（`@ if / @ loop / @ tag / @ jump / @ wait`）的运行时形态在 `1.6-phase-b-plan.md` 工作包中反复出现（`SegmentGraphPlan` / `GraphPlaybackRuntime` / `defaultPath` / `warp replay` / `graph_gate`），但都是占位词，没有定义。本草案补这一层。
+
+## 0. 表面语法映射（2026-07-08 语言收敛后）
+
+本草案写于语言收敛之前，正文中的 `@ if / @ tag / @ jump` 是**占位记法**。表面语法权威是
+`docs/knowledge/language/control-flow.md`（决议 D23），运行时形状（节点、边、求值规则）不受影响：
+
+| 本文占位记法 | 封盘表面语法 | 运行时形状 |
+| --- | --- | --- |
+| `@ tag name` | `# 名字`（标题即锚点） | `entryTags` / tag 索引，不变 |
+| `@ jump name` | `-> #名字`（独立结构行，或块 if 内条件形态，D26） | `kind: "jump"` 边，不变 |
+| `@ if / @ elif / @ else` | `[if cond -> #A \| elif cond -> #B \| else -> #C]` | 条件边 + priority，不变 |
+| `[if cond]`（段落有无） | 同左（收敛新增的第二高度） | 条件不满足 = 该段不进节点内容；退化为节点烘焙期裁剪，无需新边类型 |
+| `@ loop / @ while` | **无专门语法**（D25）：后向 `->` + 条件边即循环 | 回边机制不变，但由 builder 按脚本序自动检测（跳转目标更早 = back-edge）；counter 不再是 edge 字段，由用户文档级 `var` 承担，循环条件即普通条件边 |
+| `@ wait click / signal` | `pause(click)` / 正文糖 `\|(click)`（D27）；`signal:name` 留 Phase C | wait-gate 边与 `waiting` 相位，不变 |
+
+另：B1 的 `state` 按 D19 不再是独立命名空间——`Checkpoint.state` 保存的是两级作用域
+（文档级 `var` / 场景级）的快照，字段名可保留 `state`，语义以 `scope-and-lifetime.md` 为准。
 
 ## 1. 本文件是什么、不是什么
 
