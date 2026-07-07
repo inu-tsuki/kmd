@@ -1,6 +1,6 @@
 # 文档索引
 
-> 最近更新：2026-06-30
+> 最近更新：2026-07-07
 
 `docs/` 按用途分成三类：开发规划、知识库、归档。新增文档时先判断它是“接下来要做什么”“长期事实是什么”，还是“历史记录是什么”。
 
@@ -14,6 +14,7 @@
 - `ecosystem/`：跨包、跨应用的仓库编排和生态策略。
 - `runtime/`：运行链路审查-修复轮次的自审计与修复笔记（R13–R22），记录每轮的探针、修复、回归集与方法论提炼。具体 SA 记录与检查清单在 `knowledge/runtime/core/lifecycle-invariants.md`，此目录放轮次级的自审计/修复过程文档。
 - `TODO.md`：AI 协作期任务池和历史任务追踪；阶段权威以 `roadmap/` 为准。
+- `architecture-health-check-2026-07.md`：2026-07 架构体检结论与处方追踪（处方 1–4 已落地，5–10 为 backlog）。
 
 > 当前阶段与下一步以 `planning/roadmap/implementation-roadmap.md` 为准。
 
@@ -27,10 +28,10 @@
 
 - `language/`：KMD 语言语法、命名空间、指令语义和设计草稿。
 - `runtime/`：parser、layout、effect、stage、playback 等运行链路。
-- `architecture/`：系统分层、host/runtime 边界和架构记忆。
+- `architecture/`：系统分层、host/runtime 边界和架构记忆；含 `design-patterns-map.md`（各子系统设计模式与 house style 一致性判据）。
 - `integration/`：Android WebView、VS Code、editor shell 等宿主接入知识。
 - `research/`：外部项目调研和可借鉴方案。
-- `decisions/`：后续新增 ADR，记录“为什么这样决定”。
+- `decisions/`：后续新增 ADR，记录“为什么这样决定”；提案/归档统一使用 `decisions/TEMPLATE.md`。
 
 修改 parser、layout、effect、stage 或 language 语义时，优先检查 `knowledge/runtime/` 与 `knowledge/language/`。
 

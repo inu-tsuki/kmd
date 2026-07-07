@@ -5,8 +5,9 @@
   "license": "Apache-2.0",
   "type": "module",
   "scripts": {
-    "build": "pnpm --dir ../../apps/editor exec vite build --config ../../packages/reader-runtime-web/vite.config.ts",
-    "check": "pnpm --dir ../../apps/editor exec vite build --config ../../packages/reader-runtime-web/vite.config.ts",
+    "typecheck": "pnpm --dir ../../apps/editor exec tsc -p ../../packages/reader-runtime-web/tsconfig.json --noEmit",
+    "build": "pnpm run typecheck && pnpm --dir ../../apps/editor exec vite build --config ../../packages/reader-runtime-web/vite.config.ts",
+    "check": "pnpm run typecheck && pnpm --dir ../../apps/editor exec vite build --config ../../packages/reader-runtime-web/vite.config.ts",
     "preview": "pnpm --dir ../../apps/editor exec vite preview --config ../../packages/reader-runtime-web/vite.config.ts --host 0.0.0.0"
   },
   "exports": {

@@ -40,6 +40,11 @@ class EffectManager {
     return this.registry[name]?.meta;
   }
 
+  // 供 IntelliSense/诊断枚举命令名，避免外部强转访问私有 registry
+  public getRegisteredNames(): string[] {
+    return Object.keys(this.registry);
+  }
+
   // 应用特效的核心方法
   public apply(target: Container, name: string, params: EffectParams = {}, force: boolean = false) {
     if (this.shouldLogEffectDiagnostics()) {

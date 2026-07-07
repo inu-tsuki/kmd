@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Language assets sync check
+        run: pnpm language:check
+
+      - name: Editor type-check + build
+        run: pnpm build
+
+      - name: Parser regression
+        run: pnpm test:parser
+
+      - name: Reader runtime type-check
+        run: pnpm reader:typecheck
+
+      - name: Reader runtime build
+        run: pnpm reader:build
+
+      - name: Community API build
+        run: pnpm community-api:build
+
+      - name: Community API tests
+        run: pnpm community-api:test
+
+      # test:shaders 需要 glslangValidator，暂未纳入；见
+      # docs/planning/architecture-health-check-2026-07.md 处方 5。

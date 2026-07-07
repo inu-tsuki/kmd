@@ -3,6 +3,7 @@
 > Roadmap authority：当前稳定路线已迁入 `docs/planning/roadmap/`。
 > 本文件保留为 AI 协作期任务池、历史执行记录和详细 backlog。
 > 本文件为历史任务池与执行记录，不作为阶段入口；当前阶段权威见 [`docs/planning/roadmap/implementation-roadmap.md`](roadmap/implementation-roadmap.md)。
+> 工程质量 backlog（测试收编、SegmentBuilder 拆解、Compat 清退等）见 [`architecture-health-check-2026-07.md`](architecture-health-check-2026-07.md)。
 
 ## 1. 韵律标准与排版进化 (v1.1.0) — DONE
 
