@@ -3,6 +3,14 @@ import { ref, shallowRef, watch } from 'vue';
 import type { ScriptPlayer } from '../core/player/ScriptPlayer';
 import type { ReaderRuntimePlaybackState } from '../core/runtime';
 import { stageManager } from '../core/stage/StageManager';
+import {
+  extractFrontMatterBlock,
+  serializeFrontMatter,
+  setField,
+  getField,
+  serializeUIValue,
+  UI_FRONTMATTER_KEYS,
+} from '../core/parser/frontmatter';
 import * as fsService from '../services/fileSystem';
 import type { FileNode } from '../services/fileSystem';
 
@@ -21,6 +29,16 @@ export const useEditorStore = defineStore('editor', () => {
   // 锁，防止双向同步死循环
   let isUpdatingFrontMatter = false;
   let isOpeningFile = false;
+  // 文本→UI 同步期间的独立 guard：syncConfigFromText 修改 canvasConfig 是 host 读取
+  // （W4：不得触发 frontmatter 写回），与显式 UI 操作区分开。
+  let isSyncingFromText = false;
+
+  // designWidth/designHeight 的字段级 coercion：autoConvert 对带引号的数字（"1920"）
+  // 只去引号不转数字 → string 漏进 canvasConfig，但 ScriptPlayerConfig / setDesignResolution
+  // 声明并按 number 使用。store 层对这两个 UI 数字字段统一 coerce，保留 core metadata
+  // 共享解析语义（autoConvert 仍按通用规则解析，coercion 在 store 消费侧收口）。
+  const coerceDim = (v: any): number =>
+    typeof v === 'number' ? v : Number(v) || 0;
 
   // --- 文件系统状态 ---
   const projectHandle = shallowRef<FileSystemDirectoryHandle | null>(null)
@@ -61,8 +79,8 @@ export const useEditorStore = defineStore('editor', () => {
     player.value = p;
     p.updateConfig({
       mode: canvasConfig.value.mode,
-      designWidth: canvasConfig.value.width,
-      designHeight: canvasConfig.value.height,
+      designWidth: coerceDim(canvasConfig.value.width),
+      designHeight: coerceDim(canvasConfig.value.height),
       typography: {
         fill: canvasConfig.value.fontColor,
         fontFamily: canvasConfig.value.fontFamily,
@@ -70,62 +88,78 @@ export const useEditorStore = defineStore('editor', () => {
     });
   };
 
-  // 从编辑器文本解析并同步到 UI
+  // 从编辑器文本解析并同步到 UI —— 复用 core parser 行级解析(§3),不再用 store 内第二套正则。
+  // 取经 autoConvert 的解析值,与 core parseMetadata 行为一致。
   const syncConfigFromText = () => {
-    const match = kmdContent.value.match(/^---\n([\s\S]*?)\n---/);
-    if (match && match[1]) {
-      const yaml = match[1];
-      const lines = yaml.split('\n');
-      lines.forEach(line => {
-        const [key, ...valParts] = line.split(':');
-        if (key && valParts.length > 0) {
-          const k = key.trim();
-          // 去除 YAML 值两端的引号（bgColor: "#0a0a1a" → #0a0a1a）
-          let v = valParts.join(':').trim();
-          if ((v.startsWith('"') && v.endsWith('"')) || (v.startsWith("'") && v.endsWith("'"))) {
-            v = v.slice(1, -1);
-          }
-          if (k === 'mode') canvasConfig.value.mode = v;
-          else if (k === 'designWidth') canvasConfig.value.width = parseInt(v);
-          else if (k === 'designHeight') canvasConfig.value.height = parseInt(v);
-          else if (k === 'bgColor') canvasConfig.value.bgColor = v;
-          else if (k === 'fontColor') canvasConfig.value.fontColor = v;
-          else if (k === 'fontFamily') canvasConfig.value.fontFamily = v;
-        }
-      });
-    }
+    const block = extractFrontMatterBlock(kmdContent.value);
+    if (!block) return; // 无 frontmatter:不动 canvasConfig(保留 UI 既有值)
+    const lines = block.lines;
+
+    // 文本→UI 同步是 host 读取，不是显式 UI 操作（W4：不得触发 frontmatter 写回）。
+    // 与 isUpdatingFrontMatter 同模式：设 guard + 延后解锁到下一微任务，
+    // 阻断本次 sync 修改 canvasConfig 触发 canvasConfig watcher → updateFrontMatter 的回写链。
+    isSyncingFromText = true;
+
+    const mode = getField(lines, 'mode');
+    if (mode !== undefined) canvasConfig.value.mode = mode;
+    const designWidth = getField(lines, 'designWidth');
+    if (designWidth !== undefined) canvasConfig.value.width = coerceDim(designWidth);
+    const designHeight = getField(lines, 'designHeight');
+    if (designHeight !== undefined) canvasConfig.value.height = coerceDim(designHeight);
+    const bgColor = getField(lines, 'bgColor');
+    if (bgColor !== undefined) canvasConfig.value.bgColor = bgColor;
+    const fontColor = getField(lines, 'fontColor');
+    if (fontColor !== undefined) canvasConfig.value.fontColor = fontColor;
+    const fontFamily = getField(lines, 'fontFamily');
+    if (fontFamily !== undefined) canvasConfig.value.fontFamily = fontFamily;
+
+    // 解锁延后到下一微任务，与 isUpdatingFrontMatter 同模式。
+    setTimeout(() => {
+      isSyncingFromText = false;
+    }, 0);
   };
 
-  // 从 UI 修改同步回编辑器文本
+  // 从 UI 修改同步回编辑器文本 —— 合并式写回(规范 §5 W1–W4):
+  // 解析现有 frontmatter → 只合并 UI 声明负责的 6 个键 → 序列化;未动行原样回写。
+  // 整块替换是旧 bug,会丢失 title/speed/var:/未知字段/注释。
   const updateFrontMatter = () => {
     isUpdatingFrontMatter = true;
-    const startMarker = "---";
-    const endMarker = "---";
     const content = kmdContent.value;
+    const block = extractFrontMatterBlock(content);
 
-    // 构造新的 YAML 字符串（hex 值含 # 须引号，否则 # 被视为 YAML 注释）
-    const newYaml = [
-      `mode: ${canvasConfig.value.mode}`,
-      `designWidth: ${canvasConfig.value.width}`,
-      `designHeight: ${canvasConfig.value.height}`,
-      `bgColor: "${canvasConfig.value.bgColor}"`,
-      `fontColor: "${canvasConfig.value.fontColor}"`,
-      `fontFamily: ${canvasConfig.value.fontFamily}`,
-    ].join('\n');
+    // UI 声明负责的 6 个键 → canvasConfig 字段
+    const uiValues: Record<string, any> = {
+      mode: canvasConfig.value.mode,
+      designWidth: coerceDim(canvasConfig.value.width),
+      designHeight: coerceDim(canvasConfig.value.height),
+      bgColor: canvasConfig.value.bgColor,
+      fontColor: canvasConfig.value.fontColor,
+      fontFamily: canvasConfig.value.fontFamily,
+    };
 
-    if (content.startsWith(startMarker)) {
-      const secondMarkerIdx = content.indexOf(endMarker, 3);
-      if (secondMarkerIdx !== -1) {
-        // 替换已有头文件
-        kmdContent.value = `${startMarker}\n${newYaml}\n${content.substring(secondMarkerIdx)}`;
+    if (block) {
+      // 合并:逐个 setField(W2:只写声明的字段)。仅当值变化才改行,进一步保 W3。
+      let lines = block.lines;
+      for (const key of UI_FRONTMATTER_KEYS) {
+        const current = getField(lines, key);
+        if (current !== uiValues[key]) {
+          lines = setField(lines, key, uiValues[key]);
+        }
       }
+      const fmText = serializeFrontMatter(lines);
+      // 重构:---\n<fm>\n--- + (body 非空则 \n+body)。body 为空字符串时无尾随换行。
+      kmdContent.value = block.body.length > 0
+        ? `---\n${fmText}\n---\n${block.body}`
+        : `---\n${fmText}\n---`;
     } else {
-      // 插入新头文件
-      kmdContent.value = `${startMarker}\n${newYaml}\n${endMarker}\n\n${content}`;
+      // 无 frontmatter:插入新块(§5 回归项 b)。沿用现状 6 字段 + 空行分隔正文。
+      const fmText = UI_FRONTMATTER_KEYS
+        .map(key => `${key}: ${serializeUIValue(key, uiValues[key])}`)
+        .join('\n');
+      kmdContent.value = `---\n${fmText}\n---\n\n${content}`;
     }
 
-    // 使用 nextTick 思想，但在 store 中我们手动在同步逻辑结束后解锁
-    // 由于 ref 修改是同步的，这里可以直接解锁，或者为了保险包裹在异步中
+    // 解锁延后到下一微任务,避免本次同步写触发的 kmdContent watcher 再跑 syncConfigFromText 回环。
     setTimeout(() => {
       isUpdatingFrontMatter = false;
     }, 0);
@@ -284,14 +318,16 @@ export const useEditorStore = defineStore('editor', () => {
   const layoutAuditLog = ref<any[]>([]);
 
   // 核心修复：全量深度监听配置变化并同步到编辑器和引擎
+  // 双锁：isUpdatingFrontMatter 防写回→sync 回环；isSyncingFromText 防文本→UI 同步→写回
+  // （W4：文本→UI 同步是 host 读取，不是显式 UI 操作，不得触发 frontmatter 写回）。
   watch(canvasConfig, () => {
-    if (isUpdatingFrontMatter) return;
+    if (isUpdatingFrontMatter || isSyncingFromText) return;
 
     if (player.value) {
       player.value.updateConfig({
         mode: canvasConfig.value.mode,
-        designWidth: canvasConfig.value.width,
-        designHeight: canvasConfig.value.height,
+        designWidth: coerceDim(canvasConfig.value.width),
+        designHeight: coerceDim(canvasConfig.value.height),
         typography: {
           fill: canvasConfig.value.fontColor,
           fontFamily: canvasConfig.value.fontFamily,
