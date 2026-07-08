@@ -328,14 +328,21 @@ export class SegmentBuilder {
 
           for (const cfg of blockInstant) {
             const resolved = EffectProcessor.resolveParams(cfg.params);
+            // B3: :bg scope 的 instant filter 目标是背景精灵而非 paragraphText。
+            // DIP filter fn 零改动——target 是任意 Container 即可。
+            const bgTarget = cfg.level === "bg" ? stageManager.getBackgroundSprite() : null;
+            const instantTarget = bgTarget ?? paragraphText;
+            if (bgTarget === null && cfg.level === "bg") {
+              console.warn(`[SegmentBuilder] :bg effect "${cfg.name}" skipped — no background sprite (bg(src) not loaded)`);
+              continue;
+            }
             allInstantEffects.push({
-              target: paragraphText,
+              target: instantTarget,
               effectName: cfg.name,
               params: resolved,
               charIndex: 0,
               timePosition: segmentCursor,
             });
-            const instantTarget = paragraphText;
             const instantName = cfg.name;
             const instantParams = { ...resolved };
             // R12：预查 meta——void result 的 Graphics 特效（bg/border）push graphicsLayer cleanup。
@@ -370,17 +377,23 @@ export class SegmentBuilder {
           // 分支；filter + ticker 经 BehaviorFilterResult 解包记录，与 registerBehaviors 一致）。
           for (const cfg of blockBehavior) {
             const resolved = EffectProcessor.resolveParams(cfg.params);
+            // B3: :bg scope 的 behavior filter 目标是背景精灵而非 paragraphText。
+            const bgTarget = cfg.level === "bg" ? stageManager.getBackgroundSprite() : null;
+            if (bgTarget === null && cfg.level === "bg") {
+              console.warn(`[SegmentBuilder] :bg effect "${cfg.name}" skipped — no background sprite (bg(src) not loaded)`);
+              continue;
+            }
+            const behaviorTarget = bgTarget ?? paragraphText;
+            const behaviorChar = behaviorTarget as any;  // container-level: no removeModifier, clearBehaviors 守卫跳过
             const behaviorRecord: BehaviorRecord = {
-              target: paragraphText,
-              char: paragraphText,
+              target: behaviorTarget,
+              char: behaviorChar,
               effectName: cfg.name,
               params: resolved,
               charIndex: 0,
               timePosition: segmentCursor,
             };
             allBehaviors.push(behaviorRecord);
-            const behaviorChar = paragraphText;
-            const behaviorTarget = paragraphText;
             const behaviorName = cfg.name;
             const behaviorParams = { ...resolved };
             // R22/SA-37：exact-boundary guard——与 instant 同源。

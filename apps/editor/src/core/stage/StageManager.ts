@@ -1,4 +1,4 @@
-import { Container, Graphics } from "pixi.js";
+import { Container, Graphics, Sprite } from "pixi.js";
 import { auditBus } from "../diagnostics/AuditBus";
 import { layout } from "../layout/LayoutEngine";
 import { RuntimeValueResolver } from "../runtime/RuntimeValueResolver";
@@ -30,6 +30,7 @@ class StageManager {
   private presentation = new PresentationManager();
   private hostSession: StageHostSession;
   private _bgColor: string | number = 0x000000;
+  private _bgSprite: Sprite | null = null;
   private auditPort: StageAuditPort = new UnifiedStageAuditPort();
 
   constructor() {
@@ -78,6 +79,7 @@ class StageManager {
       { x: 0, y: 0, zoom: 1, rotation: 0 },
     );
     this.contentLayer.removeChildren();
+    this.setBackgroundSprite(null);
     this.hostSession.dispose();
   }
 
@@ -220,6 +222,23 @@ class StageManager {
   public setBackgroundColor(color: string | number) {
     this._bgColor = color;
     this.hostSession.syncBackgroundColor(color);
+  }
+
+  // B2/B3: 背景图精灵管理。bg(src) 加载图片 cover-fit 后通过此方法挂到 backgroundLayer；
+  // :bg filter 路由通过 getBackgroundSprite() 获取当前精灵作为 DIP filter target。
+  public getBackgroundSprite(): Sprite | null {
+    return this._bgSprite;
+  }
+
+  public setBackgroundSprite(sprite: Sprite | null) {
+    if (this._bgSprite) {
+      this.backgroundLayer.removeChild(this._bgSprite);
+      this._bgSprite.destroy({ children: true, texture: true });
+    }
+    this._bgSprite = sprite;
+    if (sprite) {
+      this.backgroundLayer.addChild(sprite);
+    }
   }
 
   public setMode(mode: StageMode) {

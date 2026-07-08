@@ -222,17 +222,17 @@ export function applyBlockOptionCommands(
         return;
       }
 
-      if (command.level === "block") {
+      if (command.level === "block" || command.level === "bg") {
         if (!info.containerCompatible) {
           diagnostics.push({
             severity: "warning",
-            message: `Command "${command.name}" is char-only but was forced to :block`,
+            message: `Command "${command.name}" is char-only but was forced to :${command.level}`,
             line: command.line ?? entry.line,
             range: command.range,
             code: "container-incompatible",
           });
         }
-        paragraphEffects.push({ ...effect, level: "block" });
+        paragraphEffects.push({ ...effect, level: command.level });
         return;
       }
 

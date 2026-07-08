@@ -5,7 +5,7 @@ import type {
 } from "../types";
 
 export type EffectParams = Record<string, any>;
-export type CommandLevel = "char" | "group" | "block";
+export type CommandLevel = "char" | "group" | "block" | "bg";
 export type CommandPrefix = "f" | "dot" | "bare";
 export type CommandFamily = "effect" | "style" | "layout" | "stage" | "unknown";
 export type CommandScope = "token" | "line" | "paragraph";

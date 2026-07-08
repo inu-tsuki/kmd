@@ -1,7 +1,9 @@
 import { stageRuntime } from "./StageRuntimeInstance";
+import { stageManager } from "./StageManager";
 import type { StageEffectFunction } from "./StageRuntime";
 import type { StageCommandMetadataMap } from "./types";
 import { RuntimeValueResolver } from "../runtime/RuntimeValueResolver";
+import { Assets, Sprite, Texture } from "pixi.js";
 import gsap from "gsap";
 
 export const stageCommandMetadata: StageCommandMetadataMap = {
@@ -67,6 +69,12 @@ export const stageCommandMetadata: StageCommandMetadataMap = {
     kind: "playback",
     propertyKey: "playback.pause",
     blockingDefault: true,
+    capturesTween: false,
+  },
+  "bg": {
+    name: "bg",
+    kind: "background",
+    propertyKey: "background.set",
     capturesTween: false,
   },
 };
@@ -424,5 +432,62 @@ export const stagePresets: Record<string, StageEffectFunction> = {
     return new Promise<void>(resolve => {
       gsap.delayedCall(duration, resolve);
     });
+  },
+
+  /**
+   * 背景设置 (DIP-FX M2 Task B) —— bg(color) / bg(src) 双格式。
+   * B1: bg(color) → setBackgroundColor 别名（最便宜）。
+   * B2: bg(src="path/to/image.jpg") → Assets.load → cover-fit Sprite → backgroundLayer。
+   *     editor-dev 级：从 public/ 直接加载，无 manifest/security gate（spec §7.3 / asset-import-mechanism-draft）。
+   *     fire-and-forget async：apply 返回 null，图片异步加载后替换。
+   * B3: :bg filter 路由通过 stageManager.getBackgroundSprite() 获取精灵作为 DIP filter target。
+   */
+  "bg": (p: any) => {
+    const color = p.color ?? p[0];
+    const src = p.src ?? p.source ?? p[1];
+
+    // B1: 纯色背景
+    if (color !== undefined && src === undefined) {
+      stageManager.setBackgroundColor(color);
+      return;
+    }
+
+    // B2: 图片背景（editor-dev 级，fire-and-forget）
+    if (src !== undefined) {
+      // 构建 URL：Vite public/ 映射到 root，assetBaseUrl 是 BASE_URL
+      const baseUrl = (import.meta as any).env?.BASE_URL ?? "/";
+      const url = src.startsWith("http") || src.startsWith("/") || src.startsWith("blob:")
+        ? src
+        : baseUrl + src.replace(/^\.\//, "");
+
+      // fire-and-forget：不阻塞 timeline，加载完成后替换
+      Assets.load(url)
+        .then((texture: Texture) => {
+          const sprite = new Sprite(texture);
+          // cover-fit 到 designWidth × designHeight
+          const dw = stageManager.designWidth;
+          const dh = stageManager.designHeight;
+          const tw = texture.width;
+          const th = texture.height;
+          const scale = Math.max(dw / tw, dh / th);
+          sprite.scale.set(scale);
+          sprite.anchor.set(0.5);
+          sprite.x = dw / 2;
+          sprite.y = dh / 2;
+          stageManager.setBackgroundSprite(sprite);
+        })
+        .catch((err: any) => {
+          console.error("[bg] failed to load background image:", url, err);
+        });
+
+      // 若同时给了 color，先设色（图片加载前可见）
+      if (color !== undefined) {
+        stageManager.setBackgroundColor(color);
+      }
+      return;
+    }
+
+    // 无参：默认黑色
+    stageManager.setBackgroundColor(0x000000);
   },
 };

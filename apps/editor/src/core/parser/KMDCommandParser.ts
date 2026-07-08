@@ -67,7 +67,7 @@ export class KMDCommandParser {
     parts.forEach(p => {
         // 还原占位符
         const cleanPart = p.replace(/NAMESPACE_CAM_DOT_/g, "cam.");
-        const regex = /([a-zA-Z0-9_\-.]+)(?::(char|group|block))?(?:\(([^)]*)\))?(!)?/;
+        const regex = /([a-zA-Z0-9_\-.]+)(?::(char|group|block|bg))?(?:\(([^)]*)\))?(!)?/;
         const m = cleanPart.match(regex);
         if (m) {
             results.push({

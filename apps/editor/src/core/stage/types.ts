@@ -27,7 +27,8 @@ export type StageCommandKind =
   | "camera"
   | "offset"
   | "modifier"
-  | "playback";
+  | "playback"
+  | "background";
 
 export type StagePropertyKey =
   | "scene.lifecycle"
@@ -36,7 +37,8 @@ export type StagePropertyKey =
   | "camera.rotation"
   | "camera.reset"
   | "offset.xy"
-  | "playback.pause";
+  | "playback.pause"
+  | "background.set";
 
 export interface StageCommandMetadata {
   name: string;

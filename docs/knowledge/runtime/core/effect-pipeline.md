@@ -284,6 +284,19 @@ export const xxx = defineEffect(_xxx, { type: "filter", track: "instant"|"behavi
 | `bloom` | instant | both | filter_bloom | ceil(radius*2) | 多通道辉光 extract→BlurFilter→composite + 曝光混合（M1，推荐 :block） |
 | `halftone` | instant | both | filter_halftone | ceil(scale) | 网格网点 dot/line + invert（M1，推荐 :block） |
 
+### 背景命令 bg（DIP-FX M2 Task B）
+
+`bg` 是 **stage 命令**（注册在 `stagePresets.ts`，非 `effectManager`），与 `visual.ts` 的元素级 `bg` 样式（Graphics 画圆角矩形，`mutexGroup:"bg"`）是不同概念：
+
+| 用法 | 路径 | 效果 |
+|---|---|---|
+| `bg(color="#1a0a2e")` | B1 → `stageManager.setBackgroundColor` | 设置画布纯色背景（最便宜） |
+| `bg(src="tests/assets/photo.jpg")` | B2 → `Assets.load` → cover-fit Sprite → `backgroundLayer` | 加载图片作为背景（editor-dev 级，从 `public/` 直接加载，fire-and-forget async） |
+| `bg(color="#0f3460", src="...")` | B1+B2 组合 | 先设色（图片加载前可见），图片加载后替换 |
+| `[.duotone:bg]` / `[.emboss:bg]` | B3 → `:bg` scope 路由 | DIP 滤镜作用于背景精灵（`stageManager.getBackgroundSprite()`），fn 零改动 |
+
+**`:bg` scope 路由**：`CommandLevel` 加 `"bg"`，parser regex 识别 `:bg` 后缀。`:bg` 与 `:block` 同构（都是容器级 block-option scope），在 `SegmentBuilder` 块拆分中 target 解析为 `stageManager.getBackgroundSprite()` 而非 `paragraphText`。DIP filter `fn`/`meta` 完全复用——`fn` 只做 `target.filters = [...]`，target 是任意 Container 即可。若未加载 `bg(src)`，`:bg` effect 跳过并 warn。
+
 ## 已知边界
 
 - **`targetType: "both"` 的特效** (如 shake)：在 Container 上也能工作（修改 Container.position），

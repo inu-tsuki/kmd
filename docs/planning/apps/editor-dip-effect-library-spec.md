@@ -1,7 +1,7 @@
 # Editor DIP Effect Library — Implementation Spec
 
 > 状态：Active planning（实现规格 / 交接稿）
-> 最近更新：2026-06-28（技术债清理二：结尾重播不清理 entranceFilters + clearScreen 置空 segment + 容器级 blurIn timeline 统一 + stage modifier 清理，见 §0.4 第 9/10/13 点修正）
+> 最近更新：2026-07-09（M2 Task B 落地：bg(color) + bg(src) + :bg filter 路由，见 §0.5）
 > 代号：DIP-FX
 > 上游：`docs/planning/apps/editor-dip-effect-library.md`（清单与设计纲领）
 
@@ -72,6 +72,28 @@ M1 以 instant-track 为主；M2 五个滤镜里 **displace/dissolve/scanline/no
 19. **自审计四：stage modifier 命令级生命周期建模**：(1) **duration 按命令语义**——原三路径用通用 `params[1]` 提取 duration：`cam.shake(10)` 的 `params[1]` undefined → persistent（错，应有 0.5s 默认）；`cam.drift(5, 0.001)` 的 `params[1]` = 0.001 → 0.001s 有限效果（错，drift 是 persistent）。新增 `getStageModifierDuration(command, params)`：`cam.shake` → `params.duration ?? params.d ?? params[1] ?? 0.5`；`cam.drift` 及其他 → `undefined`（persistent）。三路径共用。(2) **clear boundary**——`cam.reset` 记为 `isClearBoundary`，`replayStageModifiers` 找 `currentTime` 前最后一个 boundary，之前的 modifier 不重放（seek 到 reset 后不恢复 drift）。(3) **cam.shake 中间强度**——seek 到 shake 中途时用 `power2.out` 衰减公式 `strength * (1 - elapsed/duration)^2` 计算剩余强度，用此值作为 strength + `duration:0` apply（无衰减，seek 是静态的），不创建新衰减 tween。仓库样例 `09-stage-commands.kmd:22` 的 `cam.shake(10)` 由此正确（strength=10, duration=0.5）。**R2 review 修正（SA-14/SA-15）**：(2) 初版只在 global 路径 `applyStageConfigs` 特殊处理 cam.reset，inline（`文字 @ cam.reset!`）/token-chain（effect chain 里的 stage）的 cam.reset 落非 modifier 分支只 captureTween 不写 record，且 SegmentBuilder 聚合漏拷 `isClearBoundary`。引入单一真相源 `buildStageModifierRecord(command, params)`（`stagePresets.ts`），三路径共用，cam.reset boundary 在任一写法下一致记录；聚合改 spread 全字段。(3) `duration:0` 被 GSAP 当作 `set()` → `onComplete` 同步触发 `removeModifier` → 静态重放立即自删（no-op）。改用 `static:true` 显式参数：cam.shake 检测到 `static:true` 只 `addModifier`、不创建衰减 tween、不注册 `onComplete`，modifier 以恒定强度保留至下次 `clearModifiers`。**不重载 `duration:0`**——那会污染用户可写参数 `cam.shake(…,0)` 的语义。
 
 完整实现细节见 `docs/knowledge/runtime/core/effect-pipeline.md` 的 behavior track filter cleanup 说明段；**生命周期不变量合约**见 `docs/knowledge/runtime/core/lifecycle-invariants.md`。
+
+### 0.5 M2 Task B 落地（背景图基础设施，2026-07-09）
+
+Task B 三步全部落地，解锁色调类滤镜在真实连续色调照片上的教科书级验证（§0.3 第 2 点化解）：
+
+1. **B1 `bg(color)`**：stage 命令 `bg` 注册在 `stagePresets.ts`，`bg(color=...)` 委托 `stageManager.setBackgroundColor`。与 `visual.ts` 的元素级 `bg` 样式（Graphics 画圆角矩形）是不同概念——stage bg 设画布底色，element bg 画元素背景。
+2. **B2 `bg(src)`**（editor-dev 级）：`Assets.load(url)` → cover-fit Sprite（`designWidth × designHeight`）→ `stageManager.setBackgroundSprite()` 挂到 `backgroundLayer`。fire-and-forget async（apply 返回 null）。旧 sprite 自动销毁。无 manifest/security gate（reader-hardened 级是独立 epic，见 `asset-import-mechanism-draft.md`）。
+3. **B3 `:bg` filter 路由**：`CommandLevel` 加 `"bg"`，parser regex 识别 `:bg` 后缀。`:bg` 与 `:block` 同构（容器级 block-option scope），`SegmentBuilder` 块拆分中 target 解析为 `stageManager.getBackgroundSprite()` 而非 `paragraphText`。DIP filter `fn`/`meta` 零改动——`fn` 只做 `target.filters = [...]`，target 是任意 Container 即可。未加载 `bg(src)` 时 `:bg` effect 跳过并 warn。
+
+**路由改动清单**（`:bg` 加入所有 `"block" || "group"` 比较分支）：
+- `parser/types.ts`: `CommandLevel` 加 `"bg"`
+- `parser/KMDCommandParser.ts`: regex alternation 加 `bg`
+- `parser/ScopeRouter.ts`: `applyBlockOptionCommands` `:bg` 走 `paragraphEffects`
+- `effects/EffectProcessor.ts`: `processEffectResult` / `resolveTiming` / `classifyStyleWrite` / `inferChainHint` 四处加 `"bg"`
+- `render/text/TextPlayer.ts`: 容器级检测加 `"bg"`
+- `render/text/TextTimelineCursor.ts`: advance 加 `"bg"`
+- `execution/chainPlanning.ts`: `inferChainMode` 加 `"bg"`
+- `player/SegmentBuilder.ts`: blockInstant / blockBehavior target 解析按 `cfg.level === "bg"` 走 `stageManager.getBackgroundSprite()`
+- `stage/StageManager.ts`: `getBackgroundSprite()` / `setBackgroundSprite()` + disposeSession 清理
+- `stage/types.ts`: `StageCommandKind` 加 `"background"`，`StagePropertyKey` 加 `"background.set"`
+
+门禁：`pnpm build` + `pnpm test:parser` + `pnpm test:playback` (260) + `pnpm test:invariants` ✅。示例：`public/tests/fx-bg.kmd` + `public/tests/assets/sample-bg.jpg`。
 
 ## 1. 实现真相核对（动手前必读，含两处对既有约定的纠正）
 

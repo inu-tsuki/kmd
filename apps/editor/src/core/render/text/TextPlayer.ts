@@ -549,7 +549,7 @@ export class TextPlayer {
         if (groupHoldEncountered) return true;
         if (isStyle) return false;
         if (isCharLevel) return hasGroupHold;
-        return (config.level === "group" || config.level === "block") ||
+        return (config.level === "group" || config.level === "block" || config.level === "bg") ||
           (meta != null && meta.targetType === "group") ||
           (!config.level && meta != null && meta.type === "action");
       })();
