@@ -1,6 +1,6 @@
-import { KMDCommandParser } from "./KMDCommandParser";
 import { KmdAstParser } from "./AstParser";
 import { buildParagraphData } from "./lowering";
+import { parseFrontMatter, linesToMetadata } from "./frontmatter";
 import {
   getCommandSemanticInfo,
   runtimeCommandRegistryView,
@@ -109,33 +109,11 @@ export class KMDParser {
     }
   }
 
+  // 行级解析逻辑提炼到 ./frontmatter.ts,与 editor store 共享同一套语义(§3 现状即规范)。
+  // 这里仅把行模型展平为 metadata 对象,保持既有 parse 输出形状零变化。
   private parseMetadata(metaStr: string, metadata: any) {
-    let inVar = false;
-    metaStr.split("\n").forEach((line) => {
-      const trimmed = line.trim();
-      if (!trimmed || trimmed.startsWith("//")) return;
-      if (trimmed === "var:") {
-        inVar = true;
-        return;
-      }
-
-      const colonIdx = line.indexOf(":");
-      if (colonIdx === -1) return;
-
-      const key = line.substring(0, colonIdx).trim();
-      const val = line.substring(colonIdx + 1).trim();
-      const parsed = KMDCommandParser.autoConvert(val);
-      const indentMatch = line.match(/^\s*/);
-      const indent = indentMatch ? indentMatch[0].length : 0;
-
-      if (inVar && indent >= 2) {
-        metadata.variables ??= {};
-        metadata.variables[key] = parsed;
-      } else {
-        inVar = false;
-        metadata[key] = parsed;
-      }
-    });
+    const lines = parseFrontMatter(metaStr);
+    linesToMetadata(lines, metadata);
   }
 
   /**

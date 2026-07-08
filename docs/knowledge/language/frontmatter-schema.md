@@ -66,14 +66,14 @@ runtime presentation mode 的权威枚举是 `stage / scroll / page`（`ReaderRu
 - **W3** 未被修改的字段不得被重新序列化成不同写法（引号风格、缩进、大小写）。
 - **W4** T 层字段被 host settings 覆盖时，覆盖值不回写进源文件。
 
-**违规现状（本规范落地的第一个待修项）**：`editorStore.updateFrontMatter`（`apps/editor/src/store/editorStore.ts:100-132`）用固定 6 字段整体替换 frontmatter——作者在 Inspector 改一次 mode/尺寸/字体，就会丢失 `title`、`speed`、`var:` 块及一切未知字段。这是三端 drift 中唯一**主动破坏用户源文件**的问题，优先级最高。修复方向：改为"解析现有 frontmatter → 合并已变更键 → 按 W1/W3 序列化"，实现应与 core parser 共享解析逻辑，避免 store 里的第二套正则解析（`editorStore.ts:74-97`）继续漂移。
+**违规现状（已修复）**：`editorStore.updateFrontMatter` 原用固定 6 字段整体替换 frontmatter——作者在 Inspector 改一次 mode/尺寸/字体，就会丢失 `title`、`speed`、`var:` 块及一切未知字段。已修复：改为"解析现有 frontmatter → 合并已变更键 → 按 W1/W3 序列化"（合并式写回，`editorStore.ts` + `core/parser/frontmatter.ts` 共享 core parser 解析逻辑，淘汰 store 内第二套正则）。另修复打开文件间接触发写回的链路（`syncConfigFromText` 修改 `canvasConfig` 触发 `canvasConfig` watcher → `updateFrontMatter`，W4 违规）——加 `isSyncingFromText` guard 阻断文本→UI 同步→写回；`designWidth`/`designHeight` 加字段级 number coercion（autoConvert 对带引号数字只去引号不转数字 → string 漏进 `canvasConfig`）。
 
 ## 6. 三端对齐清单
 
 | 端 | 最小修正 |
 | --- | --- |
 | editor core | `KMDMetadata` 补声明 `bgColor` / `fontColor` / `fontFamily` / `kmdVersion`；核实 `fontSize` / `lineHeight`（接线或移除） |
-| editor UI | 写回改合并式（§5 W1–W3）；淘汰 store 内独立的 frontmatter 正则解析 |
+| editor UI | 写回改合并式（§5 W1–W3）**已落地**；store 内独立 frontmatter 正则解析**已淘汰**（改用 `core/parser/frontmatter.ts` 共享解析）；打开文件→写回 W4 违规**已修复**（`isSyncingFromText` guard）；`designWidth`/`designHeight` number coercion **已修复** |
 | Android reader | `paged → page` 归一化保留；`interactive` 按 Work 层标签处理（现状已是，补诊断） |
 | community-api | `PresentationMode` 与 runtime 枚举解耦：平台层可保有 `interactive` 形态标签，但校验/生成源文件 frontmatter 时按本规范枚举 |
 
