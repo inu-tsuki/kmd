@@ -2634,6 +2634,136 @@ async function testBlockPostHoldStyleE2E() {
   }
 }
 
+/**
+ * [20.5] M2 氛围集收尾滤镜 + underwater Filter[] 组合 seek 幂等端到端。
+ *
+ * §15 验证了 blur（单 filter behavior-track）的 seek 幂等，但从未覆盖：
+ * (a) displace（新 behavior-track filter）的 build→seek→cleanup；
+ * (b) warp 容器级（本 PR 从 char-only 扩展到 both）的 :block 路由；
+ * (c) underwater —— 首个返回 filters:Filter[] 的组合预设。clearBehaviors 的 Array.isArray
+ *     分支（line 315）此前只有代码阅读覆盖，无真实 preset 触发过。本节用真实
+ *     parser→SegmentBuilder→seek 验证：build 后 filter 在 paragraphText（KineticText）.filters，
+ *     seek 来回不堆积，cleanup 条数幂等。underwater 需断言 filters 恰好 3 个（displace+duotone+blur）。
+ *
+ * block 级 behavior 的 target 是 paragraphText（= activeTexts[0]，KineticText，Container 子类，
+ * 有 .filters）。char 级 target 是 KineticChar（有 .filters + addModifier）。
+ */
+async function testM2AtmosphereDisplaceUnderwaterE2E() {
+  console.log("\n[20.5] M2 displace + underwater(Filter[]) + warp 容器级 seek 幂等");
+
+  async function build(source: string) {
+    const result = parser.parse(source);
+    const playbackState = {
+      isAutoPlaying: false,
+      activeBehaviorCleanups: [] as any[],
+      activeInstantCleanups: [] as any[],
+    } as any;
+    const { segment, activeTexts } = await SegmentBuilder.build({
+      container: new Container(),
+      metadata: { variables: {} } as any,
+      paragraphs: result.paragraphs,
+      rawParagraphs: result.rawParagraphs,
+      currentMode: "stage",
+      playbackState,
+    });
+    // block 级 target = paragraphText = activeTexts[0]（KineticText）。
+    // char 级 target = activeTexts[0]._displayAssembly.chars 的首个非空 char。
+    const kt = activeTexts[0];
+    const chars = kt._displayAssembly.chars;
+    const char = chars.find((c: any) => c.text.trim()) ?? chars[0];
+    return { segment, kt, char, playbackState };
+  }
+
+  // (1) [.displace:block] —— 新 behavior-track filter，容器级 ticker 驱动。
+  //      seek 后 kt.filters 有 1 个 DisplaceFilter；多次 seek 来回幂等不堆积。
+  {
+    const { segment, kt, playbackState } = await build("[.displace:block]\nHello");
+    PlaybackController.seekToTime(segment, 1.0, playbackState);
+    const filters = (kt as any).filters;
+    assert(
+      Array.isArray(filters) && filters.length === 1 && filters[0]?.constructor?.name === "DisplaceFilter",
+      `M2 displace seek 1.0 后 kt.filters 有 1 个 DisplaceFilter（实际 ${filters?.length} ${filters?.[0]?.constructor?.name}）`,
+    );
+    const cleanupCount = playbackState.activeBehaviorCleanups.length;
+    PlaybackController.seekToTime(segment, 0.5, playbackState);
+    PlaybackController.seekToTime(segment, 1.5, playbackState);
+    assert(
+      (kt as any).filters?.length === 1,
+      `M2 displace 多次 seek 来回后 filters 仍 1 个（幂等不堆积）（实际 ${(kt as any).filters?.length}）`,
+    );
+    assert(
+      playbackState.activeBehaviorCleanups.length === cleanupCount,
+      `M2 displace 多次 seek 后 cleanup 条数不变（${cleanupCount}，幂等）（实际 ${playbackState.activeBehaviorCleanups.length}）`,
+    );
+  }
+
+  // (2) [.warp:block] —— warp 从 char-only 扩展到容器级后的 :block 路由。
+  //      此前 char-only guard 会 warn no-op，kt.filters 无 WarpFilter。扩展后应有 1 个。
+  {
+    const { segment, kt, playbackState } = await build("[.warp:block]\nHello");
+    PlaybackController.seekToTime(segment, 1.0, playbackState);
+    const filters = (kt as any).filters;
+    assert(
+      Array.isArray(filters) && filters.length === 1 && filters[0]?.constructor?.name === "WarpFilter",
+      `M2 warp:block seek 1.0 后 kt.filters 有 1 个 WarpFilter（扩展后容器级生效，实际 ${filters?.length} ${filters?.[0]?.constructor?.name}）`,
+    );
+    PlaybackController.seekToTime(segment, 0.5, playbackState);
+    PlaybackController.seekToTime(segment, 1.5, playbackState);
+    assert(
+      (kt as any).filters?.length === 1,
+      `M2 warp:block 多次 seek 来回后 filters 仍 1 个（幂等不堆积）（实际 ${(kt as any).filters?.length}）`,
+    );
+  }
+
+  // (3) [.underwater:block] —— 首个 filters:Filter[] 组合预设（displace+duotone+blur）。
+  //      seek 后 kt.filters 恰好 3 个；多次 seek 来回幂等（每次 clearBehaviors 移除全部 3 个再重 apply 3 个）。
+  //      验证 clearBehaviors 的 Array.isArray 分支（line 315）经真实 preset 触发，不堆积。
+  {
+    const { segment, kt, playbackState } = await build("[.underwater:block]\nHello");
+    PlaybackController.seekToTime(segment, 1.0, playbackState);
+    const filters = (kt as any).filters;
+    assert(
+      Array.isArray(filters) && filters.length === 3,
+      `M2 underwater seek 1.0 后 kt.filters 恰好 3 个（displace+duotone+blur）（实际 ${filters?.length}）`,
+    );
+    const names = (filters as any[]).map((f) => f?.constructor?.name).sort();
+    assert(
+      names.includes("DisplaceFilter") && names.includes("DuotoneFilter") && names.includes("BlurFilter"),
+      `M2 underwater 三 filter 类型正确（实际 ${JSON.stringify(names)}）`,
+    );
+    const cleanupCount = playbackState.activeBehaviorCleanups.length;
+    PlaybackController.seekToTime(segment, 0.5, playbackState);
+    PlaybackController.seekToTime(segment, 1.5, playbackState);
+    assert(
+      (kt as any).filters?.length === 3,
+      `M2 underwater 多次 seek 来回后 filters 仍 3 个（Filter[] 幂等不堆积）（实际 ${(kt as any).filters?.length}）`,
+    );
+    assert(
+      playbackState.activeBehaviorCleanups.length === cleanupCount,
+      `M2 underwater 多次 seek 后 cleanup 条数不变（${cleanupCount}，幂等）（实际 ${playbackState.activeBehaviorCleanups.length}）`,
+    );
+  }
+
+  // (4) {Hello} @ f.underwater —— char 级水下组合（addModifier 驱动，{ filters: [...] } 无 tickerFn）。
+  //      char 级返回 { filters: [...] }（数组 + 无 ticker），unpackBehaviorResult 经 'filters' in result
+  //      分支捕获数组供 clearBehaviors 清理。验证 char 级 Filter[] + addModifier 组合 cleanup 正确。
+  {
+    const { segment, char, playbackState } = await build("{Hello} @ f.underwater");
+    PlaybackController.seekToTime(segment, 1.0, playbackState);
+    const filters = (char as any).filters;
+    assert(
+      Array.isArray(filters) && filters.length === 3,
+      `M2 underwater char 级 seek 1.0 后 char.filters 恰好 3 个（实际 ${filters?.length}）`,
+    );
+    PlaybackController.seekToTime(segment, 0.5, playbackState);
+    PlaybackController.seekToTime(segment, 1.5, playbackState);
+    assert(
+      (char as any).filters?.length === 3,
+      `M2 underwater char 级多次 seek 来回后 filters 仍 3 个（幂等不堆积）（实际 ${(char as any).filters?.length}）`,
+    );
+  }
+}
+
 // ─── 主入口 ──────────────────────────────────────────────────────────────
 
 // ─── R22 / SA-37：exact-boundary 双 apply 抑制 ───────────────────────────
@@ -3008,6 +3138,7 @@ async function main() {
   await testMultiTokenHoldChainE2E();
   await testMultiParagraphE2E();
   await testBlockPostHoldStyleE2E();
+  await testM2AtmosphereDisplaceUnderwaterE2E();
   // R22 / SA-37：exact-boundary 双 apply 抑制。
   testR22LastSeekTimeLifecycle();
   testR22GsapPremise();

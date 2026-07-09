@@ -18,6 +18,7 @@ import { VignetteFilter } from "../../filters/VignetteFilter";
 import { ScanlineFilter } from "../../filters/ScanlineFilter";
 import { NoiseFilter } from "../../filters/NoiseFilter";
 import { DissolveFilter } from "../../filters/DissolveFilter";
+import { DisplaceFilter } from "../../filters/DisplaceFilter";
 import { hexToVec3 } from "../../filters/colorUtils";
 import type { EffectFunction, EffectMetadata } from "../types";
 
@@ -64,13 +65,10 @@ export const rgbShift = defineEffect(_rgbShift, {
   mutexGroup: "filter_rgb",
 });
 
-// 扭曲 (Warp) —— behavior-track filter，char 专有（addModifier 驱动 uTime）。
-// return filter 供 seek cleanup 移除（modifier 靠 modName 经 removeModifier 清理）。
+// 扭曲 (Warp) —— behavior-track filter。char + 容器级皆可。
+// char 级：addModifier 驱动 uTime + return filter（modifier 靠 modName 经 removeModifier 清理）。
+// 容器级（:group/:block/:bg）：gsap.ticker.add 驱动 + return BehaviorFilterResult。
 const _warp: EffectFunction = (target, params = {}) => {
-  if (!(target instanceof KineticChar)) {
-    console.warn("[Effect] warp effect requires KineticChar");
-    return;
-  }
   const freq = params.freq || 10;
   const amp = params.amp || 0.05;
   const speed = params.speed || 0.01;
@@ -83,16 +81,24 @@ const _warp: EffectFunction = (target, params = {}) => {
   target.filters = [...(target.filters || []), filter];
 
   // modifier id = effectName（见 rgbShift 注释）。
-  target.addModifier("warp", 'behavior', (time: number) => {
-    filter.time = time * speed;
-    return {};
-  });
-  return filter;
+  if (target instanceof KineticChar) {
+    target.addModifier("warp", 'behavior', (time: number) => {
+      filter.time = time * speed;
+      return {};
+    });
+    return filter;
+  } else {
+    const tickFn = () => {
+      filter.time = gsap.ticker.time * 1000 * speed;
+    };
+    gsap.ticker.add(tickFn);
+    return { filters: filter, tickerFn: tickFn };
+  }
 };
 export const warp = defineEffect(_warp, {
   type: "filter",
-  track: "behavior",  // 修复：总是使用 addModifier 更新 filter.time
-  targetType: "char",
+  track: "behavior",
+  targetType: "both",
   mutexGroup: "filter_warp",
 });
 
@@ -555,4 +561,92 @@ export const dissolve = defineEffect(_dissolve, {
   track: "behavior",
   targetType: "both",
   mutexGroup: "filter_dissolve",
+});
+
+// 位移 (Displace) —— DIP-FX M2 氛围集，behavior-track 滤镜。
+// 噪声场驱动 UV 位移，underwater 组合的几何半边。推荐 :block。
+// char 级 addModifier 驱动 uTime + return filter；容器级 gsap.ticker.add + return BehaviorFilterResult。
+const _displace: EffectFunction = (target, params = {}) => {
+  const amount = params.amount ?? 10;
+  const scale = params.scale ?? 4;
+  const speed = params.speed ?? 0.01;
+  const filter = new DisplaceFilter();
+  filter.amount = amount;
+  filter.scale = scale;
+  target.filters = [...(target.filters || []), filter];
+
+  if (target instanceof KineticChar) {
+    target.addModifier("displace", 'behavior', (t) => {
+      filter.time = t * speed;
+      return {};
+    });
+    return filter;
+  } else {
+    const tickFn = () => {
+      filter.time = gsap.ticker.time * 1000 * speed;
+    };
+    gsap.ticker.add(tickFn);
+    return { filters: filter, tickerFn: tickFn };
+  }
+};
+export const displace = defineEffect(_displace, {
+  type: "filter",
+  track: "behavior",
+  targetType: "both",
+  mutexGroup: "filter_displace",
+});
+
+// 水下 (Underwater) —— DIP-FX M2 旗舰组合预设（非新 shader）。
+// fn 内组合 displace（波纹位移）+ duotone（蓝移 tint）+ blur（Pixi BlurFilter 轻 blur），
+// 串进 target.filters，一个 tickerFn/addModifier 驱动全部 filter 的 uTime。
+// 首个返回 filters: Filter[] 的 preset——cleanup 经 clearBehaviors 的 Array.isArray 分支
+// 逐个移除 + destroyFilterDeep（BlurFilter 子 pass 已覆盖），无需改 PlaybackController。
+// duotone 直接 new DuotoneFilter() 构造（不调 duotone effect fn，避免双注册 + 双 push）。
+// char 级 return { filters: [...] }（无 tickerFn，addModifier 驱动，同 dissolve char 级形态）；
+// 容器级 return { filters: [...], tickerFn }。
+const _underwater: EffectFunction = (target, params = {}) => {
+  const amount = params.amount ?? 8;
+  const scale = params.scale ?? 4;
+  const speed = params.speed ?? 0.01;
+  const tint = params.tint ?? "#0a1e3f";       // 深蓝 shadow
+  const highlight = params.highlight ?? "#5fb8d6"; // 浅青 highlight
+  const blurStrength = params.blur ?? 1;
+
+  const displaceFilter = new DisplaceFilter();
+  displaceFilter.amount = amount;
+  displaceFilter.scale = scale;
+
+  const duotoneFilter = new DuotoneFilter();
+  duotoneFilter.shadow = hexToVec3(tint);
+  duotoneFilter.highlight = hexToVec3(highlight);
+
+  const blurFilter = new BlurFilter();
+  blurFilter.strength = blurStrength;
+
+  const filters = [displaceFilter, duotoneFilter, blurFilter];
+  for (const f of filters) {
+    target.filters = [...(target.filters || []), f];
+  }
+
+  if (target instanceof KineticChar) {
+    target.addModifier("underwater", 'behavior', (t) => {
+      displaceFilter.time = t * speed;
+      return {};
+    });
+    // 无 tickerFn（displace.time 由 addModifier 驱动；duotone/blur 静态无 time）。
+    // filters 数组供 clearBehaviors 移除全部三个（同 dissolve char 级 { filters, tween } 形态）。
+    return { filters };
+  } else {
+    const tickFn = () => {
+      displaceFilter.time = gsap.ticker.time * 1000 * speed;
+    };
+    gsap.ticker.add(tickFn);
+    return { filters, tickerFn: tickFn };
+  }
+};
+export const underwater = defineEffect(_underwater, {
+  type: "filter",
+  track: "behavior",
+  targetType: "both",
+  mutexGroup: "filter_underwater",
 });
