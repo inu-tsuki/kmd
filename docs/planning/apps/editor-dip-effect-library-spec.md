@@ -248,7 +248,7 @@ Task B 把 `:bg` 实现为 `CommandLevel` 的第四个取值，与 `docs/knowled
 | `displace` | behavior | both | char/block | filter_displace | amount(10), scale(4), speed(0.01) |
 | `noise` | behavior | both | block/frame(未来) | filter_noise | amount(0.1), mono(true) |
 | `vignette` | instant | both | **block**/frame(未来) | filter_vignette | radius(0.75), softness(0.45) |
-| `underwater` | behavior | both | char/block | （组合预设，见卡） | amount(8), tint("#2a6f97"), blur(2) |
+| `underwater` | behavior | both | char/block | （组合预设，见卡） | amount(8), tint("#0a1e3f"), highlight("#5fb8d6"), blur(1) |
 
 > `mix`/`mut` 类参数统一 0~1。颜色参数在 `fn` 内解析为 vec3（可参考 `visual.ts` 既有色值解析；若无则简单 hex→rgb）。
 > “frame(未来)”标注的滤镜在 frame 路由接线后（§7.1）能升级为真正的全屏后处理，届时 fn 无需改动——只是多一个调用作用域。
