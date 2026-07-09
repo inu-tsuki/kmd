@@ -283,6 +283,10 @@ export const xxx = defineEffect(_xxx, { type: "filter", track: "instant"|"behavi
 | `outline` | instant | both | filter_outline | ceil(width*2) | alpha 膨胀描边 + 可选发光（M1 形态学，hexToVec3） |
 | `bloom` | instant | both | filter_bloom | ceil(radius*2) | 多通道辉光 extract→BlurFilter→composite + 曝光混合（M1，推荐 :block） |
 | `halftone` | instant | both | filter_halftone | ceil(scale) | 网格网点 dot/line + invert（M1，推荐 :block） |
+| `vignette` | instant | both | filter_vignette | — | 径向亮度衰减 smoothstep（M2，推荐 :block） |
+| `scanline` | behavior | both | filter_scanline | — | CRT 周期亮度调制 + 桶形畸变 + 闪烁（M2，推荐 :block） |
+| `noise` | behavior | both | filter_noise | — | 时变噪声叠加 hash21，单色/彩噪（M2） |
+| `dissolve` | behavior | both | filter_dissolve | ceil(scale) | 噪声场与 uProgress 阈值比较消散 + 边缘上色（M2，progress 同构 fadeShake） |
 
 ### 背景命令 bg（DIP-FX M2 Task B）
 

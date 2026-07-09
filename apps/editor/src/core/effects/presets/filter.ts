@@ -14,6 +14,10 @@ import { EdgeFilter } from "../../filters/EdgeFilter";
 import { OutlineFilter } from "../../filters/OutlineFilter";
 import { BloomFilter } from "../../filters/BloomFilter";
 import { HalftoneFilter } from "../../filters/HalftoneFilter";
+import { VignetteFilter } from "../../filters/VignetteFilter";
+import { ScanlineFilter } from "../../filters/ScanlineFilter";
+import { NoiseFilter } from "../../filters/NoiseFilter";
+import { DissolveFilter } from "../../filters/DissolveFilter";
 import { hexToVec3 } from "../../filters/colorUtils";
 import type { EffectFunction, EffectMetadata } from "../types";
 
@@ -405,4 +409,150 @@ export const halftone = defineEffect(_halftone, {
   targetType: "both",
   mutexGroup: "filter_halftone",
   stackable: true,
+});
+
+// ── DIP-FX M2 氛围集 ──
+
+// 暗角 (Vignette) —— DIP-FX M2 氛围集，静态 instant 滤镜。
+// 径向亮度衰减。推荐 :block（整段才有暗角语义）。预乘 alpha 对偶。
+const _vignette: EffectFunction = (target, params = {}) => {
+  const radius = params.radius ?? 0.75;
+  const softness = params.softness ?? 0.45;
+  const filter = new VignetteFilter();
+  filter.radius = radius;
+  filter.softness = softness;
+  target.filters = [...(target.filters || []), filter];
+  return filter;
+};
+export const vignette = defineEffect(_vignette, {
+  type: "filter",
+  track: "instant",
+  targetType: "both",
+  mutexGroup: "filter_vignette",
+  stackable: true,
+});
+
+// 扫描线 (Scanline) —— DIP-FX M2 氛围集，behavior-track 滤镜。
+// CRT 周期亮度调制 + 可选桶形畸变 + 闪烁。推荐 :block。
+const _scanline: EffectFunction = (target, params = {}) => {
+  const density = params.density ?? 2;
+  const curvature = params.curvature ?? 0;
+  const flicker = params.flicker ?? 0;
+  const speed = params.speed ?? 0.01;
+  const filter = new ScanlineFilter();
+  filter.density = density;
+  filter.curvature = curvature;
+  filter.flicker = flicker;
+  target.filters = [...(target.filters || []), filter];
+
+  if (target instanceof KineticChar) {
+    target.addModifier("scanline", 'behavior', (t) => {
+      filter.time = t * speed;
+      return {};
+    });
+    return filter;
+  } else {
+    const tickFn = () => {
+      filter.time = gsap.ticker.time * 1000 * speed;
+    };
+    gsap.ticker.add(tickFn);
+    return { filters: filter, tickerFn: tickFn };
+  }
+};
+export const scanline = defineEffect(_scanline, {
+  type: "filter",
+  track: "behavior",
+  targetType: "both",
+  mutexGroup: "filter_scanline",
+});
+
+// 噪声 (Noise) —— DIP-FX M2 氛围集，behavior-track 滤镜。
+// 时变噪声叠加，uMono 控制单色/彩噪。数字降解视觉。
+const _noise: EffectFunction = (target, params = {}) => {
+  const amount = params.amount ?? 0.1;
+  const mono = params.mono !== undefined ? (params.mono ? 1 : 0) : 1;
+  const scale = params.scale ?? 4;
+  const speed = params.speed ?? 0.01;
+  const filter = new NoiseFilter();
+  filter.amount = amount;
+  filter.mono = mono;
+  filter.scale = scale;
+  target.filters = [...(target.filters || []), filter];
+
+  if (target instanceof KineticChar) {
+    target.addModifier("noise", 'behavior', (t) => {
+      filter.time = t * speed;
+      return {};
+    });
+    return filter;
+  } else {
+    const tickFn = () => {
+      filter.time = gsap.ticker.time * 1000 * speed;
+    };
+    gsap.ticker.add(tickFn);
+    return { filters: filter, tickerFn: tickFn };
+  }
+};
+export const noise = defineEffect(_noise, {
+  type: "filter",
+  track: "behavior",
+  targetType: "both",
+  mutexGroup: "filter_noise",
+});
+
+// 溶解 (Dissolve) —— DIP-FX M2 氛围集，behavior-track 滤镜。
+// 噪声场与 uProgress 阈值比较：低于阈值 alpha=0（消散），边缘带用 uEdge 上色。
+// progress 来源：state 对象 + gsap tween（同构 fadeShake），作者可 progress= 锁定。
+// char 级 return { filters, tween }（无 tickerFn——progress 由 addModifier 逐帧驱动；
+//   filters 字段仍需带上，否则 unpackBehaviorResult 只捕获 tween，char.filters 里的
+//   DissolveFilter 永远不会被 clearBehaviors 移除/destroy，seek 反复触发会不断堆积）。
+// 容器级 return { filters, tickerFn, tween }（BehaviorFilterResult.tween 被 unpackBehaviorResult 提取）。
+const _dissolve: EffectFunction = (target, params = {}) => {
+  const progress = params.progress;
+  const scale = params.scale ?? 8;
+  const edgeColor = params.edge ?? "#fff";
+  const duration = params.duration ?? 1;
+  const ease = params.ease ?? "none";
+  const filter = new DissolveFilter();
+  filter.scale = scale;
+  filter.edge = hexToVec3(edgeColor);
+  target.filters = [...(target.filters || []), filter];
+
+  // 静态 progress 锁定（作者给定 progress= 值）
+  if (progress !== undefined) {
+    filter.progress = progress;
+    // 仍需 cleanup：behavior track 的 filter 靠 clearBehaviors 移除
+    if (target instanceof KineticChar) {
+      // char 级无需 modifier（progress 是静态的），但仍需 return filter 供 cleanup
+      return filter;
+    } else {
+      // 容器级无 ticker（progress 静态），但仍需 return filter 供 cleanup
+      return filter;
+    }
+  }
+
+  // 自动 progress 0→1（同构 fadeShake）
+  const state = { progress: 0 };
+  const progressTween = gsap.to(state, { progress: 1, duration, ease });
+
+  if (target instanceof KineticChar) {
+    target.addModifier("dissolve", 'behavior', () => {
+      filter.progress = state.progress;
+      return {};
+    });
+    // 无 tickerFn（progress 已由 addModifier 驱动），但仍需带 filters 供 clearBehaviors 清理。
+    return { filters: filter, tween: progressTween };
+  } else {
+    const tickFn = () => {
+      filter.progress = state.progress;
+    };
+    gsap.ticker.add(tickFn);
+    return { filters: filter, tickerFn: tickFn, tween: progressTween };
+  }
+};
+export const dissolve = defineEffect(_dissolve, {
+  type: "filter",
+  track: "behavior",
+  targetType: "both",
+  mutexGroup: "filter_dissolve",
 });
