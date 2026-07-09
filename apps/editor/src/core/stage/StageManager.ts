@@ -1,4 +1,4 @@
-import { Container, Graphics, Sprite } from "pixi.js";
+import { Container, Graphics, Sprite, Assets, Texture } from "pixi.js";
 import { auditBus } from "../diagnostics/AuditBus";
 import { layout } from "../layout/LayoutEngine";
 import { RuntimeValueResolver } from "../runtime/RuntimeValueResolver";
@@ -31,6 +31,12 @@ class StageManager {
   private hostSession: StageHostSession;
   private _bgColor: string | number = 0x000000;
   private _bgSprite: Sprite | null = null;
+  private _bgSpriteUrl: string | null = null;
+  // Bug 7: 纪元号——并发 bg(src) 时丢弃过期 resolve
+  private _bgEpoch = 0;
+  // Bug 6: 背景就绪回调——:bg filter target 解析在 build 期同步发生，Assets.load 异步 resolve
+  // 晚于 build。注册回调后，sprite 加载完成时通知调用方（SegmentBuilder 可据此延后 apply）。
+  private _bgReadyCallbacks: Set<(sprite: Sprite) => void> = new Set();
   private auditPort: StageAuditPort = new UnifiedStageAuditPort();
 
   constructor() {
@@ -80,6 +86,7 @@ class StageManager {
     );
     this.contentLayer.removeChildren();
     this.setBackgroundSprite(null);
+    this._bgReadyCallbacks.clear();
     this.hostSession.dispose();
   }
 
@@ -93,7 +100,8 @@ class StageManager {
       designWidth: this.designWidth,
       designHeight: this.designHeight,
       isFixedRatio: this.isFixedRatio,
-      backgroundColor: this._bgColor
+      backgroundColor: this._bgColor,
+      bgSpriteUrl: this._bgSpriteUrl,  // Bug 4: 快照背景图 URL 供 restore 重新加载
     };
   }
 
@@ -104,6 +112,14 @@ class StageManager {
     stageRuntime.restoreState(state.camera, state.cameraOffset);
     this.presentation.loadState(state);
     this.setBackgroundColor(state.backgroundColor);
+
+    // Bug 4: 恢复背景图——若快照有 bgSpriteUrl 则重新加载（异步）。
+    // 若快照无 bgSpriteUrl 但当前有 sprite，清除（恢复到无背景图状态）。
+    if (state.bgSpriteUrl) {
+      this.loadBackgroundFromUrl(state.bgSpriteUrl);
+    } else if (this._bgSprite) {
+      this.setBackgroundSprite(null);
+    }
 
     gsap.killTweensOf(stageRuntime.camera);
     gsap.killTweensOf(stageRuntime.cameraOffset);
@@ -230,15 +246,76 @@ class StageManager {
     return this._bgSprite;
   }
 
-  public setBackgroundSprite(sprite: Sprite | null) {
+  // Bug 3: 不在 destroy 时销毁 texture——Assets 缓存可能被同 URL 复用。
+  // 改用 Assets.unload(url) 释放缓存引用；sprite 自身的 texture 引用在 destroy({ texture: false }) 时断开。
+  // Bug 6: sprite 加载完成后触发 _bgReadyCallbacks，通知等待中的 :bg filter apply。
+  public setBackgroundSprite(sprite: Sprite | null, url?: string | null) {
     if (this._bgSprite) {
       this.backgroundLayer.removeChild(this._bgSprite);
-      this._bgSprite.destroy({ children: true, texture: true });
+      this._bgSprite.destroy({ children: true, texture: false });
+      // Bug 3: 释放 Assets 缓存中的 texture 引用，避免同 URL 复用拿到已 destroy 的资源
+      if (this._bgSpriteUrl) {
+        Assets.unload(this._bgSpriteUrl).catch(() => {});
+      }
     }
     this._bgSprite = sprite;
+    this._bgSpriteUrl = url ?? null;
     if (sprite) {
       this.backgroundLayer.addChild(sprite);
+      // Bug 6: 通知等待中的 :bg filter apply
+      for (const cb of this._bgReadyCallbacks) {
+        cb(sprite);
+      }
+      this._bgReadyCallbacks.clear();
     }
+  }
+
+  // Bug 6: 注册背景就绪回调。若 sprite 已存在则立即调用；否则存入 Set，加载完成后触发。
+  // SegmentBuilder 在 :bg target 解析时调用此方法注册延后 apply 回调。
+  public onBackgroundReady(callback: (sprite: Sprite) => void): void {
+    if (this._bgSprite) {
+      callback(this._bgSprite);
+    } else {
+      this._bgReadyCallbacks.add(callback);
+    }
+  }
+
+  // Bug 7: 纪元号守卫——并发 bg(src) 时，仅最新纪元的 resolve 生效。
+  public nextBgEpoch(): number {
+    return ++this._bgEpoch;
+  }
+
+  public get currentBgEpoch(): number {
+    return this._bgEpoch;
+  }
+
+  // Bug 4: bg sprite URL 快照——seek/restore 时通过 URL 重新加载图片恢复背景。
+  public get bgSpriteUrl(): string | null {
+    return this._bgSpriteUrl;
+  }
+
+  // 共享的背景图加载逻辑（stagePresets bg preset + loadState restore 复用）。
+  // 返回纪元号供调用方做过期判断（Bug 7）。
+  public loadBackgroundFromUrl(url: string): number {
+    const epoch = this.nextBgEpoch();
+    Assets.load(url)
+      .then((texture: Texture) => {
+        if (this.currentBgEpoch !== epoch) return;  // Bug 7: 过期 resolve 丢弃
+        const sprite = new Sprite(texture);
+        const dw = this.designWidth;
+        const dh = this.designHeight;
+        const scale = Math.max(dw / texture.width, dh / texture.height);
+        sprite.scale.set(scale);
+        sprite.anchor.set(0.5);
+        sprite.x = dw / 2;
+        sprite.y = dh / 2;
+        this.setBackgroundSprite(sprite, url);
+      })
+      .catch((err: any) => {
+        if (this.currentBgEpoch !== epoch) return;
+        console.error("[StageManager] failed to load background image:", url, err);
+      });
+    return epoch;
   }
 
   public setMode(mode: StageMode) {

@@ -282,8 +282,17 @@ export class SegmentBuilder {
             }
 
             // pre-hold style：applyGroupEffects 同步写 + recapture baseline（R16/P2 模型，含 big/small 测量）。
-            if (blockStylePreHold.length > 0) {
-              EffectProcessor.applyGroupEffects(paragraphText, [...blockStylePreHold]);
+            // Bug 2: :bg scope 的 style/non-style 不走 applyGroupEffects（Sprite 无 getGraphicsLayer/tokens），
+            // 应在 instant/behavior 轨道已处理；若落到 remaining 则跳过并 warn。
+            const blockStylePreHoldNonBg = blockStylePreHold.filter(cfg => {
+              if (cfg.level === "bg") {
+                console.warn(`[SegmentBuilder] :bg style "${cfg.name}" in blockRemaining — not applicable to bg sprite, skipped`);
+                return false;
+              }
+              return true;
+            });
+            if (blockStylePreHoldNonBg.length > 0) {
+              EffectProcessor.applyGroupEffects(paragraphText, [...blockStylePreHoldNonBg]);
               // R16/SA-31：applyGroupEffects 在 KineticChar 构造**之后**同步写 char.style（force=true），
               // 但 baseStyleSnapshot 已在构造时固化（R15 pre-hold 烘焙态）。重新捕获 baseline = 当前
               // style（含 block 样式），避免 replayStyles reset 回无 block 样式的 baseline 丢样式。
@@ -296,8 +305,16 @@ export class SegmentBuilder {
             }
 
             // 非 style 残留（timing/unknown，hold 已抽走）：保持原 applyGroupEffects 同步路径。
-            if (blockNonStyleRemaining.length > 0) {
-              EffectProcessor.applyGroupEffects(paragraphText, [...blockNonStyleRemaining]);
+            // Bug 2: :bg scope 同理跳过（Sprite 无 applyGroupEffects 所需接口）。
+            const blockNonStyleRemainingNonBg = blockNonStyleRemaining.filter(cfg => {
+              if (cfg.level === "bg") {
+                console.warn(`[SegmentBuilder] :bg non-style "${cfg.name}" in blockRemaining — not applicable to bg sprite, skipped`);
+                return false;
+              }
+              return true;
+            });
+            if (blockNonStyleRemainingNonBg.length > 0) {
+              EffectProcessor.applyGroupEffects(paragraphText, [...blockNonStyleRemainingNonBg]);
             }
 
             // post-hold style：record + segmentTl.call（R21/SA-36，镜像 site2 P3）。
@@ -309,6 +326,11 @@ export class SegmentBuilder {
             // play 的 tl.call 让位给快照消费者。原「不加守卫——style 不创建资源」注释废止：双 apply 是
             // mutation 双（不是资源泄漏），guard 现为防 mutation 双。
             for (const { config, time } of blockStylePostHold) {
+              // Bug 2: :bg scope post-hold style 跳过（同 pre-hold 理由）。
+              if (config.level === "bg") {
+                console.warn(`[SegmentBuilder] :bg post-hold style "${config.name}" — not applicable to bg sprite, skipped`);
+                continue;
+              }
               const resolved = EffectProcessor.resolveParams(config.params);
               const cfgName = config.name;
               const cfgParams = { ...resolved };
@@ -329,40 +351,59 @@ export class SegmentBuilder {
           for (const cfg of blockInstant) {
             const resolved = EffectProcessor.resolveParams(cfg.params);
             // B3: :bg scope 的 instant filter 目标是背景精灵而非 paragraphText。
-            // DIP filter fn 零改动——target 是任意 Container 即可。
-            const bgTarget = cfg.level === "bg" ? stageManager.getBackgroundSprite() : null;
-            const instantTarget = bgTarget ?? paragraphText;
-            if (bgTarget === null && cfg.level === "bg") {
-              console.warn(`[SegmentBuilder] :bg effect "${cfg.name}" skipped — no background sprite (bg(src) not loaded)`);
-              continue;
+            // Bug 6: target 延后到 segmentTl.call 触发时解析——bg(src) 异步加载，
+            // build 期 sprite 可能尚未就绪；播放时（tl.call 触发）更可能已加载完成。
+            // 若仍未就绪，注册 onBackgroundReady 回调延后 apply。
+            const isBg = cfg.level === "bg";
+            const buildTimeBgTarget = isBg ? stageManager.getBackgroundSprite() : null;
+            const instantTarget = buildTimeBgTarget ?? paragraphText;
+            if (isBg) {
+              allInstantEffects.push({
+                target: instantTarget,
+                effectName: cfg.name,
+                params: resolved,
+                charIndex: 0,
+                timePosition: segmentCursor,
+              });
+            } else {
+              allInstantEffects.push({
+                target: paragraphText,
+                effectName: cfg.name,
+                params: resolved,
+                charIndex: 0,
+                timePosition: segmentCursor,
+              });
             }
-            allInstantEffects.push({
-              target: instantTarget,
-              effectName: cfg.name,
-              params: resolved,
-              charIndex: 0,
-              timePosition: segmentCursor,
-            });
             const instantName = cfg.name;
             const instantParams = { ...resolved };
-            // R12：预查 meta——void result 的 Graphics 特效（bg/border）push graphicsLayer cleanup。
+            // R12：预查 meta——void result 的 Graphics 特效（box/border）push graphicsLayer cleanup。
             const instantMeta = effectManager.getMetadata(instantName);
-            // R22/SA-37：exact-boundary guard——seek 落在 segmentCursor 上、随后 play 时 deferred
-            // tick 跨越会重触发（与 seek 的 registerInstantEffects 双 push filter，cleanup 总数错）。
+            // R22/SA-37：exact-boundary guard。
             const instantRecTime = segmentCursor;
             segmentTl.call(() => {
               if (!context.playbackState.isAutoPlaying) return;
               if (context.playbackState.lastSeekTime === instantRecTime) return;
-              const filterInstance = effectManager.apply(instantTarget, instantName, instantParams, true);
+              // Bug 6: :bg target 在 call 触发时解析（此时 sprite 可能已加载）
+              const liveTarget: any = isBg ? stageManager.getBackgroundSprite() : instantTarget;
+              if (isBg && !liveTarget) {
+                // sprite 仍未就绪——注册延后 apply
+                stageManager.onBackgroundReady((sprite) => {
+                  const fi = effectManager.apply(sprite, instantName, instantParams, true);
+                  if (fi) {
+                    context.playbackState.activeInstantCleanups.push({ target: sprite, filterInstance: fi });
+                  }
+                });
+                return;
+              }
+              const filterInstance = effectManager.apply(liveTarget, instantName, instantParams, true);
               if (filterInstance) {
                 context.playbackState.activeInstantCleanups.push({
-                  target: instantTarget,
+                  target: liveTarget,
                   filterInstance,
                 });
-              } else if (instantMeta?.mutexGroup && typeof (instantTarget as any).getGraphicsLayer === "function") {
-                // R12：Graphics 特效（bg/border 画 Graphics 非 filter，返回 void）——seek 回退清该层防残留。
+              } else if (instantMeta?.mutexGroup && typeof (liveTarget as any).getGraphicsLayer === "function") {
                 context.playbackState.activeInstantCleanups.push({
-                  target: instantTarget,
+                  target: liveTarget,
                   filterInstance: undefined as any,
                   graphicsLayer: instantMeta.mutexGroup,
                 });
@@ -378,16 +419,11 @@ export class SegmentBuilder {
           for (const cfg of blockBehavior) {
             const resolved = EffectProcessor.resolveParams(cfg.params);
             // B3: :bg scope 的 behavior filter 目标是背景精灵而非 paragraphText。
-            const bgTarget = cfg.level === "bg" ? stageManager.getBackgroundSprite() : null;
-            if (bgTarget === null && cfg.level === "bg") {
-              console.warn(`[SegmentBuilder] :bg effect "${cfg.name}" skipped — no background sprite (bg(src) not loaded)`);
-              continue;
-            }
-            const behaviorTarget = bgTarget ?? paragraphText;
-            const behaviorChar = behaviorTarget as any;  // container-level: no removeModifier, clearBehaviors 守卫跳过
+            // Bug 6: target 延后到 segmentTl.call 触发时解析（与 instant 同理）。
+            const isBgBehavior = cfg.level === "bg";
             const behaviorRecord: BehaviorRecord = {
-              target: behaviorTarget,
-              char: behaviorChar,
+              target: isBgBehavior ? (stageManager.getBackgroundSprite() ?? paragraphText) : paragraphText,
+              char: isBgBehavior ? (stageManager.getBackgroundSprite() ?? paragraphText) as any : paragraphText,
               effectName: cfg.name,
               params: resolved,
               charIndex: 0,
@@ -401,14 +437,29 @@ export class SegmentBuilder {
             segmentTl.call(() => {
               if (!context.playbackState.isAutoPlaying) return;
               if (context.playbackState.lastSeekTime === behaviorRecTime) return;
+              // Bug 6: :bg target 在 call 触发时解析
+              const liveBehaviorTarget = isBgBehavior ? stageManager.getBackgroundSprite() : paragraphText;
+              if (isBgBehavior && !liveBehaviorTarget) {
+                stageManager.onBackgroundReady((sprite) => {
+                  const result = effectManager.apply(sprite, behaviorName, behaviorParams, true);
+                  const unpacked = PlaybackController.unpackBehaviorResult(result, sprite);
+                  context.playbackState.activeBehaviorCleanups.push({
+                    char: sprite as any,
+                    modName: behaviorName,
+                    target: sprite,
+                    ...unpacked,
+                  });
+                });
+                return;
+              }
+              const behaviorChar = liveBehaviorTarget as any;
               const result = effectManager.apply(behaviorChar, behaviorName, behaviorParams, true);
               // INV-7（SA-16）：解包经 PlaybackController.unpackBehaviorResult 单一真相源
-              // （与 group 路径、registerBehaviors 共用，新增返回 shape 只改一处）。
-              const unpacked = PlaybackController.unpackBehaviorResult(result, behaviorTarget);
+              const unpacked = PlaybackController.unpackBehaviorResult(result, liveBehaviorTarget);
               context.playbackState.activeBehaviorCleanups.push({
                 char: behaviorChar,
                 modName: behaviorName,
-                target: behaviorTarget,
+                target: liveBehaviorTarget,
                 ...unpacked,
               });
             }, [], segmentCursor);
@@ -423,7 +474,13 @@ export class SegmentBuilder {
         // 在 buildTimeline 之前，captureEntrance 不可用）。
         for (const cfg of blockEntrance) {
           const resolved = EffectProcessor.resolveParams(cfg.params);
-          const entranceTarget = paragraphText;
+          // Bug 2: :bg scope 的 entrance filter 目标是背景精灵而非 paragraphText。
+          const bgEntranceTarget = cfg.level === "bg" ? stageManager.getBackgroundSprite() : null;
+          if (bgEntranceTarget === null && cfg.level === "bg") {
+            console.warn(`[SegmentBuilder] :bg entrance "${cfg.name}" skipped — no background sprite`);
+            continue;
+          }
+          const entranceTarget = bgEntranceTarget ?? paragraphText;
           const entranceName = cfg.name;
           const entranceParams = { ...resolved };
           // build 期同步 apply：fn 创建 filter push 进 target.filters + 返回 {tween, filter}

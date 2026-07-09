@@ -75,8 +75,8 @@ export interface InstantCleanup {
   target: any;
   filterInstance: Filter | Filter[];
   /**
-   * Graphics 层名（如 "bg"/"border"），用于返回 void 的 instant 特效（画 Graphics 非 filter）。
-   * R12：bg/border 的 meta.track==="instant" 但 type==="style" 返回 void，filterInstance 通道捕获不到。
+   * Graphics 层名（如 "box"/"border"），用于返回 void 的 instant 特效（画 Graphics 非 filter）。
+   * R12：box/border 的 meta.track==="instant" 但 type==="style" 返回 void，filterInstance 通道捕获不到。
    * seek 回退时 Graphics 残留——用 graphicsLayer 记录 mutexGroup/层名，clearInstantEffects 清该层。
    * filterInstance 与 graphicsLayer 互斥（filter 特效只填 filterInstance；Graphics 特效只填 graphicsLayer）。
    */

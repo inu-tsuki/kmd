@@ -12,6 +12,7 @@ export interface StageState {
   designHeight: number;
   isFixedRatio: boolean;
   backgroundColor: string | number;
+  bgSpriteUrl?: string | null;  // Bug 4: 快照背景图 URL 供 restore 重新加载
 }
 
 export type StageMode = "stage" | "scroll";

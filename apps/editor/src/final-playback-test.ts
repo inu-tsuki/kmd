@@ -734,7 +734,7 @@ function testGraphicsInstantCleanup() {
     isAutoPlaying: false,
     activeBehaviorCleanups: [],
     activeInstantCleanups: [
-      { target: fakeTarget, filterInstance: undefined as any, graphicsLayer: "bg" },
+      { target: fakeTarget, filterInstance: undefined as any, graphicsLayer: "box" },
     ],
     onTimeUpdate: () => {},
   } as any;
@@ -856,20 +856,20 @@ function testRealKineticTextGraphicsLayer() {
     // bounds.x = min(50-20, 90-20) = 30；确认 bounds.x 非零（验证 stub 正确）
     assert(approxEq(bounds.x, 30), `KineticText.getContentBounds().x 非零（center 模拟，x=${bounds.x}）`);
 
-    const result = effectManager.apply(kt, "bg", { color: 0x333333, alpha: 1, padding: 5, radius: 4 }, true);
-    // bg 返回 void（画 Graphics 非 filter）
-    assert(result === undefined, "R12: bg 对真实 KineticText 返回 void（Graphics 非 filter）");
-    const g = kt.getGraphicsLayer("bg");
+    const result = effectManager.apply(kt, "box", { color: 0x333333, alpha: 1, padding: 5, radius: 4 }, true);
+    // box 返回 void（画 Graphics 非 filter）
+    assert(result === undefined, "R12: box 对真实 KineticText 返回 void（Graphics 非 filter）");
+    const g = kt.getGraphicsLayer("box");
     const coords = firstRectCoords(g);
-    assert(coords !== null, "R12: bg 真画到 KineticText.getGraphicsLayer('bg')（instructions 非空）");
+    assert(coords !== null, "R12: box 真画到 KineticText.getGraphicsLayer('box')（instructions 非空）");
     // 坐标补偿：x = bounds.x - padding = 30 - 5 = 25（旧画 -5 会偏左 30px）
     assert(
       coords !== null && approxEq(coords.x, bounds.x - 5),
-      `R12: bg 坐标补偿 x=bounds.x-padding=${bounds.x - 5}（实际 ${coords?.x}），非 -padding`,
+      `R12: box 坐标补偿 x=bounds.x-padding=${bounds.x - 5}（实际 ${coords?.x}），非 -padding`,
     );
     assert(
       coords !== null && approxEq(coords.y, bounds.y - 5),
-      `R12: bg 坐标补偿 y=bounds.y-padding=${bounds.y - 5}（实际 ${coords?.y}）`,
+      `R12: box 坐标补偿 y=bounds.y-padding=${bounds.y - 5}（实际 ${coords?.y}）`,
     );
   }
 
@@ -894,16 +894,16 @@ function testRealKineticTextGraphicsLayer() {
     const kt = makeKineticText([makeCharStub(300, 30, 40, 50)]); // bounds.x = 300-20 = 280
     const bounds = kt.getContentBounds();
     assert(bounds.x > 250, `center 模拟 bounds.x 显著非零（x=${bounds.x}）`);
-    effectManager.apply(kt, "bg", { padding: 5, radius: 4 }, true);
-    const g = kt.getGraphicsLayer("bg");
+    effectManager.apply(kt, "box", { padding: 5, radius: 4 }, true);
+    const g = kt.getGraphicsLayer("box");
     const coords = firstRectCoords(g);
     assert(
       coords !== null && coords.x > 250,
-      `R12: center 模式 bg 画在 bounds.x 侧（x=${coords?.x}），旧 -padding 画法会偏到 -5（此断言锁定补偿不回退）`,
+      `R12: center 模式 box 画在 bounds.x 侧（x=${coords?.x}），旧 -padding 画法会偏到 -5（此断言锁定补偿不回退）`,
     );
     assert(
       coords !== null && approxEq(coords.x, bounds.x - 5),
-      `R12: center 模式 bg x = bounds.x - padding = ${bounds.x - 5}（实际 ${coords?.x}）`,
+      `R12: center 模式 box x = bounds.x - padding = ${bounds.x - 5}（实际 ${coords?.x}）`,
     );
   }
 
@@ -914,10 +914,10 @@ function testRealKineticTextGraphicsLayer() {
   //     覆盖之前 fake target 跳过的「真实 KineticText.getGraphicsLayer 存在」守卫。
   {
     const kt = makeKineticText([makeCharStub(60, 40, 40, 50)]);
-    const meta = effectManager.getMetadata("bg");
-    assert(meta?.mutexGroup === "bg", "R12: bg meta.mutexGroup = 'bg'（graphicsLayer 层名源）");
+    const meta = effectManager.getMetadata("box");
+    assert(meta?.mutexGroup === "box", "R12: box meta.mutexGroup = 'box'（graphicsLayer 层名源）");
     // 真实 apply（与 registerInstantEffects 内 effectManager.apply 同源）
-    const result = effectManager.apply(kt, "bg", { padding: 5, radius: 4 }, true);
+    const result = effectManager.apply(kt, "box", { padding: 5, radius: 4 }, true);
     // 复现 registerInstantEffects 的 void-result 登记分支（守卫对真实 KineticText 现在为 true）
     const state = {
       isAutoPlaying: false,
@@ -937,13 +937,13 @@ function testRealKineticTextGraphicsLayer() {
       "R12: 真实 KineticText 有 getGraphicsLayer → void-result graphicsLayer cleanup 登记成功（守卫为 true）",
     );
     // 清理前 Graphics 有指令
-    const g = kt.getGraphicsLayer("bg");
-    assert(firstRectCoords(g) !== null, "R12: 清理前 bg Graphics 有绘制指令");
+    const g = kt.getGraphicsLayer("box");
+    assert(firstRectCoords(g) !== null, "R12: 清理前 box Graphics 有绘制指令");
     // 真实 clearInstantEffects
     PlaybackController.clearInstantEffects(state);
     assert(
       firstRectCoords(g) === null,
-      "R12: clearInstantEffects 对真实 KineticText 清 bg 层（g.clear() → instructions 空）",
+      "R12: clearInstantEffects 对真实 KineticText 清 box 层（g.clear() → instructions 空）",
     );
     assert(state.activeInstantCleanups.length === 0, "R12: clearInstantEffects 清空 activeInstantCleanups");
   }

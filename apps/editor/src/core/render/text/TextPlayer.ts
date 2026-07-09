@@ -560,6 +560,11 @@ export class TextPlayer {
       const track = EffectProcessor.getTrack(config.name);
 
       if (isStyle) {
+        // Bug 2: :bg scope style 不走 applyStyleRecursively（Sprite 无 getGraphicsLayer/tokens）。
+        if (config.level === "bg") {
+          console.warn(`[TextPlayer] :bg inline style "${config.name}" — not applicable to bg sprite, skipped`);
+          continue;
+        }
         // 样式：applyStyleRecursively 内部已递归到每字
         const cfgName = config.name;
         const cfgParams = { ...resolved };
@@ -606,17 +611,25 @@ export class TextPlayer {
           }
         });
       } else {
-        // 组级特效：应用到 wrapper 容器
+        // Bug 2: :bg scope 内联链路 (@ f.x:bg) — target 解析为背景精灵而非 wrapper。
+        const bgTarget = config.level === "bg" ? stageManager.getBackgroundSprite() : null;
+        if (bgTarget === null && config.level === "bg") {
+          console.warn(`[TextPlayer] :bg inline effect "${config.name}" skipped — no background sprite`);
+          continue;
+        }
+        const containerTarget = bgTarget ?? wrapper;
+
+        // 组级特效：应用到 containerTarget 容器
         if (track === "entrance") {
-          const tween = effectManager.apply(wrapper, config.name, resolved, true);
-          this.captureEntrance(tl, tween, chainCursor, wrapper, entranceFilters);
+          const tween = effectManager.apply(containerTarget, config.name, resolved, true);
+          this.captureEntrance(tl, tween, chainCursor, containerTarget, entranceFilters);
         } else if (track === "behavior") {
           // 容器级 behavior：经 behaviors[] → SegmentBuilder segmentTl.call 统一 apply +
-          // cleanup 追踪（与 char 级对称）。target = wrapper，char = wrapper（容器无
-          // removeModifier，clearBehaviors 守卫跳过 modifier 清理，靠 filterInstance + tickerFn）。
+          // cleanup 追踪（与 char 级对称）。target = containerTarget，char = containerTarget
+          // （容器无 removeModifier，clearBehaviors 守卫跳过 modifier 清理，靠 filterInstance + tickerFn）。
           behaviors.push({
-            char: wrapper,
-            target: wrapper,
+            char: containerTarget,
+            target: containerTarget,
             effectName: config.name,
             params: { ...resolved },
             charIndex: 0,
@@ -625,7 +638,7 @@ export class TextPlayer {
         } else {
           // instant filter（组级容器）：只记录，apply 驱动交给 SegmentBuilder。
           instantEffects.push({
-            target: wrapper,
+            target: containerTarget,
             effectName: config.name,
             params: { ...resolved },
             charIndex: 0,

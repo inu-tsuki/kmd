@@ -51,6 +51,22 @@
 - [ ] **处方 10 · 外部依赖防波堤**
   `globalThis.KmdRuntimeConfig` 加 schema 校验（zod 已在 community-api 使用，可复用）；
   `App.ts` 中对 Pixi 私有内部（`renderer.batchPipe` 等 11 处强转）收拢进单一 adapter 并加启动期预检。
+- [x] **处方 11 · DIP-FX M2 Task B（`bg` 命令 + `:bg` 作用域）回归修复**（2026-07-09 提交 `3a38445` 代码审查发现，7 条 bug 全部修复）
+  1. ✅ **`bg(...)` 命令名撞车**——`visual.ts` 旧 `bg` 改名 `box`（`mutexGroup:"box"`），消除 `effectManager.has("bg")` 恒真导致的 stage bg 死代码。`final-playback-test.ts` R12 用例同步改名。
+  2. ✅ **`:bg` 四条轨道 target 解析补齐**——entrance track 加 `:bg` target 解析；style track `:bg` 跳过并 warn（Sprite 无 `getGraphicsLayer`）；`TextPlayer.unrollGroupChain` 容器级分支加 `:bg` target 解析；内联 style `:bg` 跳过。
+  3. ✅ **`setBackgroundSprite` 不销毁共享 texture**——改 `destroy({ texture: false })` + `Assets.unload(url)` 释放缓存引用。
+  4. ✅ **`dumpState`/`restoreState` 快照 `bgSpriteUrl`**——`StageState` 加字段，`loadState` 通过 `loadBackgroundFromUrl` 重新加载。
+  5. ✅ **`bg(color)`/无参 `bg()` 清除图片 sprite**——补 `setBackgroundSprite(null)`。
+  6. ✅ **`bg(src)` 异步竞态**——target 延后到 `segmentTl.call` 触发时解析 + `onBackgroundReady` 延后 apply。
+  7. ✅ **并发 `bg(src)` 纪元号守卫**——`_bgEpoch` 丢弃过期 resolve。
+  修复详情见 spec §0.5.1；`fx-bg.kmd` 补 `[.gray:bg]` 回归用例。门禁：build + parser + playback (260) + invariants ✅。
+
+- [x] **处方 12 · DIP-FX `bg`/`frame` 作用域语法方向变更**（2026-07 语言设计讨论结果，已落地约束）
+  - ✅ **不将 `frame` 作为第五个 `CommandLevel` 值加入**——`design.md` D12 封盘，工程债记在 `migration.md` #9。
+  - ✅ **`:bg` 保留为过渡期兼容写法**，不立即重构——Phase B 排期未定。
+  - ✅ **M2 剩余滤镜不受影响，照常推进**——走既有 `char/group/block` 机制。
+  - Phase B 启动时 `bg` 收编为内建对象主语（`bg.<effect>(...)`），`frame` 同理，不进 `CommandLevel`。
+  约束已写入 spec §0.5.1 和 `effect-pipeline.md`。
 
 ## 复核条件
 

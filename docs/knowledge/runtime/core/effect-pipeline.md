@@ -286,16 +286,31 @@ export const xxx = defineEffect(_xxx, { type: "filter", track: "instant"|"behavi
 
 ### 背景命令 bg（DIP-FX M2 Task B）
 
-`bg` 是 **stage 命令**（注册在 `stagePresets.ts`，非 `effectManager`），与 `visual.ts` 的元素级 `bg` 样式（Graphics 画圆角矩形，`mutexGroup:"bg"`）是不同概念：
+`bg` 是 **stage 命令**（注册在 `stagePresets.ts`，非 `effectManager`）。与 `visual.ts` 的元素级 `box` 样式（原名 `bg`，因命令名碰撞已改名——见下方审查修复第 1 条；Graphics 画圆角矩形，`mutexGroup:"box"`）是不同概念：
 
 | 用法 | 路径 | 效果 |
 |---|---|---|
-| `bg(color="#1a0a2e")` | B1 → `stageManager.setBackgroundColor` | 设置画布纯色背景（最便宜） |
-| `bg(src="tests/assets/photo.jpg")` | B2 → `Assets.load` → cover-fit Sprite → `backgroundLayer` | 加载图片作为背景（editor-dev 级，从 `public/` 直接加载，fire-and-forget async） |
+| `bg(color="#1a0a2e")` | B1 → `stageManager.setBackgroundColor` + `setBackgroundSprite(null)` | 设置画布纯色背景，清除已有图片 |
+| `bg(src="tests/assets/photo.jpg")` | B2 → `stageManager.loadBackgroundFromUrl` → cover-fit Sprite → `backgroundLayer` | 加载图片作为背景（editor-dev 级，fire-and-forget async，纪元号守卫） |
 | `bg(color="#0f3460", src="...")` | B1+B2 组合 | 先设色（图片加载前可见），图片加载后替换 |
 | `[.duotone:bg]` / `[.emboss:bg]` | B3 → `:bg` scope 路由 | DIP 滤镜作用于背景精灵（`stageManager.getBackgroundSprite()`），fn 零改动 |
 
-**`:bg` scope 路由**：`CommandLevel` 加 `"bg"`，parser regex 识别 `:bg` 后缀。`:bg` 与 `:block` 同构（都是容器级 block-option scope），在 `SegmentBuilder` 块拆分中 target 解析为 `stageManager.getBackgroundSprite()` 而非 `paragraphText`。DIP filter `fn`/`meta` 完全复用——`fn` 只做 `target.filters = [...]`，target 是任意 Container 即可。若未加载 `bg(src)`，`:bg` effect 跳过并 warn。
+**`:bg` scope 路由**：`CommandLevel` 加 `"bg"`，parser regex 识别 `:bg` 后缀。`:bg` 与 `:block` 同构（都是容器级 block-option scope），在 `SegmentBuilder` 块拆分中 target 解析为 `stageManager.getBackgroundSprite()` 而非 `paragraphText`。DIP filter `fn`/`meta` 完全复用。四条轨道（instant/behavior/style/entrance）均已接线：
+- **instant/behavior**：target 延后到 `segmentTl.call` 触发时解析（Bug 6 修复）；sprite 未就绪时注册 `onBackgroundReady` 回调延后 apply。
+- **style**：`:bg` style 跳过并 warn（Sprite 无 `getGraphicsLayer`/`tokens`，`:bg` style 无语义）。
+- **entrance**：target 解析同 instant/behavior 模式。
+- **内联 `@ f.x:bg`**：`TextPlayer.unrollGroupChain` 容器级分支加 `:bg` target 解析。
+
+**审查修复（2026-07-09，7 处 bug，详见 spec §0.5.1）**：
+1. `bg(...)` 命令名碰撞——`visual.ts` 旧 `bg` 改名 `box`，消除 `effectManager.has("bg")` 恒真导致的 stage bg 死代码。
+2. `:bg` 四条轨道 target 解析补齐（见上）。
+3. `setBackgroundSprite` 不销毁 Assets 缓存共享 texture——改 `destroy({ texture: false })` + `Assets.unload(url)`。
+4. `dumpState`/`restoreState` 快照 `bgSpriteUrl`——seek/restore 后重新加载背景图。
+5. `bg(color)`/无参 `bg()` 补 `setBackgroundSprite(null)` 清除旧图片。
+6. `bg(src)` 异步竞态——target 延后到 `segmentTl.call` 触发时解析 + `onBackgroundReady` 延后 apply。
+7. 并发 `bg(src)` 纪元号守卫——`_bgEpoch` 丢弃过期 resolve。
+
+**语法方向约束**：`:bg` 是过渡期兼容写法，非终态——`design.md` D12 封盘"覆盖范围归主语不归 `:`"，`:bg` 已违反此条。终态应为 `bg.<effect>(...)` 主语形态（Phase B 链语法统一重写），工程债记在 `migration.md` #9。**不再往 `CommandLevel` 加更多主语性质值**。
 
 ## 已知边界
 

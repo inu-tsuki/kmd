@@ -46,3 +46,11 @@ bg(src="tests/assets/sample-bg.jpg")
 bg(src="tests/assets/sample-bg.jpg")
 [.gray:bg]
 灰度背景上的彩色文字
+
+---
+
+// :bg gray 回归用例——此前 bg 命令名碰撞导致 stage bg 死代码，:bg 静默失败
+// 修复后 bg 重命名为 box（元素级），stage bg 正常路由，:bg filter 作用于背景精灵
+bg(src="tests/assets/sample-bg.jpg")
+[.gray:bg]
+gray:bg 回归验证
