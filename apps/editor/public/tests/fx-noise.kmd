@@ -1,0 +1,41 @@
+---
+title: fx - noise 噪声滤镜
+mode: stage
+speed: 50
+designWidth: 1920
+designHeight: 1080
+bgColor: "#0d1b2a"
+fontColor: "#e0e0e0"
+---
+
+// 逐字单色噪声
+{噪声} @ f.noise
+
+---
+
+// :block 整段噪声——推荐用法（数字降解）
+[.noise:block]
+整段噪声效果，模拟信号干扰和数字降解。
+
+---
+
+// 改参：彩噪
+[.noise:block(amount=0.3, mono=false)]
+彩色噪声，三通道独立噪声场。
+
+---
+
+// 改参：强噪声
+[.noise:block(amount=0.5)]
+强噪声，接近纯噪点。
+
+---
+
+// 改参：粗粒噪声
+[.noise:block(scale=1)]
+粗粒噪声，噪声块更大更明显。
+
+---
+
+// 与 behavior 组合：噪声 + 波浪
+{噪声加波浪} @ f.noise.wave

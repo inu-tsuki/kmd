@@ -22,7 +22,18 @@ export interface BehaviorFilterResult {
    * return 此字段；容器级纯 offset behavior（shake:group）不 return，仅 return tickerFn。
    */
   filters?: Filter | Filter[];
-  tickerFn: () => void;
+  /**
+   * 容器级逐帧驱动回调。char 级 dissolve 无需 ticker（progress 已由 addModifier 驱动），
+   * 只带 filters + tween——tickerFn 留空，clearBehaviors 对空 tickerFn 直接跳过第 2 步。
+   */
+  tickerFn?: () => void;
+  /**
+   * 可选 progress/state 驱动 tween（M2 dissolve）。
+   * 容器级 dissolve 用 gsap.to(state, {progress:1}) 驱动 uProgress，
+   * ticker 读 state.progress 写 filter uniform。此 tween 需在 clearBehaviors 时 kill，
+   * 与 fadeShake 的 bare tween return 同路径（BehaviorCleanup.tween）。
+   */
+  tween?: gsap.core.Tween | gsap.core.Timeline;
 }
 
 /**
@@ -57,7 +68,7 @@ export interface BehaviorCleanup {
                         // clearBehaviors 遍历 props 写回 target（restoreProps 不走 ticker，
                         // 不与 timeline alpha 冲突——dim 写 alpha 是一次性属性写入，
                         // seek 时 registerBehaviors 先 clearBehaviors 恢复原始 alpha 再重 apply）。
-  tween?: gsap.core.Tween; // gsap tween（可选；char 级 fadeShake 的 state 推进 tween。
+  tween?: gsap.core.Tween | gsap.core.Timeline; // gsap tween/timeline（可选；char 级 fadeShake / M2 dissolve 的 state 推进 tween。
                         // seek/stop/clearScreen 时 clearBehaviors 调 tween.kill() 释放）
 }
 
@@ -411,13 +422,16 @@ export class PlaybackController {
   ): Pick<BehaviorCleanup, 'filterInstance' | 'tickerFn' | 'tween' | 'offsetTarget' | 'restoreProps'> {
     let filterInstance: Filter | Filter[] | undefined;
     let tickerFn: (() => void) | undefined;
-    let tween: gsap.core.Tween | undefined;
+    let tween: gsap.core.Tween | gsap.core.Timeline | undefined;
     let offsetTarget: any;
     let restoreProps: any;
-    if (result && typeof result === 'object' && 'tickerFn' in result) {
+    if (result && typeof result === 'object' && ('tickerFn' in result || 'filters' in result)) {
+      // 'filters' in result 分支覆盖 char 级 dissolve：{ filters, tween }，无 tickerFn
+      // （容器级 offset-only behavior 如 shake:group 仍走 'tickerFn' in result 一侧）。
       const bfr = result as BehaviorFilterResult;
       filterInstance = bfr.filters;
       tickerFn = bfr.tickerFn;
+      tween = bfr.tween;  // M2 dissolve: progress/state 驱动 tween
       // 无 filters 的 BehaviorFilterResult = 容器级 offset behavior（shake:group/block）。
       // offsetTarget 指明 offset 绑定容器，clearBehaviors 调 removeContainerOffset 恢复 position。
       if (!filterInstance) offsetTarget = target;

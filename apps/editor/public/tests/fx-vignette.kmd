@@ -1,0 +1,35 @@
+---
+title: fx - vignette 暗角滤镜
+mode: stage
+speed: 50
+designWidth: 1920
+designHeight: 1080
+bgColor: "#1a1a2e"
+fontColor: "#e94560"
+---
+
+// 逐字（笔画级）：暗角在单字上几乎不可见（纹理太小）
+{暗角} @ f.vignette
+
+---
+
+// :block 整段暗角——推荐用法
+[.vignette:block]
+整段暗角效果，四角变暗中心明亮，营造聚光灯氛围。
+
+---
+
+// 改参：更柔和的暗角
+[.vignette:block(radius=0.9, softness=0.3)]
+柔和暗角，边缘渐变更宽。
+
+---
+
+// 改参：强暗角
+[.vignette:block(radius=0.5, softness=0.2)]
+强暗角，只在中心可见。
+
+---
+
+// 与 behavior 组合：暗角 + 波浪
+{暗角加波浪} @ f.vignette.wave

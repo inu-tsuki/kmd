@@ -1,0 +1,35 @@
+---
+title: fx - scanline 扫描线滤镜
+mode: stage
+speed: 50
+designWidth: 1920
+designHeight: 1080
+bgColor: "#000000"
+fontColor: "#00ff41"
+---
+
+// 逐字 CRT 扫描线
+{扫描线} @ f.scanline
+
+---
+
+// :block 整段扫描线——推荐用法（CRT 屏幕效果）
+[.scanline:block]
+整段扫描线效果，模拟老式 CRT 显示器的水平扫描线。
+
+---
+
+// 改参：高密度扫描线
+[.scanline:block(density=5)]
+高密度扫描线，线条更密集。
+
+---
+
+// 改参：桶形畸变 + 闪烁（复古 CRT）
+[.scanline:block(density=3, curvature=0.15, flicker=0.1)]
+桶形畸变 + 闪烁的 CRT 效果。
+
+---
+
+// 与 behavior 组合：扫描线 + 波浪
+{扫描线加波浪} @ f.scanline.wave
