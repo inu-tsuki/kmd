@@ -270,7 +270,7 @@ export const xxx = defineEffect(_xxx, { type: "filter", track: "instant"|"behavi
 | name | track | targetType | mutexGroup | padding | 说明 |
 |---|---|---|---|---|---|
 | `rgbShift` | behavior | both | filter_rgb | — | RGB 通道偏移（可选 anim；char 级 addModifier / 容器级 ticker 驱动） |
-| `warp` | behavior | char | filter_warp | 20 | 正弦扭曲（addModifier 驱动 uTime；char 专有） |
+| `warp` | behavior | both | filter_warp | 20 (preset) | sin(y*freq+time)*amp 波浪扭曲（M0→§0.5.3 扩展到容器级，原 char-only） |
 | `blur` | behavior | both | filter_blur | — | Pixi BlurFilter（可选 anim；char 级 addModifier / 容器级 ticker 驱动） |
 | `pixelate` | instant | both | filter_pixelate | — | 下采样马赛克（M0 模板） |
 | `gray` | instant | both | filter_color | — | 灰度点运算（M1 premult-alpha 模板） |
@@ -287,8 +287,7 @@ export const xxx = defineEffect(_xxx, { type: "filter", track: "instant"|"behavi
 | `scanline` | behavior | both | filter_scanline | — | CRT 周期亮度调制 + 桶形畸变 + 闪烁（M2，推荐 :block） |
 | `noise` | behavior | both | filter_noise | — | 时变噪声叠加 hash21，单色/彩噪（M2） |
 | `dissolve` | behavior | both | filter_dissolve | ceil(scale) | 噪声场与 uProgress 阈值比较消散 + 边缘上色（M2，progress 同构 fadeShake） |
-| `displace` | behavior | both | filter_displace | ceil(amount*64) | sin 组合噪声场驱动 UV 位移（M2，underwater 几何半边，推荐 :block） |
-| `warp` | behavior | both | filter_warp | 20 (preset) | sin(y*freq+time)*amp 波浪扭曲（M0→§0.5.3 扩展到容器级，原 char-only） |
+| `displace` | behavior | both | filter_displace | ceil(amount) | sin 组合噪声场驱动 UV 位移（M2，underwater 几何半边，amount=像素值，推荐 :block） |
 | `underwater` | behavior | both | filter_underwater | — | **组合预设**（非新 shader）：displace+duotone 蓝移+blur，fn 内 `new` 三 filter 串联，返回 `filters:Filter[]`（M2 首个 Filter[] preset） |
 
 ### 背景命令 bg（DIP-FX M2 Task B）

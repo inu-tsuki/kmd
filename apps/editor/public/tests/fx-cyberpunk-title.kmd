@@ -35,7 +35,7 @@ SIGNAL LOST
 
 // ━━ 镜头 4：水下（M2 旗舰组合） ━━
 // underwater = displace 波纹 + duotone 蓝移 + blur，整段水下沉浸感
-[.underwater:block(amount=0.03, scale=5, tint="#061230", highlight="#3aa0c0", blur=1)]
+[.underwater:block(amount=15, scale=5, tint="#061230", highlight="#3aa0c0", blur=1)]
 DEEP BELOW
 
 ---

@@ -19,14 +19,14 @@ fontColor: "#00ff41"
 
 ---
 
-// 改参：强位移 + 高频波纹
-[.displace:block(amount=0.05, scale=8)]
+// 改参：强位移 + 高频波纹（amount 是像素值）
+[.displace:block(amount=25, scale=8)]
 强位移高频波纹，纹理边缘更剧烈的扭曲。
 
 ---
 
 // 改参：慢速位移（speed 控制动画速率）
-[.displace:block(amount=0.03, scale=6, speed=0.005)]
+[.displace:block(amount=15, scale=6, speed=0.005)]
 慢速位移，波纹缓慢流动。
 
 ---

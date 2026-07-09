@@ -567,7 +567,7 @@ export const dissolve = defineEffect(_dissolve, {
 // 噪声场驱动 UV 位移，underwater 组合的几何半边。推荐 :block。
 // char 级 addModifier 驱动 uTime + return filter；容器级 gsap.ticker.add + return BehaviorFilterResult。
 const _displace: EffectFunction = (target, params = {}) => {
-  const amount = params.amount ?? 0.02;
+  const amount = params.amount ?? 10;
   const scale = params.scale ?? 4;
   const speed = params.speed ?? 0.01;
   const filter = new DisplaceFilter();
@@ -605,7 +605,7 @@ export const displace = defineEffect(_displace, {
 // char 级 return { filters: [...] }（无 tickerFn，addModifier 驱动，同 dissolve char 级形态）；
 // 容器级 return { filters: [...], tickerFn }。
 const _underwater: EffectFunction = (target, params = {}) => {
-  const amount = params.amount ?? 0.02;
+  const amount = params.amount ?? 8;
   const scale = params.scale ?? 4;
   const speed = params.speed ?? 0.01;
   const tint = params.tint ?? "#0a1e3f";       // 深蓝 shadow

@@ -20,8 +20,8 @@ fontColor: "#5fb8d6"
 
 ---
 
-// 改参：强位移 + 深蓝 tint
-[.underwater:block(amount=0.04, scale=6, tint="#061230", highlight="#3aa0c0", blur=2)]
+// 改参：强位移 + 深蓝 tint（amount 是像素值）
+[.underwater:block(amount=20, scale=6, tint="#061230", highlight="#3aa0c0", blur=2)]
 深蓝水下，更强波纹与更深色调。
 
 ---
