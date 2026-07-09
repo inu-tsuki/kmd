@@ -474,29 +474,35 @@ export class SegmentBuilder {
         // 在 buildTimeline 之前，captureEntrance 不可用）。
         for (const cfg of blockEntrance) {
           const resolved = EffectProcessor.resolveParams(cfg.params);
-          // Bug 2: :bg scope 的 entrance filter 目标是背景精灵而非 paragraphText。
-          const bgEntranceTarget = cfg.level === "bg" ? stageManager.getBackgroundSprite() : null;
-          if (bgEntranceTarget === null && cfg.level === "bg") {
-            console.warn(`[SegmentBuilder] :bg entrance "${cfg.name}" skipped — no background sprite`);
-            continue;
-          }
+          // Bug 2/6: :bg scope 的 entrance filter 目标是背景精灵而非 paragraphText。
+          // 与 instant/behavior 同理：sprite 未就绪时注册 onBackgroundReady 延后 apply。
+          const isBgEntrance = cfg.level === "bg";
+          const bgEntranceTarget = isBgEntrance ? stageManager.getBackgroundSprite() : null;
           const entranceTarget = bgEntranceTarget ?? paragraphText;
           const entranceName = cfg.name;
           const entranceParams = { ...resolved };
+
           // build 期同步 apply：fn 创建 filter push 进 target.filters + 返回 {tween, filter}
-          const result = effectManager.apply(entranceTarget, entranceName, entranceParams, true);
-          if (result && typeof result === 'object' && 'tween' in result && 'filter' in result) {
-            const efr = result as any;
-            // tween 入 segment timeline（与 captureTween 同构）
-            if (efr.tween instanceof gsap.core.Tween || efr.tween instanceof gsap.core.Timeline) {
-              segmentTl.add(efr.tween, segmentCursor);
+          const applyEntrance = (target: any) => {
+            const result = effectManager.apply(target, entranceName, entranceParams, true);
+            if (result && typeof result === 'object' && 'tween' in result && 'filter' in result) {
+              const efr = result as any;
+              if (efr.tween instanceof gsap.core.Tween || efr.tween instanceof gsap.core.Timeline) {
+                segmentTl.add(efr.tween, segmentCursor);
+              }
+              allEntranceFilters.push({
+                target,
+                filter: efr.filter,
+                timePosition: segmentCursor,
+              });
             }
-            // filter 进 entranceFilters（clearEntranceFilters 在 stop/clearScreen 移除 + destroyFilterDeep）
-            allEntranceFilters.push({
-              target: entranceTarget,
-              filter: efr.filter,
-              timePosition: segmentCursor,
-            });
+          };
+
+          if (isBgEntrance && !bgEntranceTarget) {
+            // Bug 6: sprite 未就绪——延后到 onBackgroundReady 回调
+            stageManager.onBackgroundReady((sprite) => applyEntrance(sprite));
+          } else {
+            applyEntrance(entranceTarget);
           }
         }
         }

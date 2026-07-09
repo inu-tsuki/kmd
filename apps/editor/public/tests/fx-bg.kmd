@@ -54,3 +54,17 @@ bg(src="tests/assets/sample-bg.jpg")
 bg(src="tests/assets/sample-bg.jpg")
 [.gray:bg]
 gray:bg 回归验证
+
+---
+
+// 内联 @ f.x:bg 链路——与块选项 [.x:bg] 走不同代码路径（TextPlayer.unrollGroupChain）
+// onBackgroundReady 延迟机制覆盖此路径
+bg(src="tests/assets/sample-bg.jpg")
+{内联灰背景} @ f.gray:bg
+
+---
+
+// bg(color) 清除图片回归——先设图片再设纯色，图片应消失
+bg(src="tests/assets/sample-bg.jpg")
+bg(color="#1a0a2e")
+{纯色替换图片} @ f.gray
