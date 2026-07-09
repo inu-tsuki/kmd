@@ -1,11 +1,19 @@
 # DIP Filter PR — Review Entry Point
 
 > 状态：Active（审查入口 / 可复用清单）
-> 最近更新：2026-06-28（技术债清理二：结尾重播不清理 entranceFilters + clearScreen 置空 segment + 容器级 blurIn timeline 统一 + stage modifier 清理）
+> 最近更新：2026-07-09（M2 收尾 PR3：displace + underwater 组合 + warp 容器级扩展 + 赛博朋克 demo）
 > 代号：DIP-FX
 > 配套：实现规格 `editor-dip-effect-library-spec.md`，纲领 `editor-dip-effect-library.md`
 
 本文件是 DIP 滤镜 PR 的**审查入口**：每个新滤镜 PR 来时，从这里逐条过。它是 spec §6 的权威副本——spec §6 只指回本文件，避免两处维护。条目改动以本文件为准。
+
+### M2 收尾 PR3 审查记录（2026-07-09）
+
+- **warp 容器级扩展**：原 char-only（`targetType:"char"`，容器 warn no-op）。改为 `both`，去掉 guard 加 `gsap.ticker.add` 容器分支（与 scanline/noise 同构）。WarpFilter 的 `warpUniforms` resource key 不改。`[.warp:block]` 此前 no-op，扩展后生效。回归：`final-playback-test.ts` [20.5](2) 验证 kt.filters 有 WarpFilter + seek 幂等。
+- **underwater 首个 `Filter[]` preset**：`clearBehaviors` 的 `Array.isArray` 分支此前只有代码阅读覆盖、无真实 preset 触发。回归覆盖决策：新增 `fx-underwater.kmd` 样例 + `final-playback-test.ts` [20.5](3)/(4) 用例（block + char 两路径，断言 kt/char.filters 恰好 3 个 + 多次 seek 来回幂等不堆积 + cleanup 条数不变）。
+- **duotone 在 underwater 内直接 `new`**：不调 duotone effect fn（避免双注册 + 双 push），shadow `#0a1e3f` / highlight `#5fb8d6` 蓝移 tint。
+- **displace 噪声实现**：spec §7.2 原文 `noise(uv*uScale + uTime)` 无强制实现；用 `sin` 双轴组合生成连续平滑位移场（避免 `hash21` 白噪点撕裂），文件作用域 `displaceNoise` 函数（GLSL ES 3.00 禁嵌套）。padding `ceil(amount*64)` 保守估算（宁大勿小，preset 可覆盖）。
+- **赛博朋克 demo `fx-cyberpunk-title.kmd`**：7 镜头答辩交付物。warp 用于 `@ f.warp`（char 逐字）与 `[.warp:block]`（扩展后容器级）两种。glitch/shift 仍 char-only，demo 未用（如需 char-only 逐字效果仍走 `@ f.x`）。
 
 ## 用法
 

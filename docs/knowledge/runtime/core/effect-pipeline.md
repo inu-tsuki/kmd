@@ -37,7 +37,7 @@ export const wave = defineEffect(_wave, {
 > **`instant` track 说明**：原是“死桶”——`TextPlayer.placeCharOnTimeline` 只读 `.behavior`/`.entrance`，`instant` 滤镜 fn 永不执行。现已修复：非 style 的 instant 特效（如静态 filter）经 `InstantEffectRecord` 收集，seek 时由 `PlaybackController.registerInstantEffects` 从 `target.filters` 重置后 force 重 apply，靠 fn 返回的 filter 实例做幂等清理。`InstantCleanup.filterInstance` 支持 `Filter | Filter[]`（组合预设 return 数组）。现有 blur/rgbShift/warp 因含可选 `addModifier` 动画仍填 `behavior`；纯静态滤镜（pixelate 及 M1 的 gray/threshold/posterize/duotone/sharpen/emboss/edge/outline/bloom/halftone）用 `instant`。**block 作用域 filter 也经 `SegmentBuilder` 路由进 record + `segmentTl.call`**（与 char/group 路径对称，非 `applyGroupEffects` 同步挂载）——instant 进 `InstantEffectRecord`、behavior 进 `BehaviorRecord`，char/group/block × instant/behavior 六路径 seek 幂等均覆盖。
 
 > **`behavior` track filter cleanup 说明**（M2 准备修复）：behavior-track filter（blur/rgbShift/warp 及 M2 displace/dissolve/scanline/noise/underwater）除 `addModifier` 外还会把 filter push 进 `target.filters`。原 `clearBehaviors` 只 `removeModifier`、不碰 filters → 每次 seek 累积一个 filter + stop/clearScreen 时 GPU 资源不释放。现已修复，与 instant 路径对称：
-> - **fn 返回值契约**：char 级 fn `return filter`（`Filter | Filter[]`）；容器级（`:group`/`:block`，无 `addModifier`）fn `return { filters, tickerFn }`（`BehaviorFilterResult`），ticker 回调驱动 `uTime`/`uProgress`，cleanup 时 `gsap.ticker.remove(tickerFn)`。
+> - **fn 返回值契约**：char 级 fn `return filter`（`Filter | Filter[]`）；容器级（`:group`/`:block`，无 `addModifier`）fn `return { filters, tickerFn }`（`BehaviorFilterResult`），ticker 回调驱动 `uTime`/`uProgress`，cleanup 时 `gsap.ticker.remove(tickerFn)`。**`Filter[]` 首次实战**：M2 `underwater` 组合预设 char 级 `return { filters: [...] }`（无 tickerFn，addModifier 驱动）/ 容器级 `return { filters: [...], tickerFn }`——`unpackBehaviorResult` 经 `'filters' in result` 分支捕获数组，`clearBehaviors` 的 `Array.isArray` 分支逐个移除+`destroyFilterDeep`。回归覆盖见 `final-playback-test.ts` [20.5]。
 > - **`BehaviorCleanup`** 扩展 `target?`/`filterInstance?`/`tickerFn?`；`clearBehaviors` 在 `removeModifier`（守卫：仅 KineticChar 有此方法）之外，从 `target.filters` 移除 filter + 深销毁（见下文 `destroyFilterDeep`）+ 移除 ticker。
 > - **容器级 animation 驱动**：`addModifier` 是 KineticChar 专属；容器级用 `gsap.ticker.add(fn)` 注册回调更新 filter uniform（与 `addModifier` 同源，都是 `gsap.ticker`）。char 级与容器级在 fn 内按 `target instanceof KineticChar` 分走两条路，cleanup 统一由 `clearBehaviors` 处理。
 > - **group-scope behavior 进 cleanup**：原 `unrollGroupChain` 容器级 behavior 用独立 `tl.call` 且不 push `behaviors` → seek 不重 apply、无 cleanup。现改为 push `behaviors`（`target = wrapper`），经 `SegmentBuilder` 统一 `tl.call` + `registerBehaviors` seek 重注册，与 char 级对称。
@@ -287,6 +287,9 @@ export const xxx = defineEffect(_xxx, { type: "filter", track: "instant"|"behavi
 | `scanline` | behavior | both | filter_scanline | — | CRT 周期亮度调制 + 桶形畸变 + 闪烁（M2，推荐 :block） |
 | `noise` | behavior | both | filter_noise | — | 时变噪声叠加 hash21，单色/彩噪（M2） |
 | `dissolve` | behavior | both | filter_dissolve | ceil(scale) | 噪声场与 uProgress 阈值比较消散 + 边缘上色（M2，progress 同构 fadeShake） |
+| `displace` | behavior | both | filter_displace | ceil(amount*64) | sin 组合噪声场驱动 UV 位移（M2，underwater 几何半边，推荐 :block） |
+| `warp` | behavior | both | filter_warp | 20 (preset) | sin(y*freq+time)*amp 波浪扭曲（M0→§0.5.3 扩展到容器级，原 char-only） |
+| `underwater` | behavior | both | filter_underwater | — | **组合预设**（非新 shader）：displace+duotone 蓝移+blur，fn 内 `new` 三 filter 串联，返回 `filters:Filter[]`（M2 首个 Filter[] preset） |
 
 ### 背景命令 bg（DIP-FX M2 Task B）
 

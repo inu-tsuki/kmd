@@ -1,0 +1,62 @@
+---
+title: fx - 赛博朋克标题序列 (DIP-FX M2 demo)
+mode: stage
+speed: 50
+designWidth: 1920
+designHeight: 1080
+bgColor: "#0a0a0f"
+fontColor: "#00fff0"
+fontFamily: monospace
+---
+
+// ━━ 镜头 1：背景图 + 连续色调底 ━━
+// bg(src) 落背景图，duotone:bg 压暗上色保证文字对比度（Task B 落地后 :bg 路由）
+bg(src="tests/assets/sample-bg.jpg")
+[.duotone:bg(shadow="#0d0221", highlight="#ff006e")]
+NEON CITY
+
+---
+
+// ━━ 镜头 2：扫描线 + 噪声 + RGB 分裂组合 ━━
+// CRT 降解：scanline 周期亮度调制 + noise 数字噪声 + rgbShift 色彩撕裂
+bg(color="#0a0a0f")
+[.scanline:block(density=4, curvature=0.1, flicker=0.05)]
+[.noise:block(amount=0.15, mono=1, scale=6)]
+[.rgbShift:block(dist=8, anim=true)]
+SIGNAL LOST
+
+---
+
+// ━━ 镜头 3：逐字扭曲 + glitch 消散 ━━
+// warp 逐字波纹扭曲（char 级）+ dissolve 消散转场
+{GLITCH} @ f.warp(freq=15, amp=0.08, speed=0.03).dissolve(duration=2, edge="#00fff0")
+
+---
+
+// ━━ 镜头 4：水下（M2 旗舰组合） ━━
+// underwater = displace 波纹 + duotone 蓝移 + blur，整段水下沉浸感
+[.underwater:block(amount=0.03, scale=5, tint="#061230", highlight="#3aa0c0", blur=1)]
+DEEP BELOW
+
+---
+
+// ━━ 镜头 5：暗角 + 溶解转场收尾 ━━
+// vignette 径向暗角 + dissolve 消散，赛博朋克收束
+[.vignette:block]
+[.dissolve:block(duration=1.5, edge="#ff006e", scale=10)]
+SYSTEM OFF
+
+---
+
+// ━━ 镜头 6：背景图浮雕连续色调验证 ━━
+// emboss:bg 在真实照片上的浮雕效果（连续色调教科书级验证）
+bg(src="tests/assets/sample-bg.jpg")
+[.emboss:bg(strength=1.5)]
+ARCHIVE
+
+---
+
+// ━━ 镜头 7：warp 容器级（扩展后 :block 路径） ━━
+// warp 扩展到容器级后可在 :block 用（此前 char-only 会 warn no-op）
+[.warp:block(freq=12, amp=0.06, speed=0.02)]
+整段扭曲，容器级 warp 验证。

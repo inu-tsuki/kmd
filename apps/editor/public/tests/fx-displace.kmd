@@ -1,0 +1,35 @@
+---
+title: fx - displace 位移贴图滤镜
+mode: stage
+speed: 50
+designWidth: 1920
+designHeight: 1080
+bgColor: "#000000"
+fontColor: "#00ff41"
+---
+
+// 逐字位移——文字边缘波纹扭曲
+{位移} @ f.displace
+
+---
+
+// :block 整段位移——推荐用法（连续波纹场）
+[.displace:block]
+整段位移效果，噪声场驱动 UV 偏移产生波纹扭曲。
+
+---
+
+// 改参：强位移 + 高频波纹
+[.displace:block(amount=0.05, scale=8)]
+强位移高频波纹，纹理边缘更剧烈的扭曲。
+
+---
+
+// 改参：慢速位移（speed 控制动画速率）
+[.displace:block(amount=0.03, scale=6, speed=0.005)]
+慢速位移，波纹缓慢流动。
+
+---
+
+// 与 behavior 组合：位移 + 波浪
+{位移加波浪} @ f.displace.wave
