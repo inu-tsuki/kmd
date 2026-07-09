@@ -219,12 +219,12 @@ export class EffectProcessor {
     if (!result) return;
     if (result.type === "delay") {
       finalRes.delayOverride = result.value;
-      if (config.level === "block") finalRes.blockAdvanceRequested = true;
+      if (config.level === "block" || config.level === "bg") finalRes.blockAdvanceRequested = true;
     } else if (result.type === "speedMultiplier") {
       finalRes.speedMultiplier = result.value;
     } else if (typeof result === 'number') {
       finalRes.delayOverride = result;
-      if (config.level === "block") finalRes.blockAdvanceRequested = true;
+      if (config.level === "block" || config.level === "bg") finalRes.blockAdvanceRequested = true;
     }
   }
 
@@ -307,7 +307,7 @@ export class EffectProcessor {
       if (s.name === "go") {
         res.advanceLevel = s.level;
         res.delayOverride = s.params[0] ?? 0;
-        if (s.level === "group" || s.level === "block") {
+        if (s.level === "group" || s.level === "block" || s.level === "bg") {
           res.blockAdvanceRequested = true;
         }
       }
@@ -377,12 +377,14 @@ export class EffectProcessor {
   public static classifyStyleWrite(config: EffectConfig): { isStyle: boolean; isBlocking: boolean } {
     const isStyle = styleManager.has(config.name);
     // R19/SA-33：style 不受 level==="group"/"block" 边界阻断（见上 doc）。仅非 style 时这些 level 才终止烘焙。
-    const isStyleScoped = isStyle && (config.level === "group" || config.level === "block");
+    // :bg 与 :block 同构（都是容器级 block-option scope），加入 style-scoped / blocking 判定。
+    const isStyleScoped = isStyle && (config.level === "group" || config.level === "block" || config.level === "bg");
     const isBlocking = !isStyleScoped && (
       config.name === "hold" ||
       config.blocking ||
       config.level === "group" ||
-      config.level === "block"
+      config.level === "block" ||
+      config.level === "bg"
     );
     return { isStyle, isBlocking };
   }
@@ -426,7 +428,7 @@ export class EffectProcessor {
     }
     if (config.name === "hold" && config.level === "char") return "char_stagger";
     if (config.name === "hold") return "group_sync";
-    if (config.level === "group" || config.level === "block" || meta?.targetType === "group") {
+    if (config.level === "group" || config.level === "block" || config.level === "bg" || meta?.targetType === "group") {
       return "container_only";
     }
     if (meta?.track === "entrance" && (meta.targetType === "char" || meta.targetType === "both")) {

@@ -1,7 +1,7 @@
 # Editor DIP Effect Library — Implementation Spec
 
 > 状态：Active planning（实现规格 / 交接稿）
-> 最近更新：2026-06-28（技术债清理二：结尾重播不清理 entranceFilters + clearScreen 置空 segment + 容器级 blurIn timeline 统一 + stage modifier 清理，见 §0.4 第 9/10/13 点修正）
+> 最近更新：2026-07-09（M2 Task B 代码审查 + 语法方向订正：bg 命令撞车 bug + :bg 路由缺口 8 处，见 §0.5；`bg`/`frame` 不进 `CommandLevel`，见 §0.5.1 与架构体检处方 11/12）
 > 代号：DIP-FX
 > 上游：`docs/planning/apps/editor-dip-effect-library.md`（清单与设计纲领）
 
@@ -73,6 +73,62 @@ M1 以 instant-track 为主；M2 五个滤镜里 **displace/dissolve/scanline/no
 
 完整实现细节见 `docs/knowledge/runtime/core/effect-pipeline.md` 的 behavior track filter cleanup 说明段；**生命周期不变量合约**见 `docs/knowledge/runtime/core/lifecycle-invariants.md`。
 
+### 0.5 M2 Task B 落地（背景图基础设施，2026-07-09）
+
+Task B 三步全部落地，解锁色调类滤镜在真实连续色调照片上的教科书级验证（§0.3 第 2 点化解）：
+
+1. **B1 `bg(color)`**：stage 命令 `bg` 注册在 `stagePresets.ts`，`bg(color=...)` 委托 `stageManager.setBackgroundColor`。与 `visual.ts` 的元素级 `bg` 样式（Graphics 画圆角矩形）是不同概念——stage bg 设画布底色，element bg 画元素背景。
+2. **B2 `bg(src)`**（editor-dev 级）：`Assets.load(url)` → cover-fit Sprite（`designWidth × designHeight`）→ `stageManager.setBackgroundSprite()` 挂到 `backgroundLayer`。fire-and-forget async（apply 返回 null）。旧 sprite 自动销毁。无 manifest/security gate（reader-hardened 级是独立 epic，见 `asset-import-mechanism-draft.md`）。
+3. **B3 `:bg` filter 路由**：`CommandLevel` 加 `"bg"`，parser regex 识别 `:bg` 后缀。`:bg` 与 `:block` 同构（容器级 block-option scope），`SegmentBuilder` 块拆分中 target 解析为 `stageManager.getBackgroundSprite()` 而非 `paragraphText`。DIP filter `fn`/`meta` 零改动——`fn` 只做 `target.filters = [...]`，target 是任意 Container 即可。未加载 `bg(src)` 时 `:bg` effect 跳过并 warn。
+
+**路由改动清单**（`:bg` 加入所有 `"block" || "group"` 比较分支）：
+- `parser/types.ts`: `CommandLevel` 加 `"bg"`
+- `parser/KMDCommandParser.ts`: regex alternation 加 `bg`
+- `parser/ScopeRouter.ts`: `applyBlockOptionCommands` `:bg` 走 `paragraphEffects`
+- `effects/EffectProcessor.ts`: `processEffectResult` / `resolveTiming` / `classifyStyleWrite` / `inferChainHint` 四处加 `"bg"`
+- `render/text/TextPlayer.ts`: 容器级检测加 `"bg"`
+- `render/text/TextTimelineCursor.ts`: advance 加 `"bg"`
+- `execution/chainPlanning.ts`: `inferChainMode` 加 `"bg"`
+- `player/SegmentBuilder.ts`: blockInstant / blockBehavior target 解析按 `cfg.level === "bg"` 走 `stageManager.getBackgroundSprite()`
+- `stage/StageManager.ts`: `getBackgroundSprite()` / `setBackgroundSprite()` + disposeSession 清理
+- `stage/types.ts`: `StageCommandKind` 加 `"background"`，`StagePropertyKey` 加 `"background.set"`
+
+门禁：`pnpm build` + `pnpm test:parser` + `pnpm test:playback` (260) + `pnpm test:invariants` ✅。示例：`public/tests/fx-bg.kmd` + `public/tests/assets/sample-bg.jpg`。
+
+**门禁通过≠功能可用**——上述四个门禁未覆盖跨注册表路由与 `:bg` 的轨道完整性，落地后代码审查发现 8 处问题（含"顶层 `bg(...)` 命令从未被调用"这一级）。详见架构体检 `architecture-health-check-2026-07.md` 处方 11。
+
+### 0.5.1 Task B 审查修复（2026-07-09，7 处 bug）
+
+审查发现的 7 处 bug 全部修复：
+
+1. **`bg(...)` 命令名碰撞（P1 阻断）**：`visual.ts` 旧元素级 `bg` 效果（圆角矩形 Graphics）与 stage 命令 `bg` 同名 → `EffectProcessor.classifyCommand` 的 `isStage = stageManager.has(name) && !effectManager.has(name)` 因 `effectManager.has("bg")` 恒真，stage bg 永远不被路由（死代码）。**修法**：旧效果改名 `box`，`mutexGroup` 同步改为 `"box"`，消除撞车。测试 `final-playback-test.ts` 中 R12 Graphics 清理用例同步改名。
+
+2. **`:bg` 只接了 instant/behavior 轨道**：`SegmentBuilder` blockRemaining（style track）和 blockEntrance 硬编码 `paragraphText`，`TextPlayer.unrollGroupChain`（内联 `@ f.x:bg`）硬编码 `wrapper`。**修法**：entrance track 加 `:bg` target 解析（同 instant/behavior 模式）；style track 的 `:bg` 跳过并 warn（Sprite 无 `getGraphicsLayer`/`tokens`，`:bg` style 无语义）；`unrollGroupChain` 容器级分支加 `:bg` target 解析。
+
+3. **`setBackgroundSprite` 销毁 Assets 缓存共享的 texture**：`destroy({ texture: true })` 销毁的 texture 可能被 Assets 缓存复用 → 同 URL 后续加载拿到已销毁资源。**修法**：改 `destroy({ texture: false })` + `Assets.unload(url)` 释放缓存引用。
+
+4. **`dumpState`/`restoreState` 未快照 `_bgSprite`**：seek/restore 后背景图丢失。**修法**：`StageState` 加 `bgSpriteUrl?: string | null`，`dumpState` 写入 URL，`loadState` 通过 `loadBackgroundFromUrl` 重新加载。
+
+5. **`bg(color=...)` / 无参 `bg()` 不清除已有图片 sprite**：设色后旧图片 sprite 仍留在 `backgroundLayer`。**修法**：color/无参路径补 `setBackgroundSprite(null)`。
+
+6. **`bg(src=...)` 与 `:bg` 滤镜时序竞态**：`Assets.load` 异步 resolve 晚于同步的 `:bg` target 解析，首次构建必然 warn-and-skip。**修法**：`:bg` target 延后到 `segmentTl.call` 触发时解析（此时 sprite 可能已加载）；若仍未就绪，注册 `stageManager.onBackgroundReady(sprite => apply(...))` 回调延后 apply。**覆盖范围**（重审补齐）：`onBackgroundReady` 延迟机制接入全部四条轨道——SegmentBuilder block-instant/behavior（`segmentTl.call` 内延后解析）、block-entrance（build 期 `onBackgroundReady` 回调延后 apply）、TextPlayer `unrollGroupChain` 内联链路 instant/behavior/entrance 三条（同 `onBackgroundReady` 回调模式）。
+
+7. **并发 `bg(src=...)` 无序列守卫**：快速连续 `bg(src=A)` → `bg(src=B)`，A 的 resolve 可能晚于 B 到达 → 错误替换。**修法**：`StageManager` 加 `_bgEpoch` 纪元号，`loadBackgroundFromUrl` 返回 epoch，resolve 时检查 `currentBgEpoch !== epoch` 则丢弃。
+
+**语法方向约束**（任务 B）：`:bg` 保留为过渡期兼容写法，**不再往 `CommandLevel` 加更多主语性质值**（如 `:frame`）。`docs/knowledge/language/design.md` D12 封盘"覆盖范围永远不归 `:` 管，归主语管"——`:bg` 本身已违反此条（选的是目标而非粒度），这笔债已记进 `docs/knowledge/language/migration.md` 解析器工程债 #9。Phase B 链语法统一重写时迁移到主语形态（`bg.<effect>(...)`），现在不提前造通用分发机制。
+
+门禁：`pnpm build` + `pnpm test:parser` + `pnpm test:playback` (260) + `pnpm test:invariants` ✅。
+
+### 0.5.1 `bg`/`frame` 语法方向订正（2026-07-09 审查后决议，先于处方 11 的 bug 修复单独记录）
+
+Task B 把 `:bg` 实现为 `CommandLevel` 的第四个取值，与 `docs/knowledge/language/design.md` D12（"覆盖范围永远不归 `:` 管，归主语管"）冲突——`:bg` 选的是**目标**（背景精灵），不是**粒度**，这类选择理应由主语（`cam`/`flow`/`var` 同级的内建对象）承担，不该长在冒号后缀上。落地时漏看了两处已有决议：`design.md` D12，以及本文件 §7.3（"`bg.brightness`/`bg.blur` 首要为可读性"——这里已经用了 `bg.` 命名空间形态，而非 `:bg`）。
+
+**决议**：
+- `:bg` 暂时保留为过渡期兼容写法，不因这条冲突立即重构——Phase B（链语法统一重写）未排期，现在提前造通用主语分发机制成本不划算。已记入 `docs/knowledge/language/migration.md` 解析器工程债 #9。
+- `frame` 不作为 `CommandLevel` 第五值加入；§1.1 "作用域模型（char / group / block / frame）"这个标题本身需要跟着修正——`frame` 若要落地，应和 `bg` 一样走主语路线（`frame.<effect>(...)` 或类似形态），不进这张表。
+- M2 剩余滤镜（displace/dissolve/noise/vignette/scanline/underwater）与此争议无关联，照常推进。
+- Task B 的实现 bug（命令名撞车导致 stage `bg` 从未被调用、`:bg` 只接了 instant/behavior 两条轨道、texture 生命周期、seek 状态快照缺口等）与语法形态无关，按处方 11 独立修复。
+
 ## 1. 实现真相核对（动手前必读，含两处对既有约定的纠正）
 
 以下基于当前代码（Pixi v8.15，`pixi.js` v8 filter API）核对：
@@ -86,10 +142,11 @@ M1 以 instant-track 为主；M2 五个滤镜里 **displace/dissolve/scanline/no
 - **【纠正 2】作用域是路由（`level`）问题，不是 `targetType` 取值问题**——见 §1.1。早期稿把 block 当作“被 group 覆盖”、把 stage 挂点写成 `StageRuntime`，两者都不准确，已订正。
 - **文档同步**：`docs/knowledge/runtime/core/effect-pipeline.md` 仍写 preset 在单文件 `presets.ts`，实际已是 `presets/` 目录；新增 filter 分类时一并订正该处并补 filter 注册说明。
 
-## 1.1 作用域模型（char / group / block / frame）——本库的核心架构判断
+## 1.1 作用域模型（char / group / block，`frame` 另议）——本库的核心架构判断
 
 核对代码后确立的事实，这是整个滤镜库能“写一次、多作用域复用”的依据。
-**命名注意**：第四个作用域命名为 `frame`（全屏屏幕空间后处理），**不叫 stage**——`stage` 在仓库里已被 `mode:"stage"`（呈现模式）和 `StageRuntime`（镜头子系统）占用，复用会三重碰撞。命名分层与镜头系统去向见概览 §9。
+**命名注意**：`frame`（全屏屏幕空间后处理）**不叫 stage**——`stage` 在仓库里已被 `mode:"stage"`（呈现模式）和 `StageRuntime`（镜头子系统）占用，复用会三重碰撞。命名分层与镜头系统去向见概览 §9。
+**2026-07-09 订正（见 §0.5.1）**：`frame` 不进 `CommandLevel` 枚举——它和 `bg` 一样是**目标/主语**而非**粒度**，与 `design.md` D12 冲突。下表仍保留 `frame` 一行是为了说明"挂点存在、fn 零改动"这一事实（§7.1 的挂点判断不变），但触发语法待 Phase B 按主语形态定案，不会是 `:frame`。
 
 - **滤镜 `fn` 本身与作用域无关**。它只做 `target.filters = [...]`，`target` 是任意 Pixi `Container`。同一个 `bloom` fn 既能作用于单字，也能作用于整段，区别只在调用点传进来的 `target` 是哪个容器。
 - **“作用域”由 `EffectConfig.level` 路由决定，而非 `meta.targetType`**。`level` 取值与目标容器：

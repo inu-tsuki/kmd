@@ -49,7 +49,7 @@ export class TextTimelineCursor {
     const isSugarGo = delayOverride === 0;
     const isInstantGo = isSugarGo || this.lastWasInstantGo;
 
-    if (timing.advanceLevel === "block") {
+    if (timing.advanceLevel === "block" || timing.advanceLevel === "bg") {
       this._advanceTime = this.cursor;
     }
     if (timing.advanceLevel === "group") {

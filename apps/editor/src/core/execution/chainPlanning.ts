@@ -64,7 +64,7 @@ export function inferChainMode(effects: EffectConfig[]): ChainExecutionPlan["mod
   if (effects.some((effect) => effect.name === "hold" && effect.level === "char")) {
     return "char_stagger";
   }
-  if (effects.some((effect) => effect.level === "group" || effect.level === "block")) {
+  if (effects.some((effect) => effect.level === "group" || effect.level === "block" || effect.level === "bg")) {
     return "container_only";
   }
   return "group_sync";

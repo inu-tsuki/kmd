@@ -1,0 +1,70 @@
+---
+title: fx - bg 背景图基础 (DIP-FX M2 Task B)
+mode: stage
+speed: 50
+designWidth: 1920
+designHeight: 1080
+bgColor: "#000000"
+fontColor: "#ffffff"
+---
+
+// B1: 纯色背景
+bg(color="#1a0a2e")
+{纯色背景} @ f.gray
+
+---
+
+// B2: 图片背景（editor-dev 级，从 public/ 加载）
+// 图片异步加载，加载完成后替换纯色背景
+bg(src="tests/assets/sample-bg.jpg")
+{图片背景} @ f.duotone(shadow="#1a0a2e", highlight="#e94560")
+
+---
+
+// B1 + B2 组合：先设色再加载图片（图片加载前可见纯色）
+bg(color="#0f3460", src="tests/assets/sample-bg.jpg")
+{色彩加图片} @ f.gray
+
+---
+
+// B3: :bg filter 路由——DIP 滤镜作用于背景精灵而非文字
+// 背景图上 duotone 连续色调教科书级用法
+bg(src="tests/assets/sample-bg.jpg")
+[.duotone:bg(shadow="#0d1b2a", highlight="#e94560")]
+背景图双色处理
+
+---
+
+// :bg emboss——连续色调表面的浮雕效果
+bg(src="tests/assets/sample-bg.jpg")
+[.emboss:bg]
+背景图浮雕处理
+
+---
+
+// :bg gray + 文字——背景灰度，文字保持原色
+bg(src="tests/assets/sample-bg.jpg")
+[.gray:bg]
+灰度背景上的彩色文字
+
+---
+
+// :bg gray 回归用例——此前 bg 命令名碰撞导致 stage bg 死代码，:bg 静默失败
+// 修复后 bg 重命名为 box（元素级），stage bg 正常路由，:bg filter 作用于背景精灵
+bg(src="tests/assets/sample-bg.jpg")
+[.gray:bg]
+gray:bg 回归验证
+
+---
+
+// 内联 @ f.x:bg 链路——与块选项 [.x:bg] 走不同代码路径（TextPlayer.unrollGroupChain）
+// onBackgroundReady 延迟机制覆盖此路径
+bg(src="tests/assets/sample-bg.jpg")
+{内联灰背景} @ f.gray:bg
+
+---
+
+// bg(color) 清除图片回归——先设图片再设纯色，图片应消失
+bg(src="tests/assets/sample-bg.jpg")
+bg(color="#1a0a2e")
+{纯色替换图片} @ f.gray

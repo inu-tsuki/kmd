@@ -1,4 +1,5 @@
 import { stageRuntime } from "./StageRuntimeInstance";
+import { stageManager } from "./StageManager";
 import type { StageEffectFunction } from "./StageRuntime";
 import type { StageCommandMetadataMap } from "./types";
 import { RuntimeValueResolver } from "../runtime/RuntimeValueResolver";
@@ -67,6 +68,12 @@ export const stageCommandMetadata: StageCommandMetadataMap = {
     kind: "playback",
     propertyKey: "playback.pause",
     blockingDefault: true,
+    capturesTween: false,
+  },
+  "bg": {
+    name: "bg",
+    kind: "background",
+    propertyKey: "background.set",
     capturesTween: false,
   },
 };
@@ -424,5 +431,48 @@ export const stagePresets: Record<string, StageEffectFunction> = {
     return new Promise<void>(resolve => {
       gsap.delayedCall(duration, resolve);
     });
+  },
+
+  /**
+   * 背景设置 (DIP-FX M2 Task B) —— bg(color) / bg(src) 双格式。
+   * B1: bg(color) → setBackgroundColor 别名（最便宜）。Bug 5: 同时清除已有图片 sprite。
+   * B2: bg(src="path/to/image.jpg") → Assets.load → cover-fit Sprite → backgroundLayer。
+   *     editor-dev 级：从 public/ 直接加载，无 manifest/security gate。
+   *     fire-and-forget async：apply 返回 null，图片异步加载后替换。
+   *     Bug 7: 纪元号守卫——并发 bg(src) 丢弃过期 resolve。
+   * B3: :bg filter 路由通过 stageManager.getBackgroundSprite() 获取精灵作为 DIP filter target。
+   *     Bug 6: SegmentBuilder 通过 onBackgroundReady 注册回调，sprite 加载完成时延后 apply。
+   */
+  "bg": (p: any) => {
+    const color = p.color ?? p[0];
+    const src = p.src ?? p.source ?? p[1];
+
+    // B1: 纯色背景 — Bug 5: 清除已有图片 sprite
+    if (color !== undefined && src === undefined) {
+      stageManager.setBackgroundColor(color);
+      stageManager.setBackgroundSprite(null);
+      return;
+    }
+
+    // B2: 图片背景（editor-dev 级，fire-and-forget）
+    if (src !== undefined) {
+      const baseUrl = (import.meta as any).env?.BASE_URL ?? "/";
+      const url = src.startsWith("http") || src.startsWith("/") || src.startsWith("blob:")
+        ? src
+        : baseUrl + src.replace(/^\.\//, "");
+
+      // 委托 StageManager.loadBackgroundFromUrl（含纪元守卫 + cover-fit + 就绪回调）
+      stageManager.loadBackgroundFromUrl(url);
+
+      // 若同时给了 color，先设色（图片加载前可见）
+      if (color !== undefined) {
+        stageManager.setBackgroundColor(color);
+      }
+      return;
+    }
+
+    // 无参：默认黑色 — Bug 5: 清除已有图片 sprite
+    stageManager.setBackgroundColor(0x000000);
+    stageManager.setBackgroundSprite(null);
   },
 };

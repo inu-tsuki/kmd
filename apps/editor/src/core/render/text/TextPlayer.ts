@@ -549,7 +549,7 @@ export class TextPlayer {
         if (groupHoldEncountered) return true;
         if (isStyle) return false;
         if (isCharLevel) return hasGroupHold;
-        return (config.level === "group" || config.level === "block") ||
+        return (config.level === "group" || config.level === "block" || config.level === "bg") ||
           (meta != null && meta.targetType === "group") ||
           (!config.level && meta != null && meta.type === "action");
       })();
@@ -560,6 +560,11 @@ export class TextPlayer {
       const track = EffectProcessor.getTrack(config.name);
 
       if (isStyle) {
+        // Bug 2: :bg scope style 不走 applyStyleRecursively（Sprite 无 getGraphicsLayer/tokens）。
+        if (config.level === "bg") {
+          console.warn(`[TextPlayer] :bg inline style "${config.name}" — not applicable to bg sprite, skipped`);
+          continue;
+        }
         // 样式：applyStyleRecursively 内部已递归到每字
         const cfgName = config.name;
         const cfgParams = { ...resolved };
@@ -606,31 +611,42 @@ export class TextPlayer {
           }
         });
       } else {
-        // 组级特效：应用到 wrapper 容器
-        if (track === "entrance") {
-          const tween = effectManager.apply(wrapper, config.name, resolved, true);
-          this.captureEntrance(tl, tween, chainCursor, wrapper, entranceFilters);
-        } else if (track === "behavior") {
-          // 容器级 behavior：经 behaviors[] → SegmentBuilder segmentTl.call 统一 apply +
-          // cleanup 追踪（与 char 级对称）。target = wrapper，char = wrapper（容器无
-          // removeModifier，clearBehaviors 守卫跳过 modifier 清理，靠 filterInstance + tickerFn）。
-          behaviors.push({
-            char: wrapper,
-            target: wrapper,
-            effectName: config.name,
-            params: { ...resolved },
-            charIndex: 0,
-            timePosition: chainCursor
-          });
+        // Bug 2/6: :bg scope 内联链路 (@ f.x:bg) — target 解析为背景精灵而非 wrapper。
+        // 与 SegmentBuilder block 路径同理：sprite 未就绪时注册 onBackgroundReady 延后处理。
+        const isBgInline = config.level === "bg";
+        const bgTarget = isBgInline ? stageManager.getBackgroundSprite() : null;
+        const containerTarget = bgTarget ?? wrapper;
+
+        // 组级特效：应用到 containerTarget 容器
+        const applyContainerEffect = (target: any) => {
+          if (track === "entrance") {
+            const tween = effectManager.apply(target, config.name, resolved, true);
+            TextPlayer.captureEntrance(tl, tween, chainCursor, target, entranceFilters);
+          } else if (track === "behavior") {
+            behaviors.push({
+              char: target,
+              target,
+              effectName: config.name,
+              params: { ...resolved },
+              charIndex: 0,
+              timePosition: chainCursor
+            });
+          } else {
+            instantEffects.push({
+              target,
+              effectName: config.name,
+              params: { ...resolved },
+              charIndex: 0,
+              timePosition: chainCursor
+            });
+          }
+        };
+
+        if (isBgInline && !bgTarget) {
+          // Bug 6: sprite 未就绪——延后到 onBackgroundReady 回调
+          stageManager.onBackgroundReady((sprite) => applyContainerEffect(sprite));
         } else {
-          // instant filter（组级容器）：只记录，apply 驱动交给 SegmentBuilder。
-          instantEffects.push({
-            target: wrapper,
-            effectName: config.name,
-            params: { ...resolved },
-            charIndex: 0,
-            timePosition: chainCursor
-          });
+          applyContainerEffect(containerTarget);
         }
       }
     }

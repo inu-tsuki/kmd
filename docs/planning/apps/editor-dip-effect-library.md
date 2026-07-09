@@ -116,7 +116,7 @@
 
 - 各滤镜最终 `targetType` 与作用域用法（char/group/block）已在 spec §1.1 / §3 定稿；block 纹理范围待 M0 实测（spec §7.2）。
 - demo 作品的具体题材（歌词 / 视觉小说开场 / 赛博朋克标题序列）待定，将反向校正清单优先级。
-- `frame`（全屏）作用域是否要做，取决于 demo——架构判断见 §9。
+- `frame`（全屏）作用域是否要做，取决于 demo——架构判断见 §9。**2026-07-09 订正**：`frame`（连同 `bg`）的触发语法不会走 `CommandLevel` 冒号后缀（`:frame`/`:bg`）——`docs/knowledge/language/design.md` D12 已封盘"覆盖范围永远不归 `:` 管，归主语管"，两者应作内建对象主语（`bg.<effect>(...)`，同 `cam`/`flow`/`var`）。DIP-FX M2 Task B（2026-07-09，`3a38445`）把 `:bg` 实现为 `CommandLevel` 第四值，正是漏看了这条决议，也漏看了下面这一条——本节早在 Task B 之前就已用 `bg.brightness`/`bg.blur` 的命名空间形态描述背景可读性用法。详见 spec §0.5.1、`migration.md` 解析器工程债 #9、架构体检处方 11/12。
 - 背景图作为阅读体验一等表面（`bg.brightness`/`bg.blur` 为可读性）已立草案 `../ecosystem/reading-experience-vision-draft.md`；它给本库连续色调类滤镜定位了「背景表面」这个归宿（spec §7.3），与 `frame` 镜头层是不同的层。
 - `bg` 命令本身（纯色别名 / 图像基底 / 叙事换景三重身份）的词汇表归属见 `../ecosystem/special-commands-vocabulary-draft.md` §3。
 
@@ -155,7 +155,7 @@
 | `StageRuntime`/`StageManager`/`stagePresets` | **镜头/电影感子系统**（cam/bg/scene.clear） | 既有代码，短期不改名；长期定位见 §9.3 |
 | ~~stage-scope 滤镜~~ → **`frame`-scope** | 我们新造的“全屏后处理”作用域 | **现在改名为 `frame`**，把碰撞消灭在源头 |
 
-`frame` = 在相机变换之后、对合成完的整帧做屏幕空间后处理。四个作用域定为 `char / group / block / frame`，无一叫 stage。
+`frame` = 在相机变换之后、对合成完的整帧做屏幕空间后处理。**2026-07-09 订正**：`frame` 名字仍保留，但不再计划挂进"四个作用域"的 `CommandLevel` 枚举——按 `design.md` D12，它和 `bg` 一样该走主语路线，不走 `:` 后缀。详见 §8、spec §0.5.1。
 
 ### 9.2 能力分层：为什么滤镜库不会把 KMD 锁进叙事
 

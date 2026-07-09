@@ -12,6 +12,7 @@ export interface StageState {
   designHeight: number;
   isFixedRatio: boolean;
   backgroundColor: string | number;
+  bgSpriteUrl?: string | null;  // Bug 4: 快照背景图 URL 供 restore 重新加载
 }
 
 export type StageMode = "stage" | "scroll";
@@ -27,7 +28,8 @@ export type StageCommandKind =
   | "camera"
   | "offset"
   | "modifier"
-  | "playback";
+  | "playback"
+  | "background";
 
 export type StagePropertyKey =
   | "scene.lifecycle"
@@ -36,7 +38,8 @@ export type StagePropertyKey =
   | "camera.rotation"
   | "camera.reset"
   | "offset.xy"
-  | "playback.pause";
+  | "playback.pause"
+  | "background.set";
 
 export interface StageCommandMetadata {
   name: string;

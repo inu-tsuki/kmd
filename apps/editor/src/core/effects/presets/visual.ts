@@ -38,11 +38,14 @@ export const border = defineEffect(_border, {
   mutexGroup: "border",
 });
 
-// 背景 (Background)
-const _bg: EffectFunction = (target, params = {}) => {
+// 底框 (Box) — 元素级圆角矩形背景（Graphics 画法，非 DIP filter / 非 stage bg 命令）。
+// 原名 `bg` 与 stage 命令 `bg`（setBackgroundColor / bg(src) 背景图）撞车——EffectProcessor
+// classifyCommand 的 `isStage = stageManager.has(name) && !effectManager.has(name)` 因同名
+// effectManager.has("bg") 恒真，stage bg 永远不被路由。改名 `box` 消除碰撞。
+const _box: EffectFunction = (target, params = {}) => {
   const t = target as any;
   if (!t.getContentBounds || !t.getGraphicsLayer) {
-    console.warn("[Effect] bg effect requires object with geometry methods");
+    console.warn("[Effect] box effect requires object with geometry methods");
     return;
   }
   const color = params.color || 0x333333;
@@ -50,7 +53,7 @@ const _bg: EffectFunction = (target, params = {}) => {
   const padding = params.padding || 5;
   const radius = params.radius || 4;
   const bounds = t.getContentBounds();
-  const g = t.getGraphicsLayer("bg");
+  const g = t.getGraphicsLayer("box");
   g.clear();
   // 补 bounds 原点（见 _border 同理注释）：align:center/right 或 indent>0 时 bounds.x/y 非零。
   g.roundRect(
@@ -62,11 +65,11 @@ const _bg: EffectFunction = (target, params = {}) => {
   );
   g.fill({ color, alpha });
 };
-export const bg = defineEffect(_bg, {
+export const box = defineEffect(_box, {
   type: "style",
   track: "instant",
   targetType: "group",
-  mutexGroup: "bg",
+  mutexGroup: "box",
 });
 
 // 变暗 (Dim) — 通过 addModifier/属性恢复设置 alpha

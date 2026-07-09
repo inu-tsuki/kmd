@@ -163,8 +163,10 @@ KMD 命令按作用对象分四类，本文件只管最后一类：
 - 示例 `public/tests/fx-bg.kmd`：`bg(color="#1a1a2e")`、`bg(src="tests/assets/<sample>.jpg")`、图上叠文字（验证 `f.outline`/`f.bloom` 在真实画面上的读感）。需附一张 sample 图进 `public/tests/assets/`。
 - `pnpm build` 通过；`pnpm dev` 实测背景出现、cover 适配正确、换背景/清场无残留。
 
-### B3 `:bg` 滤镜路由（已纳入本批）
+### B3 `:bg` 滤镜路由（已纳入本批，2026-07-09 落地后语法方向订正——见下方【订正】）
 要把 duotone/emboss 等 DIP 滤镜**应用到背景图本身**（色调族「教科书级」验证 / 报告素材），需要一条「滤镜路由到 `backgroundLayer`」的路径。最小且前向兼容的做法：新增 `:bg` 作用域（复用 DIP 滤镜 `fn` 不改，把 `target` 解析为 `backgroundLayer` 上的当前 bg sprite，同 spec §1.1「写一次多作用域复用」），用法 `[.duotone:bg]`。它也是 `reading-experience` 的 `bg.brightness`/`bg.blur` 的底层（后者可作 `:bg` 语法糖）。
+
+> **【订正】** 上一段把 `:bg` 定为底层、`bg.brightness`/`bg.blur` 降级为其语法糖——顺序反了。`docs/knowledge/language/design.md` D12 封盘"覆盖范围永远不归 `:` 管，归主语管"：`:bg` 选的是目标（背景精灵），理应由主语承担，`bg.<effect>(...)` 才是底层形态，`:bg` 至多是过渡期兼容写法。落地时也漏看了本节第 160 行自己的断言——"经 `stageManager.has("bg")` 自动 known（同 `cam.*`）"——`classifyCommand` 的真实判据是 `stageManager.has(name) && !effectManager.has(name)`，而 `visual.ts` 已注册同名元素级 `bg` 效果，`effectManager.has("bg")` 恒真，`bg(color=...)`/`bg(src=...)` 命令因此从未被路由到新 `stagePresets.ts` 实现。详见 spec §0.5.1、`migration.md` 解析器工程债 #9、架构体检处方 11/12。
 
 - **落地点**：作用域解析在 `ScopeRouter` / `EffectProcessor`——`:bg` 把 effect target 解析为 `stageManager` 当前 bg sprite（B2 的模块级变量），filter 挂到该 sprite 的 `filters`。DIP 滤镜 `fn`/`meta` 不改。
 - **依赖**：必须在 B2 之后（要有 bg sprite 才能挂滤镜）。
