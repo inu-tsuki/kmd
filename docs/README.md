@@ -21,6 +21,7 @@
 远期生态草案：
 
 - `planning/ecosystem/work-presentation-generation-draft.md`
+- `planning/ecosystem/effect-preset-and-plugin-contract.md`
 
 ## 知识库：`docs/knowledge/`
 

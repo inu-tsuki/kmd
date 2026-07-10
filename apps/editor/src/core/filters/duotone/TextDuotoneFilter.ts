@@ -29,7 +29,7 @@ void main(void)
 }
 `;
 
-export class DuotoneFilter extends Filter {
+export class TextDuotoneFilter extends Filter {
   public readonly kmdEffectProfile = "duotone:text";
 
   constructor() {

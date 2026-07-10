@@ -378,6 +378,8 @@
 ## 7. 插件化生态 (v1.7.0 - Plugin Architecture)
 
 > **核心理念**: 从内建注册表到开放插件接口，逐层递进。四大 Manager 已具备 `registerBatch` 能力，需要标准化插件契约、开放语法糖注册、建立管线钩子。
+>
+> Effect/preset 的 surface capability、参数、生命周期与工具链消费边界以 [`ecosystem/effect-preset-and-plugin-contract.md`](ecosystem/effect-preset-and-plugin-contract.md) 为候选契约；本文只维护阶段任务，不重复定义接口。
 
 ### P1. 插件接口标准化
 

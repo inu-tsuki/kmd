@@ -6,12 +6,10 @@ import { WarpFilter } from "../../filters/WarpFilter";
 import { PixelateFilter } from "../../filters/PixelateFilter";
 import { GrayFilter } from "../../filters/GrayFilter";
 import { ThresholdFilter } from "../../filters/ThresholdFilter";
-import { DuotoneFilter } from "../../filters/DuotoneFilter";
-import { BackgroundDuotoneFilter } from "../../filters/BackgroundDuotoneFilter";
+import { TextDuotoneFilter, BackgroundDuotoneFilter } from "../../filters/duotone";
 import { PosterizeFilter } from "../../filters/PosterizeFilter";
 import { SharpenFilter } from "../../filters/SharpenFilter";
-import { EmbossFilter } from "../../filters/EmbossFilter";
-import { BackgroundEmbossFilter } from "../../filters/BackgroundEmbossFilter";
+import { TextEmbossFilter, BackgroundEmbossFilter } from "../../filters/emboss";
 import { EdgeFilter } from "../../filters/EdgeFilter";
 import { OutlineFilter } from "../../filters/OutlineFilter";
 import { BloomFilter } from "../../filters/BloomFilter";
@@ -209,7 +207,7 @@ export const threshold = defineEffect(_threshold, {
 const _duotone: EffectFunction = (target, params = {}) => {
   const shadow = params.shadow ?? "#1a1a2e";
   const highlight = params.highlight ?? "#e94560";
-  const filter = new DuotoneFilter();
+  const filter = new TextDuotoneFilter();
   filter.shadow = hexToVec3(shadow);
   filter.highlight = hexToVec3(highlight);
   target.filters = [...(target.filters || []), filter];
@@ -280,7 +278,7 @@ const _emboss: EffectFunction = (target, params = {}) => {
   const angle = params.angle ?? 45;
   const mix = params.mix ?? 0.5;
   const width = params.width ?? 3;
-  const filter = new EmbossFilter();
+  const filter = new TextEmbossFilter();
   filter.strength = strength;
   filter.angle = angle;
   filter.mix = mix;
@@ -629,7 +627,7 @@ export const displace = defineEffect(_displace, {
 // 串进 target.filters，一个 tickerFn/addModifier 驱动全部 filter 的 uTime。
 // 首个返回 filters: Filter[] 的 preset——cleanup 经 clearBehaviors 的 Array.isArray 分支
 // 逐个移除 + destroyFilterDeep（BlurFilter 子 pass 已覆盖），无需改 PlaybackController。
-// duotone 直接 new DuotoneFilter() 构造（不调 duotone effect fn，避免双注册 + 双 push）。
+// duotone 直接构造对应 surface profile（不调 duotone effect fn，避免双注册 + 双 push）。
 // char 级 return { filters: [...] }（无 tickerFn，addModifier 驱动，同 dissolve char 级形态）；
 // 容器级 return { filters: [...], tickerFn }。
 const createUnderwaterEffect = (backgroundProfile: boolean): EffectFunction => (target, params = {}) => {
@@ -644,7 +642,7 @@ const createUnderwaterEffect = (backgroundProfile: boolean): EffectFunction => (
   displaceFilter.amount = amount;
   displaceFilter.scale = scale;
 
-  const duotoneFilter = backgroundProfile ? new BackgroundDuotoneFilter() : new DuotoneFilter();
+  const duotoneFilter = backgroundProfile ? new BackgroundDuotoneFilter() : new TextDuotoneFilter();
   duotoneFilter.shadow = hexToVec3(tint);
   duotoneFilter.highlight = hexToVec3(highlight);
 

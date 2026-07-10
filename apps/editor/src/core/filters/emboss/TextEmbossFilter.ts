@@ -65,7 +65,7 @@ void main(void)
 }
 `;
 
-export class EmbossFilter extends Filter {
+export class TextEmbossFilter extends Filter {
   public readonly kmdEffectProfile = "emboss:text";
 
   constructor() {
