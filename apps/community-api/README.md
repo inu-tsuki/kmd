@@ -33,3 +33,7 @@ Seed KMD files live in:
 ```text
 content/works/<work-id>/<revision-id>.kmd
 ```
+
+The seed library includes 27 works: 4 narrative-style works (rain-city, glass-rail, after-school-orbit, final-test) plus 23 samples packaged from `apps/editor/public/` — 4 general-purpose demos (inquisition, timing-demo, coord-stress, font-test) and 19 DIP-FX filter showcases (bloom, duotone, edge, emboss, gray, halftone, noise, outline, pixelate, posterize, scanline, sharpen, threshold, vignette, displace, underwater, dissolve, cyberpunk-title, bg). All packaged samples use `lifecycleStatus: published` so they do not collide with the `submitted` filter assertions.
+
+Some fx showcases (`bg`, `cyberpunk-title`) reference a background image via `bg(src="tests/assets/sample-bg.jpg")`. The runtime resolves this to `/tests/assets/sample-bg.jpg`, so the API serves that path statically from `content/assets/`.

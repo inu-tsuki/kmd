@@ -1,0 +1,37 @@
+---
+title: fx - underwater 水下组合滤镜
+mode: stage
+speed: 50
+designWidth: 1920
+designHeight: 1080
+bgColor: "#0a1e3f"
+fontColor: "#5fb8d6"
+---
+
+// :block 整段水下——M2 旗舰组合（displace + duotone 蓝移 + blur）
+// 三个 filter 串进 target.filters，一个 ticker 驱动 displace 的 uTime
+[.underwater:block]
+整段水下效果，波纹位移叠加蓝移色调与轻模糊。
+
+---
+
+// 逐字水下——char 级 addModifier 驱动
+{水下} @ f.underwater
+
+---
+
+// 改参：强位移 + 深蓝 tint（amount 是像素值）
+[.underwater:block(amount=20, scale=6, tint="#061230", highlight="#3aa0c0", blur=2)]
+深蓝水下，更强波纹与更深色调。
+
+---
+
+// 与 behavior 组合：水下 + 波浪
+{水下加波浪} @ f.underwater.wave
+
+---
+
+// seek 回归用例：反复 seek 应无 filter 堆积
+// （underwater 是首个返回 filters:Filter[] 的 preset，clearBehaviors Array.isArray 分支验证）
+[.underwater:block]
+水下 seek 回归——此段反复 seek 后 filter 数量应保持 3 不堆积。

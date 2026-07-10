@@ -1,0 +1,32 @@
+---
+title: fx - sharpen 锐化滤镜
+mode: stage
+speed: 50
+designWidth: 1920
+designHeight: 1080
+---
+
+// 逐字（笔画级风格化）：笔画边缘对比增强
+{锐利边缘} @ f.sharpen
+
+---
+
+// 逐字改参：强锐化 radius=2
+{强锐化} @ f.sharpen(amount=2, radius=2)
+
+---
+
+// group 作用域：整词组共用容器纹理一起锐化
+{词组锐化} @ f.sharpen:group
+
+---
+
+// block 作用域（连续色调表面，教科书用法）：整段一起锐化
+// 验证 padding 边缘无透明截断（§5.5）
+[.sharpen:block(amount=2, radius=2)]
+整段文字一起锐化，连续色调表面下边缘提升更均匀，缩放画布后边缘不应出现透明截断。
+
+---
+
+// 与 behavior 组合：滤镜静态挂载，wave 逐字波动
+{锐化加波浪} @ f.sharpen.wave

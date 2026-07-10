@@ -1,0 +1,36 @@
+---
+title: KMD 全功能集成演示
+mode: stage
+speed: 40
+designWidth: 1920
+designHeight: 1080
+var:
+  start_x: -500
+  focus_y: 200
+  heavy_shake: 20
+---
+
+[cam.zoom(0.8, 1s)!]
+演出开始。变量 start_x 是 {var.start_x}。
+
+{第一阶段>快速推进} @ f.red.hold(1s).blue
+这段文字使用了 `>` 瞬间弹出，并演示了红转蓝时序链。
+
+{第二阶段>>无缝衔接}。
+句号紧跟最后一个字弹出，跳过了自然停顿。
+
+打到这里{下一行>>>}就会提前开始。 @ f.shake(strength=var.heavy_shake).hold(1s)
+我是被 `>>>` 提前召唤出来的，我出现时上一行还在震动并等待。
+
+[align=center]
+我现在处于{屏幕中间} @ up(100).mark(center_point)
+{回位} @ goto(var.start_x, var.focus_y).rainbow
+
+@ cam.move(200, -100, 2s)!
+镜头执行了一个异步平移，文字会在镜头停下后才继续。
+
+{语速~变~慢~了}，但下一行会恢复。
+语速^变^快^了！
+
+[cam.reset(1s)!]
+一切回归初始状态。演出结束。

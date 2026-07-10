@@ -1,0 +1,31 @@
+---
+title: 坐标稳定性压力测试
+mode: stage
+designWidth: 1920
+designHeight: 1080
+speed: 50
+var:
+  intro_zoom: 1.1
+  shake_heavy: 50
+---
+
+[cam.zoom(0.5, 1s)!]
+我会等镜头缩放完才出现。
+
+{我要停一下} @ pause(1s)
+打完{“停一下”}后，我会消失一秒钟。 @ f.hold:group(1s)
+
+我要在打完字后才重置镜头 @ cam.reset(2s)!
+你会看到这句话全显后，镜头才开始慢慢{回位}。 @ f.glitch
+
+{一二三} @ f.yellow.hold(1s).green.hold(1s).red
+
+{你说什么} @ f.hold:char(1s).shake:char
+
+我很忙|，请稍等一下||。
+
+这是一个|(2s)超长停顿。
+
+|
+
+ok

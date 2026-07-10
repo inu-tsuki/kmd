@@ -1,0 +1,37 @@
+---
+mode: stage
+designWidth: 1920
+designHeight: 1080
+bgColor: "#0a0a1a"
+fontColor: "#ffcc66"
+fontFamily: Sasara Regular
+---
+
+// 逐字（笔画级风格化）：暖色字 + 白色描边
+{白色描边} @ f.outline(color="#ffffff").big.big
+
+---
+
+// 改参宽描边 + 发光（width=3, color=#00ccff, glow=1）
+{青色发光描边} @ f.outline(width=3, color="#00ccff", glow=1)
+
+---
+
+// 逐字改参：粉色描边
+{粉色描边} @ f.outline(width=2, color="#ff2bd6")
+
+---
+
+// block 作用域：整段一起描边（验证 padding 边缘无透明截断）
+[.outline:block(width=3, color="#00ffcc")]
+整段文字带青色描边，边缘不应出现透明截断。
+
+---
+
+// group 作用域：整词组共用容器纹理一起描边
+{词组描边} @ f.outline:group
+
+---
+
+// 与 behavior 组合：滤镜静态挂载，wave 逐字波动
+{描边加波浪} @ f.outline.wave

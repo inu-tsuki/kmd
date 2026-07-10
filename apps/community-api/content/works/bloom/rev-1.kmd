@@ -1,0 +1,36 @@
+---
+title: fx - bloom 辉光滤镜
+mode: stage
+speed: 50
+designWidth: 1920
+designHeight: 1080
+bgColor: "#0a0a1a"
+fontColor: "#ffcc66"
+---
+
+// block 作用域：整段辉光（推荐用法，邻域扩散需连续区域）
+// 暖色字 + 深蓝底，辉光扩散到字外区域可见
+[.bloom:block(threshold=0.5, strength=1.5, radius=4)]
+亮部扩散出柔和辉光，整段文字才有意义。
+
+---
+
+// 改参强辉光 + 大半径
+[.bloom:block(threshold=0.3, strength=2.5, radius=8)]
+更低的阈值让更多区域发光，大半径让辉光更扩散。
+
+---
+
+// 白字黑底（默认场景）：对比看辉光在纯白字上的表现
+[.bloom:block(threshold=0.7, strength=1, radius=4)]
+白色字体上的辉光，注意辉光向外扩散的范围。
+
+---
+
+// char 作用域对比：逐字辉光，小纹理几乎无效（验证 §4 spec 卡注意）
+{逐字辉光} @ f.bloom
+
+---
+
+// group 作用域：词组级辉光
+{词组辉光} @ f.bloom:group

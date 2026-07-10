@@ -75,6 +75,44 @@ describe('kmd-community-api', () => {
     expect(response.text).toContain('cam.reset');
   });
 
+  it('lists all 27 works (4 original + 23 public samples) without filters', async () => {
+    const response = await request(createApp()).get('/works').expect(200);
+
+    expect(response.body).toHaveLength(27);
+    // 打包自 public/ 的新 work 全部是 published，不应撞 submitted 过滤器
+    const publishedFromPublic = response.body.filter((w: { lifecycleStatus: string; tags: string[] }) =>
+      w.lifecycleStatus === 'published' && w.tags.includes('demo')
+    );
+    expect(publishedFromPublic.length).toBeGreaterThanOrEqual(3);
+  });
+
+  it('serves an fx filter showcase source', async () => {
+    const response = await request(createApp())
+      .get('/works/bloom/source')
+      .expect(200);
+
+    expect(response.headers['content-type']).toContain('text/x-kmd');
+    expect(response.headers['x-kmd-work-id']).toBe('bloom');
+    expect(response.text).toContain('bloom');
+  });
+
+  it('serves the cyberpunk title demo source with bg(src) references', async () => {
+    const response = await request(createApp())
+      .get('/works/cyberpunk-title/source')
+      .expect(200);
+
+    expect(response.text).toContain('bg(src');
+    expect(response.text).toContain('NEON CITY');
+  });
+
+  it('serves the background image at /tests/assets/sample-bg.jpg', async () => {
+    const response = await request(createApp())
+      .get('/tests/assets/sample-bg.jpg')
+      .expect(200);
+
+    expect(response.headers['content-type']).toBe('image/jpeg');
+  });
+
   it('creates a review for an existing work', async () => {
     const response = await request(createApp())
       .post('/reviews')
