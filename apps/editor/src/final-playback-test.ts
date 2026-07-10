@@ -29,9 +29,8 @@ import { parser } from "./core/parser/Parser";
 import { SegmentBuilder } from "./core/player/SegmentBuilder";
 import { buildStageModifierRecord, buildStageModifierApplyParams } from "./core/stage/stagePresets";
 import { StageRuntime } from "./core/stage/StageRuntime";
-import { BackgroundDuotoneFilter } from "./core/filters/BackgroundDuotoneFilter";
-import { BackgroundEmbossFilter } from "./core/filters/BackgroundEmbossFilter";
-import { DuotoneFilter } from "./core/filters/DuotoneFilter";
+import { TextDuotoneFilter, BackgroundDuotoneFilter } from "./core/filters/duotone";
+import { TextEmbossFilter, BackgroundEmbossFilter } from "./core/filters/emboss";
 import { GrayFilter } from "./core/filters/GrayFilter";
 import type { Segment } from "./core/state/Segment";
 import type { LayoutGlyphPlan } from "./core/layout/LayoutPlanner";
@@ -2733,7 +2732,7 @@ async function testM2AtmosphereDisplaceUnderwaterE2E() {
     );
     const names = (filters as any[]).map((f) => f?.constructor?.name).sort();
     assert(
-      names.includes("DisplaceFilter") && names.includes("DuotoneFilter") && names.includes("BlurFilter"),
+      names.includes("DisplaceFilter") && names.includes("TextDuotoneFilter") && names.includes("BlurFilter"),
       `M2 underwater 三 filter 类型正确（实际 ${JSON.stringify(names)}）`,
     );
     const cleanupCount = playbackState.activeBehaviorCleanups.length;
@@ -3680,12 +3679,30 @@ async function testBackgroundSurfaceProfilesAndReplayBoundary() {
   const profileTarget = new Container();
   const textDuotone = effectManager.apply(profileTarget, "duotone", {}, true, "text");
   const backgroundDuotone = effectManager.apply(profileTarget, "duotone", {}, true, "background");
+  const textEmboss = effectManager.apply(profileTarget, "emboss", {}, true, "text");
   const backgroundEmboss = effectManager.apply(profileTarget, "emboss", {}, true, "background");
   const backgroundGray = effectManager.apply(profileTarget, "gray", {}, true, "background");
-  assert(textDuotone instanceof DuotoneFilter, "SA-47 text duotone 保持 alpha profile");
+  assert(textDuotone instanceof TextDuotoneFilter, "SA-47 text duotone 保持 alpha profile");
   assert(backgroundDuotone instanceof BackgroundDuotoneFilter, "SA-47 bg duotone 选择 luma profile");
+  assert(textEmboss instanceof TextEmbossFilter, "SA-47 text emboss 保持 alpha profile");
   assert(backgroundEmboss instanceof BackgroundEmbossFilter, "SA-47 bg emboss 选择 luma profile");
   assert(backgroundGray instanceof GrayFilter, "SA-47 bg gray 复用现有 GrayFilter");
+  assert(textDuotone.kmdEffectProfile === "duotone:text", "SA-47 text duotone 诊断标识稳定");
+  assert(backgroundDuotone.kmdEffectProfile === "duotone:background", "SA-47 bg duotone 诊断标识稳定");
+  assert(textEmboss.kmdEffectProfile === "emboss:text", "SA-47 text emboss 诊断标识稳定");
+  assert(backgroundEmboss.kmdEffectProfile === "emboss:background", "SA-47 bg emboss 诊断标识稳定");
+  assert(backgroundGray.kmdEffectProfile === "gray", "SA-47 gray 诊断标识稳定");
+
+  const textUnderwater = effectManager.apply(profileTarget, "underwater", {}, true, "text");
+  const backgroundUnderwater = effectManager.apply(profileTarget, "underwater", {}, true, "background");
+  assert(
+    textUnderwater.filters[1] instanceof TextDuotoneFilter,
+    "SA-47 underwater:text 组合 TextDuotoneFilter",
+  );
+  assert(
+    backgroundUnderwater.filters[1] instanceof BackgroundDuotoneFilter,
+    "SA-47 underwater:background 组合 BackgroundDuotoneFilter",
+  );
 
   const grayBgClassification = EffectProcessor.classifyCommand({ name: "gray", params: {}, level: "bg" });
   assert(
@@ -3693,7 +3710,17 @@ async function testBackgroundSurfaceProfilesAndReplayBoundary() {
     `SA-47 gray:bg 应优先走 effect lane（实际 lane=${grayBgClassification.lane} isStyle=${grayBgClassification.isStyle}）`,
   );
 
-  for (const filter of [textDuotone, backgroundDuotone, backgroundEmboss, backgroundGray]) {
+  G.ticker.remove(textUnderwater.tickerFn);
+  G.ticker.remove(backgroundUnderwater.tickerFn);
+  for (const filter of [
+    textDuotone,
+    backgroundDuotone,
+    textEmboss,
+    backgroundEmboss,
+    backgroundGray,
+    ...textUnderwater.filters,
+    ...backgroundUnderwater.filters,
+  ]) {
     filter?.destroy?.();
   }
   profileTarget.filters = [];

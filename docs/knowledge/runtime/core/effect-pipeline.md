@@ -27,6 +27,39 @@ export const wave = defineEffect(_wave, {
 
 **surface profile 决定同一效果语义在不同图像表面的实现**：`EffectDefinition` 除默认 `fn` 外可注册 `profiles.text` / `profiles.background`。`EffectManager.apply(..., surface)` 优先选择对应 profile，未注册时回退默认 `fn`。文字路径默认使用 `text`；`:bg` 兼容路径显式传 `background`。因此作者仍写 `duotone` / `emboss`，runtime 分别选择读取字形 alpha 的文字 shader 与读取 RGB luma 的图片 shader。`targetType` 仍只描述 char/group 能力，不承载 background/frame 表面语义。
 
+### Filter 与 surface profile 的目录约定
+
+内建 filter 采用 **effect-first, surface-second**：先按稳定效果语义聚合，再在效果目录内区分 surface profile。
+
+```text
+core/filters/
+  duotone/
+    TextDuotoneFilter.ts
+    BackgroundDuotoneFilter.ts
+    index.ts
+  emboss/
+    TextEmbossFilter.ts
+    BackgroundEmbossFilter.ts
+    index.ts
+  GrayFilter.ts
+```
+
+- profile-split 效果使用效果名目录，类名显式标出 surface，并由局部 `index.ts` 导出；preset 从目录入口导入。
+- surface-agnostic 效果保持一个平铺实现，不为目录对称而复制 shader。
+- 组合 preset 复用已注册 profile。例如 `underwater:text` 使用 `TextDuotoneFilter`，`underwater:background` 使用 `BackgroundDuotoneFilter`。
+- 目录结构是内建实现细节，不是 KMD 作者语法，也不是未来插件的文件布局契约。
+
+新增或扩展 filter 时检查：
+
+1. 先判断视觉语义是否仍相同；不同语义应拆效果名，相同语义但信号模型不同才拆 profile。
+2. 明确支持的 surface；未支持应能诊断，不应静默选择错误 shader。当前 runtime 的 fallback 行为仍是 `profiles[surface] ?? fn`，开放插件前需先收紧 capability 契约。
+3. 参数 schema、默认值及解析只设一个所有者；自然播放与 seek replay 必须消费同一份已解析参数。
+4. 保持 `targetType` 与 surface capability 分离，不能把 `background` / `frame` 塞进 char/group 粒度模型。
+5. 为 profile 选择、稳定诊断标识、组合 preset 与通用实现复用添加回归；browser/Pixi 路径还需 production e2e。
+6. 新建或修改 shader 时运行 shader gate，并复核 uniform、padding、预乘 alpha 与 cleanup 所有权。
+
+未来 preset/plugin contribution 的候选契约与尚未实现的能力见 [`../../../planning/ecosystem/effect-preset-and-plugin-contract.md`](../../../planning/ecosystem/effect-preset-and-plugin-contract.md)。
+
 ## 四轨分类 (`EffectProcessor.classifyByTrack`)
 
 | Track | 时间驱动 | seek 行为 | 典型特效 |

@@ -9,7 +9,7 @@
 // 依赖: glslangValidator（系统安装）
 
 import { readFileSync, readdirSync, writeFileSync, unlinkSync, existsSync } from "fs";
-import { join } from "path";
+import { join, relative } from "path";
 import { execSync } from "child_process";
 
 // preflight: glslangValidator 必须存在，否则所有 shader 会因"命令找不到"
@@ -30,7 +30,13 @@ try {
 }
 
 const filtersDir = join(import.meta.dirname, "core/filters");
-const files = readdirSync(filtersDir).filter((f: string) => f.endsWith("Filter.ts"));
+const collectFilterFiles = (dir: string): string[] => readdirSync(dir, { withFileTypes: true })
+  .flatMap((entry) => {
+    const path = join(dir, entry.name);
+    if (entry.isDirectory()) return collectFilterFiles(path);
+    return entry.name.endsWith("Filter.ts") ? [path] : [];
+  });
+const files = collectFilterFiles(filtersDir).sort();
 
 if (files.length === 0) {
   console.error("[shaders] 没有 *Filter.ts 文件，检查路径:", filtersDir);
@@ -48,8 +54,8 @@ let failed = 0;
 const failures: { file: string; error: string }[] = [];
 
 for (const file of files) {
-  const filePath = join(filtersDir, file);
-  const source = readFileSync(filePath, "utf-8");
+  const displayPath = relative(filtersDir, file);
+  const source = readFileSync(file, "utf-8");
 
   // 提取 /* glsl */ `...` 模板字符串内的 fragment shader
   // 匹配 /* glsl */ 后跟反引号包围的内容（支持多行）
@@ -67,7 +73,8 @@ for (const file of files) {
 
     // glslangValidator --stdin 需要文件扩展名推断 stage，
     // 但 --stdin 不支持指定 stage；用临时文件 + .frag 扩展名
-    const tmpFile = `/tmp/kmd-shader-${file.replace(".ts", "")}-${shaderIdx}.frag`;
+    const tmpName = displayPath.replace(/[^a-zA-Z0-9_-]/g, "-").replace(/-ts$/, "");
+    const tmpFile = `/tmp/kmd-shader-${tmpName}-${shaderIdx}.frag`;
     writeFileSync(tmpFile, shader);
 
     try {
@@ -77,12 +84,12 @@ for (const file of files) {
         timeout: 10000,
       });
       passed++;
-      console.log(`  ✓ ${file} shader #${shaderIdx}`);
+      console.log(`  ✓ ${displayPath} shader #${shaderIdx}`);
     } catch (err: any) {
       failed++;
       const stderr = err.stderr?.toString() || err.message;
-      failures.push({ file: `${file} #${shaderIdx}`, error: stderr });
-      console.error(`  ✗ ${file} shader #${shaderIdx} — COMPILE FAILED`);
+      failures.push({ file: `${displayPath} #${shaderIdx}`, error: stderr });
+      console.error(`  ✗ ${displayPath} shader #${shaderIdx} — COMPILE FAILED`);
       console.error(`    ${stderr.split("\n").slice(0, 5).join("\n    ")}`);
     } finally {
       if (existsSync(tmpFile)) unlinkSync(tmpFile);

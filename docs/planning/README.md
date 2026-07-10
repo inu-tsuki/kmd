@@ -13,6 +13,7 @@
 - `roadmap/phase-b/1.6-phase-b-plan.md`：Phase B 语言与 Segment Graph 功能路线（gated roadmap）。
 - `ecosystem/repository-strategy.md`：仓库、包边界与 Android Reader 协作策略。
 - `ecosystem/work-presentation-generation-draft.md`：`Work.presentation` 生态生成链草案（远期对齐点）。
+- `ecosystem/effect-preset-and-plugin-contract.md`：effect/preset contribution 与插件边界草案（未实现）。
 - `TODO.md`：历史任务池与执行记录（不作为阶段入口）。
 
 ## 子目录
