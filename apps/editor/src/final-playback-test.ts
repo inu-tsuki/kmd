@@ -3240,6 +3240,69 @@ async function testBgClearInvalidatesPendingLoad() {
   );
 }
 
+// ─── SA-41：bg 命令延迟执行（不在 build 期同步 apply） ────────────────────────
+//
+// 背景：bg 命令原走 applyStageConfigs line 878 同步 apply 路径（buildStageModifierRecord
+// 对 bg 返回 null），导致所有 bg 在 build 期立即执行、最后一条赢，而非在时间线 cursor
+// 位置触发。修复：buildStageModifierRecord 对 bg 返回 record fragment，使 bg 走
+// segmentTl.call 延迟路径（同 cam.shake/cam.drift），并记入 stageModifierRecords 供
+// replayStageModifiers seek 重放。本测试验证 buildStageModifierRecord 对 bg 返回非 null，
+// 且 bg 不被标记为 isClearBoundary 或 modifierBased。
+
+function testBgDeferredExecution() {
+  console.log("\n[27] SA-41 bg 命令延迟执行（buildStageModifierRecord 产出 record）");
+
+  // (1) buildStageModifierRecord 对 bg 返回非 null
+  const bgRecord = buildStageModifierRecord("bg", { color: "#1a0a2e" });
+  assert(
+    bgRecord !== null,
+    `SA-41 buildStageModifierRecord("bg") 返回非 null（实际 ${bgRecord}）`,
+  );
+  assert(
+    bgRecord!.command === "bg",
+    `SA-41 record.command === "bg"（实际 ${bgRecord!.command}）`,
+  );
+
+  // (2) bg 不是 clear boundary（不应 clearModifiers）
+  assert(
+    !bgRecord!.isClearBoundary,
+    `SA-41 bg record 不是 isClearBoundary（实际 ${bgRecord!.isClearBoundary}）`,
+  );
+
+  // (3) bg 的 params 被正确保存（供 replayStageModifiers 重放）
+  assert(
+    (bgRecord!.params as any).color === "#1a0a2e",
+    `SA-41 bg record 保留 color 参数（实际 ${JSON.stringify(bgRecord!.params)}）`,
+  );
+
+  // (4) bg with src
+  const bgSrcRecord = buildStageModifierRecord("bg", { src: "tests/assets/sample-bg.jpg" });
+  assert(
+    bgSrcRecord !== null && (bgSrcRecord!.params as any).src === "tests/assets/sample-bg.jpg",
+    `SA-41 bg(src) record 保留 src 参数（实际 ${JSON.stringify(bgSrcRecord?.params)}）`,
+  );
+
+  // (5) bg 无 duration（persistent，seek 时总是重放，与 cam.drift 同语义）
+  assert(
+    bgRecord!.duration === undefined,
+    `SA-41 bg record duration undefined（persistent，实际 ${bgRecord!.duration}）`,
+  );
+
+  // (6) 回归保护：cam.shake 仍走 modifierBased 路径（不被 bg 改动影响）
+  const shakeRecord = buildStageModifierRecord("cam.shake", { strength: 10, duration: 0.5 });
+  assert(
+    shakeRecord !== null && shakeRecord!.baseStrength === 10 && shakeRecord!.duration === 0.5,
+    `SA-41 cam.shake 仍正常返回 record（baseStrength=${shakeRecord?.baseStrength} duration=${shakeRecord?.duration}）`,
+  );
+
+  // (7) 回归保护：cam.move 仍返回 null（走 tween capture 路径，不进 tl.call 延迟）
+  const moveRecord = buildStageModifierRecord("cam.move", { x: 200, y: 0, duration: 1 });
+  assert(
+    moveRecord === null,
+    `SA-41 cam.move 仍返回 null（走 tween 路径，实际 ${moveRecord}）`,
+  );
+}
+
 async function main() {
   console.log("╔══════════════════════════════════════════════════════════╗");
   console.log("║  KMD Playback State Regression (F-2 / R5-R22 + SA-38)    ║");
@@ -3274,6 +3337,7 @@ async function main() {
   testStageDefaultParamAlignment();
   testBgStringParamPreservation();
   await testBgClearInvalidatesPendingLoad();
+  testBgDeferredExecution();
 
   console.log(`\n🎬 Playback regression: ${pass} passed, ${fail} failed`);
   if (fail > 0) {

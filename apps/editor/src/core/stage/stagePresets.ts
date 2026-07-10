@@ -172,6 +172,16 @@ export function buildStageModifierRecord(
     }
     return fragment;
   }
+  // SA-41：bg 是即时状态设置命令（setBackgroundColor/setBackgroundSprite），返回 void 无 tween。
+  // 原实现在 build 期同步 apply（line 878），导致所有 bg 在构建时立刻执行、最后一条赢，
+  // 而非在时间线 cursor 位置触发。改为延迟执行 + 记入 stageModifierRecords 供 seek 重放。
+  // duration undefined = persistent（seek 时总是重放，与 cam.drift 同语义）。
+  if (command === "bg") {
+    return {
+      command: "bg",
+      params: { ...(params || {}) },
+    };
+  }
   return null;
 }
 
