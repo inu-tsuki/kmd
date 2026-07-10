@@ -1,0 +1,31 @@
+---
+title: fx - gray 灰度滤镜
+mode: stage
+speed: 50
+designWidth: 1920
+designHeight: 1080
+---
+
+// 默认全灰度（mix=1）：逐字转灰
+{黑白世界} @ f.gray
+
+---
+
+// 改参半灰度（mix=0.5）：原色与灰度各半
+{半灰半彩} @ f.gray(mix=0.5)
+
+---
+
+// group 作用域：整词组共用容器纹理一起转灰
+{词组灰度} @ f.gray:group
+
+---
+
+// block 作用域：整段一起转灰（验证 §7.2 block seek 修复）
+[.gray:block]
+整段文字一起变成灰度，seek 回退不应堆叠滤镜。
+
+---
+
+// 与 behavior 组合（spec §2.5）：滤镜静态挂载，wave 逐字波动
+{灰度加波浪} @ f.gray.wave

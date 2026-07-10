@@ -1,0 +1,18 @@
+---
+title: Font Test
+speed: 50
+---
+
+This is Fira Code. @ .font('Fira Code')
+
+这是默认字体 Arial。
+
+# 这是 special 预设字体（应该是 Smiley Sans）。
+
+这是 {Smiley Sans 显式设置} @ f.font('Smiley Sans')
+
+这是 {霞鹜文楷 显式设置} @ f.font('LXGW WenKai')
+
+这是 **粗体** 和 *斜体* 在默认字体下的样子。
+
+# 这是 **粗体** 和 *斜体* 在 special 字体下的样子。

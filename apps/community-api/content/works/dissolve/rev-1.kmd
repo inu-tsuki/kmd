@@ -1,0 +1,39 @@
+---
+title: fx - dissolve 溶解滤镜
+mode: stage
+speed: 50
+designWidth: 1920
+designHeight: 1080
+bgColor: "#1a1a2e"
+fontColor: "#e94560"
+---
+
+// 静态 progress 锁定：半溶解状态
+{半溶解} @ f.dissolve(progress=0.5)
+
+---
+
+// 静态 progress 锁定：大部分消散
+{大部分消散} @ f.dissolve(progress=0.8, edge="#00ffff")
+
+---
+
+// :block 自动溶解 0→1（出场消散转场）
+[.dissolve:block(duration=2)]
+整段自动溶解，从完整到全部消散。
+
+---
+
+// :block 改参：慢速溶解 + 亮色边缘
+[.dissolve:block(duration=3, edge="#ff00ff", scale=12)]
+慢速溶解，亮紫色边缘。
+
+---
+
+// 逐字自动溶解
+{逐字溶解} @ f.dissolve(duration=1.5)
+
+---
+
+// 与 behavior 组合：溶解 + 波浪
+{溶解加波浪} @ f.dissolve(duration=2).wave
