@@ -16,7 +16,7 @@
  * 不测 ScriptPlayer 实例方法（构造重，且逻辑被 PlaybackController 完全覆盖）。
  */
 import gsap from "gsap";
-import { TextStyle, Container, DOMAdapter } from "pixi.js";
+import { TextStyle, Container, DOMAdapter, Assets, Sprite, Texture } from "pixi.js";
 import { PlaybackController } from "./core/player/PlaybackController";
 import { EffectProcessor } from "./core/effects/EffectProcessor";
 import { layout } from "./core/layout/LayoutEngine";
@@ -3303,6 +3303,371 @@ function testBgDeferredExecution() {
   );
 }
 
+// ─── SA-42：bg(src) 同 URL 替换不能卸载新 sprite 复用的 texture ────────────────
+//
+// 背景：Pixi Assets.load(sameUrl) 会复用缓存 Texture。StageManager.setBackgroundSprite
+// 旧实现先销毁旧 sprite，再无条件 Assets.unload(oldUrl)。当 new sprite 与 old sprite
+// 来自同一个 URL 时，unload(oldUrl) 会卸掉新 sprite 仍在使用的缓存纹理，画面退回到
+// renderer clear color。fx-bg.kmd 中 L25 和 L32 都会连续加载 sample-bg.jpg，故分别
+// 只剩 #0f3460 / #1a0a2e。
+// 修复：卸载延迟到下一 tick；同一轮若再次加载同 URL，则取消 pending unload。
+// 真正替换为不同 URL 或保持无图状态时，下一 tick 仍卸载旧 URL。
+
+async function testBgSameUrlReplaceDoesNotUnloadSharedTexture() {
+  console.log("\n[28] SA-42 bg(src) 同 URL 替换不卸载共享 texture");
+
+  const { stageManager } = await import("./core/stage/StageManager");
+  stageManager.setBackgroundSprite(null);
+
+  const originalLoad = Assets.load;
+  const originalUnload = Assets.unload;
+  const unloadCalls: string[] = [];
+  (Assets as any).load = () => Promise.resolve(Texture.WHITE);
+  (Assets as any).unload = (url: string) => {
+    unloadCalls.push(url);
+    return Promise.resolve();
+  };
+  const flushUnloadTick = () => new Promise<void>((resolve) => setTimeout(resolve, 0));
+
+  try {
+    stageManager.setBackgroundSprite(new Sprite(Texture.WHITE), "/tests/assets/sample-bg.jpg");
+    stageManager.setBackgroundSprite(new Sprite(Texture.WHITE), "/tests/assets/sample-bg.jpg");
+    assert(
+      unloadCalls.length === 0,
+      `SA-42 同 URL 替换不调用 Assets.unload（实际 ${JSON.stringify(unloadCalls)}）`,
+    );
+
+    stageManager.setBackgroundSprite(null, null, { unloadTexture: false });
+    await flushUnloadTick();
+    assert(
+      unloadCalls.length === 0,
+      `SA-42 同 URL bg(color,src) fallback 清屏不卸载缓存（实际 ${JSON.stringify(unloadCalls)}）`,
+    );
+
+    stageManager.setBackgroundSprite(null);
+    stageManager.loadBackgroundFromUrl("/tests/assets/sample-bg.jpg");
+    await Promise.resolve();
+    await flushUnloadTick();
+    assert(
+      unloadCalls.length === 0,
+      `SA-42 同轮 clear → load(same URL) 必须取消 pending unload（实际 ${JSON.stringify(unloadCalls)}）`,
+    );
+
+    stageManager.setBackgroundSprite(new Sprite(Texture.WHITE), "/tests/assets/other-bg.jpg");
+    await flushUnloadTick();
+    assert(
+      unloadCalls.length === 1 && unloadCalls[0] === "/tests/assets/sample-bg.jpg",
+      `SA-42 不同 URL 替换卸载旧 URL（实际 ${JSON.stringify(unloadCalls)}）`,
+    );
+
+    stageManager.setBackgroundSprite(null);
+    await flushUnloadTick();
+    assert(
+      unloadCalls.length === 2 && unloadCalls[1] === "/tests/assets/other-bg.jpg",
+      `SA-42 清空 sprite 卸载当前 URL（实际 ${JSON.stringify(unloadCalls)}）`,
+    );
+  } finally {
+    stageManager.setBackgroundSprite(null, null, { unloadTexture: false });
+    await flushUnloadTick();
+    (Assets as any).load = originalLoad;
+    (Assets as any).unload = originalUnload;
+  }
+}
+
+// ─── SA-43：stop/loadState 恢复无图 checkpoint 必须取消 pending bg(src) ───────
+//
+// 背景：stop() 通过 stageManager.loadState(entryCheckpoint.stage) 恢复入口状态。
+// 若 bg(src) 已启动但 Assets.load 尚未 resolve，此时 _bgSprite 仍可能为 null。
+// 旧 loadState 只有当前存在 sprite 时才 setBackgroundSprite(null)，因此不会推进
+// _bgEpoch，pending resolve 仍能在 stop 后把背景挂回来。
+// 修复：恢复到 bgSpriteUrl=null 的 checkpoint 时无条件 setBackgroundSprite(null)。
+
+async function testBgLoadStateWithoutSpriteInvalidatesPendingLoad() {
+  console.log("\n[29] SA-43 loadState(no bgSpriteUrl) 取消 pending bg(src)");
+
+  const { stageManager } = await import("./core/stage/StageManager");
+  stageManager.setBackgroundSprite(null);
+
+  const pendingEpoch = stageManager.nextBgEpoch();
+  assert(
+    stageManager.getBackgroundSprite() === null,
+    `SA-43 pending load 期间 sprite 可为 null（实际 ${stageManager.getBackgroundSprite()}）`,
+  );
+
+  stageManager.loadState({
+    camera: { x: 0, y: 0, zoom: 1, rotation: 0 },
+    cameraOffset: { x: 0, y: 0, zoom: 1, rotation: 0 },
+    designWidth: 1920,
+    designHeight: 1080,
+    isFixedRatio: true,
+    backgroundColor: "#000000",
+    bgSpriteUrl: null,
+  });
+
+  assert(
+    stageManager.currentBgEpoch > pendingEpoch,
+    `SA-43 loadState(no bgSpriteUrl) 后 epoch > pendingEpoch（current=${stageManager.currentBgEpoch} pending=${pendingEpoch}）`,
+  );
+}
+
+// ─── SA-44：:bg replay 必须重新解析背景 sprite，不能用 build-time fallback ───
+//
+// 背景：:bg 的自然播放路径已在 segmentTl.call 触发时解析 stageManager.getBackgroundSprite()。
+// 但 seek replay 读 segment.instantEffects / behaviors 中的 target。旧构建在 bg(src) 未
+// resolve 时把 paragraphText fallback 存进 record；seek 到 [.duotone:bg] 时就把滤镜打到
+// 文字容器，真实 Pixi FilterPipe 崩溃（alphaMode null）。修复：record 标 targetLevel="bg"，
+// replay 时重新取当前背景 sprite。
+
+async function testBgReplayResolvesLiveSpriteTarget() {
+  console.log("\n[30] SA-44 :bg replay 重新解析 live sprite target");
+
+  const { stageManager } = await import("./core/stage/StageManager");
+  stageManager.setBackgroundSprite(null);
+  const bgSprite = new Sprite(Texture.WHITE);
+  stageManager.setBackgroundSprite(bgSprite, "/tests/assets/sample-bg.jpg");
+
+  const fallbackTarget = new Container();
+  const tl = G.timeline({ paused: true });
+  tl.to({ x: 0 }, { x: 1, duration: 2 });
+  const segment: any = {
+    timeline: tl,
+    duration: 2,
+    behaviors: [{
+      char: fallbackTarget,
+      target: fallbackTarget,
+      targetLevel: "bg",
+      effectName: "probeBehavior",
+      params: {},
+      charIndex: 0,
+      timePosition: 1,
+    }],
+    instantEffects: [{
+      target: fallbackTarget,
+      targetLevel: "bg",
+      effectName: "probeInstant",
+      params: {},
+      charIndex: 0,
+      timePosition: 1,
+    }],
+    styleRecords: [],
+    entranceFilters: [],
+    stageModifierRecords: [],
+  };
+  const state: any = {
+    isAutoPlaying: false,
+    activeBehaviorCleanups: [],
+    activeInstantCleanups: [],
+  };
+
+  const originalApply = (effectManager as any).apply;
+  const calls: any[] = [];
+  (effectManager as any).apply = (target: any, name: string) => {
+    calls.push({ target, name });
+    return null;
+  };
+
+  try {
+    PlaybackController.seekToTime(segment, 1, state);
+    assert(
+      calls.length === 2,
+      `SA-44 behavior + instant 两条 :bg replay 都应 apply（实际 ${calls.map(c => c.name).join(",")})`,
+    );
+    assert(
+      calls.every(c => c.target === bgSprite),
+      `SA-44 :bg replay target 必须是 live bg sprite，而非 fallback paragraphText`,
+    );
+  } finally {
+    (effectManager as any).apply = originalApply;
+    stageManager.setBackgroundSprite(null);
+  }
+}
+
+// ─── SA-45：seek 时 bg replay 必须先于 :bg filter replay ─────────────────────
+//
+// 背景：SA-44 修复后 :bg replay 会取 live sprite，但旧 seek 顺序是
+// registerInstantEffects → replayStageModifiers。seek 到 L32 时，:bg 先挂到上一张
+// sprite；随后 bg replay 清旧图/加载新图，旧 sprite 带着 filter 被销毁，真实 Pixi
+// FilterPipe 进入坏状态。修复：先 replayStageModifiers 恢复当前 bg，再注册 :bg filter。
+
+async function testBgReplayBeforeBgFilterReplay() {
+  console.log("\n[31] SA-45 bg replay 先于 :bg filter replay");
+
+  const { stageManager } = await import("./core/stage/StageManager");
+  stageManager.setBackgroundSprite(null);
+  const fallbackTarget = new Container();
+  const liveSprite = new Sprite(Texture.WHITE);
+  const tl = G.timeline({ paused: true });
+  tl.to({ x: 0 }, { x: 1, duration: 2 });
+  const segment: any = {
+    timeline: tl,
+    duration: 2,
+    behaviors: [],
+    instantEffects: [{
+      target: fallbackTarget,
+      targetLevel: "bg",
+      effectName: "probeInstant",
+      params: {},
+      charIndex: 0,
+      timePosition: 1,
+    }],
+    styleRecords: [],
+    entranceFilters: [],
+    stageModifierRecords: [{
+      command: "bg",
+      params: { src: "tests/assets/sample-bg.jpg" },
+      timePosition: 1,
+    }],
+  };
+  const state: any = {
+    isAutoPlaying: false,
+    activeBehaviorCleanups: [],
+    activeInstantCleanups: [],
+  };
+
+  const originalStageApply = (stageManager as any).apply;
+  const originalEffectApply = (effectManager as any).apply;
+  const order: string[] = [];
+  (stageManager as any).apply = (command: string) => {
+    order.push(`stage:${command}`);
+    if (command === "bg") stageManager.setBackgroundSprite(liveSprite, "/tests/assets/sample-bg.jpg");
+  };
+  (effectManager as any).apply = (target: any, name: string) => {
+    order.push(`effect:${name}:${target === liveSprite ? "live" : "fallback"}`);
+    return null;
+  };
+
+  try {
+    PlaybackController.seekToTime(segment, 1, state);
+    assert(
+      order.join(" > ") === "stage:bg > effect:probeInstant:live",
+      `SA-45 顺序应为 bg replay 后再 :bg filter replay（实际 ${order.join(" > ")}）`,
+    );
+  } finally {
+    (stageManager as any).apply = originalStageApply;
+    (effectManager as any).apply = originalEffectApply;
+    stageManager.setBackgroundSprite(null);
+  }
+}
+
+// ─── SA-46：bg 未 resolve 时连续 seek 不应重复 apply :bg 特效 ──────────────────
+//
+// 背景：registerBehaviors / registerInstantEffects 中 :bg record 的 target（background
+// sprite）可能因 Assets.load 异步未 resolve 而为 null。此时注册 onBackgroundReady 延后
+// apply 闭包。旧实现用 Set<fn> 存回调——每次 seek 注册不同闭包实例，Set 无法去重。连续
+// seek 两次后，两个闭包都留在 set 中；bg resolve 时全部执行 → 同一 behavior/instant 被
+// apply 两次，产生重复 filter + ticker（underwater 会重复创建 6 个 filter + 2 个 ticker）。
+//
+// 修复：onBackgroundReady 返回 { cancel } 句柄，PlaybackController 在每次 seek/play 周期
+// 开头取消上一轮 pending 句柄 + clearBgReadyCallbacks 清空所有 pending 回调。验证：
+// 加载前连续 seek 两次，resolve 后 behavior 和 instant 各只 apply 一次。
+
+async function testBgMultiSeekBeforeResolve() {
+  console.log("\n[32] SA-46 bg 未 resolve 时连续 seek 不重复 apply :bg 特效");
+
+  const { stageManager } = await import("./core/stage/StageManager");
+  stageManager.setBackgroundSprite(null);
+
+  const fallbackTarget = new Container();
+  const tl = G.timeline({ paused: true });
+  tl.to({ x: 0 }, { x: 1, duration: 5 });
+  const segment: any = {
+    timeline: tl,
+    duration: 5,
+    behaviors: [{
+      char: fallbackTarget,
+      target: fallbackTarget,
+      targetLevel: "bg",
+      effectName: "probeBehavior",
+      params: {},
+      charIndex: 0,
+      timePosition: 1,
+    }],
+    instantEffects: [{
+      target: fallbackTarget,
+      targetLevel: "bg",
+      effectName: "probeInstant",
+      params: {},
+      charIndex: 0,
+      timePosition: 1,
+    }],
+    styleRecords: [],
+    entranceFilters: [],
+    stageModifierRecords: [{
+      command: "bg",
+      params: { src: "tests/assets/sample-bg.jpg" },
+      timePosition: 0,
+    }],
+  };
+  const state: any = {
+    isAutoPlaying: false,
+    activeBehaviorCleanups: [],
+    activeInstantCleanups: [],
+  };
+
+  const originalApply = (effectManager as any).apply;
+  const originalStageApply = (stageManager as any).apply;
+  const behaviorCalls: any[] = [];
+  const instantCalls: any[] = [];
+  // stageManager.apply("bg", ...) 的 mock：不真正加载图片，让 sprite 保持 null。
+  (stageManager as any).apply = (command: string) => {
+    if (command === "bg") return; // 不加载图片，保持 sprite null
+  };
+  (effectManager as any).apply = (target: any, name: string) => {
+    if (name === "probeBehavior") behaviorCalls.push({ target });
+    if (name === "probeInstant") instantCalls.push({ target });
+    return null;
+  };
+
+  try {
+    // 第一次 seek——bg 未 resolve，注册 onBackgroundReady 延后回调
+    PlaybackController.seekToTime(segment, 2, state);
+    assert(
+      behaviorCalls.length === 0,
+      `SA-46 第一次 seek 时 bg 未 resolve，behavior 不应 apply（实际 ${behaviorCalls.length}）`,
+    );
+    assert(
+      instantCalls.length === 0,
+      `SA-46 第一次 seek 时 bg 未 resolve，instant 不应 apply（实际 ${instantCalls.length}）`,
+    );
+
+    // 第二次 seek——旧实现会再注册一组闭包，resolve 后两组都执行
+    PlaybackController.seekToTime(segment, 3, state);
+    assert(
+      behaviorCalls.length === 0,
+      `SA-46 第二次 seek 时 bg 仍未 resolve，behavior 不应 apply（实际 ${behaviorCalls.length}）`,
+    );
+    assert(
+      instantCalls.length === 0,
+      `SA-46 第二次 seek 时 bg 仍未 resolve，instant 不应 apply（实际 ${instantCalls.length}）`,
+    );
+
+    // 模拟 bg resolve——只有最后一次 seek 注册的闭包应执行
+    const resolveSprite = new Sprite(Texture.WHITE);
+    stageManager.setBackgroundSprite(resolveSprite, "tests/assets/sample-bg.jpg");
+
+    assert(
+      behaviorCalls.length === 1,
+      `SA-46 bg resolve 后 behavior 应只 apply 一次（实际 ${behaviorCalls.length}）——连续 seek 不应累积闭包`,
+    );
+    assert(
+      instantCalls.length === 1,
+      `SA-46 bg resolve 后 instant 应只 apply 一次（实际 ${instantCalls.length}）——连续 seek 不应累积闭包`,
+    );
+    assert(
+      behaviorCalls[0]?.target === resolveSprite,
+      `SA-46 behavior apply target 应为 resolve 后的 live sprite`,
+    );
+    assert(
+      instantCalls[0]?.target === resolveSprite,
+      `SA-46 instant apply target 应为 resolve 后的 live sprite`,
+    );
+  } finally {
+    (effectManager as any).apply = originalApply;
+    (stageManager as any).apply = originalStageApply;
+    stageManager.setBackgroundSprite(null);
+  }
+}
+
 async function main() {
   console.log("╔══════════════════════════════════════════════════════════╗");
   console.log("║  KMD Playback State Regression (F-2 / R5-R22 + SA-38)    ║");
@@ -3338,6 +3703,11 @@ async function main() {
   testBgStringParamPreservation();
   await testBgClearInvalidatesPendingLoad();
   testBgDeferredExecution();
+  await testBgSameUrlReplaceDoesNotUnloadSharedTexture();
+  await testBgLoadStateWithoutSpriteInvalidatesPendingLoad();
+  await testBgReplayResolvesLiveSpriteTarget();
+  await testBgReplayBeforeBgFilterReplay();
+  await testBgMultiSeekBeforeResolve();
 
   console.log(`\n🎬 Playback regression: ${pass} passed, ${fail} failed`);
   if (fail > 0) {

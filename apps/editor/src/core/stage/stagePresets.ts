@@ -471,13 +471,17 @@ export const stagePresets: Record<string, StageEffectFunction> = {
         ? src
         : baseUrl + src.replace(/^\.\//, "");
 
-      // 委托 StageManager.loadBackgroundFromUrl（含纪元守卫 + cover-fit + 就绪回调）
-      stageManager.loadBackgroundFromUrl(url);
-
-      // 若同时给了 color，先设色（图片加载前可见）
+      // bg(color, src) 的语义是先落纯色 fallback，再等待图片加载；必须清掉旧 sprite，
+      // 否则旧图会遮住 fallback，且旧 :bg filters 可能继续显示到新图 resolve。
       if (color !== undefined) {
         stageManager.setBackgroundColor(color);
+        stageManager.setBackgroundSprite(null, null, {
+          unloadTexture: stageManager.bgSpriteUrl !== url,
+        });
       }
+
+      // 委托 StageManager.loadBackgroundFromUrl（含纪元守卫 + cover-fit + 就绪回调）
+      stageManager.loadBackgroundFromUrl(url);
       return;
     }
 

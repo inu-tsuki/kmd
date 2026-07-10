@@ -91,7 +91,7 @@
   - **任务 B（背景图地基，前置）**：editor-dev 级 `bg(color)`（B1）+ `bg(src)`（B2，`public/` 加载图挂 `backgroundLayer`）+ **`:bg` 滤镜路由（B3，已纳入本批）**。解锁「文字滤镜叠真实画面」+「DIP 滤镜应用到背景图本身 = 色调族照片级验证」。交接稿见 `../ecosystem/special-commands-vocabulary-draft.md` §10。
   - `displace`（underwater 基石原语）提为创作滤镜第一优先（§8.1）。
   - `underwater` 组合预设、`dissolve`、`noise`、`vignette`、`scanline` 按 demo 缺口取舍。
-- **M3 收尾**：非 DIP 配套 behavior 按 demo 缺口补；整理报告叙事（库边界 = DIP 定义）。
+- **M3 收尾**：先过 **M3.0 Surface Profile Decision** gate（见 `../../knowledge/decisions/2026-07-10-dip-fx-surface-profiles.md`），把文字 / 背景 / frame 的 profile 表补齐；随后按 demo 缺口补非 DIP 配套 behavior，并整理报告叙事（库边界 = DIP 定义）。
 
 ### 6.1 验证表面与背景图依赖（决定怎么即刻验证 M1）
 
@@ -119,6 +119,7 @@
 - `frame`（全屏）作用域是否要做，取决于 demo——架构判断见 §9。**2026-07-09 订正**：`frame`（连同 `bg`）的触发语法不会走 `CommandLevel` 冒号后缀（`:frame`/`:bg`）——`docs/knowledge/language/design.md` D12 已封盘"覆盖范围永远不归 `:` 管，归主语管"，两者应作内建对象主语（`bg.<effect>(...)`，同 `cam`/`flow`/`var`）。DIP-FX M2 Task B（2026-07-09，`3a38445`）把 `:bg` 实现为 `CommandLevel` 第四值，正是漏看了这条决议，也漏看了下面这一条——本节早在 Task B 之前就已用 `bg.brightness`/`bg.blur` 的命名空间形态描述背景可读性用法。详见 spec §0.5.1、`migration.md` 解析器工程债 #9、架构体检处方 11/12。
 - 背景图作为阅读体验一等表面（`bg.brightness`/`bg.blur` 为可读性）已立草案 `../ecosystem/reading-experience-vision-draft.md`；它给本库连续色调类滤镜定位了「背景表面」这个归宿（spec §7.3），与 `frame` 镜头层是不同的层。
 - `bg` 命令本身（纯色别名 / 图像基底 / 叙事换景三重身份）的词汇表归属见 `../ecosystem/special-commands-vocabulary-draft.md` §3。
+- DIP-FX 的"两用"承诺已收束为 surface profile 模型：同名效果复用视觉语义，但允许文字、背景、frame 使用不同 profile/default/shader。M3 不把完整 `bg.*` / `frame.*` 系统塞进收尾，只先补 profile 表与 demo 必需的最小背景 profile。
 
 ### 8.2 资产引入机制（`bg(image)` 与色调族验证的前置，待讨论/立草案）
 

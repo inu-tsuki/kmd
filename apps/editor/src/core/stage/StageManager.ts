@@ -34,9 +34,17 @@ class StageManager {
   private _bgSpriteUrl: string | null = null;
   // Bug 7: 纪元号——并发 bg(src) 时丢弃过期 resolve
   private _bgEpoch = 0;
+  private _pendingBgUnloads: Map<string, ReturnType<typeof setTimeout>> = new Map();
   // Bug 6: 背景就绪回调——:bg filter target 解析在 build 期同步发生，Assets.load 异步 resolve
   // 晚于 build。注册回调后，sprite 加载完成时通知调用方（SegmentBuilder 可据此延后 apply）。
-  private _bgReadyCallbacks: Set<(sprite: Sprite) => void> = new Set();
+  //
+  // SA-46: 原为 Set<fn>，但每次 seek 注册的是不同闭包实例 → Set 无法按内容去重。
+  // bg 未 resolve 时连续 seek 两次，两个闭包都留在 set 中，resolve 后全部执行 →
+  // 同一 behavior/instant 被 apply 两次，产生重复 filter + ticker。
+  // 改为 Map<id, fn>，onBackgroundReady 返回 { cancel } 句柄；PlaybackController 在
+  // 每次 seek/play 周期开头取消上一轮的 pending 句柄，保证同一 record 只 apply 一次。
+  private _bgReadyCallbacks: Map<number, (sprite: Sprite) => void> = new Map();
+  private _bgReadyNextId = 0;
   private auditPort: StageAuditPort = new UnifiedStageAuditPort();
 
   constructor() {
@@ -117,7 +125,9 @@ class StageManager {
     // 若快照无 bgSpriteUrl 但当前有 sprite，清除（恢复到无背景图状态）。
     if (state.bgSpriteUrl) {
       this.loadBackgroundFromUrl(state.bgSpriteUrl);
-    } else if (this._bgSprite) {
+    } else {
+      // 恢复到无图 checkpoint 时也要取消待 resolve 的 bg(src)。
+      // stop 可能发生在 Assets.load resolve 前，此时 _bgSprite 仍为 null。
       this.setBackgroundSprite(null);
     }
 
@@ -249,13 +259,19 @@ class StageManager {
   // Bug 3: 不在 destroy 时销毁 texture——Assets 缓存可能被同 URL 复用。
   // 改用 Assets.unload(url) 释放缓存引用；sprite 自身的 texture 引用在 destroy({ texture: false }) 时断开。
   // Bug 6: sprite 加载完成后触发 _bgReadyCallbacks，通知等待中的 :bg filter apply。
-  public setBackgroundSprite(sprite: Sprite | null, url?: string | null) {
+  public setBackgroundSprite(
+    sprite: Sprite | null,
+    url?: string | null,
+    options?: { unloadTexture?: boolean },
+  ) {
+    const previousUrl = this._bgSpriteUrl;
     if (this._bgSprite) {
       this.backgroundLayer.removeChild(this._bgSprite);
       this._bgSprite.destroy({ children: true, texture: false });
-      // Bug 3: 释放 Assets 缓存中的 texture 引用，避免同 URL 复用拿到已 destroy 的资源
-      if (this._bgSpriteUrl) {
-        Assets.unload(this._bgSpriteUrl).catch(() => {});
+      // Bug 3: 释放旧 URL 的 Assets 缓存引用；同 URL 替换时不能卸载，因为新 sprite
+      // 通常复用同一 Texture。卸载同 URL 会让新背景丢纹理，只剩 renderer clear color。
+      if (sprite !== null && previousUrl && previousUrl !== url) {
+        this.scheduleBackgroundUnload(previousUrl);
       }
     }
     // SA-40: 清除 sprite 时推进纪元，使任何待 resolve 的异步 Assets.load 丢弃。
@@ -263,27 +279,40 @@ class StageManager {
     // epoch 仍匹配 → sprite 被重新挂上，bg(color) 的清除被静默撤销。
     if (sprite === null) {
       this._bgEpoch++;
+      this._bgReadyCallbacks.clear();
+      if (previousUrl && options?.unloadTexture !== false) {
+        this.scheduleBackgroundUnload(previousUrl);
+      }
     }
     this._bgSprite = sprite;
     this._bgSpriteUrl = url ?? null;
     if (sprite) {
+      if (url) this.cancelBackgroundUnload(url);
       this.backgroundLayer.addChild(sprite);
       // Bug 6: 通知等待中的 :bg filter apply
-      for (const cb of this._bgReadyCallbacks) {
+      for (const cb of this._bgReadyCallbacks.values()) {
         cb(sprite);
       }
       this._bgReadyCallbacks.clear();
     }
   }
 
-  // Bug 6: 注册背景就绪回调。若 sprite 已存在则立即调用；否则存入 Set，加载完成后触发。
-  // SegmentBuilder 在 :bg target 解析时调用此方法注册延后 apply 回调。
-  public onBackgroundReady(callback: (sprite: Sprite) => void): void {
+  // Bug 6: 注册背景就绪回调。若 sprite 已存在则立即调用；否则存入 Map，加载完成后触发。
+  // SegmentBuilder / PlaybackController 在 :bg target 解析时调用此方法注册延后 apply 回调。
+  //
+  // SA-46: 返回 { cancel } 句柄。bg 未 resolve 时连续 seek 会多次注册不同闭包；旧 Set 无法
+  // 去重这些闭包，resolve 后全部执行导致重复 apply。PlaybackController 在每次周期开头取消
+  // 上一轮的 pending 句柄，保证同一 record 只 apply 一次。
+  public onBackgroundReady(callback: (sprite: Sprite) => void): { cancel: () => void } {
     if (this._bgSprite) {
       callback(this._bgSprite);
-    } else {
-      this._bgReadyCallbacks.add(callback);
+      return { cancel: () => {} };
     }
+    const id = this._bgReadyNextId++;
+    this._bgReadyCallbacks.set(id, callback);
+    return {
+      cancel: () => { this._bgReadyCallbacks.delete(id); },
+    };
   }
 
   // Bug 7: 纪元号守卫——并发 bg(src) 时，仅最新纪元的 resolve 生效。
@@ -295,6 +324,18 @@ class StageManager {
     return this._bgEpoch;
   }
 
+  /**
+   * SA-46: 清除所有 pending 的 onBackgroundReady 回调（不推进纪元、不动 sprite）。
+   *
+   * seek 时 registerBehaviors/registerInstantEffects 会重新注册 :bg 延后 apply。
+   * 若不清除，build 期注册的回调（sprite 未 resolve 时仍留在 map）与 seek 路径的回调
+   * 共存，resolve 后全部执行导致重复 apply。PlaybackController.clearPendingBgCallbacks
+   * 调此方法统一清空，保证每轮 seek 只有一组 :bg apply 闭包。
+   */
+  public clearBgReadyCallbacks() {
+    this._bgReadyCallbacks.clear();
+  }
+
   // Bug 4: bg sprite URL 快照——seek/restore 时通过 URL 重新加载图片恢复背景。
   public get bgSpriteUrl(): string | null {
     return this._bgSpriteUrl;
@@ -303,6 +344,7 @@ class StageManager {
   // 共享的背景图加载逻辑（stagePresets bg preset + loadState restore 复用）。
   // 返回纪元号供调用方做过期判断（Bug 7）。
   public loadBackgroundFromUrl(url: string): number {
+    this.cancelBackgroundUnload(url);
     const epoch = this.nextBgEpoch();
     Assets.load(url)
       .then((texture: Texture) => {
@@ -322,6 +364,23 @@ class StageManager {
         console.error("[StageManager] failed to load background image:", url, err);
       });
     return epoch;
+  }
+
+  private scheduleBackgroundUnload(url: string) {
+    if (this._pendingBgUnloads.has(url)) return;
+    const timer = setTimeout(() => {
+      this._pendingBgUnloads.delete(url);
+      if (this._bgSpriteUrl === url) return;
+      Assets.unload(url).catch(() => {});
+    }, 0);
+    this._pendingBgUnloads.set(url, timer);
+  }
+
+  private cancelBackgroundUnload(url: string) {
+    const timer = this._pendingBgUnloads.get(url);
+    if (!timer) return;
+    clearTimeout(timer);
+    this._pendingBgUnloads.delete(url);
   }
 
   public setMode(mode: StageMode) {
