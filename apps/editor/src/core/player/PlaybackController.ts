@@ -492,11 +492,19 @@ export class PlaybackController {
 
   private static registerBehaviors(segment: Segment, currentTime: number, state: PlaybackRuntimeState) {
     this.clearBehaviors(state);
+    const backgroundBoundary = this.getBackgroundReplayBoundary(segment, currentTime);
 
     for (const behavior of segment.behaviors) {
       if (behavior.timePosition <= currentTime) {
+        if (behavior.targetLevel === "bg" && behavior.timePosition < backgroundBoundary) continue;
         const applyBehavior = (target: any) => {
-          const result = effectManager.apply(target, behavior.effectName, behavior.params, true);
+          const result = effectManager.apply(
+            target,
+            behavior.effectName,
+            behavior.params,
+            true,
+            behavior.targetLevel === "bg" ? "background" : "text",
+          );
           const unpacked = this.unpackBehaviorResult(result, target);
           state.activeBehaviorCleanups.push({
             char: target,
@@ -529,11 +537,19 @@ export class PlaybackController {
    */
   private static registerInstantEffects(segment: Segment, currentTime: number, state: PlaybackRuntimeState) {
     this.clearInstantEffects(state);
+    const backgroundBoundary = this.getBackgroundReplayBoundary(segment, currentTime);
 
     for (const record of segment.instantEffects) {
       if (record.timePosition <= currentTime) {
+        if (record.targetLevel === "bg" && record.timePosition < backgroundBoundary) continue;
         const applyInstant = (target: any) => {
-          const result = effectManager.apply(target, record.effectName, record.params, true);
+          const result = effectManager.apply(
+            target,
+            record.effectName,
+            record.params,
+            true,
+            record.targetLevel === "bg" ? "background" : "text",
+          );
           if (result) {
             state.activeInstantCleanups.push({
               target,
@@ -566,6 +582,16 @@ export class PlaybackController {
         }
       }
     }
+  }
+
+  private static getBackgroundReplayBoundary(segment: Segment, currentTime: number): number {
+    let boundary = Number.NEGATIVE_INFINITY;
+    for (const record of segment.stageModifierRecords) {
+      if (record.command === "bg" && record.timePosition <= currentTime) {
+        boundary = Math.max(boundary, record.timePosition);
+      }
+    }
+    return boundary;
   }
 
   /**

@@ -66,6 +66,8 @@ void main(void)
 `;
 
 export class EmbossFilter extends Filter {
+  public readonly kmdEffectProfile = "emboss:text";
+
   constructor() {
     const glProgram = new GlProgram({
       vertex: defaultFilterVert,

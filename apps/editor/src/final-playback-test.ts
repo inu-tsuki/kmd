@@ -29,6 +29,10 @@ import { parser } from "./core/parser/Parser";
 import { SegmentBuilder } from "./core/player/SegmentBuilder";
 import { buildStageModifierRecord, buildStageModifierApplyParams } from "./core/stage/stagePresets";
 import { StageRuntime } from "./core/stage/StageRuntime";
+import { BackgroundDuotoneFilter } from "./core/filters/BackgroundDuotoneFilter";
+import { BackgroundEmbossFilter } from "./core/filters/BackgroundEmbossFilter";
+import { DuotoneFilter } from "./core/filters/DuotoneFilter";
+import { GrayFilter } from "./core/filters/GrayFilter";
 import type { Segment } from "./core/state/Segment";
 import type { LayoutGlyphPlan } from "./core/layout/LayoutPlanner";
 
@@ -3668,6 +3672,86 @@ async function testBgMultiSeekBeforeResolve() {
   }
 }
 
+// ─── SA-47：background surface profile + latest-bg replay boundary ────────────
+
+async function testBackgroundSurfaceProfilesAndReplayBoundary() {
+  console.log("\n[33] SA-47 background profile 路由 + latest bg boundary");
+
+  const profileTarget = new Container();
+  const textDuotone = effectManager.apply(profileTarget, "duotone", {}, true, "text");
+  const backgroundDuotone = effectManager.apply(profileTarget, "duotone", {}, true, "background");
+  const backgroundEmboss = effectManager.apply(profileTarget, "emboss", {}, true, "background");
+  const backgroundGray = effectManager.apply(profileTarget, "gray", {}, true, "background");
+  assert(textDuotone instanceof DuotoneFilter, "SA-47 text duotone 保持 alpha profile");
+  assert(backgroundDuotone instanceof BackgroundDuotoneFilter, "SA-47 bg duotone 选择 luma profile");
+  assert(backgroundEmboss instanceof BackgroundEmbossFilter, "SA-47 bg emboss 选择 luma profile");
+  assert(backgroundGray instanceof GrayFilter, "SA-47 bg gray 复用现有 GrayFilter");
+
+  const grayBgClassification = EffectProcessor.classifyCommand({ name: "gray", params: {}, level: "bg" });
+  assert(
+    grayBgClassification.lane === "effect" && !grayBgClassification.isStyle,
+    `SA-47 gray:bg 应优先走 effect lane（实际 lane=${grayBgClassification.lane} isStyle=${grayBgClassification.isStyle}）`,
+  );
+
+  for (const filter of [textDuotone, backgroundDuotone, backgroundEmboss, backgroundGray]) {
+    filter?.destroy?.();
+  }
+  profileTarget.filters = [];
+
+  const { stageManager } = await import("./core/stage/StageManager");
+  stageManager.setBackgroundSprite(null);
+  stageManager.setBackgroundSprite(new Sprite(Texture.WHITE), "tests/assets/sample-bg.jpg");
+  const tl = G.timeline({ paused: true });
+  tl.to({ x: 0 }, { x: 1, duration: 3 });
+  const segment: any = {
+    timeline: tl,
+    duration: 3,
+    behaviors: [
+      { char: new Container(), target: new Container(), targetLevel: "bg", effectName: "oldBehavior", params: {}, charIndex: 0, timePosition: 1 },
+      { char: new Container(), target: new Container(), targetLevel: "bg", effectName: "newBehavior", params: {}, charIndex: 0, timePosition: 2 },
+    ],
+    instantEffects: [
+      { target: new Container(), targetLevel: "bg", effectName: "duotone", params: {}, charIndex: 0, timePosition: 1 },
+      { target: new Container(), targetLevel: "bg", effectName: "emboss", params: {}, charIndex: 0, timePosition: 2 },
+    ],
+    styleRecords: [],
+    entranceFilters: [],
+    stageModifierRecords: [
+      { command: "bg", params: { src: "tests/assets/sample-bg.jpg" }, timePosition: 1 },
+      { command: "bg", params: { src: "tests/assets/sample-bg.jpg" }, timePosition: 2 },
+    ],
+  };
+  const state: any = {
+    isAutoPlaying: false,
+    activeBehaviorCleanups: [],
+    activeInstantCleanups: [],
+    pendingBgReadyCancels: [],
+  };
+  const originalStageApply = (stageManager as any).apply;
+  const originalEffectApply = (effectManager as any).apply;
+  const calls: Array<{ name: string; surface: string }> = [];
+  (stageManager as any).apply = () => {};
+  (effectManager as any).apply = (_target: any, name: string, _params: any, _force: boolean, surface: string) => {
+    calls.push({ name, surface });
+    return null;
+  };
+  try {
+    PlaybackController.seekToTime(segment, 2.5, state);
+    assert(
+      calls.map((call) => call.name).join(",") === "newBehavior,emboss",
+      `SA-47 latest bg boundary 之前的 record 不重放（实际 ${calls.map((call) => call.name).join(",")})`,
+    );
+    assert(
+      calls.every((call) => call.surface === "background"),
+      `SA-47 bg replay 全部显式选择 background profile`,
+    );
+  } finally {
+    (stageManager as any).apply = originalStageApply;
+    (effectManager as any).apply = originalEffectApply;
+    stageManager.setBackgroundSprite(null);
+  }
+}
+
 async function main() {
   console.log("╔══════════════════════════════════════════════════════════╗");
   console.log("║  KMD Playback State Regression (F-2 / R5-R22 + SA-38)    ║");
@@ -3708,6 +3792,7 @@ async function main() {
   await testBgReplayResolvesLiveSpriteTarget();
   await testBgReplayBeforeBgFilterReplay();
   await testBgMultiSeekBeforeResolve();
+  await testBackgroundSurfaceProfilesAndReplayBoundary();
 
   console.log(`\n🎬 Playback regression: ${pass} passed, ${fail} failed`);
   if (fail > 0) {

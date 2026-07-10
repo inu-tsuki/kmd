@@ -389,14 +389,20 @@ export class SegmentBuilder {
               if (isBg && !liveTarget) {
                 // sprite 仍未就绪——注册延后 apply
                 stageManager.onBackgroundReady((sprite) => {
-                  const fi = effectManager.apply(sprite, instantName, instantParams, true);
+                  const fi = effectManager.apply(sprite, instantName, instantParams, true, "background");
                   if (fi) {
                     context.playbackState.activeInstantCleanups.push({ target: sprite, filterInstance: fi });
                   }
                 });
                 return;
               }
-              const filterInstance = effectManager.apply(liveTarget, instantName, instantParams, true);
+              const filterInstance = effectManager.apply(
+                liveTarget,
+                instantName,
+                instantParams,
+                true,
+                isBg ? "background" : "text",
+              );
               if (filterInstance) {
                 context.playbackState.activeInstantCleanups.push({
                   target: liveTarget,
@@ -443,7 +449,7 @@ export class SegmentBuilder {
               const liveBehaviorTarget = isBgBehavior ? stageManager.getBackgroundSprite() : paragraphText;
               if (isBgBehavior && !liveBehaviorTarget) {
                 stageManager.onBackgroundReady((sprite) => {
-                  const result = effectManager.apply(sprite, behaviorName, behaviorParams, true);
+                  const result = effectManager.apply(sprite, behaviorName, behaviorParams, true, "background");
                   const unpacked = PlaybackController.unpackBehaviorResult(result, sprite);
                   context.playbackState.activeBehaviorCleanups.push({
                     char: sprite as any,
@@ -455,7 +461,13 @@ export class SegmentBuilder {
                 return;
               }
               const behaviorChar = liveBehaviorTarget as any;
-              const result = effectManager.apply(behaviorChar, behaviorName, behaviorParams, true);
+              const result = effectManager.apply(
+                behaviorChar,
+                behaviorName,
+                behaviorParams,
+                true,
+                isBgBehavior ? "background" : "text",
+              );
               // INV-7（SA-16）：解包经 PlaybackController.unpackBehaviorResult 单一真相源
               const unpacked = PlaybackController.unpackBehaviorResult(result, liveBehaviorTarget);
               context.playbackState.activeBehaviorCleanups.push({
@@ -486,7 +498,13 @@ export class SegmentBuilder {
 
           // build 期同步 apply：fn 创建 filter push 进 target.filters + 返回 {tween, filter}
           const applyEntrance = (target: any) => {
-            const result = effectManager.apply(target, entranceName, entranceParams, true);
+            const result = effectManager.apply(
+              target,
+              entranceName,
+              entranceParams,
+              true,
+              isBgEntrance ? "background" : "text",
+            );
             if (result && typeof result === 'object' && 'tween' in result && 'filter' in result) {
               const efr = result as any;
               if (efr.tween instanceof gsap.core.Tween || efr.tween instanceof gsap.core.Timeline) {
@@ -538,7 +556,7 @@ export class SegmentBuilder {
             timePosition: absTime,
           });
           const behaviorChar = behavior.char;
-          const behaviorTarget = behavior.target;
+          const isBgBehavior = behavior.targetLevel === "bg";
           const behaviorName = behavior.effectName;
           const behaviorParams = { ...behavior.params };
           // R22/SA-37：exact-boundary guard——absTime 已是 const（let 重新赋值的局部），但为 guard
@@ -547,16 +565,30 @@ export class SegmentBuilder {
           segmentTl.call(() => {
             if (!context.playbackState.isAutoPlaying) return;
             if (context.playbackState.lastSeekTime === behaviorRecTime) return;
-            const result = effectManager.apply(behaviorChar, behaviorName, behaviorParams, true);
-            // INV-7（SA-16）：解包经 PlaybackController.unpackBehaviorResult 单一真相源
-            // （与 block 路径、registerBehaviors 共用，新增返回 shape 只改一处）。
-            const unpacked = PlaybackController.unpackBehaviorResult(result, behaviorTarget);
-            context.playbackState.activeBehaviorCleanups.push({
-              char: behaviorChar,
-              modName: behaviorName,
-              target: behaviorTarget,
-              ...unpacked,
-            });
+            const applyBehavior = (target: any) => {
+              const result = effectManager.apply(
+                target,
+                behaviorName,
+                behaviorParams,
+                true,
+                isBgBehavior ? "background" : "text",
+              );
+              // INV-7（SA-16）：解包经 PlaybackController.unpackBehaviorResult 单一真相源
+              // （与 block 路径、registerBehaviors 共用，新增返回 shape 只改一处）。
+              const unpacked = PlaybackController.unpackBehaviorResult(result, target);
+              context.playbackState.activeBehaviorCleanups.push({
+                char: target,
+                modName: behaviorName,
+                target,
+                ...unpacked,
+              });
+            };
+            const liveTarget = isBgBehavior ? stageManager.getBackgroundSprite() : behaviorChar;
+            if (isBgBehavior && !liveTarget) {
+              stageManager.onBackgroundReady((sprite) => applyBehavior(sprite));
+            } else {
+              applyBehavior(liveTarget);
+            }
           }, [], absTime);
         }
 
@@ -577,6 +609,7 @@ export class SegmentBuilder {
             timePosition: absTime,
           });
           const instantTarget = instantRecord.target;
+          const isBgInstant = instantRecord.targetLevel === "bg";
           const instantName = instantRecord.effectName;
           const instantParams = { ...instantRecord.params };
           // R12：预查 meta——void result 的 Graphics 特效（bg/border）push graphicsLayer cleanup。
@@ -586,19 +619,30 @@ export class SegmentBuilder {
           segmentTl.call(() => {
             if (!context.playbackState.isAutoPlaying) return;
             if (context.playbackState.lastSeekTime === instantRecTime) return;
-            const filterInstance = effectManager.apply(instantTarget, instantName, instantParams, true);
-            if (filterInstance) {
-              context.playbackState.activeInstantCleanups.push({
-                target: instantTarget,
-                filterInstance,
-              });
-            } else if (instantMeta?.mutexGroup && typeof (instantTarget as any).getGraphicsLayer === "function") {
-              // R12：Graphics 特效（bg/border 画 Graphics 非 filter，返回 void）——seek 回退清该层防残留。
-              context.playbackState.activeInstantCleanups.push({
-                target: instantTarget,
-                filterInstance: undefined as any,
-                graphicsLayer: instantMeta.mutexGroup,
-              });
+            const applyInstant = (target: any) => {
+              const filterInstance = effectManager.apply(
+                target,
+                instantName,
+                instantParams,
+                true,
+                isBgInstant ? "background" : "text",
+              );
+              if (filterInstance) {
+                context.playbackState.activeInstantCleanups.push({ target, filterInstance });
+              } else if (instantMeta?.mutexGroup && typeof target?.getGraphicsLayer === "function") {
+                // R12：Graphics 特效（bg/border 画 Graphics 非 filter，返回 void）——seek 回退清该层防残留。
+                context.playbackState.activeInstantCleanups.push({
+                  target,
+                  filterInstance: undefined as any,
+                  graphicsLayer: instantMeta.mutexGroup,
+                });
+              }
+            };
+            const liveTarget = isBgInstant ? stageManager.getBackgroundSprite() : instantTarget;
+            if (isBgInstant && !liveTarget) {
+              stageManager.onBackgroundReady((sprite) => applyInstant(sprite));
+            } else {
+              applyInstant(liveTarget);
             }
           }, [], absTime);
         }

@@ -237,6 +237,37 @@ M3 规则：
 
 **标注结果**（2026-07-10，见 §3 表格 `surface profile` 列）：17 个 DIP-FX 效果已标注——`text-only` ×4（threshold/posterize/sharpen/outline）、`profile-split` ×4（emboss/edge/duotone/underwater）、`background-ready` ×9（pixelate/gray/bloom/halftone/scanline/dissolve/displace/noise/vignette）。`scanline`/`noise`/`vignette` 的 `future-frame` 升级路径（推荐作用域 frame(未来) → §7.1 frame 路由接线后升级为整帧后处理）不变——升级时 profile 状态不变（shader 信号模型不因挂载点改变），仅 `targetType`/`CommandLevel` 不扩展（由 Phase B `bg.*`/`frame.*` 主语链承担）。
 
+### 0.6.1 Background profile 缺口与落地（浏览器验证，2026-07-10）
+
+`fx-bg.kmd` 最初不能作为“background profile 已交付”的证据。production reader + Chromium 定点验证发现：
+
+1. **自然播放全失效**：`bg(src)` 与 `:bg` filter 位于同一 timeline 时间点。前者启动异步 load，后者把 filter 挂到当时的旧 sprite；load resolve 后用无 filter 的新 sprite 替换旧 sprite。4× 连续播放在 duotone/emboss/gray 三段稳定后均观测到 live sprite `filters:[]`，三张截图逐字节 hash 相同。
+2. **seek/profile 退化**：`duotone:bg` 使用文字 alpha profile；全不透明 JPEG 的 `c.a≈1`，整图被映成 highlight 纯色。
+3. **seek/profile 退化**：`emboss:bg` 使用文字 alpha 梯度；全不透明 JPEG 内部梯度≈0，没有照片级浮雕细节。
+4. **路由冲突**：`gray:bg` 虽标为 `background-ready`，但 `gray` 与文字 style 同名，block 分流先命中 `classifyStyleWrite(...).isStyle`，随后 `:bg style` 被 skip；现有 `GrayFilter` 没有真正挂到背景。
+5. **seek 历史污染**：instant effects 使用 `timePosition <= currentTime` 全量重放 + `force=true`，且颜色 filter `stackable:true`；更早的 `duotone:bg` 会污染后续 emboss/gray 段。新 `bg(...)` 或显式 background effect state 必须形成 replay boundary，不能让历史背景 filter 无界累积。
+
+**建议实现边界**：
+
+- background target ownership：`bg(src)` 与同一时间点的 `:bg` effects 必须组成一个 load/apply 单元。filter 应消费本次 load resolve 后的 sprite；不得先应用到旧 sprite 再由异步替换销毁。自然播放与 seek replay 必须共享这份已解析 target/参数关系。
+- surface-aware effect dispatch：当目标 surface 为 background 时，优先选择 effect 的 background profile，不能因同名文字 style 抢占路由。
+- `duotone:background`：RGB luma → `shadow/highlight`；保留文字 alpha profile 不变。
+- `emboss:background`：RGB luma/颜色方向梯度（可用 directional gradient 或 Sobel）→ 浮雕；保留文字 alpha profile 不变。
+- `gray:background`：复用现有 `GrayFilter`，只修路由与 record/replay 所有权。
+- `underwater:background`：组合内的 duotone 必须切换到 background profile。
+- background instant replay：只恢复最后一个有效 background boundary 之后的 records；同一 mutexGroup 默认 last-write-wins。需要叠加时由同一显式 effect chain 表达，而不是依靠历史段落累积。
+
+**验收门禁**：
+
+- `pnpm test:shaders`：所有新增 background shader 可编译；此门禁不证明视觉语义正确。
+- `pnpm test:playback`：覆盖 surface 路由、最后有效 boundary、同 mutexGroup last-write-wins、显式链叠加和 seek 往返幂等。
+- `pnpm test:e2e`：production reader 中分别覆盖**自然连续播放**与**定点 seek**的 control / duotone / emboss / gray；等待异步背景加载稳定后，断言正确 filter profile/归属、texture 未销毁、无 page/console error，并保留失败截图证据。只测 seek 不足以覆盖自然播放的旧-sprite apply 竞态。
+- 视觉判据：duotone 保留原图明暗结构；emboss 对照片内部亮度边缘产生方向性起伏；gray 输出无彩色分量且不受先前 duotone 污染；文字层仍位于 background layer 之上。
+
+**落地结果（2026-07-10）**：上述五类缺口已修复。effect registry 支持 `text` / `background` profile；`duotone` 与 `emboss` 新增基于 RGB luma 的背景 shader，`gray` 修复同名 style 抢路由，`underwater` 的内嵌 duotone 随 surface 选择 profile。`bg(src)` 在发起加载前移除旧 sprite，使同点 effect 等待本次 resolve 后的 live sprite；seek 只重放最后一条有效 `bg` boundary 之后的 background records。作者语法保持不变，`:bg` 仍是受限兼容入口。
+
+回归结果：`test:playback` 315/315，通过 SA-47 的 profile、路由、boundary 与 surface 参数断言；`test:shaders` 21/21，通过 20 个 filter 文件；production Playwright e2e 2/2，同时覆盖定点 seek 与 4× 自然播放，在 control / duotone / emboss / gray 落点断言 live sprite profile、纹理存活、截图差异以及无 page/console error。
+
 ## 1. 实现真相核对（动手前必读，含两处对既有约定的纠正）
 
 以下基于当前代码（Pixi v8.15，`pixi.js` v8 filter API）核对：

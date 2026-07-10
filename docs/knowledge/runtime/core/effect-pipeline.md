@@ -25,6 +25,8 @@ export const wave = defineEffect(_wave, {
 - `"group"` → `effectManager.apply(tokenWrapper, ...)` — 作用于容器
 - `"both"` → 同时支持 char 和 group/container
 
+**surface profile 决定同一效果语义在不同图像表面的实现**：`EffectDefinition` 除默认 `fn` 外可注册 `profiles.text` / `profiles.background`。`EffectManager.apply(..., surface)` 优先选择对应 profile，未注册时回退默认 `fn`。文字路径默认使用 `text`；`:bg` 兼容路径显式传 `background`。因此作者仍写 `duotone` / `emboss`，runtime 分别选择读取字形 alpha 的文字 shader 与读取 RGB luma 的图片 shader。`targetType` 仍只描述 char/group 能力，不承载 background/frame 表面语义。
+
 ## 四轨分类 (`EffectProcessor.classifyByTrack`)
 
 | Track | 时间驱动 | seek 行为 | 典型特效 |
@@ -273,12 +275,12 @@ export const xxx = defineEffect(_xxx, { type: "filter", track: "instant"|"behavi
 | `warp` | behavior | both | filter_warp | 20 (preset) | sin(y*freq+time)*amp 波浪扭曲（M0→§0.5.3 扩展到容器级，原 char-only） |
 | `blur` | behavior | both | filter_blur | — | Pixi BlurFilter（可选 anim；char 级 addModifier / 容器级 ticker 驱动） |
 | `pixelate` | instant | both | filter_pixelate | — | 下采样马赛克（M0 模板） |
-| `gray` | instant | both | filter_color | — | 灰度点运算（M1 premult-alpha 模板） |
+| `gray` | instant | both | filter_color | — | 灰度点运算（M1 premult-alpha 模板）；文字/背景共用 RGB profile |
 | `threshold` | instant | both | filter_color | — | alpha 软阈值二值化边缘（M1 点运算） |
-| `duotone` | instant | both | filter_color | — | alpha→shadow/highlight 渐变（M1，hexToVec3） |
+| `duotone` | instant | both | filter_color | — | surface profile：文字 alpha→双色渐变；背景 RGB luma→shadow/highlight |
 | `posterize` | instant | both | filter_color | — | alpha 量化+可选 Bayer 4×4 抖动（M1 点运算） |
 | `sharpen` | instant | both | filter_conv | ceil(radius) | alpha unsharp mask 3×3（M1 卷积模板） |
-| `emboss` | instant | both | filter_conv | ceil(width) | alpha 梯度浮雕 + 多步长斜坡（M1，可链 f.blur.emboss） |
+| `emboss` | instant | both | filter_conv | ceil(width) | surface profile：文字 alpha 梯度；背景 RGB luma 方向梯度 |
 | `edge` | instant | both | filter_conv | ceil(width) | alpha 内描边（M1，hexToVec3，类似 CSS text-stroke） |
 | `outline` | instant | both | filter_outline | ceil(width*2) | alpha 膨胀描边 + 可选发光（M1 形态学，hexToVec3） |
 | `bloom` | instant | both | filter_bloom | ceil(radius*2) | 多通道辉光 extract→BlurFilter→composite + 曝光混合（M1，推荐 :block） |
@@ -288,7 +290,7 @@ export const xxx = defineEffect(_xxx, { type: "filter", track: "instant"|"behavi
 | `noise` | behavior | both | filter_noise | — | 时变噪声叠加 hash21，单色/彩噪（M2） |
 | `dissolve` | behavior | both | filter_dissolve | ceil(scale) | 噪声场与 uProgress 阈值比较消散 + 边缘上色（M2，progress 同构 fadeShake） |
 | `displace` | behavior | both | filter_displace | ceil(amount) | sin 组合噪声场驱动 UV 位移（M2，underwater 几何半边，amount=像素值，推荐 :block） |
-| `underwater` | behavior | both | filter_underwater | — | **组合预设**（非新 shader）：displace+duotone 蓝移+blur，fn 内 `new` 三 filter 串联，返回 `filters:Filter[]`（M2 首个 Filter[] preset） |
+| `underwater` | behavior | both | filter_underwater | — | **组合预设**：displace+duotone+blur；内嵌 duotone 随 surface 选择文字/背景 profile |
 
 ### 背景命令 bg（DIP-FX M2 Task B）
 
@@ -297,13 +299,14 @@ export const xxx = defineEffect(_xxx, { type: "filter", track: "instant"|"behavi
 | 用法 | 路径 | 效果 |
 |---|---|---|
 | `bg(color="#1a0a2e")` | B1 → `stageManager.setBackgroundColor` + `setBackgroundSprite(null)` | 设置画布纯色背景，清除已有图片 |
-| `bg(src="tests/assets/photo.jpg")` | B2 → `stageManager.loadBackgroundFromUrl` → cover-fit Sprite → `backgroundLayer` | 加载图片作为背景（editor-dev 级，fire-and-forget async，纪元号守卫） |
+| `bg(src="tests/assets/photo.jpg")` | B2 → 清除旧 sprite → `stageManager.loadBackgroundFromUrl` → cover-fit Sprite → `backgroundLayer` | 加载图片作为背景；同 URL 保留纹理缓存，纪元号守卫废弃过期 resolve |
 | `bg(color="#0f3460", src="...")` | B1+B2 组合 | 先设色（图片加载前可见），图片加载后替换 |
-| `[.duotone:bg]` / `[.emboss:bg]` | B3 → `:bg` scope 路由 | DIP 滤镜作用于背景精灵（`stageManager.getBackgroundSprite()`），fn 零改动 |
+| `[.duotone:bg]` / `[.emboss:bg]` | B3 → `:bg` scope 路由 → background profile | DIP 滤镜作用于本次 `bg(src)` resolve 后的 live sprite |
 
-**`:bg` scope 路由**：`CommandLevel` 加 `"bg"`，parser regex 识别 `:bg` 后缀。`:bg` 与 `:block` 同构（都是容器级 block-option scope），在 `SegmentBuilder` 块拆分中 target 解析为 `stageManager.getBackgroundSprite()` 而非 `paragraphText`。DIP filter `fn`/`meta` 完全复用。四条轨道（instant/behavior/style/entrance）均已接线：
-- **instant/behavior**：target 延后到 `segmentTl.call` 触发时解析（Bug 6 修复）；sprite 未就绪时注册 `onBackgroundReady` 回调延后 apply。
-- **style**：`:bg` style 跳过并 warn（Sprite 无 `getGraphicsLayer`/`tokens`，`:bg` style 无语义）。
+**`:bg` scope 路由**：`CommandLevel` 加 `"bg"`，parser regex 识别 `:bg` 后缀。`:bg` 与 `:block` 同构（都是容器级 block-option scope），在 `SegmentBuilder` 块拆分中 target 解析为 `stageManager.getBackgroundSprite()` 而非 `paragraphText`。四条轨道（instant/behavior/style/entrance）均已接线：
+- **instant/behavior**：`bg(src)` 先清除旧显示对象，再发起 load；同一时间点的 background effect 因而只能等待 `onBackgroundReady`，并应用到本次 resolve 后的 live sprite。自然播放与 seek replay 都在 apply 当下重新解析 target，并显式选择 `background` profile。
+- **seek boundary**：重放只消费当前时间点之前最后一条 `bg` stage record 之后的 background instant/behavior records；新背景不会继承更早背景的滤镜历史。
+- **style 同名冲突**：当 `level === "bg"` 且 effect registry 存在同名效果时，filter 路由优先于 style。`gray:bg` 因而进入 `GrayFilter`；只有不存在同名 effect 的纯 style 才跳过并 warn。
 - **entrance**：target 解析同 instant/behavior 模式。
 - **内联 `@ f.x:bg`**：`TextPlayer.unrollGroupChain` 容器级分支加 `:bg` target 解析。
 

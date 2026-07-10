@@ -1,13 +1,10 @@
 import { Container } from "pixi.js";
-import type { EffectMetadata, EffectFunction, EffectParams } from "./types";
+import type { EffectDefinition, EffectMetadata, EffectFunction, EffectParams, EffectSurface } from "./types";
 import * as Presets from "./presets";
 
 class EffectManager {
   // 存储特效实现的 Map
-  private registry: Record<
-    string,
-    { fn: EffectFunction; meta: EffectMetadata }
-  > = {};
+  private registry: Record<string, EffectDefinition> = {};
 
   // 运行时记录：记录每个对象当前身上的互斥组
   // Key: Container Object Reference
@@ -21,13 +18,18 @@ class EffectManager {
   }
 
   // 注册单个特效
-  public register(name: string, fn: EffectFunction, meta: EffectMetadata) {
-    this.registry[name] = { fn, meta };
+  public register(
+    name: string,
+    fn: EffectFunction,
+    meta: EffectMetadata,
+    profiles?: EffectDefinition["profiles"],
+  ) {
+    this.registry[name] = { fn, meta, profiles };
   }
 
   // 批量注册
   public registerBatch(
-    effects: Record<string, { fn: EffectFunction; meta: EffectMetadata }>,
+    effects: Record<string, EffectDefinition>,
   ) {
     Object.assign(this.registry, effects);
   }
@@ -46,7 +48,13 @@ class EffectManager {
   }
 
   // 应用特效的核心方法
-  public apply(target: Container, name: string, params: EffectParams = {}, force: boolean = false) {
+  public apply(
+    target: Container,
+    name: string,
+    params: EffectParams = {},
+    force: boolean = false,
+    surface: EffectSurface = "text",
+  ) {
     if (this.shouldLogEffectDiagnostics()) {
       console.log(`[EffectManager] Applying effect: ${name}`, params);
     }
@@ -55,7 +63,8 @@ class EffectManager {
       console.warn(`[Effect] Unknown: ${name}`);
       return;
     }
-    const { fn, meta } = entry;
+    const { meta } = entry;
+    const fn = entry.profiles?.[surface] ?? entry.fn;
 
     // --- 冲突检测核心逻辑 ---
     if (meta.mutexGroup && !force) {

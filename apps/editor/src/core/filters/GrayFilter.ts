@@ -31,6 +31,8 @@ void main(void)
 `;
 
 export class GrayFilter extends Filter {
+  public readonly kmdEffectProfile = "gray";
+
   constructor() {
     const glProgram = new GlProgram({
       vertex: defaultFilterVert,
