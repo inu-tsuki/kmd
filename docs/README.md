@@ -27,7 +27,7 @@
 放长期有效、可被代码维护者反复查阅的事实、机制和研究材料。
 
 - `language/`：KMD 语言语法、命名空间、指令语义和设计草稿。
-- `runtime/`：parser、layout、effect、stage、playback 等运行链路。
+- `runtime/`：parser、layout、effect、stage、playback 等运行链路，以及 production reader bundle 的浏览器 e2e 机制。
 - `architecture/`：系统分层、host/runtime 边界和架构记忆；含 `design-patterns-map.md`（各子系统设计模式与 house style 一致性判据）。
 - `integration/`：Android WebView、VS Code、editor shell 等宿主接入知识。
 - `research/`：外部项目调研和可借鉴方案。
