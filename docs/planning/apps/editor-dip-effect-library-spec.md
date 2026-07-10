@@ -235,6 +235,8 @@ M3 规则：
 - `:bg` 继续只作为旧解析器兼容层；终态由 Phase B 主语链迁移到 `bg.<effect>(...)`。
 - 若 demo/report 需要背景效果，只挑少数 `background` profile 做受限实现，不在 M3 铺开完整 `bg.*` 系统。
 
+**标注结果**（2026-07-10，见 §3 表格 `surface profile` 列）：17 个 DIP-FX 效果已标注——`text-only` ×4（threshold/posterize/sharpen/outline）、`profile-split` ×4（emboss/edge/duotone/underwater）、`background-ready` ×9（pixelate/gray/bloom/halftone/scanline/dissolve/displace/noise/vignette）。`scanline`/`noise`/`vignette` 的 `future-frame` 升级路径（推荐作用域 frame(未来) → §7.1 frame 路由接线后升级为整帧后处理）不变——升级时 profile 状态不变（shader 信号模型不因挂载点改变），仅 `targetType`/`CommandLevel` 不扩展（由 Phase B `bg.*`/`frame.*` 主语链承担）。
+
 ## 1. 实现真相核对（动手前必读，含两处对既有约定的纠正）
 
 以下基于当前代码（Pixi v8.15，`pixi.js` v8 filter API）核对：
@@ -292,34 +294,40 @@ M3 规则：
 
 ## 3. 命名与参数总表
 
-最终命名以此表为准（避免与现有 `rgbShift`/`warp`/`blur`/`glitch` 冲突）。参数为初稿，实现时可微调手感但需在 spec 卡与示例同步。M3.0 之后，本表还需补 `surface profile` 列；在补表前，不得把"推荐作用域"误读为背景/frame 承诺。
+最终命名以此表为准（避免与现有 `rgbShift`/`warp`/`blur`/`glitch` 冲突）。参数为初稿，实现时可微调手感但需在 spec 卡与示例同步。M3.0 已补 `surface profile` 列——标注依据是 shader 信号模型：读 alpha/stroke/glyph coverage 的为 `text-only` 或 `profile-split`，读 RGB/luma/geometry 的为 `background-ready`。
 
 `targetType` 一律取 `both`（§1.1：`both` 默认逐字、按需经 `:group`/`:block` 升容器，最灵活）。下表“推荐作用域”是建议用法（靠调用点写 `f.x:group` / `[.x:block]` 选择），不是 `targetType` 决定、也不是代码限制；需要“整段连续区域”的（bloom/halftone/...）务必用 `[.x:block]`，写成默认逐字会失去邻域语义。
 
 > **【M1 设计审查】默认呈现 = 两种合法用法，样例须双示**（§0.3）。色调/邻域类（emboss/edge/sharpen/threshold/posterize/duotone/bloom/halftone）有两层意图：bare `f.x` 逐字 = **笔画级风格化**（文字是高频纹理，笔画边缘即信号）；`[.x:block]` = **连续色调级**（教科书用法，作用在整段烤栅格或未来背景图）。两者都合法、观感不同——样例 KMD **须同时给两示**，否则只给逐字会让连续色调类看着像「失效」。`edge`/`emboss` 另需把默认参数从「替换」改为「叠加」（§0.3 第 2 点 / §4 卡），否则逐字时字身被抹成灰块或黑剪影。
 
-| name | track | targetType | 推荐作用域 | mutexGroup | 参数（默认） |
-|---|---|---|---|---|---|
-| `pixelate` | instant | both | char/group/block | filter_pixelate | size(8) |
-| `gray` | instant | both | 任意 | filter_color | mix(1) |
-| `threshold` | instant | both | 任意 | filter_color | level(0.5), soft(0.02) |
-| `posterize` | instant | both | 任意 | filter_color | levels(4), dither(false) |
-| `sharpen` | instant | both | 任意 | filter_conv | amount(1), radius(1) |
-| `emboss` | instant | both | 任意 | filter_conv | strength(1), angle(45) |
-| `edge` | instant | both | char/block | filter_conv | threshold(0.2), color("#000"), mix(1) |
-| `bloom` | instant | both | **block** | filter_bloom | threshold(0.7), strength(1), radius(4) |
-| `halftone` | instant | both | **block** | filter_halftone | scale(6), angle(0), shape("dot") |
-| `outline` | instant | both | char/block | filter_outline | width(2), color("#fff"), glow(0) |
-| `scanline` | behavior | both | **block**/frame(未来) | filter_scanline | density(2), curvature(0), flicker(0) |
-| `duotone` | instant | both | 任意 | filter_color | shadow("#1a1a2e"), highlight("#e94560") |
-| `dissolve` | behavior | both | char/block | filter_dissolve | progress(0), scale(8), edge("#fff") |
-| `displace` | behavior | both | char/block | filter_displace | amount(10), scale(4), speed(0.01) |
-| `noise` | behavior | both | block/frame(未来) | filter_noise | amount(0.1), mono(true) |
-| `vignette` | instant | both | **block**/frame(未来) | filter_vignette | radius(0.75), softness(0.45) |
-| `underwater` | behavior | both | char/block | （组合预设，见卡） | amount(8), tint("#0a1e3f"), highlight("#5fb8d6"), blur(1) |
+| name | track | targetType | 推荐作用域 | mutexGroup | 参数（默认） | surface profile |
+|---|---|---|---|---|---|---|
+| `pixelate` | instant | both | char/group/block | filter_pixelate | size(8) | `background-ready` |
+| `gray` | instant | both | 任意 | filter_color | mix(1) | `background-ready` |
+| `threshold` | instant | both | 任意 | filter_color | level(0.5), soft(0.02) | `text-only` |
+| `posterize` | instant | both | 任意 | filter_color | levels(4), dither(false) | `text-only` |
+| `sharpen` | instant | both | 任意 | filter_conv | amount(1), radius(1) | `text-only` |
+| `emboss` | instant | both | 任意 | filter_conv | strength(1), angle(45) | `profile-split` |
+| `edge` | instant | both | char/block | filter_conv | threshold(0.2), color("#000"), mix(1) | `profile-split` |
+| `bloom` | instant | both | **block** | filter_bloom | threshold(0.7), strength(1), radius(4) | `background-ready` |
+| `halftone` | instant | both | **block** | filter_halftone | scale(6), angle(0), shape("dot") | `background-ready` |
+| `outline` | instant | both | char/block | filter_outline | width(2), color("#fff"), glow(0) | `text-only` |
+| `scanline` | behavior | both | **block**/frame(未来) | filter_scanline | density(2), curvature(0), flicker(0) | `background-ready` |
+| `duotone` | instant | both | 任意 | filter_color | shadow("#1a1a2e"), highlight("#e94560") | `profile-split` |
+| `dissolve` | behavior | both | char/block | filter_dissolve | progress(0), scale(8), edge("#fff") | `background-ready` |
+| `displace` | behavior | both | char/block | filter_displace | amount(10), scale(4), speed(0.01) | `background-ready` |
+| `noise` | behavior | both | block/frame(未来) | filter_noise | amount(0.1), mono(true) | `background-ready` |
+| `vignette` | instant | both | **block**/frame(未来) | filter_vignette | radius(0.75), softness(0.45) | `background-ready` |
+| `underwater` | behavior | both | char/block | （组合预设，见卡） | amount(8), tint("#0a1e3f"), highlight("#5fb8d6"), blur(1) | `profile-split` |
 
 > `mix`/`mut` 类参数统一 0~1。颜色参数在 `fn` 内解析为 vec3（可参考 `visual.ts` 既有色值解析；若无则简单 hex→rgb）。
 > “frame(未来)”标注的滤镜在 frame 路由接线后（§7.1）能升级为真正的全屏后处理，但需先过 surface profile 判定；不能默认假设文字 profile 的 shader/default 直接适合整帧。
+
+**surface profile 标注依据**（M3.0，2026-07-10）：
+
+- **`text-only`**（4：`threshold` / `posterize` / `sharpen` / `outline`）：shader 读 `c.a`（alpha 通道）作为信号模型——单色文字 RGB luma 恒定，alpha 在笔画核心与 AA 边缘间有梯度。作用于背景 sprite 时 alpha=1 → 全过/全不过，语义错误。
+- **`profile-split`**（4：`emboss` / `edge` / `duotone` / `underwater`）：同名效果保留视觉语义，但文字与背景需不同 shader/默认值。`emboss` 文字从 alpha 算梯度、背景从 RGB luma 算梯度；`edge` 文字 = alpha 内描边、背景 = luma 边缘检测（ADR：”不应共享同一个 `edge` 承诺”）；`duotone` 文字 = alpha→shadow/highlight 映射、背景 = luma/RGB color grading（ADR 正典示例）；`underwater` 内嵌 DuotoneFilter → 背景上 alpha=1 全变 highlight 色。
+- **`background-ready`**（9：`pixelate` / `gray` / `bloom` / `halftone` / `scanline` / `dissolve` / `displace` / `noise` / `vignette`）：shader 读 RGB/luma/geometry，surface-agnostic。`scanline`/`noise`/`vignette` 推荐作用域已标 frame(未来)，升级为整帧后处理时 profile 不变。
 
 ## 4. Spec 卡
 
