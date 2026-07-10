@@ -91,7 +91,7 @@
   - **任务 B（背景图地基，前置）**：editor-dev 级 `bg(color)`（B1）+ `bg(src)`（B2，`public/` 加载图挂 `backgroundLayer`）+ **`:bg` 滤镜路由（B3，已纳入本批）**。解锁「文字滤镜叠真实画面」+「DIP 滤镜应用到背景图本身 = 色调族照片级验证」。交接稿见 `../ecosystem/special-commands-vocabulary-draft.md` §10。
   - `displace`（underwater 基石原语）提为创作滤镜第一优先（§8.1）。
   - `underwater` 组合预设、`dissolve`、`noise`、`vignette`、`scanline` 按 demo 缺口取舍。
-- **M3 收尾**：~~先过 **M3.0 Surface Profile Decision** gate~~（✅ 2026-07-10 已通过：17 个 DIP-FX 效果已标注 surface profile——`text-only` ×4 / `profile-split` ×4 / `background-ready` ×9，见 spec §3 表格 + §0.6 标注结果）。随后按 demo 缺口补非 DIP 配套 behavior，并整理报告叙事（库边界 = DIP 定义）。
+- **M3 收尾**：~~先过 **M3.0 Surface Profile Decision** gate~~（✅ 2026-07-10 已通过：17 个 DIP-FX 效果已标注 surface profile——`text-only` ×4 / `profile-split` ×4 / `background-ready` ×9，见 spec §3 表格 + §0.6 标注结果）。随后按 demo 缺口补非 DIP 配套 behavior，并整理报告叙事（库边界 = DIP 定义）。执行顺序、条件式 behavior gate、提交结构与编写者提示词见 [`editor-dip-effect-library-m3-plan.md`](editor-dip-effect-library-m3-plan.md)。
 
 ### 6.1 验证表面与背景图依赖（决定怎么即刻验证 M1）
 
