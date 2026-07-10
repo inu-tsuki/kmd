@@ -258,6 +258,12 @@ class StageManager {
         Assets.unload(this._bgSpriteUrl).catch(() => {});
       }
     }
+    // SA-40: 清除 sprite 时推进纪元，使任何待 resolve 的异步 Assets.load 丢弃。
+    // 否则 bg(src) 启动异步加载 → bg(color) 同步清除 sprite → 异步 resolve 到达时
+    // epoch 仍匹配 → sprite 被重新挂上，bg(color) 的清除被静默撤销。
+    if (sprite === null) {
+      this._bgEpoch++;
+    }
     this._bgSprite = sprite;
     this._bgSpriteUrl = url ?? null;
     if (sprite) {

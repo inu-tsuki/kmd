@@ -3189,6 +3189,57 @@ function testBgStringParamPreservation() {
   }
 }
 
+// ─── SA-40：bg(color) 清除 bg(src) 异步加载的 epoch 守卫 ──────────────────────
+//
+// 背景：bg(src) 启动 Assets.load(url).then(...)（异步，fire-and-forget），nextBgEpoch
+// 返回 epoch N。bg(color) 同步调 setBackgroundSprite(null) 清除 sprite，但原实现不推进
+// epoch → 异步 resolve 到达时 currentBgEpoch === epoch N → sprite 被重新挂上，
+// bg(color) 的清除被静默撤销（图片"重新出现"）。
+// 修复：setBackgroundSprite(null) 推进 _bgEpoch，使待 resolve 的异步加载因 epoch
+// 不匹配而丢弃。本测试直接用真实 StageManager 实例验证 epoch 行为（不需 WebGL，
+// pixi v8 懒初始化）。
+
+async function testBgClearInvalidatesPendingLoad() {
+  console.log("\n[26] SA-40 bg(color) 清除使待 resolve 的 bg(src) 异步加载过期");
+
+  // 直接用真实 StageManager 实例（pixi v8 懒初始化，import + 构造不触发 WebGL）。
+  const { stageManager } = await import("./core/stage/StageManager");
+
+  // (1) 初始状态
+  const initialEpoch = stageManager.currentBgEpoch;
+  assert(
+    stageManager.getBackgroundSprite() === null,
+    `SA-40 初始 sprite 为 null（实际 ${stageManager.getBackgroundSprite()}）`,
+  );
+
+  // (2) 模拟 bg(src) 启动异步加载：nextBgEpoch 返回加载纪元
+  const loadEpoch = stageManager.nextBgEpoch();
+  assert(
+    loadEpoch === initialEpoch + 1,
+    `SA-40 nextBgEpoch 返回 initialEpoch+1（实际 loadEpoch=${loadEpoch} initial=${initialEpoch}）`,
+  );
+
+  // (3) 模拟 bg(color) 清除 sprite：应推进 epoch
+  stageManager.setBackgroundSprite(null);
+  const epochAfterClear = stageManager.currentBgEpoch;
+  assert(
+    epochAfterClear > loadEpoch,
+    `SA-40 setBackgroundSprite(null) 后 epoch > loadEpoch（实际 epochAfterClear=${epochAfterClear} loadEpoch=${loadEpoch}）`,
+  );
+
+  // (4) 验证：异步 resolve 检查 currentBgEpoch !== epoch 会被丢弃
+  assert(
+    stageManager.currentBgEpoch !== loadEpoch,
+    `SA-40 currentBgEpoch !== loadEpoch → 待 resolve 的异步加载会被 epoch 守卫丢弃（实际 current=${stageManager.currentBgEpoch} load=${loadEpoch}）`,
+  );
+
+  // (5) 回归保护：setBackgroundSprite(null) 后 sprite 仍为 null
+  assert(
+    stageManager.getBackgroundSprite() === null,
+    `SA-40 清除后 sprite 仍 null（实际 ${stageManager.getBackgroundSprite()}）`,
+  );
+}
+
 async function main() {
   console.log("╔══════════════════════════════════════════════════════════╗");
   console.log("║  KMD Playback State Regression (F-2 / R5-R22 + SA-38)    ║");
@@ -3222,6 +3273,7 @@ async function main() {
   await testR22BoundaryGuardMechanism();
   testStageDefaultParamAlignment();
   testBgStringParamPreservation();
+  await testBgClearInvalidatesPendingLoad();
 
   console.log(`\n🎬 Playback regression: ${pass} passed, ${fail} failed`);
   if (fail > 0) {
