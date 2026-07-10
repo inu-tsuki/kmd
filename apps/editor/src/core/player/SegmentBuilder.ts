@@ -364,6 +364,7 @@ export class SegmentBuilder {
                 params: resolved,
                 charIndex: 0,
                 timePosition: segmentCursor,
+                targetLevel: "bg",
               });
             } else {
               allInstantEffects.push({
@@ -428,6 +429,7 @@ export class SegmentBuilder {
               params: resolved,
               charIndex: 0,
               timePosition: segmentCursor,
+              targetLevel: isBgBehavior ? "bg" : undefined,
             };
             allBehaviors.push(behaviorRecord);
             const behaviorName = cfg.name;

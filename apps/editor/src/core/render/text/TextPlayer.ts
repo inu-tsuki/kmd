@@ -39,6 +39,7 @@ export interface BehaviorRecord {
   params: Record<string, any>;
   charIndex: number;
   timePosition: number; // 在 Timeline 上的时间位置 (秒)
+  targetLevel?: "bg";
 }
 
 /**
@@ -60,6 +61,7 @@ export interface InstantEffectRecord {
   params: Record<string, any>;
   charIndex: number;
   timePosition: number; // 在 Timeline 上的时间位置 (秒)
+  targetLevel?: "bg";
 }
 
 /**
@@ -629,7 +631,8 @@ export class TextPlayer {
               effectName: config.name,
               params: { ...resolved },
               charIndex: 0,
-              timePosition: chainCursor
+              timePosition: chainCursor,
+              targetLevel: isBgInline ? "bg" : undefined,
             });
           } else {
             instantEffects.push({
@@ -637,7 +640,8 @@ export class TextPlayer {
               effectName: config.name,
               params: { ...resolved },
               charIndex: 0,
-              timePosition: chainCursor
+              timePosition: chainCursor,
+              targetLevel: isBgInline ? "bg" : undefined,
             });
           }
         };

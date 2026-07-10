@@ -33,6 +33,7 @@ coverage
 *.sln
 *.sw?
 .codex
+.zcode
 parser-output.json
 
 # Temporary sibling-style project folders if created inside this repo.

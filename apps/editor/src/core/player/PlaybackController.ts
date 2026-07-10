@@ -102,6 +102,21 @@ export interface PlaybackRuntimeState {
   onLineUpdate?: (line: number) => void;
   onPlaybackComplete?: () => void;
   /**
+   * SA-46: :bg replay 注册的 onBackgroundReady 延后 apply 句柄。
+   *
+   * **背景**：bg(src) 异步 resolve 时，registerBehaviors / registerInstantEffects 中
+   * :bg record 的 target（background sprite）可能尚未就绪。onBackgroundReady 注册
+   * 延后 apply 闭包，resolve 后触发。但旧实现用 Set<fn> 存回调，每次 seek 注册的是不同
+   * 闭包实例 → Set 无法去重。bg 未 resolve 时连续 seek 两次，两个闭包都留在 set 中，
+   * resolve 后全部执行 → 同一 behavior/instant 被 apply 两次（underwater 重复创建 6 个
+   * filter + 2 个 ticker）。
+   *
+   * **修复**：onBackgroundReady 返回 { cancel } 句柄；registerBehaviors /
+   * registerInstantEffects 将句柄推入此数组。每次 seekToTime / playSegment 周期开头
+   * 调 clearPendingBgCallbacks 取消上一轮的 pending 句柄，保证同一 record 只 apply 一次。
+   */
+  pendingBgReadyCancels?: Array<() => void>;
+  /**
    * R22/SA-37：exact-boundary 双 apply 抑制的所有权 flag。
    *
    * **背景**：GSAP `tl.call(fn, [], t)` 在 ticker tick 上、当 `tl.time()` 跨越 t（从 =t 推进到 >t）
@@ -149,6 +164,25 @@ export interface PlaybackRuntimeState {
 export type PlaybackPhase = "playing" | "paused" | "ended";
 
 export class PlaybackController {
+  /**
+   * SA-46: 取消上一轮 :bg replay 注册的 onBackgroundReady 延后 apply 句柄。
+   *
+   * 每次 seekToTime / playSegment 周期开头调用。若不取消，bg 未 resolve 时连续 seek
+   * 会在 _bgReadyCallbacks 中累积多个闭包，resolve 后全部执行导致重复 apply。
+   *
+   * 同时调 stageManager.clearBgReadyCallbacks() 清除 build 期注册的 pending 回调——
+   * build 期 tl.call 触发时若 sprite 未 resolve 也会注册 onBackgroundReady，这些闭包
+   * 与 seek 路径闭包共存时 resolve 后全部执行。统一清空后由 registerBehaviors /
+   * registerInstantEffects / replayStageModifiers 重新注册当前轮的唯一闭包组。
+   */
+  private static clearPendingBgCallbacks(state: PlaybackRuntimeState) {
+    if (state.pendingBgReadyCancels) {
+      for (const cancel of state.pendingBgReadyCancels) cancel();
+    }
+    state.pendingBgReadyCancels = [];
+    stageManager.clearBgReadyCallbacks();
+  }
+
   public static playSegment(segment: Segment | null, state: PlaybackRuntimeState) {
     if (!segment) return;
     const tl = segment.timeline;
@@ -204,6 +238,11 @@ export class PlaybackController {
     //   靠 0s tl.call 驱动；现翻转——快照消费者驱动，0s tl.call 让位）。
     // - t>0 resume：lastSeekTime=tl.time() → register* 恢复当前态 → boundary（若有 record 正在
     //   tl.time()）tl.call 跳过；严格过去的 tl.call 本就不会因 resume 重触发（tick 只在跨越时触发）。
+    // SA-46: 取消上一轮 :bg replay 注册的 pending onBackgroundReady 句柄。
+    // playSegment 也会经 registerBehaviors/registerInstantEffects 注册新的 :bg 延后 apply，
+    // 若不取消旧的，bg resolve 后会重复 apply。
+    this.clearPendingBgCallbacks(state);
+
     state.lastSeekTime = tl.time();
     state.isAutoPlaying = true;
     this.registerBehaviors(segment, tl.time(), state);
@@ -252,19 +291,25 @@ export class PlaybackController {
     // register* 重放当前时间点的 behaviors/instant（若 dim 在目标时间仍生效则重 apply 写新 alpha）。
     this.clearBehaviors(state);
     this.clearInstantEffects(state);
+    // SA-46: 取消上一轮 :bg replay 注册的 pending onBackgroundReady 句柄，
+    // 防止连续 seek 在 bg resolve 后重复 apply。
+    this.clearPendingBgCallbacks(state);
 
     segment.timeline.seek(clamped);
-
-    // register* 内部会先 clear（此时 active 数组已空，clear 是 no-op）再 replay。
-    this.registerBehaviors(segment, clamped, state);
-    this.replayStyles(segment, clamped);
-    this.registerInstantEffects(segment, clamped, state);
 
     // stage modifier 重放：ScriptPlayer.seekToTime 已 clearModifiers，此处按时间重放
     // （tl.call seek 跨过不补触发 → cam.drift/cam.shake 在 seek 后缺失）。
     // F-2：replay mode 由 deriveReplayMode 从播放状态派生（不传字面量）。seek 末尾（progress>=1）
     // 不 resume（R6-1），此处仍 static 快照；中途且 isAutoPlaying 由 playSegment 后续转 live。
+    // SA-45：stage replay 必须先于 behavior/instant replay。:bg 的 target 依赖 bg(src)
+    // replay 后的 live sprite；若先注册 instant/behavior，会把滤镜挂到旧 sprite，随后 bg replay
+    // 清掉旧 sprite，真实 Pixi filter/render state 会崩。
     this.replayStageModifiers(segment, clamped, this.deriveReplayMode(segment, state));
+
+    // register* 内部会先 clear（此时 active 数组已空，clear 是 no-op）再 replay。
+    this.registerBehaviors(segment, clamped, state);
+    this.replayStyles(segment, clamped);
+    this.registerInstantEffects(segment, clamped, state);
 
     // R22/SA-37：exact-boundary 双 apply 抑制——记下 seek 目标时间，供随后 playSegment 的
     // deferred tick 跨越此时间时，boundary tl.call guard 据此跳过（见 PlaybackRuntimeState.lastSeekTime
@@ -450,14 +495,28 @@ export class PlaybackController {
 
     for (const behavior of segment.behaviors) {
       if (behavior.timePosition <= currentTime) {
-        const result = effectManager.apply(behavior.char, behavior.effectName, behavior.params, true);
-        const unpacked = this.unpackBehaviorResult(result, behavior.target);
-        state.activeBehaviorCleanups.push({
-          char: behavior.char,
-          modName: behavior.effectName,
-          target: behavior.target,
-          ...unpacked,
-        });
+        const applyBehavior = (target: any) => {
+          const result = effectManager.apply(target, behavior.effectName, behavior.params, true);
+          const unpacked = this.unpackBehaviorResult(result, target);
+          state.activeBehaviorCleanups.push({
+            char: target,
+            modName: behavior.effectName,
+            target,
+            ...unpacked,
+          });
+        };
+        if (behavior.targetLevel === "bg") {
+          const bgTarget = stageManager.getBackgroundSprite();
+          if (bgTarget) {
+            applyBehavior(bgTarget);
+          } else {
+            // SA-46: 保存 cancel 句柄，下轮 seek/play 周期开头取消。
+            const handle = stageManager.onBackgroundReady((sprite) => applyBehavior(sprite));
+            state.pendingBgReadyCancels!.push(handle.cancel);
+          }
+        } else {
+          applyBehavior(behavior.char);
+        }
       }
     }
   }
@@ -473,23 +532,37 @@ export class PlaybackController {
 
     for (const record of segment.instantEffects) {
       if (record.timePosition <= currentTime) {
-        const result = effectManager.apply(record.target, record.effectName, record.params, true);
-        if (result) {
-          state.activeInstantCleanups.push({
-            target: record.target,
-            filterInstance: result,
-          });
-        } else {
-          // R12：void result（bg/border 画 Graphics 非 filter）——查 meta.mutexGroup 作 Graphics 层名，
-          // push graphicsLayer cleanup 供 seek 回退清该层。filterInstance 与 graphicsLayer 互斥。
-          const meta = effectManager.getMetadata(record.effectName);
-          if (meta?.mutexGroup && typeof (record.target as any).getGraphicsLayer === "function") {
+        const applyInstant = (target: any) => {
+          const result = effectManager.apply(target, record.effectName, record.params, true);
+          if (result) {
             state.activeInstantCleanups.push({
-              target: record.target,
-              filterInstance: undefined as any,
-              graphicsLayer: meta.mutexGroup,
+              target,
+              filterInstance: result,
             });
+          } else {
+            // R12：void result（bg/border 画 Graphics 非 filter）——查 meta.mutexGroup 作 Graphics 层名，
+            // push graphicsLayer cleanup 供 seek 回退清该层。filterInstance 与 graphicsLayer 互斥。
+            const meta = effectManager.getMetadata(record.effectName);
+            if (meta?.mutexGroup && typeof (target as any).getGraphicsLayer === "function") {
+              state.activeInstantCleanups.push({
+                target,
+                filterInstance: undefined as any,
+                graphicsLayer: meta.mutexGroup,
+              });
+            }
           }
+        };
+        if (record.targetLevel === "bg") {
+          const bgTarget = stageManager.getBackgroundSprite();
+          if (bgTarget) {
+            applyInstant(bgTarget);
+          } else {
+            // SA-46: 保存 cancel 句柄，下轮 seek/play 周期开头取消。
+            const handle = stageManager.onBackgroundReady((sprite) => applyInstant(sprite));
+            state.pendingBgReadyCancels!.push(handle.cancel);
+          }
+        } else {
+          applyInstant(record.target);
         }
       }
     }

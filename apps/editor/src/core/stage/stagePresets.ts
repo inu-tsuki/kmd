@@ -172,6 +172,16 @@ export function buildStageModifierRecord(
     }
     return fragment;
   }
+  // SA-41：bg 是即时状态设置命令（setBackgroundColor/setBackgroundSprite），返回 void 无 tween。
+  // 原实现在 build 期同步 apply（line 878），导致所有 bg 在构建时立刻执行、最后一条赢，
+  // 而非在时间线 cursor 位置触发。改为延迟执行 + 记入 stageModifierRecords 供 seek 重放。
+  // duration undefined = persistent（seek 时总是重放，与 cam.drift 同语义）。
+  if (command === "bg") {
+    return {
+      command: "bg",
+      params: { ...(params || {}) },
+    };
+  }
   return null;
 }
 
@@ -461,13 +471,17 @@ export const stagePresets: Record<string, StageEffectFunction> = {
         ? src
         : baseUrl + src.replace(/^\.\//, "");
 
-      // 委托 StageManager.loadBackgroundFromUrl（含纪元守卫 + cover-fit + 就绪回调）
-      stageManager.loadBackgroundFromUrl(url);
-
-      // 若同时给了 color，先设色（图片加载前可见）
+      // bg(color, src) 的语义是先落纯色 fallback，再等待图片加载；必须清掉旧 sprite，
+      // 否则旧图会遮住 fallback，且旧 :bg filters 可能继续显示到新图 resolve。
       if (color !== undefined) {
         stageManager.setBackgroundColor(color);
+        stageManager.setBackgroundSprite(null, null, {
+          unloadTexture: stageManager.bgSpriteUrl !== url,
+        });
       }
+
+      // 委托 StageManager.loadBackgroundFromUrl（含纪元守卫 + cover-fit + 就绪回调）
+      stageManager.loadBackgroundFromUrl(url);
       return;
     }
 
