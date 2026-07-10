@@ -10,6 +10,8 @@
     "preview": "pnpm --filter @kmd/editor preview",
     "test:parser": "pnpm --filter @kmd/editor test:parser",
     "test:shaders": "pnpm --filter @kmd/editor test:shaders",
+    "test:e2e": "pnpm reader:build && playwright test",
+    "test:e2e:run": "playwright test",
     "language:check": "node scripts/check-language-assets.mjs",
     "editor:dev": "pnpm --filter @kmd/editor dev",
     "editor:build": "pnpm --filter @kmd/editor build",
@@ -20,5 +22,8 @@
     "community-api:dev": "pnpm --filter @kmd/community-api dev",
     "community-api:build": "pnpm --filter @kmd/community-api build",
     "community-api:test": "pnpm --filter @kmd/community-api test"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.61.1"
   }
 }

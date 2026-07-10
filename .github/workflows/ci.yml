@@ -32,11 +32,23 @@ jobs:
       - name: Parser regression
         run: pnpm test:parser
 
+      - name: Playback regression
+        run: pnpm --filter @kmd/editor test:playback
+
+      - name: Runtime invariant guards
+        run: pnpm --filter @kmd/editor test:invariants
+
       - name: Reader runtime type-check
         run: pnpm reader:typecheck
 
       - name: Reader runtime build
         run: pnpm reader:build
+
+      - name: Install Playwright Chromium
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Reader runtime browser e2e
+        run: pnpm test:e2e:run
 
       - name: Community API build
         run: pnpm community-api:build

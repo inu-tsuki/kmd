@@ -37,6 +37,8 @@
   把 `apps/editor/src/test-*.ts` / `final-*-test.ts` 散件收编为 Vitest 套件；
   重点补 layout 坐标稳定性与 effects 四轨分类测试 —— **Phase B 将大改这些区域，无测试网不动手**。
   同时：CI 安装 glslang（`glslang-tools`），将 `test:shaders` 纳入必跑门禁（当前 `SKIP_SHADER_GATE=1` 可绕过）。
+  **部分落地（2026-07-10）**：Playwright Chromium 已接入 CI，首个 production reader bundle e2e 覆盖
+  `fx-bg.kmd` 的 Pixi texture 生命周期、背景/内容层级与 `:bg` filter 归属；Vitest 收编与 shader CI 仍待完成。
 - [ ] **处方 6 · 拆解 SegmentBuilder**（约 2–3 天）
   按记录类型抽出 BehaviorRecordBuilder / StyleRecordBuilder / StageModifierBuilder 子构建器，目标 851→~400 行。
 - [ ] **处方 7 · Phase B 客观准入清单**

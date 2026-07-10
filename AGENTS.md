@@ -8,7 +8,7 @@ This repository is the KMD main incubation repo, not only the Web editor. `apps/
 
 ## Build, Test, and Development Commands
 
-Use `pnpm` throughout. `dev`, `build`, `preview`, `test:parser`, `test:shaders`, and `language:check` run from the repo root (the root `package.json` proxies them). `test:playback` and `test:invariants` live in the editor package only — run them from `apps/editor/`, or from the root as `pnpm --filter @kmd/editor test:playback` / `test:invariants`.
+Use `pnpm` throughout. `dev`, `build`, `preview`, `test:parser`, `test:shaders`, `test:e2e`, and `language:check` run from the repo root (the root `package.json` proxies them). `test:playback` and `test:invariants` live in the editor package only — run them from `apps/editor/`, or from the root as `pnpm --filter @kmd/editor test:playback` / `test:invariants`.
 
 - `pnpm dev` - start the Vite dev server for the editor.
 - `pnpm build` - run `vue-tsc` type-checking, then produce a production build in `dist/`.
@@ -17,6 +17,7 @@ Use `pnpm` throughout. `dev`, `build`, `preview`, `test:parser`, `test:shaders`,
 - `pnpm test:playback` - run the playback state-machine regression in `apps/editor/src/final-playback-test.ts` (seek/phase/resume semantics, effect lifecycle, baseline/record ownership). **Required gate for any playback, effect, timeline, or seek change.**
 - `pnpm test:invariants` - run the INV-7/INV-8 structural guard in `apps/editor/src/test-invariants.ts` (no inline effect-track special-casing; no unverified boundary-behavior claims). **Required gate for any effect-routing or playback change.**
 - `pnpm test:shaders` - compile every `*Filter.ts` fragment shader with `glslangValidator` (catches GLSL syntax/scope errors that `vue-tsc` cannot see). Requires `glslangValidator` on PATH.
+- `pnpm test:e2e` - build the reader runtime and run Playwright Chromium against the production bundle. **Required for browser-only rendering, Pixi resource lifecycle, ticker, or WebGL integration changes.** Install the browser once with `pnpm exec playwright install chromium`.
 - `pnpm language:check` - verify `@kmd/language` assets match the VS Code extension packaged copies.
 
 ### Gate requirements by change scope
@@ -25,6 +26,7 @@ Use `pnpm` throughout. `dev`, `build`, `preview`, `test:parser`, `test:shaders`,
 |---|---|
 | parser, layout, or shared runtime | `pnpm build` + `pnpm test:parser` |
 | playback, seek, effect pipeline, timeline/easing, stage modifiers | `pnpm build` + `pnpm test:parser` + `pnpm test:playback` + `pnpm test:invariants` |
+| browser rendering, Pixi resource lifecycle, ticker, or WebGL integration | also run `pnpm test:e2e` |
 | any `*Filter.ts` | also run `pnpm test:shaders` (see below) |
 | `@kmd/language` or VS Code extension assets | `pnpm language:check` |
 
