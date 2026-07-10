@@ -30,6 +30,8 @@ void main(void)
 `;
 
 export class DuotoneFilter extends Filter {
+  public readonly kmdEffectProfile = "duotone:text";
+
   constructor() {
     const glProgram = new GlProgram({
       vertex: defaultFilterVert,

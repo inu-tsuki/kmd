@@ -60,10 +60,11 @@ export class EffectProcessor {
 
   public static classifyCommand(config: EffectConfig): EffectCommandClassification {
     const isLayout = layoutManager.has(config.name);
-    const isStage = stageManager.has(config.name) && !effectManager.has(config.name);
-    const isStyle = styleManager.has(config.name);
-    const effectMeta = effectManager.getMetadata(config.name);
     const effectRegistered = effectManager.has(config.name);
+    const isStage = stageManager.has(config.name) && !effectRegistered;
+    const isBackgroundEffect = config.level === "bg" && effectRegistered;
+    const isStyle = styleManager.has(config.name) && !isBackgroundEffect;
+    const effectMeta = effectManager.getMetadata(config.name);
 
     const lane: EffectCommandLane = isLayout
       ? "layout"
@@ -375,7 +376,7 @@ export class EffectProcessor {
    * post-hold 的 group/block style（链中 hold 之后）仍由调用方游标判 isDynamic → 进 record（site2/3）。
    */
   public static classifyStyleWrite(config: EffectConfig): { isStyle: boolean; isBlocking: boolean } {
-    const isStyle = styleManager.has(config.name);
+    const isStyle = styleManager.has(config.name) && !(config.level === "bg" && effectManager.has(config.name));
     // R19/SA-33：style 不受 level==="group"/"block" 边界阻断（见上 doc）。仅非 style 时这些 level 才终止烘焙。
     // :bg 与 :block 同构（都是容器级 block-option scope），加入 style-scoped / blocking 判定。
     const isStyleScoped = isStyle && (config.level === "group" || config.level === "block" || config.level === "bg");

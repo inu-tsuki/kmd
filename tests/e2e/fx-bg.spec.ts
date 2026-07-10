@@ -73,6 +73,9 @@ async function inspectRenderedStage(page: Page) {
       contentVisible: contentLayer?.visible ?? false,
       contentAlpha: contentLayer?.alpha ?? 0,
       backgroundFilterCount: background?.filters?.length ?? 0,
+      backgroundFilterNames: background?.filters?.map((filter: any) => (
+        filter?.kmdEffectProfile ?? filter?.glProgram?.name ?? filter?.constructor?.name ?? "unknown"
+      )) ?? [],
     };
   });
 }
@@ -141,6 +144,86 @@ test('fx-bg keeps the shared background texture alive across consecutive seeks',
     expect(stage.contentVisible).toBe(true);
     expect(stage.contentAlpha).toBe(1);
     if (checkpoints[targetIndex]?.filtered) expect(stage.backgroundFilterCount).toBeGreaterThan(0);
+  }
+
+  const runtimeErrors = ((await page.evaluate(() => (window as any).__KMD_E2E_EVENTS__)) as RuntimeEvent[])
+    .filter((event) => event.type === 'error');
+  expect(runtimeErrors).toEqual([]);
+  expect(pageErrors).toEqual([]);
+  expect(consoleErrors).toEqual([]);
+});
+
+test('fx-bg applies settled background profiles during natural playback', async ({ page }) => {
+  const pageErrors: string[] = [];
+  const consoleErrors: string[] = [];
+  page.on('pageerror', (error) => pageErrors.push(error.message));
+  page.on('console', (message) => {
+    if (message.type() === 'error') consoleErrors.push(message.text());
+  });
+
+  await page.addInitScript(() => {
+    (window as any).__KMD_E2E_EVENTS__ = [];
+    window.KmdRuntimeConfig = { autoDemo: false };
+    window.addEventListener('kmd-runtime-event', (event) => {
+      (window as any).__KMD_E2E_EVENTS__.push((event as CustomEvent).detail);
+    });
+  });
+  await page.route('**/tests/assets/sample-bg.jpg', async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'image/jpeg',
+      body: await fs.readFile(backgroundPath),
+    });
+  });
+
+  await page.goto('/');
+  await waitForEvent(page, 'runtimeReady');
+  const source = await fs.readFile(fixturePath, 'utf8');
+  await sendRuntimeCommand(page, 'loadScript', {
+    source,
+    work: { id: 'fx-bg-natural-e2e', title: 'fx-bg natural e2e' },
+  });
+  const ready = await waitForEvent(page, 'ready');
+  const markers = ready.payload?.timelineMarkers ?? [];
+  const checkpoints = [
+    { labelPrefix: '// B1 + B2 组合', filterName: null },
+    { labelPrefix: '// B3: :bg filter', filterName: 'duotone:background' },
+    { labelPrefix: '// :bg emboss', filterName: 'emboss:background' },
+    { labelPrefix: '// :bg gray +', filterName: 'gray' },
+  ].map((checkpoint) => ({
+    ...checkpoint,
+    timeMs: markers.find((marker) => marker.label?.startsWith(checkpoint.labelPrefix))?.timeMs,
+  }));
+  expect(checkpoints.map((checkpoint) => checkpoint.timeMs), `timeline markers: ${JSON.stringify(markers)}`)
+    .not.toContain(undefined);
+
+  await sendRuntimeCommand(page, 'updateSettings', { timeScale: 4 });
+  await sendRuntimeCommand(page, 'play', {});
+
+  let controlScreenshot: Buffer | null = null;
+  for (const checkpoint of checkpoints) {
+    await page.waitForFunction((targetTime) => {
+      const events = (window as any).__KMD_E2E_EVENTS__ as RuntimeEvent[];
+      const progress = [...events].reverse().find((event) => event.type === 'progressChanged');
+      return (progress?.payload as any)?.timeMs >= targetTime;
+    }, checkpoint.timeMs! + 250, { timeout: 15_000 });
+    await sendRuntimeCommand(page, 'pause', {});
+
+    if (checkpoint.filterName) {
+      await expect.poll(async () => (await inspectRenderedStage(page)).backgroundFilterNames)
+        .toEqual([checkpoint.filterName]);
+    } else {
+      await expect.poll(async () => (await inspectRenderedStage(page)).hasBackground).toBe(true);
+      expect((await inspectRenderedStage(page)).backgroundFilterNames).toEqual([]);
+    }
+
+    const screenshot = await page.screenshot();
+    if (!controlScreenshot) {
+      controlScreenshot = screenshot;
+    } else {
+      expect(screenshot.equals(controlScreenshot)).toBe(false);
+    }
+    await sendRuntimeCommand(page, 'play', {});
   }
 
   const runtimeErrors = ((await page.evaluate(() => (window as any).__KMD_E2E_EVENTS__)) as RuntimeEvent[])

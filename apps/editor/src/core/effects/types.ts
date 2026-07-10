@@ -9,6 +9,7 @@ import { TextStyle } from "pixi.js";
  * - timing:   时序控制指令 (go/slow/fast/wait)，转化为 Timeline 位置偏移
  */
 export type EffectTrack = "entrance" | "behavior" | "instant" | "timing";
+export type EffectSurface = "text" | "background";
 
 export interface EffectMetadata {
   type: "behavior" | "style" | "filter" | "action" | "anim";
@@ -32,12 +33,15 @@ export type EffectFunction = (
   params?: EffectParams,
 ) => gsap.core.Tween | gsap.core.Timeline | Promise<void> | any;
 
+export interface EffectDefinition {
+  fn: EffectFunction;
+  meta: EffectMetadata;
+  profiles?: Partial<Record<EffectSurface, EffectFunction>>;
+}
+
 // 注册表结构
 export interface IEffectRegistry {
-  [name: string]: {
-    fn: EffectFunction;
-    meta: EffectMetadata;
-  };
+  [name: string]: EffectDefinition;
 }
 
 // 样式处理器：接收一个 TextStyle 对象并直接修改它

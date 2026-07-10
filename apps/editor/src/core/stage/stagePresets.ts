@@ -471,14 +471,15 @@ export const stagePresets: Record<string, StageEffectFunction> = {
         ? src
         : baseUrl + src.replace(/^\.\//, "");
 
-      // bg(color, src) 的语义是先落纯色 fallback，再等待图片加载；必须清掉旧 sprite，
-      // 否则旧图会遮住 fallback，且旧 :bg filters 可能继续显示到新图 resolve。
+      // bg(src) 每次都先释放旧 sprite 的显示所有权，再等待本次 load。
+      // 同时间点的 :bg effect 因而只能通过 onBackgroundReady 命中本次 resolve 后的新 sprite，
+      // 不会先挂到旧 sprite 再被异步替换销毁。同 URL 复用时保留 Assets texture 缓存。
       if (color !== undefined) {
         stageManager.setBackgroundColor(color);
-        stageManager.setBackgroundSprite(null, null, {
-          unloadTexture: stageManager.bgSpriteUrl !== url,
-        });
       }
+      stageManager.setBackgroundSprite(null, null, {
+        unloadTexture: stageManager.bgSpriteUrl !== url,
+      });
 
       // 委托 StageManager.loadBackgroundFromUrl（含纪元守卫 + cover-fit + 就绪回调）
       stageManager.loadBackgroundFromUrl(url);

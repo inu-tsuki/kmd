@@ -622,7 +622,13 @@ export class TextPlayer {
         // 组级特效：应用到 containerTarget 容器
         const applyContainerEffect = (target: any) => {
           if (track === "entrance") {
-            const tween = effectManager.apply(target, config.name, resolved, true);
+            const tween = effectManager.apply(
+              target,
+              config.name,
+              resolved,
+              true,
+              isBgInline ? "background" : "text",
+            );
             TextPlayer.captureEntrance(tl, tween, chainCursor, target, entranceFilters);
           } else if (track === "behavior") {
             behaviors.push({

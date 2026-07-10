@@ -7,9 +7,11 @@ import { PixelateFilter } from "../../filters/PixelateFilter";
 import { GrayFilter } from "../../filters/GrayFilter";
 import { ThresholdFilter } from "../../filters/ThresholdFilter";
 import { DuotoneFilter } from "../../filters/DuotoneFilter";
+import { BackgroundDuotoneFilter } from "../../filters/BackgroundDuotoneFilter";
 import { PosterizeFilter } from "../../filters/PosterizeFilter";
 import { SharpenFilter } from "../../filters/SharpenFilter";
 import { EmbossFilter } from "../../filters/EmbossFilter";
+import { BackgroundEmbossFilter } from "../../filters/BackgroundEmbossFilter";
 import { EdgeFilter } from "../../filters/EdgeFilter";
 import { OutlineFilter } from "../../filters/OutlineFilter";
 import { BloomFilter } from "../../filters/BloomFilter";
@@ -20,10 +22,14 @@ import { NoiseFilter } from "../../filters/NoiseFilter";
 import { DissolveFilter } from "../../filters/DissolveFilter";
 import { DisplaceFilter } from "../../filters/DisplaceFilter";
 import { hexToVec3 } from "../../filters/colorUtils";
-import type { EffectFunction, EffectMetadata } from "../types";
+import type { EffectDefinition, EffectFunction, EffectMetadata } from "../types";
 
-function defineEffect(fn: EffectFunction, meta: EffectMetadata) {
-  return { fn, meta };
+function defineEffect(
+  fn: EffectFunction,
+  meta: EffectMetadata,
+  profiles?: EffectDefinition["profiles"],
+): EffectDefinition {
+  return { fn, meta, profiles };
 }
 
 // RGB偏移 (RGB Shift) —— behavior-track filter。
@@ -209,13 +215,22 @@ const _duotone: EffectFunction = (target, params = {}) => {
   target.filters = [...(target.filters || []), filter];
   return filter;
 };
+const _backgroundDuotone: EffectFunction = (target, params = {}) => {
+  const shadow = params.shadow ?? "#1a1a2e";
+  const highlight = params.highlight ?? "#e94560";
+  const filter = new BackgroundDuotoneFilter();
+  filter.shadow = hexToVec3(shadow);
+  filter.highlight = hexToVec3(highlight);
+  target.filters = [...(target.filters || []), filter];
+  return filter;
+};
 export const duotone = defineEffect(_duotone, {
   type: "filter",
   track: "instant",
   targetType: "both",
   mutexGroup: "filter_color",
   stackable: true,
-});
+}, { background: _backgroundDuotone });
 
 // 色调分离 (Posterize) —— DIP-FX M1 点运算 + 可选 Bayer 4×4 抖动。
 // levels 钳制 ≥2 防除零；dither 为 0/1 开关。预乘 alpha 对偶；无 padding。
@@ -273,13 +288,26 @@ const _emboss: EffectFunction = (target, params = {}) => {
   target.filters = [...(target.filters || []), filter];
   return filter;
 };
+const _backgroundEmboss: EffectFunction = (target, params = {}) => {
+  const strength = params.strength ?? 1;
+  const angle = params.angle ?? 45;
+  const mix = params.mix ?? 0.5;
+  const width = params.width ?? 3;
+  const filter = new BackgroundEmbossFilter();
+  filter.strength = strength;
+  filter.angle = angle;
+  filter.mix = mix;
+  filter.width = width;
+  target.filters = [...(target.filters || []), filter];
+  return filter;
+};
 export const emboss = defineEffect(_emboss, {
   type: "filter",
   track: "instant",
   targetType: "both",
   mutexGroup: "filter_conv",
   stackable: true,
-});
+}, { background: _backgroundEmboss });
 
 // 描边 (Edge) —— DIP-FX M1 alpha 内描边（类似 CSS text-stroke）。
 // 在文字边缘像素上着色 uColor，区别于 outline（外描边膨胀到文字外）。
@@ -604,7 +632,7 @@ export const displace = defineEffect(_displace, {
 // duotone 直接 new DuotoneFilter() 构造（不调 duotone effect fn，避免双注册 + 双 push）。
 // char 级 return { filters: [...] }（无 tickerFn，addModifier 驱动，同 dissolve char 级形态）；
 // 容器级 return { filters: [...], tickerFn }。
-const _underwater: EffectFunction = (target, params = {}) => {
+const createUnderwaterEffect = (backgroundProfile: boolean): EffectFunction => (target, params = {}) => {
   const amount = params.amount ?? 8;
   const scale = params.scale ?? 4;
   const speed = params.speed ?? 0.01;
@@ -616,7 +644,7 @@ const _underwater: EffectFunction = (target, params = {}) => {
   displaceFilter.amount = amount;
   displaceFilter.scale = scale;
 
-  const duotoneFilter = new DuotoneFilter();
+  const duotoneFilter = backgroundProfile ? new BackgroundDuotoneFilter() : new DuotoneFilter();
   duotoneFilter.shadow = hexToVec3(tint);
   duotoneFilter.highlight = hexToVec3(highlight);
 
@@ -644,9 +672,11 @@ const _underwater: EffectFunction = (target, params = {}) => {
     return { filters, tickerFn: tickFn };
   }
 };
+const _underwater = createUnderwaterEffect(false);
+const _backgroundUnderwater = createUnderwaterEffect(true);
 export const underwater = defineEffect(_underwater, {
   type: "filter",
   track: "behavior",
   targetType: "both",
   mutexGroup: "filter_underwater",
-});
+}, { background: _backgroundUnderwater });
