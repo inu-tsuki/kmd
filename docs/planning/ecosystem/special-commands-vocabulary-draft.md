@@ -157,10 +157,10 @@ KMD 命令按作用对象分四类，本文件只管最后一类：
 - **⚠️ 阻抗（须标注，dev 可接受）**：`stagePresets` 的 apply 约定**返回 GSAP tween（同步）**，而 `Assets.load` 是异步——dev 级用 **fire-and-forget**（apply 内启动 load、resolve 时加 sprite，apply 本身返回 `null`）。后果：背景在加载完成后才出现（首帧可能空）；seek/重播的幂等不保证。这两点都属**阅读器-硬化级**再解决，dev 验证够用。
 
 ### 注册与校验
-- 经 `stageManager.has("bg")` 自动 known（同 `cam.*`），**不改 `Parser.validate()`**（同 DIP filter，spec §1 纠正 1）。验收只需 `bg(...)` 不报 `Unknown command`。
+- `@ bg(...)` 同 `@ cam.*`——`@` 后裸名经 `stageManager.has("bg")` 自动 known，**不改 `Parser.validate()`**（同 DIP filter，spec §1 纠正 1）。验收只需 `@ bg(...)` 不报 `Unknown command`。**注意**：裸 `bg(...)`（无 `@`）会被 parser 当正文——与 `cam.*` 一致，stage 命令需 `@` 前缀。未来 Phase B 迁移到主语形态 `@ bg.set(...)`。
 
 ### 交付物
-- 示例 `public/tests/fx-bg.kmd`：`bg(color="#1a1a2e")`、`bg(src="tests/assets/<sample>.jpg")`、图上叠文字（验证 `f.outline`/`f.bloom` 在真实画面上的读感）。需附一张 sample 图进 `public/tests/assets/`。
+- 示例 `public/tests/fx-bg.kmd`：`@ bg(color="#1a1a2e")`、`@ bg(src="tests/assets/<sample>.jpg")`、图上叠文字（验证 `f.outline`/`f.bloom` 在真实画面上的读感）。需附一张 sample 图进 `public/tests/assets/`。
 - `pnpm build` 通过；`pnpm dev` 实测背景出现、cover 适配正确、换背景/清场无残留。
 
 ### B3 `:bg` 滤镜路由（已纳入本批，2026-07-09 落地后语法方向订正——见下方【订正】）

@@ -28,8 +28,7 @@ speed: 40
 
 // 测试 3: cam.offset 叠加层 — 与 cam.move 不冲突
 // 预期：camera 向右移同时 offset 向上叠加，两者独立不冲突
-[cam.move(300, 0, 4s)]
-[cam.offset(0, -100, 4s)]
+[cam.move(300, 0, 4s) cam.offset(0, -100, 4s)]
 第六段：camera 右移 + offset 上移，视觉上斜向右上运动。
 
 // 测试 4: cam.offset 单独使用

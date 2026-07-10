@@ -158,12 +158,20 @@ export class StageRuntime {
       // 非数值参数（如 cam.shake 的 static:true、嵌套对象）原样透传，不走 resolveNumeric——
       // R3 修复：原逻辑对**所有** params 调 resolveValue，boolean true → fallback 0 →
       // `p.static === true` 恒为 false（seek 静态重放失效）。仅数值/字符串参数才数值化。
-      if (typeof val === "number" || typeof val === "string") {
-        if (["duration", "d", "2"].includes(key) || (name !== "cam.move" && key === "1")) {
-          resolvedParams[key] = this.resolveValue(val, 0);
-        } else {
+      // bg-fix：字符串参数若既非 var/marker 引用又非数字（如 URL、hex 色值），resolveNumeric
+      // 会把它替换成 fallback 0，丢失原始字符串 → bg(src="...") 的 src 变成 0 → startsWith 崩溃。
+      // 改为：先尝试引用解析，再 parseFloat；若两者都不命中，保留原始字符串透传。
+      if (typeof val === "string") {
+        const referenced = RuntimeValueResolver.resolveReference(val);
+        if (referenced !== undefined) {
+          resolvedParams[key] = referenced;
+        } else if (!Number.isNaN(parseFloat(val))) {
           resolvedParams[key] = this.resolveValue(val, (before as any)[key] ?? 0);
+        } else {
+          resolvedParams[key] = val;
         }
+      } else if (typeof val === "number") {
+        resolvedParams[key] = this.resolveValue(val, (before as any)[key] ?? 0);
       } else {
         resolvedParams[key] = val;
       }

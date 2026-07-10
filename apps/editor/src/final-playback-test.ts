@@ -28,6 +28,7 @@ import { DisplayAssembler } from "./core/render/text/DisplayAssembler";
 import { parser } from "./core/parser/Parser";
 import { SegmentBuilder } from "./core/player/SegmentBuilder";
 import { buildStageModifierRecord, buildStageModifierApplyParams } from "./core/stage/stagePresets";
+import { StageRuntime } from "./core/stage/StageRuntime";
 import type { Segment } from "./core/state/Segment";
 import type { LayoutGlyphPlan } from "./core/layout/LayoutPlanner";
 
@@ -3112,6 +3113,82 @@ function testStageDefaultParamAlignment() {
   }
 }
 
+// ─── SA-39：bg 非数字字符串参数保留（StageRuntime.apply 字符串透传修复） ────
+//
+// 背景：StageRuntime.apply 原逻辑对所有字符串参数调 resolveNumeric，若 parseFloat 得 NaN
+// 则返回 fallback 0。bg(src="tests/assets/sample-bg.jpg") 的 src 参数是 URL 字符串，
+// parseFloat 得 NaN → fallback 0 → src 变成数字 0 → stagePresets["bg"] 内 src.startsWith
+// 崩溃。修复：字符串参数若既非 var/marker 引用又非数字，保留原始字符串透传。
+// 本测试直接构造 StageRuntime 实例验证解析结果（不依赖渲染边界）。
+
+function testBgStringParamPreservation() {
+  console.log("\n[25] SA-39 bg 非数字字符串参数保留（StageRuntime.apply 字符串透传）");
+
+  const rt = new StageRuntime({
+    getDesignMetrics: () => ({ width: 1920, height: 1080 }),
+    getAuditPort: () => ({ record: () => {}, clear: () => {} }),
+  });
+
+  // (1) bg(src="...")：src 必须保留为字符串 URL，不能被 resolveNumeric 吞成 0。
+  {
+    let captured: any = null;
+    rt.register("bg", (p: any) => { captured = p; });
+    rt.apply("bg", { src: "tests/assets/sample-bg.jpg" });
+    assert(
+      typeof captured.src === "string" && captured.src === "tests/assets/sample-bg.jpg",
+      `SA-39 bg(src) 参数保留为字符串（实际 typeof=${typeof captured.src} val=${captured.src}）`,
+    );
+  }
+
+  // (2) bg(color="#1a0a2e")：color 必须保留为 hex 字符串。
+  {
+    let captured: any = null;
+    rt.register("bg", (p: any) => { captured = p; });
+    rt.apply("bg", { color: "#1a0a2e" });
+    assert(
+      typeof captured.color === "string" && captured.color === "#1a0a2e",
+      `SA-39 bg(color) 参数保留为 hex 字符串（实际 typeof=${typeof captured.color} val=${captured.color}）`,
+    );
+  }
+
+  // (3) bg(color, src) 组合：两个都必须是字符串。
+  {
+    let captured: any = null;
+    rt.register("bg", (p: any) => { captured = p; });
+    rt.apply("bg", { color: "#0f3460", src: "tests/assets/sample-bg.jpg" });
+    assert(
+      typeof captured.color === "string" && typeof captured.src === "string",
+      `SA-39 bg(color,src) 两个参数均保留字符串（color typeof=${typeof captured.color} src typeof=${typeof captured.src}）`,
+    );
+  }
+
+  // (4) 回归保护：数值字符串仍被 resolveNumeric 解析（cam.move 的 "200" → 200）。
+  {
+    let captured: any = null;
+    rt.register("testNum", (p: any) => { captured = p; });
+    rt.apply("testNum", { x: "200", y: "0", duration: "1s" });
+    assert(
+      typeof captured.x === "number" && captured.x === 200,
+      `SA-39 数值字符串仍解析为数字（x typeof=${typeof captured.x} val=${captured.x}）`,
+    );
+    assert(
+      typeof captured.duration === "number" && captured.duration === 1,
+      `SA-39 时间单位字符串仍解析为秒数（duration typeof=${typeof captured.duration} val=${captured.duration}）`,
+    );
+  }
+
+  // (5) 位置参数字符串（bg("#1a0a2e")）也必须保留字符串。
+  {
+    let captured: any = null;
+    rt.register("bg", (p: any) => { captured = p; });
+    rt.apply("bg", { "0": "#1a0a2e" });
+    assert(
+      typeof captured["0"] === "string" && captured["0"] === "#1a0a2e",
+      `SA-39 位置参数非数字字符串保留（typeof=${typeof captured["0"]} val=${captured["0"]}）`,
+    );
+  }
+}
+
 async function main() {
   console.log("╔══════════════════════════════════════════════════════════╗");
   console.log("║  KMD Playback State Regression (F-2 / R5-R22 + SA-38)    ║");
@@ -3144,6 +3221,7 @@ async function main() {
   testR22GsapPremise();
   await testR22BoundaryGuardMechanism();
   testStageDefaultParamAlignment();
+  testBgStringParamPreservation();
 
   console.log(`\n🎬 Playback regression: ${pass} passed, ${fail} failed`);
   if (fail > 0) {

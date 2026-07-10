@@ -25,7 +25,7 @@ AstParser.parseParagraph()
 |------|------|------|--------|
 | `f.red.wave` | `f.` | token/group 特效链 | **token 级** — 与花括号组或视觉目标匹配 |
 | `.red.offset(100,0)` | `.` | 行级广播链 | **行级** — 当前行全部视觉目标或 lineScope 指令 |
-| `cam.move(100,0,1s)` | 裸名 | 裸名布局/舞台指令 | **行级** — 挂在主目标上 |
+| `cam.move(100,0,1s)` | `@` + 裸名 | 裸名布局/舞台指令 | **行级** — 挂在主目标上（`@` 前缀触发 `parseCommandChains`） |
 | `[.glitch]` | block option | 段落作用域链 | **段落级** — 由 `lowering.ts` 决定是 paragraph broadcast 还是 paragraph effect |
 
 ## 路由详解 (`lowering.ts`)
