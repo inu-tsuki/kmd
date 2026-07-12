@@ -1,6 +1,6 @@
 # KMD Frontmatter Schema（文档级选项）
 
-> 最近更新：2026-07-07
+> 最近更新：2026-07-12
 > 状态：规范草案 —— runtime 字段与写回规则 v1 收敛；作者字段词汇表与 `mode` 继任字段显式悬置
 > 上游决议：`design.md` D22（frontmatter = 文档级选项，引擎启动键文档级专属）
 > 背景调研：Android reader 仓库 `docs/planning/r3-d-local-import-research.md`（三端 drift 矩阵、2026-06-25 问题清账、2026-07-07 决策补充）
@@ -22,6 +22,12 @@
 | **A** | 随身作者事实 | 作者自述的可选标识（`title` / `author`） | host 可用作展示 fallback；**不是**平台权威（平台身份归 `Work`） |
 | **T** | 主题建议 | 默认视觉主题（`bgColor` 等） | 作为 runtime 缺省值生效；host settings（`ReaderRuntimeSettings.typography` / `viewport.backgroundColor`）优先级更高 |
 | **X** | 不属于 frontmatter | `Work.presentation` 派生、社区状态、editor 工作区偏好、revision/bundle 信息 | 分别归属：Work/bundle manifest、云端、editor/project 配置、`.kmdwork` manifest |
+
+T 层的“host settings 优先”只适用于作者未锁定的主题建议与对应 mode 开放的 projection
+维度，不允许越过 R 层或 presentation mode 合同改写作者构图。例如 Scroll/Page 可用宿主
+字号重排阅读投影；Stage 的设计坐标和显式字号属于作者作品语义，host `fontScale` 不生效。
+完整权威顺序与 mode matrix 见
+[`lifecycle-invariants.md` INV-9](../runtime/core/lifecycle-invariants.md#inv-9-host-preference-must-not-rewrite-author-composition)。
 
 ## 2. 字段表（v1）
 

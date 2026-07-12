@@ -1,7 +1,7 @@
 # KMD Implementation Roadmap
 
 > 文档状态：Active
-> 最近更新：2026-07-08
+> 最近更新：2026-07-12
 > 权威范围：KMD 当前主线判断与阶段顺序——已完成阶段、当前焦点、gated 下一阶段（Phase B 恢复条件）
 
 ## 当前判断
@@ -78,6 +78,22 @@ Phase B 保留为下一轮语言与 execution graph 阶段。按封盘规范（D
 - Android WebView smoke 与 reader artifact 消费链路足够稳定。
 - ~~Phase B 语言设计文档完成一次收敛审查。~~ 已满足（2026-07-08）。
 - Phase B 新语法优先进入 DocumentAST / DocumentSemanticIR，不直接塞回 legacy token/layout stream。
+
+### After Phase B: Runtime Host Semantics Consolidation
+
+Phase B 完成新语法、execution plan、`SegmentGraphPlan` 与 graph playback ownership 后，集中
+收束宿主可观察的 runtime 语义：
+
+- reader runtime settings transaction：projection rebuild 不泄漏内部 `progress=0`、
+  空 markers、`idle` 或重复 `ready`。
+- 按 INV-9 固化 host preference / author composition 的 mode capability matrix。
+- 实现 `reducedMotion` 的统一 execution/effect 策略，覆盖自然播放、seek/replay 与 graph path。
+- 用 reader artifact 浏览器 smoke 和 Android bridge 集成验证最终协议语义。
+
+这项工作刻意晚于 Phase B：不在 legacy `ScriptPlayer` 上固化即将被 graph runtime 改写的
+事务边界；也必须早于 Phase C 的非确定性交互 runtime，否则 host settings 会再次扩散到更多
+执行后端。详细工作包见
+[`../packages/reader-runtime-web.md`](../packages/reader-runtime-web.md)。
 
 ### Future: Phase C And v1.7+
 

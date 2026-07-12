@@ -123,6 +123,44 @@ GSAP / Pixi 等外部库的"易错但看起来对"的边界行为（零时长 tw
 
 **审计触发**：R2 review（SA-15）。已验证的反例库见下方"已验证外部依赖行为"小节。
 
+### INV-9: host preference must not rewrite author composition
+
+宿主偏好只能改变**承载环境**或某个 presentation mode 明确开放的适配维度，不能静默改写
+作者作品的构图、排版、颜色、镜头或语义终态。权威顺序为：
+
+```text
+安全 / 可访问性硬约束
+  > 作者作品语义与 presentation mode 合同
+  > 宿主舒适性偏好与平台默认值
+```
+
+这里的“高于”不是允许高层任意重画低层，而是限定覆盖范围：安全/可访问性可以禁用输入、
+降低刺激或替换到等价静态终态；它不能把作品的最终可见内容、叙事状态或 seek 结果改成另一份
+作品。宿主舒适性偏好只能作用于 mode 明确暴露的 projection capability。
+
+| Host setting / 环境变化 | Scroll / Page | Stage / Interactive |
+|---|---|---|
+| `fontScale` | 可改变基础阅读排版并触发 reflow | **不得缩放作者排版**；Stage 设计坐标与显式字号是作者权威 |
+| host theme / light-dark | 可为未指定的阅读基底提供默认值 | 不得重染作者颜色、背景或滤镜；只改变宿主 chrome |
+| viewport / window resize | 可重排、分页或改变可用阅读宽度 | 只做等比适配、letterbox/safe-area 承载，不改 design viewport 内构图 |
+| host font preference/fallback | 可覆盖主题建议或缺省阅读字体 | 不得替换作者显式字体；缺失资产时只能按声明的 fallback/诊断策略降级 |
+| `reducedMotion` | 可缩短/静态化非语义动效 | 可约束刺激性过程，但必须保持作者定义的语义终态、顺序和 seek 等价性 |
+| quality / renderer policy | 可降低实现成本且保持可读结果 | 可降低采样/分辨率，不得改变 effect 路由、时间或作品状态 |
+
+**判定法**：加入 host setting 前依次回答：
+
+1. 它改变的是宿主环境、projection，还是作者可观察的作品语义？
+2. 当前 mode 是否显式开放该 capability？未开放则忽略并报告 unsupported，不能“接收成功但无效果”。
+3. 若属于安全/可访问性覆盖，变换前后最终状态、事件顺序和 seek/replay 是否语义等价？
+4. 同一规则是否用于 initial load、hot update、rebuild 与 seek/replay，而非只修一条路径？
+
+**回归要求**：至少覆盖 Scroll/Page 允许侧与 Stage/Interactive 拒绝侧；initial load 与 hot update；
+作者显式值与缺省值；自然播放与 seek/replay。Stage `fontScale` 回归必须断言 typography、layout
+measurement、design viewport 与 rebuild 次数均不变，不能只断言“没有抛错”。
+
+**违反后果**：读者偏好破坏作者构图；同一作品在 editor/reader 或 load/hot-update 下分裂；
+协议字段被静默接受却无行为；可访问性模式改变播放终态或 seek 结果。
+
 ---
 
 ## B-bis. 已验证外部依赖行为（INV-8 反例库）
