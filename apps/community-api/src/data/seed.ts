@@ -149,6 +149,28 @@ export const seedWorks: Work[] = [
       preview: ['Useful for checking mobile runtime behavior.', 'Dense enough to reveal timing and layout regressions.']
     }
   },
+  {
+    id: 'reader-font-scroll', title: '阅读字号验收：长雨', authorName: 'KMD Lab',
+    description: '用于 Android Reader Scroll 字号热更新和断点恢复的稳定长文本。',
+    tags: ['reader-test', 'scroll', 'font-scale', 'r3-i'], presentationMode: 'scroll',
+    orientationHint: 'portrait', aspectRatio: '9:16', lifecycleStatus: 'published',
+    interactionLevel: 'read_only', previewMode: 'cover', estimatedDurationSec: 90, coverUrl: '',
+    script: { activeRevisionId: 'rev-1', revisions: [{ id: 'rev-1', label: 'R3-I scroll typography fixture',
+      sourcePath: 'content/works/reader-font-scroll/rev-1.kmd', sourceUrl: '/works/reader-font-scroll/source',
+      mimeType: 'text/x-kmd', kmdVersion: '0.1', runtimeVersion: '0.2-preview', createdAt: '2026-07-12T00:00:00.000Z' }] },
+    stats: { scenes: 1, lines: 18, effects: 0 }, commentSummary: { count: 0, preview: [] }
+  },
+  {
+    id: 'reader-font-paged', title: '阅读字号验收：页间灯火', authorName: 'KMD Lab',
+    description: '用于 Android Reader Paged 字号热更新和断点恢复的稳定短文本。',
+    tags: ['reader-test', 'paged', 'font-scale', 'r3-i'], presentationMode: 'paged',
+    orientationHint: 'portrait', aspectRatio: '9:16', lifecycleStatus: 'published',
+    interactionLevel: 'read_only', previewMode: 'cover', estimatedDurationSec: 70, coverUrl: '',
+    script: { activeRevisionId: 'rev-1', revisions: [{ id: 'rev-1', label: 'R3-I paged typography fixture',
+      sourcePath: 'content/works/reader-font-paged/rev-1.kmd', sourceUrl: '/works/reader-font-paged/source',
+      mimeType: 'text/x-kmd', kmdVersion: '0.1', runtimeVersion: '0.2-preview', createdAt: '2026-07-12T00:00:00.000Z' }] },
+    stats: { scenes: 1, lines: 14, effects: 0 }, commentSummary: { count: 0, preview: [] }
+  },
 
   // ━━ 通用示例（从 apps/editor/public/ 打包） ━━
 

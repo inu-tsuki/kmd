@@ -18,6 +18,10 @@
 import gsap from "gsap";
 import { TextStyle, Container, DOMAdapter, Assets, Sprite, Texture } from "pixi.js";
 import { PlaybackController } from "./core/player/PlaybackController";
+import { scriptPlayer } from "./core/player/ScriptPlayer";
+import { TextBuildContextResolver } from "./core/render/text/TextBuildContextResolver";
+import { ReaderRuntimeWebSession } from "./core/runtime/ReaderRuntimeSession";
+import { readerApp } from "./core/App";
 import { EffectProcessor } from "./core/effects/EffectProcessor";
 import { layout } from "./core/layout/LayoutEngine";
 import { effectManager } from "./core/effects/EffectManager";
@@ -3779,6 +3783,61 @@ async function testBackgroundSurfaceProfilesAndReplayBoundary() {
   }
 }
 
+async function testReaderTypographySettings() {
+  console.log("\n[34] R3-I reader typography settings");
+  const target = { x: 0, y: 0, _options: {
+    fontSize: 20, lineHeight: 30, maxWidth: 800, indent: 0, align: "left",
+    letterSpacing: 0, externalMarkers: [],
+  } } as any;
+  const originalRebuild = (scriptPlayer as any).rebuildForTypography;
+  const originalLoadFonts = (readerApp as any).loadFonts;
+  let rebuildCalls = 0;
+  (scriptPlayer as any).rebuildForTypography = async () => { rebuildCalls += 1; };
+  (readerApp as any).loadFonts = async () => {};
+  try {
+    const scrollSession = new ReaderRuntimeWebSession({
+      settings: { presentationMode: "scroll", fontScale: 1 },
+    });
+    TextBuildContextResolver.configure({ typography: { fontSize: 20, lineHeight: 30 } });
+    let context = TextBuildContextResolver.fromTarget(target);
+    assert(
+      (context.baseStyle as any).fontSize === 20 && context.layoutOptions.fontSize === 20 && context.layoutOptions.lineHeight === 30,
+      "R3-I Scroll 初始字号同时作用于 Pixi TextStyle 与 layout",
+    );
+    await scrollSession.updateSettings({ fontScale: 1.25 });
+    context = TextBuildContextResolver.fromTarget(target);
+    assert(
+      (context.baseStyle as any).fontSize === 25 && context.layoutOptions.fontSize === 25 && context.layoutOptions.lineHeight === 37.5,
+      "R3-I Scroll 热更新按比例重算字体与行高",
+    );
+    assert(rebuildCalls === 1, "R3-I Scroll fontScale 变化触发一次 typography rebuild");
+
+    const pageSession = new ReaderRuntimeWebSession({
+      settings: { presentationMode: "page", fontScale: 1.1 },
+    });
+    context = TextBuildContextResolver.fromTarget(target);
+    assert((context.baseStyle as any).fontSize === 22 && context.layoutOptions.lineHeight === 33,
+      "R3-I Page 初始字号按比例作用于 typography");
+    await pageSession.updateSettings({ fontScale: 0.9 });
+    context = TextBuildContextResolver.fromTarget(target);
+    assert((context.baseStyle as any).fontSize === 18 && context.layoutOptions.lineHeight === 27,
+      "R3-I Page 热更新按比例重算 typography");
+    assert(rebuildCalls === 2, "R3-I Page fontScale 变化触发一次 typography rebuild");
+
+    const stageSession = new ReaderRuntimeWebSession({
+      settings: { presentationMode: "stage", fontScale: 1 },
+    });
+    await stageSession.updateSettings({ fontScale: 1.5 });
+    context = TextBuildContextResolver.fromTarget(target);
+    assert((context.baseStyle as any).fontSize === 20 && context.layoutOptions.lineHeight === 30,
+      "R3-I Stage 忽略 host fontScale，保持 1x typography");
+    assert(rebuildCalls === 2, "R3-I Stage fontScale 变化不进入 typography rebuild");
+  } finally {
+    (scriptPlayer as any).rebuildForTypography = originalRebuild;
+    (readerApp as any).loadFonts = originalLoadFonts;
+  }
+}
+
 async function main() {
   console.log("╔══════════════════════════════════════════════════════════╗");
   console.log("║  KMD Playback State Regression (F-2 / R5-R22 + SA-38)    ║");
@@ -3820,6 +3879,7 @@ async function main() {
   await testBgReplayBeforeBgFilterReplay();
   await testBgMultiSeekBeforeResolve();
   await testBackgroundSurfaceProfilesAndReplayBoundary();
+  await testReaderTypographySettings();
 
   console.log(`\n🎬 Playback regression: ${pass} passed, ${fail} failed`);
   if (fail > 0) {

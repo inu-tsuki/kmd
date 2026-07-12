@@ -75,10 +75,10 @@ describe('kmd-community-api', () => {
     expect(response.text).toContain('cam.reset');
   });
 
-  it('lists all 27 works (4 original + 23 public samples) without filters', async () => {
+  it('lists all 29 works including reader typography fixtures without filters', async () => {
     const response = await request(createApp()).get('/works').expect(200);
 
-    expect(response.body).toHaveLength(27);
+    expect(response.body).toHaveLength(29);
     // 打包自 public/ 的新 work 全部是 published，不应撞 submitted 过滤器
     const publishedFromPublic = response.body.filter((w: { lifecycleStatus: string; tags: string[] }) =>
       w.lifecycleStatus === 'published' && w.tags.includes('demo')
