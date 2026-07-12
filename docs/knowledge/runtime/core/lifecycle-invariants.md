@@ -745,3 +745,16 @@ R8-R12 六轮（含 R12-block 七轮、R13 八轮、R14 九轮、R15 十轮、R1
 这对应 §F-4 的理念（强制机制），但比 INV-7/INV-8 守卫更深一层：守卫防"分裂/未验证"，但防不了"用近似代替真实"——后者是建模决策，不是代码模式。唯一的预防是在建模阶段就认"被反复需要的量要显式建模"，而不是等审查五轮后被迫落地。
 
 **给未来引入时序指令链/生命周期特性的人**：读 §G 三个第一性原因，对照检查清单 12 条。R8-R16 的学费已付，不必再付。
+
+---
+
+## H. Typography Reflow 的宿主中间态债务（2026-07-12）
+
+Android Reader 的 Scroll/Page `fontScale` 热更新当前通过 `stop -> buildSegment -> seek` 重建
+文本投影，功能上保留 source、runtime session、时间与播放态，但复用了 `stop()` 的会话终止
+语义。后续必须将其收口为静默 projection rebuild transaction，不能向宿主暴露 `progress=0`、
+空 timeline markers、`idle` 或新的 `ready` 中间态。
+
+不变量：捕获 `{ workId, sessionId, time, phase }`，清理旧 projection，重建后恢复 checkpoint；
+仅在最终状态发送宿主事件。清理仍须遵循 INV-1，连续 reflow 不得残留 timeline、文本、filter、
+ticker 或 stage modifier。任务排期见 [`reader-runtime-web.md`](../../../planning/packages/reader-runtime-web.md)。

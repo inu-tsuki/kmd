@@ -21,18 +21,21 @@ export class TextBuildContextResolver {
    */
   public static fromTarget(target: TextBuildTarget): TextBuildContext {
     const typography = TextBuildContextResolver.typography;
+    const scale = typography.scale ?? 1;
+    const fontSize = (typography.fontSize ?? target._options.fontSize) * scale;
+    const lineHeight = (typography.lineHeight ?? target._options.lineHeight) * scale;
 
     return {
       baseStyle: new TextStyle({
-        fontSize: typography.fontSize ?? target._options.fontSize,
+        fontSize,
         fill: typography.fill ?? "#ffffff",
         fontFamily: typography.fontFamily ?? "Sasara Regular",
         padding: 0,
       }),
       layoutOptions: {
         maxWidth: target._options.maxWidth,
-        lineHeight: target._options.lineHeight,
-        fontSize: target._options.fontSize,
+        lineHeight,
+        fontSize,
         indent: target._options.indent,
         align: target._options.align,
         letterSpacing: target._options.letterSpacing,

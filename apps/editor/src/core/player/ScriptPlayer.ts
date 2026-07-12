@@ -434,6 +434,20 @@ export class ScriptPlayer {
     }
   }
 
+  /** Rebuilds rendered text for host typography without replacing the runtime session. */
+  public async rebuildForTypography() {
+    const segment = this.segment;
+    if (!segment) return;
+    const time = segment.timeline.time();
+    const wasPlaying = this.playbackState.isAutoPlaying;
+    await this.stop({ suppressIdle: true });
+    this.segment = await this.buildSegment();
+    this.seekToTime(time);
+    if (wasPlaying && this.segment) {
+      PlaybackController.playSegment(this.segment, this.playbackState);
+    }
+  }
+
   public setMode(mode: "stage" | "scroll" | "page") {
     this.currentMode = mode;
     stageManager.setMode(mode === "stage" ? "stage" : "scroll");

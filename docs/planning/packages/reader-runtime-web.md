@@ -1,7 +1,7 @@
 # Reader Runtime Web Package
 
 > 文档状态：Active
-> 最近更新：2026-06-16
+> 最近更新：2026-07-12
 > 权威范围：`@kmd/reader-runtime-web` 包的职责、禁止导入边界、build 命令、Core Extraction Gate（抽 `packages/core` 的触发条件）
 
 `@kmd/reader-runtime-web` 位于 `packages/reader-runtime-web/`，负责构建 Android WebView 与普通浏览器可加载的 KMD reader runtime 静态产物。
@@ -42,3 +42,15 @@ pnpm reader:build
 - diagnostics 和 asset policy 不再依赖 editor 目录语义。
 - Android 真机 WebView smoke 稳定消费 `dist/reader-runtime/`。
 - Phase B 语言扩展不会破坏 reader runtime package boundary。
+
+## Deferred Runtime Work
+
+### Typography projection rebuild transaction
+
+R3-I 的 Scroll/Page 字号热更新已可用，但当前实现复用 `ScriptPlayer.stop()` 后重建并 seek。
+后续 runtime 生命周期收束应拆出静默 projection rebuild：捕获当前 time/phase/work/session，
+清理旧 timeline、文本和 runtime 资源，重建后恢复 checkpoint，只对宿主发布最终状态。
+
+验收：reflow 期间 Android 不收到 `progress=0`、空 markers、`idle` 或重复 `ready`；连续 reflow
+不残留资源；Stage/Interactive 不进入 typography reflow。长期不变量见
+[`lifecycle-invariants.md`](../../knowledge/runtime/core/lifecycle-invariants.md)。

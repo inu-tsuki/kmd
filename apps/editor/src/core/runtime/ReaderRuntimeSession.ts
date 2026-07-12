@@ -201,8 +201,9 @@ export class ReaderRuntimeWebSession implements ReaderRuntimeSession {
     });
   }
 
-  public updateSettings(settings: ReaderRuntimeSettings) {
+  public async updateSettings(settings: ReaderRuntimeSettings) {
     this.ensureActive();
+    const previousScale = this.options.settings?.fontScale ?? 1;
     this.applyRuntimeOptions({
       ...this.options,
       settings: {
@@ -214,6 +215,14 @@ export class ReaderRuntimeWebSession implements ReaderRuntimeSession {
       this.setTimeScale(settings.timeScale);
     }
     void readerApp.loadFonts(this.getAssetContext());
+    const mode = this.options.settings?.presentationMode ?? this.options.presentationMode;
+    if (
+      settings.fontScale !== undefined &&
+      settings.fontScale !== previousScale &&
+      (mode === "scroll" || mode === "page")
+    ) {
+      await scriptPlayer.rebuildForTypography();
+    }
   }
 
   public async receive(message: string | ReaderRuntimeCommandEnvelope) {
@@ -258,7 +267,7 @@ export class ReaderRuntimeWebSession implements ReaderRuntimeSession {
           break;
         }
         case "updateSettings":
-          this.updateSettings((command.payload ?? {}) as ReaderRuntimeSettings);
+          await this.updateSettings((command.payload ?? {}) as ReaderRuntimeSettings);
           break;
         case "dispose":
           await this.dispose();
@@ -328,13 +337,18 @@ export class ReaderRuntimeWebSession implements ReaderRuntimeSession {
       allowPathFetch: false,
       assetBaseUrl: this.getAssetContext().assetBaseUrl,
     });
+    const mode = settings?.presentationMode ?? options.presentationMode;
+    const scale = mode === "scroll" || mode === "page"
+      ? (settings?.fontScale ?? 1)
+      : 1;
     scriptPlayer.updateConfig({
-      mode: settings?.presentationMode ?? options.presentationMode,
+      mode,
       designWidth: settings?.viewport?.width ?? options.viewport?.width,
       designHeight: settings?.viewport?.height ?? options.viewport?.height,
       typography: {
         ...options.typography,
         ...settings?.typography,
+        scale,
       },
     });
   }

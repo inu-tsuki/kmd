@@ -59,6 +59,8 @@ export interface ReaderRuntimeViewport {
 }
 
 export interface ReaderRuntimeTypography {
+  /** Internal host scale applied after script typography resolution. */
+  scale?: number;
   fontFamily?: string;
   fontSize?: number;
   fontWeight?: string | number;
