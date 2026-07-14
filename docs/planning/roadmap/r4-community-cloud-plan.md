@@ -1,96 +1,68 @@
-# R4：完善的云端社区阅读器 —— 多仓库协同总规划
+# Community Cloud Reader：社区优先的跨仓库衔接
 
-> 文档状态：规划草案
-> 最近更新：2026-06-19
-> 代号：R4
-> 权威范围：R4 多仓库协同的总规划——community-api + runtime + reader 三方职责、契约对齐、工作包分配
+> 文档状态：社区侧规划输入；不是 Android 实施计划
+> 最近更新：2026-07-14
+> 历史代号：R4
 
-## 定位
+## 当前判断
 
-R4 = 完善的云端社区阅读器，与 R3（android-reader 的完善本地阅读器）对应。R4 让联网后的社区能力完整：issue/discussion 结构化、review 提交闭环、云端 revision 同步、位置引用模型。
+Android Reader 已在 R3-K1 结束课程阶段并进入维护休眠。社区能力接下来应先在 KMD 主仓库建立
+稳定的数据模型、API、权限和测试；Android 不参与早期契约试错，也不构成 community-api、
+Phase B 或 runtime 工作的 gate。
 
-**R4 是多仓库协同任务**，不再是 reader 单仓库阶段。
+旧 Android R4 草案已归档为历史输入，其中 `local_issue_overrides` 等假设从未成为 R3 实现事实，
+不得作为 schema 或同步协议依据。未来恢复 Android 时，应根据届时已经运行的社区契约重新立项。
 
-## 参与仓库与职责
+## 仓库所有权
 
-| 仓库 | R4 职责 |
-|---|---|
-| **community-api**（`apps/community-api/`） | 契约实质演进：issue 结构化（SourceAnchor）、issue action log、discussion/thread、review 闭环、revision 同步端点 |
-| **reader-runtime-web**（`packages/reader-runtime-web/`） | SourceAnchor 解析（scene/tag 锚点定位）、inspection 增强、revision diff 支持 |
-| **android-reader**（`apps/android-reader/`，独立仓库） | 消费新契约、云端交互（issue/discussion/review 同步）、SourceAnchor 跳转统一、本地缓冲→云端同步 |
+| 边界 | 当前所有者 | Android 恢复后的角色 |
+|---|---|---|
+| 社区作品、身份、权限、issue/discussion/review、revision 服务 | `apps/community-api/` 及其后续持久化层 | 消费稳定 API，不定义服务器事实 |
+| KMD 语法、播放、inspection、时间/源码定位能力 | language 与 `packages/reader-runtime-web/` | 通过 bridge 消费 capability，不复制解释逻辑 |
+| 本地导入、书架、阅读进度、偏好、draft 防丢 | `kmd-reader-android` | 已由 R3 冻结；未来负责客户端状态与同步 UI |
 
-reader 侧子任务详见 android-reader 仓库 `docs/planning/r4-community-review-plan.md`。
+## Android 已有的真实衔接面
 
-## 契约对齐（R3 调研识别的差距）
+- `local_drafts`：issue draft 的本地防丢缓冲；不代表 close/reopen 或提交已持久化/同步。
+- `local_revisions`：不可变本地 revision 存储与播放优先级接口；当前没有用户编辑入口或云端同步链路。
+- Review / Issues companion：已有源码上下文、marker、draft UI 与本地会话动作骨架，但社区事实仍未权威化。
+- WebView bridge：可接收 runtime inspection、进度与 settings；新增社区契约不应穿透或重写播放协议。
 
-| 差距 | community-api 负责 | runtime 负责 | reader 负责 |
-|---|---|---|---|
-| issue location 自由文本 → SourceAnchor[] | 定义 + 存储 anchor 结构 | 解析 scene/tag 锚点 | 消费 anchor 做跳转 |
-| IssueSource 枚举不对齐 | 统一枚举值 | — | 同步枚举 |
-| issue 无 status/revisionId/createdAt | 补字段 + action log | — | 同步 domain + DTO |
-| discussion/thread 未实现 | 新建实体 + 端点 | — | companion 展示 |
-| review 提交不回传 | POST 返回完整 + GET | — | 接上 submitReview |
-| CommentSummary 结构不同 | 统一结构 | — | 同步 |
+不存在可直接复用的 `local_issue_overrides` 同步队列。未来若需要离线 action/outbox，必须根据服务端
+幂等键、冲突模型和状态机重新设计，而不是从旧草案恢复表名。
 
-## 核心设计：结构化 SourceAnchor
+## 社区先行交付
 
-跳转绑在位置标签上，而非 issue/discussion 实体。issue/discussion/review 携带 `SourceAnchor[]`：
+在重新启动 Android 集成前，主仓库应先闭合：
 
-```text
-SourceAnchor
-  ├─ type: "line" | "scene" | "time" | "range" | "tag" | "none"
-  ├─ line? / endLine?     （line/range）
-  ├─ scene?               （scene，依赖脚本场景标记语法 = Phase B）
-  ├─ timeMs?              （time）
-  ├─ tag?                 （tag，依赖脚本自定义标签 = Phase B）
-  └─ label: String        （人类可读）
-```
+1. 可持久化的作品、revision、issue、discussion/thread 和 review 模型。
+2. 身份/权限、状态变更审计、幂等提交、分页与错误契约。
+3. 稳定的 DTO/schema 版本策略和 API 集成测试。
+4. 位置引用模型。line/time 可先落地；scene/tag 必须等待 Phase B 语言与 runtime 解析事实稳定。
+5. Web 或测试客户端完成完整创建、查询、状态变更和冲突路径，证明协议不是 Android 专用草案。
 
-- scene/tag 类型依赖 Phase B 脚本语法，R4 先定义模型 + line/time 实现，scene/tag 待 Phase B。
-- community-api 的 issue `location` 字段演进为 `anchors`（或兼容过渡）。
-- runtime 负责把 scene/tag 锚点解析为可定位目标（需读取脚本 AST）。
+具体端点和字段不在本文提前封盘；它们应由 community-api 的当前计划和实现共同定义。
 
-## 工作包与仓库分配
+## Android 重启 Gate
 
-### 跨仓库契约层
-- **R4-A** issue 契约对齐（三方）：SourceAnchor 定义 + issue 字段补全 + 枚举统一
-- **R4-F** SourceAnchor 跳转（reader + runtime）：anchor → 可跳转目标
+只有以下条件同时满足，才创建新的 Android 社区阶段：
 
-### community-api 层
-- **R4-B** issue action log：`POST /issues/:id/actions`
-- **R4-C** issue 创建：`POST /works/:id/issues`
-- **R4-D** discussion/thread：实体 + `GET/POST /issues/:id/threads`
-- **R4-E** review 闭环：POST 返回完整 + `GET /works/:id/reviews`
-- **R4-G** CommentSummary 统一
+- 社区 API 已部署或可用稳定测试环境，schema 与认证方式有版本化文档。
+- issue/discussion/review/revision 的权威状态、幂等、冲突和离线失败语义已通过主仓库测试。
+- SourceAnchor 或替代位置模型已有真实 producer 与 consumer，不只是概念类型。
+- Android 从 `r3-final` 在当前工具链完成 runtime build、unit、assemble 和 device 回归。
+- 新计划明确 Room migration、draft/outbox 生命周期、同步状态机和用户可恢复错误。
 
-### reader 层（详见 android-reader r4-community-review-plan.md）
-- 消费以上 community-api 新端点
-- 本地缓冲 → 云端同步（衔接 R3 的 local_issue_overrides.synced / local_revisions.synced）
-- SourceAnchor 跳转 UI
+Android 恢复入口：
 
-### runtime 层
-- SourceAnchor 的 scene/tag 解析（依赖 Phase B AST）
-- revision diff 支持（衔接 reader 的 local_revisions 编辑 UI）
+- [Post-R3 re-entry backlog](https://github.com/inu-tsuki/kmd-reader-android/blob/main/docs/planning/post-r3-reentry-backlog.md)
+- [归档的旧 R4 reader 草案](https://github.com/inu-tsuki/kmd-reader-android/blob/main/docs/archive/course-r3-2026/future-drafts/r4-community-review-plan.md)
 
-## 依赖
+第二个链接只供考古；第一个链接才是未来恢复入口。
 
-```text
-R4-A 契约对齐（三方地基）
-  ├─→ R4-F 跳转（reader + runtime）
-  ├─→ R4-B action log（api）→ reader 消费
-  ├─→ R4-C issue 创建（api）→ reader 消费
-  ├─→ R4-D discussion（api）→ reader 消费
-  └─→ R4-E review（api）→ reader 消费
-R4-G CommentSummary（独立）
-```
+## 与 Phase B / Runtime 的关系
 
-## 与 Phase B 的衔接
-
-- SourceAnchor 的 scene/tag 依赖脚本场景标记语法（Phase B 语言层）。
-- R4 先做 line/time 类型的完整链路；scene/tag 待 Phase B 语法就绪后激活。
-- runtime 的 scene/tag 解析需要 Phase B 的 AST 支持。
-
-## 前置条件
-
-- R3（完善本地阅读器）完成：R4 的云端同步依赖 R3 的本地数据层（local_issue_overrides / local_revisions）。
-- community-api 从内存 mock 演进为可持久化（至少文件/SQLite，支撑 action log 和 discussion）。
+- community-api 的基础作品与讨论能力不等待 Android。
+- scene/tag 位置解析等待 Phase B 的正式语法与 AST；line/time 能力可独立设计，但不得伪造未来兼容承诺。
+- runtime settings transaction 与 reduced-motion 按既定顺序在 Phase B graph ownership 后收束，与 Android 是否活跃无关。
+- 未来 Android 只消费已固化的 runtime/community capability，不反向迫使主仓库为旧客户端保持未发布草案。

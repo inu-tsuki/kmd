@@ -339,10 +339,10 @@ Phase R 已经满足的恢复前置条件：
 - Android WebView 已能加载最小 runtime bundle。
 - source / asset / font loading 已经由 host policy 控制。
 
-Phase B 仍需满足：
+Phase B 恢复条件结论：
 
-- Android 真机/模拟器 WebView smoke 与 artifact 消费链路稳定。
-- Phase B 语言设计经过一次文档审查，确认不会重新污染 runtime boundary。
+- ~~Android 真机/模拟器 WebView smoke 与 artifact 消费链路稳定。~~ 已满足并随 Android R3 冻结（2026-07-14）。
+- ~~Phase B 语言设计经过一次文档审查，确认不会重新污染 runtime boundary。~~ 已满足（2026-07-08，D1–D27）。
 - `@kmd/reader-runtime-web` 的禁止导入边界继续成立。
 
-在这些条件满足前，`docs/planning/roadmap/phase-b/1.6-phase-b-plan.md` 保持为 gated roadmap 与设计材料，不作为当前实施计划。
+Phase B 已不再等待 Android；何时实施由主仓库排期决定。Android Reader 当前休眠，不构成后续 gate。
