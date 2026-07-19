@@ -1,0 +1,15 @@
+---
+title: 视觉验收：长标题、混合文字与每一页未熄灭的灯火
+mode: paged
+speed: 18
+---
+
+VISUAL_PAGED_SENTINEL。第一页：河面上的灯火向下游移动，中文、English、numbers 2026 与标点一起构成稳定的分页文本。
+
+第二页：请调整 Reader 字号，并确认这一页仍然完整、没有把页尾文字和控制区域挤在一起。
+
+第三页：码头边的钟敲过一次。暂停并返回详情后，再从书架继续阅读，应回到这个位置附近。
+
+第四页：The last ferry keeps one small window lit. This fixture deliberately keeps each paragraph short enough to make page transitions easy to inspect.
+
+第五页：灯火熄灭前，水面仍保留一条清晰的反光。到达这里表示 paged fixture 的完整文本已加载。

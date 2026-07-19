@@ -75,15 +75,34 @@ describe('kmd-community-api', () => {
     expect(response.text).toContain('cam.reset');
   });
 
-  it('lists all 29 works including reader typography fixtures without filters', async () => {
+  it('lists all 31 works including reader typography and visual fixtures without filters', async () => {
     const response = await request(createApp()).get('/works').expect(200);
 
-    expect(response.body).toHaveLength(29);
+    expect(response.body).toHaveLength(31);
+    expect(response.body).toEqual(expect.arrayContaining([
+      expect.objectContaining({ id: 'reader-visual-scroll', presentationMode: 'scroll', lifecycleStatus: 'published' }),
+      expect.objectContaining({ id: 'reader-visual-paged', presentationMode: 'paged', lifecycleStatus: 'published' })
+    ]));
     // 打包自 public/ 的新 work 全部是 published，不应撞 submitted 过滤器
     const publishedFromPublic = response.body.filter((w: { lifecycleStatus: string; tags: string[] }) =>
       w.lifecycleStatus === 'published' && w.tags.includes('demo')
     );
     expect(publishedFromPublic.length).toBeGreaterThanOrEqual(3);
+  });
+
+  it('serves source-backed reader host visual fixtures', async () => {
+    const app = createApp();
+    const scroll = await request(app).get('/works/reader-visual-scroll/source').expect(200);
+    const paged = await request(app).get('/works/reader-visual-paged/source').expect(200);
+
+    expect(scroll.headers['content-type']).toContain('text/x-kmd');
+    expect(scroll.headers['x-kmd-work-id']).toBe('reader-visual-scroll');
+    expect(scroll.headers['x-kmd-revision-id']).toBe('rev-1');
+    expect(scroll.text).toContain('VISUAL_SCROLL_SENTINEL');
+    expect(paged.headers['content-type']).toContain('text/x-kmd');
+    expect(paged.headers['x-kmd-work-id']).toBe('reader-visual-paged');
+    expect(paged.headers['x-kmd-revision-id']).toBe('rev-1');
+    expect(paged.text).toContain('VISUAL_PAGED_SENTINEL');
   });
 
   it('serves an fx filter showcase source', async () => {
