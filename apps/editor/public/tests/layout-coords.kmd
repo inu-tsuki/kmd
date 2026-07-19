@@ -1,0 +1,37 @@
+---
+title: 布局坐标稳定性 fixture
+mode: normal
+speed: 40
+---
+// 本 fixture 专门测布局数学（支柱 2b）：堆叠 / align / 断行 / goto-flow-up-down 偏移 / marker 同步。
+// 给定 setup.ts 的合成度量（width = 字符数 × fontSize × 0.5），坐标应完全确定。
+// 这是"现状特征"测试，非真实渲染几何（§1.4 诚实盲区：真实渲染靠 Playwright e2e）。
+
+// 1. 垂直堆叠：两段独立 paragraph，y 应递增。
+第一段第一行
+
+第二段第一行
+
+// 2. align=center：block option 居中。
+[align=center] 居中文本
+
+// 3. align=right。
+[align=right] 右对齐文本
+
+// 4. 断行：长行超过 maxWidth 应换行。
+长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长
+
+// 5. up / down 偏移：layout instruction 应产生 displayOffsetY。
+上方 @ f.up(20)
+下方 @ f.down(15)
+
+// 6. left / right 偏移：displayOffsetX。
+左移 @ f.left(10)
+右移 @ f.right(10)
+
+// 7. goto 跳转到坐标。
+跳跃 @ f.goto(100, 200)
+
+// 8. marker 同步：mark + goto mark。
+锚点 @ f.mark(point_a)
+跳到锚点 @ f.goto(point_a)

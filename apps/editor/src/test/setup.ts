@@ -59,7 +59,20 @@ const _makeCtx = () => ({
   font: '',
   measureText(t: string) {
     const sz = parseFloat((this.font || '24px').match(/(\d+)px/)?.[1] || '24');
-    return { actualBoundingBoxAscent: sz * 0.8, actualBoundingBoxDescent: sz * 0.2, width: (t || '').length * sz * 0.5 };
+    // actualBoundingBoxLeft/Right 必须提供：pixi CanvasTextMetrics._measureText 计算
+    //   boundsWidth = actualBoundingBoxRight - actualBoundingBoxLeft
+    //   lineWidth = Math.max(metricWidth, boundsWidth)
+    // 缺这两个字段 → undefined - undefined = NaN → Math.max(width, NaN) = NaN
+    //   → measureChars 返回 width:NaN，layout 坐标全 NaN。
+    // 合成模型：左边界 0，右边界 = width（等宽假设），与 width = chars × sz × 0.5 一致。
+    const width = (t || '').length * sz * 0.5;
+    return {
+      actualBoundingBoxAscent: sz * 0.8,
+      actualBoundingBoxDescent: sz * 0.2,
+      actualBoundingBoxLeft: 0,
+      actualBoundingBoxRight: width,
+      width,
+    };
   },
 });
 DOMAdapter.set({
