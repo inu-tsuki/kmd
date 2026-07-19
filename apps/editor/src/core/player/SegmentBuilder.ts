@@ -3,7 +3,6 @@ import { KineticText } from "../KineticText";
 import { layout } from "../layout/LayoutEngine";
 import { TextPlayer } from "../render/text/TextPlayer";
 import { EffectProcessor } from "../effects/EffectProcessor";
-import { effectManager } from "../effects/EffectManager";
 import type { EffectConfig, KMDMetadata, KMDParagraphData } from "../parser/types";
 import type { Checkpoint, InFlightAnimation, ParagraphUnit, Segment, StageModifierRecord } from "../state/Segment";
 import type { BehaviorRecord, StyleRecord, InstantEffectRecord, EntranceFilterRecord } from "../render/text/TextPlayer";
@@ -11,8 +10,8 @@ import { stageManager } from "../stage/StageManager";
 import { buildStageModifierRecord, buildStageModifierApplyParams } from "../stage/stagePresets";
 import { createParagraphExecutionPlan } from "../execution/paragraphExecutionPlan";
 import type { PlaybackRuntimeState } from "./PlaybackController";
-import { PlaybackController } from "./PlaybackController";
 import type { ReaderRuntimeTimelineMarker } from "../runtime";
+import { BehaviorRecordBuilder } from "./BehaviorRecordBuilder";
 import gsap from "gsap";
 
 type ActiveStageTweenEntry = {
@@ -348,183 +347,21 @@ export class SegmentBuilder {
             }
           }
 
-          for (const cfg of blockInstant) {
-            const resolved = EffectProcessor.resolveParams(cfg.params);
-            // B3: :bg scope 的 instant filter 目标是背景精灵而非 paragraphText。
-            // Bug 6: target 延后到 segmentTl.call 触发时解析——bg(src) 异步加载，
-            // build 期 sprite 可能尚未就绪；播放时（tl.call 触发）更可能已加载完成。
-            // 若仍未就绪，注册 onBackgroundReady 回调延后 apply。
-            const isBg = cfg.level === "bg";
-            const buildTimeBgTarget = isBg ? stageManager.getBackgroundSprite() : null;
-            const instantTarget = buildTimeBgTarget ?? paragraphText;
-            if (isBg) {
-              allInstantEffects.push({
-                target: instantTarget,
-                effectName: cfg.name,
-                params: resolved,
-                charIndex: 0,
-                timePosition: segmentCursor,
-                targetLevel: "bg",
-              });
-            } else {
-              allInstantEffects.push({
-                target: paragraphText,
-                effectName: cfg.name,
-                params: resolved,
-                charIndex: 0,
-                timePosition: segmentCursor,
-              });
-            }
-            const instantName = cfg.name;
-            const instantParams = { ...resolved };
-            // R12：预查 meta——void result 的 Graphics 特效（box/border）push graphicsLayer cleanup。
-            const instantMeta = effectManager.getMetadata(instantName);
-            // R22/SA-37：exact-boundary guard。
-            const instantRecTime = segmentCursor;
-            segmentTl.call(() => {
-              if (!context.playbackState.isAutoPlaying) return;
-              if (context.playbackState.lastSeekTime === instantRecTime) return;
-              // Bug 6: :bg target 在 call 触发时解析（此时 sprite 可能已加载）
-              const liveTarget: any = isBg ? stageManager.getBackgroundSprite() : instantTarget;
-              if (isBg && !liveTarget) {
-                // sprite 仍未就绪——注册延后 apply
-                stageManager.onBackgroundReady((sprite) => {
-                  const fi = effectManager.apply(sprite, instantName, instantParams, true, "background");
-                  if (fi) {
-                    context.playbackState.activeInstantCleanups.push({ target: sprite, filterInstance: fi });
-                  }
-                });
-                return;
-              }
-              const filterInstance = effectManager.apply(
-                liveTarget,
-                instantName,
-                instantParams,
-                true,
-                isBg ? "background" : "text",
-              );
-              if (filterInstance) {
-                context.playbackState.activeInstantCleanups.push({
-                  target: liveTarget,
-                  filterInstance,
-                });
-              } else if (instantMeta?.mutexGroup && typeof (liveTarget as any).getGraphicsLayer === "function") {
-                context.playbackState.activeInstantCleanups.push({
-                  target: liveTarget,
-                  filterInstance: undefined as any,
-                  graphicsLayer: instantMeta.mutexGroup,
-                });
-              }
-            }, [], segmentCursor);
-          }
-
-          // block 作用域 behavior filter（blur/rgbShift/warp 容器级 + M2 displace/underwater 等）。
-          // 与 char/group behavior 路径（下方 segmentTl.call）同构：push BehaviorRecord 供
-          // registerBehaviors seek 重 apply，segmentTl.call 正向触发 + 捕获 cleanup。
-          // target = char = paragraphText（容器级无 removeModifier，clearBehaviors 守卫跳过 modifier
-          // 分支；filter + ticker 经 BehaviorFilterResult 解包记录，与 registerBehaviors 一致）。
-          for (const cfg of blockBehavior) {
-            const resolved = EffectProcessor.resolveParams(cfg.params);
-            // B3: :bg scope 的 behavior filter 目标是背景精灵而非 paragraphText。
-            // Bug 6: target 延后到 segmentTl.call 触发时解析（与 instant 同理）。
-            const isBgBehavior = cfg.level === "bg";
-            const behaviorRecord: BehaviorRecord = {
-              target: isBgBehavior ? (stageManager.getBackgroundSprite() ?? paragraphText) : paragraphText,
-              char: isBgBehavior ? (stageManager.getBackgroundSprite() ?? paragraphText) as any : paragraphText,
-              effectName: cfg.name,
-              params: resolved,
-              charIndex: 0,
-              timePosition: segmentCursor,
-              targetLevel: isBgBehavior ? "bg" : undefined,
-            };
-            allBehaviors.push(behaviorRecord);
-            const behaviorName = cfg.name;
-            const behaviorParams = { ...resolved };
-            // R22/SA-37：exact-boundary guard——与 instant 同源。
-            const behaviorRecTime = segmentCursor;
-            segmentTl.call(() => {
-              if (!context.playbackState.isAutoPlaying) return;
-              if (context.playbackState.lastSeekTime === behaviorRecTime) return;
-              // Bug 6: :bg target 在 call 触发时解析
-              const liveBehaviorTarget = isBgBehavior ? stageManager.getBackgroundSprite() : paragraphText;
-              if (isBgBehavior && !liveBehaviorTarget) {
-                stageManager.onBackgroundReady((sprite) => {
-                  const result = effectManager.apply(sprite, behaviorName, behaviorParams, true, "background");
-                  const unpacked = PlaybackController.unpackBehaviorResult(result, sprite);
-                  context.playbackState.activeBehaviorCleanups.push({
-                    char: sprite as any,
-                    modName: behaviorName,
-                    target: sprite,
-                    ...unpacked,
-                  });
-                });
-                return;
-              }
-              const behaviorChar = liveBehaviorTarget as any;
-              const result = effectManager.apply(
-                behaviorChar,
-                behaviorName,
-                behaviorParams,
-                true,
-                isBgBehavior ? "background" : "text",
-              );
-              // INV-7（SA-16）：解包经 PlaybackController.unpackBehaviorResult 单一真相源
-              const unpacked = PlaybackController.unpackBehaviorResult(result, liveBehaviorTarget);
-              context.playbackState.activeBehaviorCleanups.push({
-                char: behaviorChar,
-                modName: behaviorName,
-                target: liveBehaviorTarget,
-                ...unpacked,
-              });
-            }, [], segmentCursor);
-          }
-
-        // block 作用域 entrance 特效（如 blurIn:block）：build 期 apply 创建 filter + tween，
-        // tween 入 segment timeline（seek 插值 + stop kill 释放），filter 进 entranceFilters
-        // （clearEntranceFilters 在 stop/clearScreen 移除 + destroyFilterDeep）。
-        // **不进 instantEffects**（seek 重 apply blurIn 会 gsap.set(alpha=0) 重置 + 崩溃），
-        // **不落 blockRemaining**（applyGroupEffects 丢弃 {tween,filter} → filter+tween 泄漏）。
-        // 与 TextPlayer.captureEntrance 语义同构，但在 SegmentBuilder 层直接处理（block 分流
-        // 在 buildTimeline 之前，captureEntrance 不可用）。
-        for (const cfg of blockEntrance) {
-          const resolved = EffectProcessor.resolveParams(cfg.params);
-          // Bug 2/6: :bg scope 的 entrance filter 目标是背景精灵而非 paragraphText。
-          // 与 instant/behavior 同理：sprite 未就绪时注册 onBackgroundReady 延后 apply。
-          const isBgEntrance = cfg.level === "bg";
-          const bgEntranceTarget = isBgEntrance ? stageManager.getBackgroundSprite() : null;
-          const entranceTarget = bgEntranceTarget ?? paragraphText;
-          const entranceName = cfg.name;
-          const entranceParams = { ...resolved };
-
-          // build 期同步 apply：fn 创建 filter push 进 target.filters + 返回 {tween, filter}
-          const applyEntrance = (target: any) => {
-            const result = effectManager.apply(
-              target,
-              entranceName,
-              entranceParams,
-              true,
-              isBgEntrance ? "background" : "text",
-            );
-            if (result && typeof result === 'object' && 'tween' in result && 'filter' in result) {
-              const efr = result as any;
-              if (efr.tween instanceof gsap.core.Tween || efr.tween instanceof gsap.core.Timeline) {
-                segmentTl.add(efr.tween, segmentCursor);
-              }
-              allEntranceFilters.push({
-                target,
-                filter: efr.filter,
-                timePosition: segmentCursor,
-              });
-            }
-          };
-
-          if (isBgEntrance && !bgEntranceTarget) {
-            // Bug 6: sprite 未就绪——延后到 onBackgroundReady 回调
-            stageManager.onBackgroundReady((sprite) => applyEntrance(sprite));
-          } else {
-            applyEntrance(entranceTarget);
-          }
-        }
+          // behavior/instant/entrance 三类 record 的收集与 segmentTl.call 注册
+          // 由 BehaviorRecordBuilder 接管（处方 6 拆解 SegmentBuilder 的一瓣）。
+          // 行为保持：guard / `:bg` 延后 / unpackBehaviorResult / cleanup push 语义全部原样。
+          const behaviorBuilder = new BehaviorRecordBuilder({
+            segmentTl,
+            playbackState: context.playbackState,
+            paragraphText,
+            segmentCursor,
+            allBehaviors,
+            allInstantEffects,
+            allEntranceFilters,
+          });
+          behaviorBuilder.processBlockInstant(blockInstant);
+          behaviorBuilder.processBlockBehavior(blockBehavior);
+          behaviorBuilder.processBlockEntrance(blockEntrance);
         }
 
         const displayAssembly = paragraphText._displayAssembly;
@@ -549,102 +386,25 @@ export class SegmentBuilder {
         displayAssembly.chars.forEach((char) => { char.visible = false; });
         paragraphText.visible = true;
 
-        for (const behavior of buildResult.behaviors) {
-          const absTime = behavior.timePosition + segmentCursor;
-          allBehaviors.push({
-            ...behavior,
-            timePosition: absTime,
-          });
-          const behaviorChar = behavior.char;
-          const isBgBehavior = behavior.targetLevel === "bg";
-          const behaviorName = behavior.effectName;
-          const behaviorParams = { ...behavior.params };
-          // R22/SA-37：exact-boundary guard——absTime 已是 const（let 重新赋值的局部），但为 guard
-          // 显式捕获。seek 落在 absTime 上、随后 play 时 deferred tick 跨越双 push filter。
-          const behaviorRecTime = absTime;
-          segmentTl.call(() => {
-            if (!context.playbackState.isAutoPlaying) return;
-            if (context.playbackState.lastSeekTime === behaviorRecTime) return;
-            const applyBehavior = (target: any) => {
-              const result = effectManager.apply(
-                target,
-                behaviorName,
-                behaviorParams,
-                true,
-                isBgBehavior ? "background" : "text",
-              );
-              // INV-7（SA-16）：解包经 PlaybackController.unpackBehaviorResult 单一真相源
-              // （与 block 路径、registerBehaviors 共用，新增返回 shape 只改一处）。
-              const unpacked = PlaybackController.unpackBehaviorResult(result, target);
-              context.playbackState.activeBehaviorCleanups.push({
-                char: target,
-                modName: behaviorName,
-                target,
-                ...unpacked,
-              });
-            };
-            const liveTarget = isBgBehavior ? stageManager.getBackgroundSprite() : behaviorChar;
-            if (isBgBehavior && !liveTarget) {
-              stageManager.onBackgroundReady((sprite) => applyBehavior(sprite));
-            } else {
-              applyBehavior(liveTarget);
-            }
-          }, [], absTime);
-        }
+        // group/char 级 behavior/instant record 由 BehaviorRecordBuilder 接管（处方 6）。
+        // 块外重新构造（builder 无状态，只持 ctx 引用；paragraphText / segmentCursor 此处不变）。
+        const groupCharBehaviorBuilder = new BehaviorRecordBuilder({
+          segmentTl,
+          playbackState: context.playbackState,
+          paragraphText,
+          segmentCursor,
+          allBehaviors,
+          allInstantEffects,
+          allEntranceFilters,
+        });
+        groupCharBehaviorBuilder.processGroupCharBehaviors(buildResult);
+        groupCharBehaviorBuilder.processGroupCharInstantEffects(buildResult);
 
         for (const styleRecord of buildResult.styleRecords) {
           allStyleRecords.push({
             ...styleRecord,
             timePosition: styleRecord.timePosition + segmentCursor,
           });
-        }
-
-        // Instant 特效（静态 filter）：正向播放经 segmentTl.call 在 absTime 触发 apply；
-        // seek 时由 PlaybackController.registerInstantEffects reset+replay。
-        // 与 behavior 的两路径模型对称（behavior 既在此 tl.call，又靠 registerBehaviors seek 重注册）。
-        for (const instantRecord of buildResult.instantEffects) {
-          const absTime = instantRecord.timePosition + segmentCursor;
-          allInstantEffects.push({
-            ...instantRecord,
-            timePosition: absTime,
-          });
-          const instantTarget = instantRecord.target;
-          const isBgInstant = instantRecord.targetLevel === "bg";
-          const instantName = instantRecord.effectName;
-          const instantParams = { ...instantRecord.params };
-          // R12：预查 meta——void result 的 Graphics 特效（bg/border）push graphicsLayer cleanup。
-          const instantMeta = effectManager.getMetadata(instantName);
-          // R22/SA-37：exact-boundary guard。
-          const instantRecTime = absTime;
-          segmentTl.call(() => {
-            if (!context.playbackState.isAutoPlaying) return;
-            if (context.playbackState.lastSeekTime === instantRecTime) return;
-            const applyInstant = (target: any) => {
-              const filterInstance = effectManager.apply(
-                target,
-                instantName,
-                instantParams,
-                true,
-                isBgInstant ? "background" : "text",
-              );
-              if (filterInstance) {
-                context.playbackState.activeInstantCleanups.push({ target, filterInstance });
-              } else if (instantMeta?.mutexGroup && typeof target?.getGraphicsLayer === "function") {
-                // R12：Graphics 特效（bg/border 画 Graphics 非 filter，返回 void）——seek 回退清该层防残留。
-                context.playbackState.activeInstantCleanups.push({
-                  target,
-                  filterInstance: undefined as any,
-                  graphicsLayer: instantMeta.mutexGroup,
-                });
-              }
-            };
-            const liveTarget = isBgInstant ? stageManager.getBackgroundSprite() : instantTarget;
-            if (isBgInstant && !liveTarget) {
-              stageManager.onBackgroundReady((sprite) => applyInstant(sprite));
-            } else {
-              applyInstant(liveTarget);
-            }
-          }, [], absTime);
         }
 
         // 入场特效 filter（blurIn 等）：filter 已在 build 期由 captureEntrance 创建并 push 进
