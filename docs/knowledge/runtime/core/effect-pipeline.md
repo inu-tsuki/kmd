@@ -228,6 +228,42 @@ style 管线只涉及 `StyleRecord` 与 `baseStyleSnapshot`，其余三类各自
 
 > **R22/SA-37 边界所有权补充**：上面"动态 → record + tl.call"在 **exact-boundary**（seek 落在 record.timePosition 上、随后 play）有一个有状态例外——GSAP `tl.call` 是 ticker tick 跨越时触发（非 play() 同步），故 seek+play 会让 deferred tick 跨越 boundary 重触发同一 record 的 tl.call，与 seek 的 `replayStyles` 双 apply（big ×1.5 两次=×2.25）。修复：`seekToTime`/`playSegment` 设 `state.lastSeekTime`，boundary `tl.call` guard 检查 `record.timePosition===lastSeekTime` 则跳过——快照消费者（register*/replayStyles/replayStageModifiers）单一拥有当前态，tl.call 让位。这是"构建期分工"约定在 GSAP deferred 语义下的必要有状态例外（两驱动共享同一 tick 跨越事件，构建期无法分离）。详见 `timeline-and-easing.md` 检查清单 15 + `lifecycle-invariants.md` SA-37。
 
+### 显式相位契约（`StyleWritePort`，处方 6 提交 4 收口）
+
+5 处 `KineticChar.style` / `baseStyleSnapshot` 写入方分布在一条隐含管线的相位上。
+处方 6 的收口形态是**显式有序阶段**而非魔法函数——把相位顺序显式化、定统一写入契约，
+明确"哪个相位、谁、写什么"。契约定义在 `apps/editor/src/core/player/StyleWritePort.ts`，
+接口为 `recaptureBaseline`（P2）/ `registerPostHoldWrite`（P2b）。
+
+| 相位 | 模块 | 写什么 | 为什么存在 | 收口状态 |
+|------|------|--------|-----------|----------|
+| **P0 reset** | `PlaybackController.replayStyles` | `resetStyle()` 写 char.style 回 baseline | seek 时清回初始态再重放动态 | follow-up #10（随 PlaybackController 拆分迁入） |
+| **P1 bake** | `LayoutPlanner.applyInitialStylesToStyle` | styleManager.apply 写 measurementStyle → 烘进 glyphPlan.style → KineticChar 构造 baseline | 构建期烘焙 pre-hold 初始样式 | follow-up（随 LayoutPlanner 拆分迁入） |
+| **P2 recapture** | `SegmentBuilder`（`StyleRecordBuilder`） | recaptureBaseStyleSnapshot 写 baseStyleSnapshot | block pre-hold style 同步写后重捕 baseline | **已迁至 `StyleWritePort.recaptureBaseline`** |
+| **P2b block post-hold** | `SegmentBuilder`（`StyleRecordBuilder`） | segmentTl.call 内 applyStyleRecursively 写 char.style + 登记 StyleRecord | block 链 post-hold 动态样式经 tl.call 触发、seek 由 replayStyles 重放 | **已迁至 `StyleWritePort.registerPostHoldWrite`** |
+| **P3 unrollGroupChain** | `TextPlayer` | tl.call 内 applyStyleRecursively 写 char.style + 登记 StyleRecord | 组级 hold 链 post-hold 动态样式 | follow-up（随 TextPlayer 拆分迁入） |
+| **P4 unrollCharChain** | `TextPlayer` | tl.call 内 styleManager.apply 写 char.style + 登记 StyleRecord | char 级 hold 链 post-hold 动态样式 | follow-up（随 TextPlayer 拆分迁入） |
+| **P4 replay** | `PlaybackController.replayStyles` | styleManager.apply 写 char.style | seek 重放 timePosition<=currentTime 的 StyleRecord | follow-up #10 |
+| **外部直写** | `presets/behavior.ts:244` | `target.style.fill = "#ffffff"` 直写 | 某 behavior preset 绕过 styleManager 的散写 | follow-up（最该清理的散写，建议下个维护窗口改走 styleManager.apply） |
+
+`EffectProcessor.applyGroupEffects` 内的 `isBlocking` 判定仍用 inline `config.name === "hold" || config.blocking`
+（与 `classifyStyleWrite` helper 分叉），已在代码注释中标注，建议后续统一为 `classifyStyleWrite`。
+
+### Cleanup 写入单一契约（`CleanupRegistry`，处方 6 提交 4 收口）
+
+`PlaybackRuntimeState.activeBehaviorCleanups` / `activeInstantCleanups` 的写入方原有 3 处
+（SegmentBuilder 的 `segmentTl.call` 闭包 × 8 处 push + PlaybackController 的
+registerBehaviors/registerInstantEffects × 3 处 push）。处方 6 收口：
+
+- **写入侧**：子构建器（`BehaviorRecordBuilder`）构造时注入 `BehaviorCleanupSink` /
+  `InstantCleanupSink` 窄接口，8 处裸 push 改为 `sink.register(entry)`。子构建器不再
+  reach into 共享可变数组，也不知道谁执行。
+- **执行侧单一所有权**：`sink` 底层仍 push 到 `playbackState.activeBehaviorCleanups` /
+  `activeInstantCleanups`（简化方案，不引入第二数组）；执行仍由 `PlaybackController.clearBehaviors` /
+  `clearInstantEffects` 唯一 drain。ScriptPlayer 初始化点与测试断言不受影响。
+- **PlaybackController 的 3 处 push deferred 到 #10**：那是 behavior/effect 注册路径、在 replay 链上，
+  且 PlaybackController 是要单独拆的上帝对象，registry 的执行语义 equivalence 等测试网就位再验证。
+
 ## 特效实现模式
 
 ### Behavior 特效（KineticChar 上）
