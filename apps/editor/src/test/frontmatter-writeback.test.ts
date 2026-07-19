@@ -213,7 +213,11 @@ describe('frontmatter writeback (W1–W4)', () => {
       '---\n' +
       '正文\n';
 
-    const coreMeta = parser.parse(src).metadata;
+    // coreMeta 运行时含 bgColor/fontColor/fontFamily/kmdVersion（frontmatter parseMetadata 读入），
+    // 但 KMDMetadata 类型声明缺这些字段（生产侧类型债，本任务不顺手改——见 docs/planning/
+    // architecture-health-check-2026-07.md 处方 10 globalThis.KmdRuntimeConfig schema 同源问题）。
+    // 此处 cast 为 any 以访问，断言的是运行时行为而非类型完整性。
+    const coreMeta = parser.parse(src).metadata as any;
     const storeCfg = syncConfigFromText(src, DEFAULT_CFG);
 
     it('6 UI fields agree between store-side sync and core parseMetadata', () => {

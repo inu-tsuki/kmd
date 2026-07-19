@@ -20,7 +20,6 @@ export default defineConfig({
     sequence: { shuffle: false },
     // playwright e2e 仍由 playwright.config.ts 负责，vitest 不碰浏览器。
     environment: 'node',
-    includeSource: ['src/**/*.ts'],
     snapshotOutputDir: 'src/test/__snapshots__',
     // 默认 10s 太短给 pixi/gsap 互操作预热；layout 全语料跑也偏重。
     testTimeout: 30_000,

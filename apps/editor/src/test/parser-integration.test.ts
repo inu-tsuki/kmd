@@ -16,7 +16,7 @@ const result = parser.parse(source);
 
 describe('parser integration (final-test.kmd / Report 5.x)', () => {
   it('BlockOptions carries align=center and cam.zoom globalEffect', () => {
-    const p1 = result.paragraphs[0];
+    const p1 = result.paragraphs[0]!;
     expect(p1.blockOptions.align).toBe('center');
     expect(p1.globalEffects.some((e) => e.name === 'cam.zoom')).toBe(true);
   });
@@ -65,7 +65,7 @@ describe('parser integration (final-test.kmd / Report 5.x)', () => {
   });
 
   it('[.wave] broadcasts wave to all text tokens, not globalEffects', () => {
-    const broadcast = parser.parse('[.wave]\n{AB}\nCD').paragraphs[0];
+    const broadcast = parser.parse('[.wave]\n{AB}\nCD').paragraphs[0]!;
     expect(broadcast.globalEffects.every((e) => e.name !== 'wave')).toBe(true);
     const visualTokens = broadcast.tokens.filter((t) => t.content.trim());
     expect(visualTokens.length).toBe(2);
@@ -73,13 +73,13 @@ describe('parser integration (final-test.kmd / Report 5.x)', () => {
   });
 
   it('paragraph exposes ast and ir', () => {
-    const broadcast = parser.parse('[.wave]\n{AB}\nCD').paragraphs[0];
+    const broadcast = parser.parse('[.wave]\n{AB}\nCD').paragraphs[0]!;
     expect(broadcast.ast).toBeDefined();
     expect(broadcast.ir).toBeDefined();
   });
 
   it('pure comment line does not emit leading newline token or shift visible tokens onto synthetic line', () => {
-    const quoted = parser.parse('// quote\ntext1 >>> text1\n\ntext2').paragraphs[0];
+    const quoted = parser.parse('// quote\ntext1 >>> text1\n\ntext2').paragraphs[0]!;
     expect(quoted.tokens[0]?.content).not.toBe('\n');
     expect(quoted.tokens.every((t) => t.line !== 0)).toBe(true);
   });

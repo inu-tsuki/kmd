@@ -116,7 +116,7 @@ describe('layout coordinate stability', () => {
     expect(ys.size).toBeGreaterThanOrEqual(2);
     const sortedYs = [...ys].sort((a, b) => a - b);
     for (let i = 1; i < sortedYs.length; i++) {
-      expect(sortedYs[i]).toBeGreaterThan(sortedYs[i - 1]);
+      expect(sortedYs[i]!).toBeGreaterThan(sortedYs[i - 1]!);
     }
   });
 

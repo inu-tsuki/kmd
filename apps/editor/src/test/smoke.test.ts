@@ -14,7 +14,7 @@ describe('vitest smoke', () => {
   it('parser singleton parses a trivial source without throwing', () => {
     const result = parser.parse('hello @ f.red');
     expect(result.paragraphs.length).toBeGreaterThanOrEqual(1);
-    const first = result.paragraphs[0];
+    const first = result.paragraphs[0]!;
     expect(first.tokens.some((t) => t.content.includes('hello'))).toBe(true);
   });
 
