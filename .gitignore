@@ -36,6 +36,7 @@ test-results
 *.sw?
 .codex
 .zcode
+.claude
 parser-output.json
 
 # Temporary sibling-style project folders if created inside this repo.
