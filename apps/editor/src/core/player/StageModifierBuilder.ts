@@ -7,7 +7,6 @@ import gsap from "gsap";
 
 /** gsap 时间线类型（经 TimelineBuildResult.timeline 复用，避免重复声明）。 */
 type GsapTimeline = TimelineBuildResult["timeline"];
-type GsapTweenOrTimeline = gsap.core.Tween | gsap.core.Timeline;
 
 export type ActiveStageTweenEntry = {
   tween: gsap.core.Tween | gsap.core.Timeline;
@@ -275,6 +274,3 @@ export class StageModifierBuilder {
     }
   }
 }
-
-// 保持 GsapTweenOrTimeline 类型别名供未来扩展使用（当前 captureTween 内联 instanceof）。
-export type { GsapTweenOrTimeline };

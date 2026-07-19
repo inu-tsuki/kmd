@@ -41,7 +41,7 @@
   `fx-bg.kmd` 的 Pixi texture 生命周期、背景/内容层级与 `:bg` filter 归属；Vitest 收编与 shader CI 仍待完成。
 - [x] **处方 6 · 拆解 SegmentBuilder**（2026-07-19 完成，PR `refactor/segment-builder-split`）
   按记录类型抽出 `BehaviorRecordBuilder` / `StyleRecordBuilder` / `StageModifierBuilder` 子构建器，
-  SegmentBuilder 973 → 414 行。共享可变状态收口：
+  SegmentBuilder 973 → 426 行。共享可变状态收口：
   - **Cleanup**：SegmentBuilder 内 8 处裸 push → 经 `CleanupRegistry` 窄 sink 登记的单一写入契约；
     PlaybackController 的 3 处 push deferred 到 #10（随 PlaybackController 拆分迁入）。
     执行侧单一所有权仍是 `playbackState.activeBehaviorCleanups`/`activeInstantCleanups`
