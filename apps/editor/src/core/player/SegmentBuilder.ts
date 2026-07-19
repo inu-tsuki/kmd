@@ -3,7 +3,7 @@ import { KineticText } from "../KineticText";
 import { layout } from "../layout/LayoutEngine";
 import { TextPlayer } from "../render/text/TextPlayer";
 import { EffectProcessor } from "../effects/EffectProcessor";
-import type { EffectConfig, KMDMetadata, KMDParagraphData } from "../parser/types";
+import type { KMDMetadata, KMDParagraphData } from "../parser/types";
 import type { Checkpoint, InFlightAnimation, ParagraphUnit, Segment, StageModifierRecord } from "../state/Segment";
 import type { BehaviorRecord, StyleRecord, InstantEffectRecord, EntranceFilterRecord } from "../render/text/TextPlayer";
 import { stageManager } from "../stage/StageManager";
@@ -12,6 +12,7 @@ import { createParagraphExecutionPlan } from "../execution/paragraphExecutionPla
 import type { PlaybackRuntimeState } from "./PlaybackController";
 import type { ReaderRuntimeTimelineMarker } from "../runtime";
 import { BehaviorRecordBuilder } from "./BehaviorRecordBuilder";
+import { StyleRecordBuilder } from "./StyleRecordBuilder";
 import gsap from "gsap";
 
 type ActiveStageTweenEntry = {
@@ -239,112 +240,16 @@ export class SegmentBuilder {
           }
 
           if (blockRemaining.length > 0) {
-            // R21/SA-36：block/global style 链按 pre-hold / post-hold 边界拆分（镜像 site2
-            // unrollGroupChain + site3 的 hold:char 模型），不再整条经 applyGroupEffects。
-            //
-            // **R21 修复的 bug**：原代码把 blockRemaining（style + hold + timing/unknown）整条丢给
-            // applyGroupEffects 且**不 await**（旧 line 242）。applyGroupEffects 内 hold:block 返回
-            // gsap.delayedCall promise → await result（EffectProcessor.ts:280）→ 函数挂起，构建期
-            // 同步的 recaptureBaseStyleSnapshot 跑在 hold resolve **之前**（post-hold style 漏 baseline），
-            // 且 applyGroupEffects 无 styleRecords 概念 → post-hold style 既不进 baseline 也不进 record，
-            // hold 到点后 applyStyleRecursively 作为**墙钟副作用**触发（不播不 seek 自己染红，seek/reset 管不住）。
-            //
-            // **修复模型**（与 site2/site3 同源，classifyStyleWrite 单一真相源判 pre-hold 边界）：
-            //   - pre-hold style → applyGroupEffects 同步应用 + recapture baseline（R16/P2 模型不变）
-            //   - hold → 推进 chainCursor（构建期不真等，与 site2 `chainCursor += dur` 一致）
-            //   - post-hold style → segmentTl.call + allStyleRecords（seek 由 replayStyles 重放，与 site2 P3 同构）
-            //   - 非 style 非 timing 残留（unknown）→ 仍经 applyGroupEffects（保持既有行为；hold 已抽走不阻塞）
-            const blockStylePreHold: typeof visualConfigs = [];
-            const blockStylePostHold: { config: EffectConfig; time: number }[] = [];
-            const blockNonStyleRemaining: typeof visualConfigs = [];
-            let blockHoldEncountered = false;
-            let chainCursor = segmentCursor;
-            for (const cfg of blockRemaining) {
-              const { isStyle, isBlocking } = EffectProcessor.classifyStyleWrite(cfg);
-              if (isStyle) {
-                if (blockHoldEncountered) {
-                  blockStylePostHold.push({ config: cfg, time: chainCursor });
-                } else {
-                  blockStylePreHold.push(cfg);
-                }
-                continue;
-              }
-              // hold 是 cursor 推进器（stagger/timing），构建期不真等——抽走不进 applyGroupEffects。
-              if (cfg.name === "hold" && isBlocking) {
-                chainCursor += EffectProcessor.resolvePauseDuration(cfg.params, 1);
-                blockHoldEncountered = true;
-                continue;
-              }
-              // 其余非 style（timing sugar slow/fast/go、unknown）→ 保持原 applyGroupEffects 路径。
-              blockNonStyleRemaining.push(cfg);
-              if (isBlocking) blockHoldEncountered = true;
-            }
-
-            // pre-hold style：applyGroupEffects 同步写 + recapture baseline（R16/P2 模型，含 big/small 测量）。
-            // Bug 2: :bg scope 的 style/non-style 不走 applyGroupEffects（Sprite 无 getGraphicsLayer/tokens），
-            // 应在 instant/behavior 轨道已处理；若落到 remaining 则跳过并 warn。
-            const blockStylePreHoldNonBg = blockStylePreHold.filter(cfg => {
-              if (cfg.level === "bg") {
-                console.warn(`[SegmentBuilder] :bg style "${cfg.name}" in blockRemaining — not applicable to bg sprite, skipped`);
-                return false;
-              }
-              return true;
-            });
-            if (blockStylePreHoldNonBg.length > 0) {
-              EffectProcessor.applyGroupEffects(paragraphText, [...blockStylePreHoldNonBg]);
-              // R16/SA-31：applyGroupEffects 在 KineticChar 构造**之后**同步写 char.style（force=true），
-              // 但 baseStyleSnapshot 已在构造时固化（R15 pre-hold 烘焙态）。重新捕获 baseline = 当前
-              // style（含 block 样式），避免 replayStyles reset 回无 block 样式的 baseline 丢样式。
-              // 初始样式只进 baseline 不进 record，避免相对样式 big/small 双重放大。
-              for (const token of paragraphText.tokens) {
-                for (const c of token.chars) {
-                  c.recaptureBaseStyleSnapshot();
-                }
-              }
-            }
-
-            // 非 style 残留（timing/unknown，hold 已抽走）：保持原 applyGroupEffects 同步路径。
-            // Bug 2: :bg scope 同理跳过（Sprite 无 applyGroupEffects 所需接口）。
-            const blockNonStyleRemainingNonBg = blockNonStyleRemaining.filter(cfg => {
-              if (cfg.level === "bg") {
-                console.warn(`[SegmentBuilder] :bg non-style "${cfg.name}" in blockRemaining — not applicable to bg sprite, skipped`);
-                return false;
-              }
-              return true;
-            });
-            if (blockNonStyleRemainingNonBg.length > 0) {
-              EffectProcessor.applyGroupEffects(paragraphText, [...blockNonStyleRemainingNonBg]);
-            }
-
-            // post-hold style：record + segmentTl.call（R21/SA-36，镜像 site2 P3）。
-            // seek 时 replayStyles 消费 record（segment.timeline.seek 默认 suppressEvents，tl.call 不触发，
-            // 由 replayStyles 按 timePosition<=currentTime 重放）；正向播放 segmentTl.call 触发 apply。
-            // R22/SA-37：加 exact-boundary 所有权 guard——seek 落在 record.timePosition 上、随后 play 时，
-            // deferred tick 跨越会重触发此 tl.call（与 seek 的 replayStyles 双 apply，big ×1.5 两次=×2.25
-            // 几何错）。guard 检查 record.timePosition === lastSeekTime 则跳过：seek 已应用过此 record，
-            // play 的 tl.call 让位给快照消费者。原「不加守卫——style 不创建资源」注释废止：双 apply 是
-            // mutation 双（不是资源泄漏），guard 现为防 mutation 双。
-            for (const { config, time } of blockStylePostHold) {
-              // Bug 2: :bg scope post-hold style 跳过（同 pre-hold 理由）。
-              if (config.level === "bg") {
-                console.warn(`[SegmentBuilder] :bg post-hold style "${config.name}" — not applicable to bg sprite, skipped`);
-                continue;
-              }
-              const resolved = EffectProcessor.resolveParams(config.params);
-              const cfgName = config.name;
-              const cfgParams = { ...resolved };
-              const recTime = time;
-              segmentTl.call(() => {
-                if (context.playbackState.lastSeekTime === recTime) return;
-                EffectProcessor.applyStyleRecursively(paragraphText, cfgName, cfgParams, true);
-              }, [], recTime);
-              for (const token of paragraphText.tokens) {
-                for (const c of token.chars) {
-                  if (!c.text.trim()) continue;
-                  allStyleRecords.push({ char: c, styleName: cfgName, params: { ...cfgParams }, timePosition: recTime });
-                }
-              }
-            }
+            // blockRemaining（style + 非 style 残留 + hold cursor 推进）由 StyleRecordBuilder 接管
+            // （处方 6 拆解 SegmentBuilder 的一瓣）。R21/SA-36 pre-hold/post-hold 边界拆分、
+            // R16/SA-31 recapture、R22/SA-37 exact-boundary guard、:bg scope 跳过——全部原样保留。
+            new StyleRecordBuilder({
+              segmentTl,
+              playbackState: context.playbackState,
+              paragraphText,
+              segmentCursor,
+              allStyleRecords,
+            }).processBlockRemaining(blockRemaining);
           }
 
           // behavior/instant/entrance 三类 record 的收集与 segmentTl.call 注册
