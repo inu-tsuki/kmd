@@ -3,6 +3,7 @@ import type { EffectConfig } from "../parser/types";
 import type { KineticText } from "../KineticText";
 import type { StyleRecord, TimelineBuildResult } from "../render/text/TextPlayer";
 import type { PlaybackRuntimeState } from "./PlaybackController";
+import type { StyleWritePort } from "./StyleWritePort";
 
 /** gsap 时间线类型（经 TimelineBuildResult.timeline 复用，避免直接 import gsap 值）。 */
 type GsapTimeline = TimelineBuildResult["timeline"];
@@ -18,8 +19,9 @@ type GsapTimeline = TimelineBuildResult["timeline"];
  * **行为保持**（纯重构，从 SegmentBuilder.build L242-347 搬移，不改语义）：
  * - R21/SA-36 pre-hold/post-hold 边界拆分、R16/SA-31 recapture、R22/SA-37 exact-boundary guard
  *   原样保留。
- * - style 写入仍直接 styleManager.apply（经 applyGroupEffects / applyStyleRecursively）；
- *   recaptureBaseStyleSnapshot 仍直接调——contract 化在提交 4。
+ * - style 写入经注入的 StyleWritePort 显式相位契约（处方 6 提交 4 收口）：
+ *   P2 recapture 走 port.recaptureBaseline，P2b post-hold 走 port.registerPostHoldWrite。
+ *   其余 4 处 style 写入方（P0/P1/P3/P4 + 外部直写）标注为 follow-up，见 StyleWritePort.ts 清单。
  * - :bg scope 跳过 + warn、wall-clock 非泄漏（segmentTl.call 不在 build 期触发）——原样。
  *
  * **INV-7 合规**：本文件分流经 EffectProcessor.classifyStyleWrite 单一真相源，不含 SA-17 禁止的
@@ -28,6 +30,7 @@ type GsapTimeline = TimelineBuildResult["timeline"];
 export interface StyleBuildContext {
   segmentTl: GsapTimeline;
   playbackState: PlaybackRuntimeState;   // guard 读取 lastSeekTime 用
+  styleWritePort: StyleWritePort;        // 处方 6 提交 4：style 写入显式相位契约
   paragraphText: KineticText;
   segmentCursor: number;                 // 用作 chainCursor 起点
   allStyleRecords: StyleRecord[];        // 输出 accumulator
@@ -59,7 +62,7 @@ export class StyleRecordBuilder {
    *   - 非 style 非 timing 残留（unknown）→ 仍经 applyGroupEffects（保持既有行为；hold 已抽走不阻塞）
    */
   processBlockRemaining(remaining: EffectConfig[]): void {
-    const { segmentTl, playbackState, paragraphText, segmentCursor, allStyleRecords } = this.ctx;
+    const { segmentTl, playbackState, styleWritePort, paragraphText, segmentCursor, allStyleRecords } = this.ctx;
 
     const blockStylePreHold: EffectConfig[] = [];
     const blockStylePostHold: { config: EffectConfig; time: number }[] = [];
@@ -103,11 +106,10 @@ export class StyleRecordBuilder {
       // 但 baseStyleSnapshot 已在构造时固化（R15 pre-hold 烘焙态）。重新捕获 baseline = 当前
       // style（含 block 样式），避免 replayStyles reset 回无 block 样式的 baseline 丢样式。
       // 初始样式只进 baseline 不进 record，避免相对样式 big/small 双重放大。
-      for (const token of paragraphText.tokens) {
-        for (const c of token.chars) {
-          c.recaptureBaseStyleSnapshot();
-        }
-      }
+      // P2 recapture 经 StyleWritePort 显式相位契约（处方 6 提交 4）。
+      styleWritePort.recaptureBaseline(
+        paragraphText.tokens.flatMap(t => t.chars),
+      );
     }
 
     // 非 style 残留（timing/unknown，hold 已抽走）：保持原 applyGroupEffects 同步路径。
@@ -141,16 +143,17 @@ export class StyleRecordBuilder {
       const cfgName = config.name;
       const cfgParams = { ...resolved };
       const recTime = time;
-      segmentTl.call(() => {
-        if (playbackState.lastSeekTime === recTime) return;
-        EffectProcessor.applyStyleRecursively(paragraphText, cfgName, cfgParams, true);
-      }, [], recTime);
-      for (const token of paragraphText.tokens) {
-        for (const c of token.chars) {
-          if (!c.text.trim()) continue;
-          allStyleRecords.push({ char: c, styleName: cfgName, params: { ...cfgParams }, timePosition: recTime });
-        }
-      }
+      // P2b post-hold style 经 StyleWritePort 显式相位契约（处方 6 提交 4）。
+      // R22/SA-37 exact-boundary guard + StyleRecord 登记由 port 统一承载。
+      styleWritePort.registerPostHoldWrite(
+        recTime,
+        paragraphText,
+        cfgName,
+        cfgParams,
+        allStyleRecords,
+        segmentTl,
+        () => playbackState.lastSeekTime,
+      );
     }
   }
 }

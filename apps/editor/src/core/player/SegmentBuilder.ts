@@ -13,6 +13,8 @@ import type { ReaderRuntimeTimelineMarker } from "../runtime";
 import { BehaviorRecordBuilder } from "./BehaviorRecordBuilder";
 import { StyleRecordBuilder } from "./StyleRecordBuilder";
 import { StageModifierBuilder, type ActiveStageTweenEntry } from "./StageModifierBuilder";
+import { CleanupRegistry } from "./CleanupRegistry";
+import { DefaultStyleWritePort } from "./StyleWritePort";
 import gsap from "gsap";
 
 export interface SegmentBuildContext {
@@ -58,6 +60,11 @@ export class SegmentBuilder {
     const activeStageTweens = new Map<string, ActiveStageTweenEntry>();
     const virtualCam = { ...stageManager.camera };
     const virtualOff = { ...stageManager.cameraOffset };
+    // 处方 6 提交 4：cleanup 写入单一契约（子构建器经 sink 登记，不裸 push）。
+    // sink 底层仍 push 到 playbackState 数组，执行侧单一所有权不变。
+    const cleanupRegistry = new CleanupRegistry(context.playbackState);
+    // 处方 6 提交 4：style 写入显式相位契约（P2/P2b 经 port，其余 4 处 follow-up）。
+    const styleWritePort = new DefaultStyleWritePort();
     // stage modifier 子构建器（处方 6）：global 路径分流 + trim/activeStageTweens 管理。
     const stageModifierBuilder = new StageModifierBuilder({
       segmentTl,
@@ -177,6 +184,7 @@ export class SegmentBuilder {
             new StyleRecordBuilder({
               segmentTl,
               playbackState: context.playbackState,
+              styleWritePort,
               paragraphText,
               segmentCursor,
               allStyleRecords,
@@ -189,6 +197,8 @@ export class SegmentBuilder {
           const behaviorBuilder = new BehaviorRecordBuilder({
             segmentTl,
             playbackState: context.playbackState,
+            behaviorSink: cleanupRegistry.behaviorSink,
+            instantSink: cleanupRegistry.instantSink,
             paragraphText,
             segmentCursor,
             allBehaviors,
@@ -227,6 +237,8 @@ export class SegmentBuilder {
         const groupCharBehaviorBuilder = new BehaviorRecordBuilder({
           segmentTl,
           playbackState: context.playbackState,
+          behaviorSink: cleanupRegistry.behaviorSink,
+          instantSink: cleanupRegistry.instantSink,
           paragraphText,
           segmentCursor,
           allBehaviors,

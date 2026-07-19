@@ -39,8 +39,20 @@
   同时：CI 安装 glslang（`glslang-tools`），将 `test:shaders` 纳入必跑门禁（当前 `SKIP_SHADER_GATE=1` 可绕过）。
   **部分落地（2026-07-10）**：Playwright Chromium 已接入 CI，首个 production reader bundle e2e 覆盖
   `fx-bg.kmd` 的 Pixi texture 生命周期、背景/内容层级与 `:bg` filter 归属；Vitest 收编与 shader CI 仍待完成。
-- [ ] **处方 6 · 拆解 SegmentBuilder**（约 2–3 天）
-  按记录类型抽出 BehaviorRecordBuilder / StyleRecordBuilder / StageModifierBuilder 子构建器，目标 851→~400 行。
+- [x] **处方 6 · 拆解 SegmentBuilder**（2026-07-19 完成，PR `refactor/segment-builder-split`）
+  按记录类型抽出 `BehaviorRecordBuilder` / `StyleRecordBuilder` / `StageModifierBuilder` 子构建器，
+  SegmentBuilder 973 → 414 行。共享可变状态收口：
+  - **Cleanup**：SegmentBuilder 内 8 处裸 push → 经 `CleanupRegistry` 窄 sink 登记的单一写入契约；
+    PlaybackController 的 3 处 push deferred 到 #10（随 PlaybackController 拆分迁入）。
+    执行侧单一所有权仍是 `playbackState.activeBehaviorCleanups`/`activeInstantCleanups`
+    由 `clearBehaviors`/`clearInstantEffects` 唯一 drain。
+  - **Style**：5 处写入方清单（P0 reset / P1 bake / P2 recapture / P2b block post-hold /
+    P3 unrollGroupChain / P4 unrollCharChain + 外部直写）建立显式有序相位契约 `StyleWritePort`。
+    SegmentBuilder 的 P2/P2b 已迁至 port；其余 4 处标注 follow-up（随各模块拆分迁入）。
+  门禁：build + parser + playback(331) + invariants + e2e(2) 全绿。4 个独立可审提交。
+  **Follow-up**：PlaybackController 3 处 cleanup push + P0/P4 style 写入 → #10；
+  TextPlayer P3/P4 → 随 TextPlayer 拆分；LayoutPlanner P1 → 随 LayoutPlanner 拆分；
+  `presets/behavior.ts:244` 外部直写 → 下个维护窗口改走 `styleManager.apply`。
 - [ ] **处方 7 · Phase B 客观准入清单**
   现行门条件"语言设计文档完成一次收敛审查"不可判定；建 `docs/planning/roadmap/` 下的收敛验收文档
   （例如：B0–B4 语法定稿、design.md 覆盖全部命令族、一次评审通过、无 open design issue）。

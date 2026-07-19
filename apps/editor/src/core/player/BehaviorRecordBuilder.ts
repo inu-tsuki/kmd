@@ -5,6 +5,7 @@ import type { EffectConfig } from "../parser/types";
 import type { KineticText } from "../KineticText";
 import type { BehaviorRecord, InstantEffectRecord, EntranceFilterRecord, TimelineBuildResult } from "../render/text/TextPlayer";
 import type { PlaybackRuntimeState } from "./PlaybackController";
+import type { BehaviorCleanupSink, InstantCleanupSink } from "./CleanupRegistry";
 import { PlaybackController } from "./PlaybackController";
 import gsap from "gsap";
 
@@ -15,8 +16,8 @@ import gsap from "gsap";
  * 产出的 group/char 级 behavior/instant record，路由进 segment 级 accumulator + segmentTl.call。
  *
  * **行为保持**（纯重构，从 SegmentBuilder.build 搬移，不改语义）：
- * - 8 处 `context.playbackState.activeBehaviorCleanups.push` / `activeInstantCleanups.push`
- *   仍直接写 playbackState（提交 4 再 sink 化）。
+ * - 8 处 cleanup 写入经注入的 BehaviorCleanupSink / InstantCleanupSink 登记单一写入契约
+ *   （处方 6 提交 4 收口）。sink 底层仍 push 到 playbackState 数组，执行侧单一所有权不变。
  * - `isAutoPlaying` / `lastSeekTime` guard、`:bg` 延后 `onBackgroundReady`、void-result Graphics
  *   cleanup、`unpackBehaviorResult` 单一真相源——全部原样保留。
  *
@@ -27,7 +28,9 @@ import gsap from "gsap";
  */
 export interface BehaviorBuildContext {
   segmentTl: gsap.core.Timeline;
-  playbackState: PlaybackRuntimeState;
+  playbackState: PlaybackRuntimeState;   // 仅供 guard 读取（isAutoPlaying/lastSeekTime），不直接 push
+  behaviorSink: BehaviorCleanupSink;     // 处方 6 提交 4：cleanup 写入单一契约
+  instantSink: InstantCleanupSink;
   paragraphText: KineticText;
   segmentCursor: number;
   allBehaviors: BehaviorRecord[];
@@ -49,7 +52,7 @@ export class BehaviorRecordBuilder {
    * spec §7.2（M1 已修）：instant filter 原同步挂载不经 record，seek 回退 filter 堆叠。
    */
   processBlockInstant(configs: EffectConfig[]): void {
-    const { segmentTl, playbackState, paragraphText, segmentCursor } = this.ctx;
+    const { segmentTl, playbackState, instantSink, paragraphText, segmentCursor } = this.ctx;
 
     for (const cfg of configs) {
       const resolved = EffectProcessor.resolveParams(cfg.params);
@@ -94,7 +97,7 @@ export class BehaviorRecordBuilder {
           stageManager.onBackgroundReady((sprite) => {
             const fi = effectManager.apply(sprite, instantName, instantParams, true, "background");
             if (fi) {
-              playbackState.activeInstantCleanups.push({ target: sprite, filterInstance: fi });
+              instantSink.register({ target: sprite, filterInstance: fi });
             }
           });
           return;
@@ -107,12 +110,12 @@ export class BehaviorRecordBuilder {
           isBg ? "background" : "text",
         );
         if (filterInstance) {
-          playbackState.activeInstantCleanups.push({
+          instantSink.register({
             target: liveTarget,
             filterInstance,
           });
         } else if (instantMeta?.mutexGroup && typeof (liveTarget as any).getGraphicsLayer === "function") {
-          playbackState.activeInstantCleanups.push({
+          instantSink.register({
             target: liveTarget,
             filterInstance: undefined as any,
             graphicsLayer: instantMeta.mutexGroup,
@@ -135,7 +138,7 @@ export class BehaviorRecordBuilder {
    * shift/glitch 对容器跳过），进 record 后解包 result=undefined 不进 cleanup，安全。
    */
   processBlockBehavior(configs: EffectConfig[]): void {
-    const { segmentTl, playbackState, paragraphText, segmentCursor } = this.ctx;
+    const { segmentTl, playbackState, behaviorSink, paragraphText, segmentCursor } = this.ctx;
 
     for (const cfg of configs) {
       const resolved = EffectProcessor.resolveParams(cfg.params);
@@ -165,7 +168,7 @@ export class BehaviorRecordBuilder {
           stageManager.onBackgroundReady((sprite) => {
             const result = effectManager.apply(sprite, behaviorName, behaviorParams, true, "background");
             const unpacked = PlaybackController.unpackBehaviorResult(result, sprite);
-            playbackState.activeBehaviorCleanups.push({
+            behaviorSink.register({
               char: sprite as any,
               modName: behaviorName,
               target: sprite,
@@ -184,7 +187,7 @@ export class BehaviorRecordBuilder {
         );
         // INV-7（SA-16）：解包经 PlaybackController.unpackBehaviorResult 单一真相源
         const unpacked = PlaybackController.unpackBehaviorResult(result, liveBehaviorTarget);
-        playbackState.activeBehaviorCleanups.push({
+        behaviorSink.register({
           char: behaviorChar,
           modName: behaviorName,
           target: liveBehaviorTarget,
@@ -204,7 +207,7 @@ export class BehaviorRecordBuilder {
    * 在 buildTimeline 之前，captureEntrance 不可用）。
    */
   processBlockEntrance(configs: EffectConfig[]): void {
-    const { segmentTl, playbackState, paragraphText, segmentCursor, allEntranceFilters } = this.ctx;
+    const { segmentTl, paragraphText, segmentCursor, allEntranceFilters } = this.ctx;
 
     for (const cfg of configs) {
       const resolved = EffectProcessor.resolveParams(cfg.params);
@@ -245,7 +248,6 @@ export class BehaviorRecordBuilder {
         applyEntrance(entranceTarget);
       }
     }
-    void playbackState; // playbackState 目前未在 entrance 路径使用，保留 ctx 完整性
   }
 
   /**
@@ -254,7 +256,7 @@ export class BehaviorRecordBuilder {
    * 正向触发 apply + 捕获 cleanup。seek 由 PlaybackController.registerBehaviors 重放。
    */
   processGroupCharBehaviors(buildResult: TimelineBuildResult): void {
-    const { segmentTl, playbackState, segmentCursor } = this.ctx;
+    const { segmentTl, playbackState, behaviorSink, segmentCursor } = this.ctx;
 
     for (const behavior of buildResult.behaviors) {
       const absTime = behavior.timePosition + segmentCursor;
@@ -283,7 +285,7 @@ export class BehaviorRecordBuilder {
           // INV-7（SA-16）：解包经 PlaybackController.unpackBehaviorResult 单一真相源
           // （与 block 路径、registerBehaviors 共用，新增返回 shape 只改一处）。
           const unpacked = PlaybackController.unpackBehaviorResult(result, target);
-          playbackState.activeBehaviorCleanups.push({
+          behaviorSink.register({
             char: target,
             modName: behaviorName,
             target,
@@ -307,7 +309,7 @@ export class BehaviorRecordBuilder {
    * （behavior 既在此 tl.call，又靠 registerBehaviors seek 重注册）。
    */
   processGroupCharInstantEffects(buildResult: TimelineBuildResult): void {
-    const { segmentTl, playbackState, segmentCursor } = this.ctx;
+    const { segmentTl, playbackState, instantSink, segmentCursor } = this.ctx;
 
     for (const instantRecord of buildResult.instantEffects) {
       const absTime = instantRecord.timePosition + segmentCursor;
@@ -335,10 +337,10 @@ export class BehaviorRecordBuilder {
             isBgInstant ? "background" : "text",
           );
           if (filterInstance) {
-            playbackState.activeInstantCleanups.push({ target, filterInstance });
+            instantSink.register({ target, filterInstance });
           } else if (instantMeta?.mutexGroup && typeof target?.getGraphicsLayer === "function") {
             // R12：Graphics 特效（bg/border 画 Graphics 非 filter，返回 void）——seek 回退清该层防残留。
-            playbackState.activeInstantCleanups.push({
+            instantSink.register({
               target,
               filterInstance: undefined as any,
               graphicsLayer: instantMeta.mutexGroup,
