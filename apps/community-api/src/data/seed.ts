@@ -171,6 +171,32 @@ export const seedWorks: Work[] = [
       mimeType: 'text/x-kmd', kmdVersion: '0.1', runtimeVersion: '0.2-preview', createdAt: '2026-07-12T00:00:00.000Z' }] },
     stats: { scenes: 1, lines: 14, effects: 0 }, commentSummary: { count: 0, preview: [] }
   },
+  {
+    id: 'reader-visual-scroll',
+    title: '视觉验收：在风暴边缘等待下一班穿过旧城高架桥的夜车',
+    authorName: 'KMD Reader Android Host Visual Regression Ensemble',
+    description: '用于 Android Reader 宿主视觉验收的长标题、长作者、中英混排 Scroll source 与续读文本 fixture。',
+    tags: ['reader-test', 'visual-fixture', 'scroll', 'r3-k1'], presentationMode: 'scroll',
+    orientationHint: 'portrait', aspectRatio: '9:16', lifecycleStatus: 'published',
+    interactionLevel: 'read_only', previewMode: 'cover', estimatedDurationSec: 120, coverUrl: '',
+    script: { activeRevisionId: 'rev-1', revisions: [{ id: 'rev-1', label: 'R3-K1 long metadata scroll visual fixture',
+      sourcePath: 'content/works/reader-visual-scroll/rev-1.kmd', sourceUrl: '/works/reader-visual-scroll/source',
+      mimeType: 'text/x-kmd', kmdVersion: '0.1', runtimeVersion: '0.2-preview', createdAt: '2026-07-13T00:00:00.000Z' }] },
+    stats: { scenes: 1, lines: 18, effects: 0 }, commentSummary: { count: 0, preview: [] }
+  },
+  {
+    id: 'reader-visual-paged',
+    title: '视觉验收：长标题、混合文字与每一页未熄灭的灯火',
+    authorName: 'KMD Mobile Typography and Layout Acceptance Laboratory',
+    description: '用于 Android Reader 宿主视觉验收的长标题、长作者、中英混排 Paged source 与续读文本 fixture。',
+    tags: ['reader-test', 'visual-fixture', 'paged', 'r3-k1'], presentationMode: 'paged',
+    orientationHint: 'portrait', aspectRatio: '9:16', lifecycleStatus: 'published',
+    interactionLevel: 'read_only', previewMode: 'cover', estimatedDurationSec: 90, coverUrl: '',
+    script: { activeRevisionId: 'rev-1', revisions: [{ id: 'rev-1', label: 'R3-K1 long metadata paged visual fixture',
+      sourcePath: 'content/works/reader-visual-paged/rev-1.kmd', sourceUrl: '/works/reader-visual-paged/source',
+      mimeType: 'text/x-kmd', kmdVersion: '0.1', runtimeVersion: '0.2-preview', createdAt: '2026-07-13T00:00:00.000Z' }] },
+    stats: { scenes: 1, lines: 14, effects: 0 }, commentSummary: { count: 0, preview: [] }
+  },
 
   // ━━ 通用示例（从 apps/editor/public/ 打包） ━━
 

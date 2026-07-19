@@ -1,0 +1,21 @@
+---
+title: 视觉验收：在风暴边缘等待下一班穿过旧城高架桥的夜车
+mode: scroll
+speed: 20
+---
+
+VISUAL_SCROLL_SENTINEL。凌晨四点的雨从高架桥边缘落下，车站玻璃把每一盏远处的灯拉成长长的、带着轻微颤动的银线。
+
+这一段用于 Reader Host 的长文本、字号与断点验证。请把字号在 85%、100%、130% 间切换，确认中英文、数字 16:9 与标点都保持可读，且阅读位置不会被重置。
+
+The platform is quiet enough to hear the timetable relay click. A conductor folds a paper map, checks the final carriage, and leaves one warm lamp on for the next passenger.
+
+沿着站台向前，广告牌上的字被水汽擦得很淡。我们仍然能读出“不要匆忙抵达”，也仍然能看见路牌尽头的蓝色箭头。
+
+下一班车还没有出现。为了让续读状态足够明显，请在这一段附近暂停、离开阅读页，再从书架的继续阅读入口返回。
+
+No scene needs to hurry. The reader should be able to scan a longer paragraph, restore a midpoint, and keep the same calm rhythm after font settings change.
+
+天快亮时，旧城的屋顶开始从雾里浮现。雨没有立刻停下，只是把声音收得更轻，让车轮经过时留下短暂而清晰的回响。
+
+最后一段保留为稳定的视觉锚点：如果回到这里，说明这个用于宿主展示的 scroll fixture 已被完整加载。

@@ -34,6 +34,15 @@ Seed KMD files live in:
 content/works/<work-id>/<revision-id>.kmd
 ```
 
-The seed library includes 29 works: 4 narrative-style works, 2 R3-I reader typography fixtures (`reader-font-scroll`, `reader-font-paged`), plus 23 samples packaged from `apps/editor/public/`. All packaged samples use `lifecycleStatus: published` so they do not collide with the `submitted` filter assertions.
+The seed library includes source-backed narrative, typography, reader-host visual, and packaged editor samples. All packaged samples use `lifecycleStatus: published` so they do not collide with the `submitted` filter assertions.
+
+### Reader host visual fixtures
+
+| Work ID | Mode | Purpose |
+| --- | --- | --- |
+| `reader-visual-scroll` | `scroll` | Long title/author, CJK/Latin mixed long source, font-scale and continuation inspection. |
+| `reader-visual-paged` | `paged` | Long title/author, page-layout and continuation inspection. |
+
+Both are published remote works. Fetch their active source from `/works/<work-id>/source`. They intentionally describe only remote metadata and source: Android must create local-readable, shelf, history, and progress states through its normal import and reading flows.
 
 Some fx showcases (`bg`, `cyberpunk-title`) reference a background image via `bg(src="tests/assets/sample-bg.jpg")`. The runtime resolves this to `/tests/assets/sample-bg.jpg`, so the API serves that path statically from `content/assets/`.
