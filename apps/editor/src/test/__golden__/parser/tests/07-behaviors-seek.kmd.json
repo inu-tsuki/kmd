@@ -1,0 +1,541 @@
+{
+  "diagnostics": [],
+  "metadata": {
+    "designHeight": 1080,
+    "designWidth": 1920,
+    "mode": "stage",
+    "speed": 50,
+    "title": "07 - Behavior 特效 seek 重注册",
+    "variables": {}
+  },
+  "paragraphs": [
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 8,
+        "lines": [
+          {
+            "body": [
+              {
+                "children": [
+                  {
+                    "groupId": 1,
+                    "line": 9,
+                    "marks": [],
+                    "range": {
+                      "end": 3,
+                      "start": 1
+                    },
+                    "text": "震动",
+                    "type": "text"
+                  }
+                ],
+                "groupId": 1,
+                "line": 9,
+                "range": {
+                  "end": 4,
+                  "start": 0
+                },
+                "type": "group"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "name": "shake",
+                    "params": {
+                      "0": 15
+                    },
+                    "prefix": "f",
+                    "raw": "f.shake(15)"
+                  }
+                ],
+                "line": 9,
+                "prefix": "f",
+                "range": {
+                  "end": 18,
+                  "start": 7
+                },
+                "raw": "f.shake(15)",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 9,
+            "range": {
+              "end": 18,
+              "start": 0
+            },
+            "raw": "{震动} @ f.shake(15)",
+            "type": "line"
+          }
+        ],
+        "source": "// 预期：seek 后 shake/wave/rainbow 仍然激活\n{震动} @ f.shake(15)",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "braceGroupId": 1,
+            "commands": [],
+            "content": "震动",
+            "effects": [
+              {
+                "blocking": false,
+                "name": "shake",
+                "params": {
+                  "0": 15
+                }
+              }
+            ],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 9,
+            "params": {},
+            "range": {
+              "end": 3,
+              "start": 1
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 8,
+      "tokens": [
+        {
+          "braceGroupId": 1,
+          "commands": [],
+          "content": "震动",
+          "effects": [
+            {
+              "blocking": false,
+              "name": "shake",
+              "params": {
+                "0": 15
+              }
+            }
+          ],
+          "isBraced": true,
+          "layoutInstructions": [],
+          "line": 9,
+          "params": {},
+          "range": {
+            "end": 3,
+            "start": 1
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 11,
+        "lines": [
+          {
+            "body": [
+              {
+                "children": [
+                  {
+                    "groupId": 2,
+                    "line": 11,
+                    "marks": [],
+                    "range": {
+                      "end": 3,
+                      "start": 1
+                    },
+                    "text": "波浪",
+                    "type": "text"
+                  }
+                ],
+                "groupId": 2,
+                "line": 11,
+                "range": {
+                  "end": 4,
+                  "start": 0
+                },
+                "type": "group"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "name": "wave",
+                    "params": {},
+                    "prefix": "f",
+                    "raw": "f.wave"
+                  }
+                ],
+                "line": 11,
+                "prefix": "f",
+                "range": {
+                  "end": 13,
+                  "start": 7
+                },
+                "raw": "f.wave",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 11,
+            "range": {
+              "end": 13,
+              "start": 0
+            },
+            "raw": "{波浪} @ f.wave",
+            "type": "line"
+          }
+        ],
+        "source": "{波浪} @ f.wave",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "braceGroupId": 2,
+            "commands": [],
+            "content": "波浪",
+            "effects": [
+              {
+                "blocking": false,
+                "name": "wave",
+                "params": {}
+              }
+            ],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 11,
+            "params": {},
+            "range": {
+              "end": 3,
+              "start": 1
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 11,
+      "tokens": [
+        {
+          "braceGroupId": 2,
+          "commands": [],
+          "content": "波浪",
+          "effects": [
+            {
+              "blocking": false,
+              "name": "wave",
+              "params": {}
+            }
+          ],
+          "isBraced": true,
+          "layoutInstructions": [],
+          "line": 11,
+          "params": {},
+          "range": {
+            "end": 3,
+            "start": 1
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 13,
+        "lines": [
+          {
+            "body": [
+              {
+                "children": [
+                  {
+                    "groupId": 3,
+                    "line": 13,
+                    "marks": [],
+                    "range": {
+                      "end": 3,
+                      "start": 1
+                    },
+                    "text": "彩虹",
+                    "type": "text"
+                  }
+                ],
+                "groupId": 3,
+                "line": 13,
+                "range": {
+                  "end": 4,
+                  "start": 0
+                },
+                "type": "group"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "name": "rainbow",
+                    "params": {},
+                    "prefix": "f",
+                    "raw": "f.rainbow"
+                  }
+                ],
+                "line": 13,
+                "prefix": "f",
+                "range": {
+                  "end": 16,
+                  "start": 7
+                },
+                "raw": "f.rainbow",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 13,
+            "range": {
+              "end": 16,
+              "start": 0
+            },
+            "raw": "{彩虹} @ f.rainbow",
+            "type": "line"
+          }
+        ],
+        "source": "{彩虹} @ f.rainbow",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "braceGroupId": 3,
+            "commands": [],
+            "content": "彩虹",
+            "effects": [
+              {
+                "blocking": false,
+                "name": "rainbow",
+                "params": {}
+              }
+            ],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 13,
+            "params": {},
+            "range": {
+              "end": 3,
+              "start": 1
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 13,
+      "tokens": [
+        {
+          "braceGroupId": 3,
+          "commands": [],
+          "content": "彩虹",
+          "effects": [
+            {
+              "blocking": false,
+              "name": "rainbow",
+              "params": {}
+            }
+          ],
+          "isBraced": true,
+          "layoutInstructions": [],
+          "line": 13,
+          "params": {},
+          "range": {
+            "end": 3,
+            "start": 1
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 15,
+        "lines": [
+          {
+            "body": [
+              {
+                "children": [
+                  {
+                    "groupId": 4,
+                    "line": 16,
+                    "marks": [],
+                    "range": {
+                      "end": 8,
+                      "start": 1
+                    },
+                    "text": "同时震动+波浪",
+                    "type": "text"
+                  }
+                ],
+                "groupId": 4,
+                "line": 16,
+                "range": {
+                  "end": 9,
+                  "start": 0
+                },
+                "type": "group"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "name": "shake",
+                    "params": {
+                      "0": 10
+                    },
+                    "prefix": "f",
+                    "raw": "f.shake(10).wave"
+                  },
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "name": "wave",
+                    "params": {},
+                    "prefix": "f",
+                    "raw": "f.shake(10).wave"
+                  }
+                ],
+                "line": 16,
+                "prefix": "f",
+                "range": {
+                  "end": 28,
+                  "start": 12
+                },
+                "raw": "f.shake(10).wave",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 16,
+            "range": {
+              "end": 28,
+              "start": 0
+            },
+            "raw": "{同时震动+波浪} @ f.shake(10).wave",
+            "type": "line"
+          }
+        ],
+        "source": "// 测试：seek 到中间位置后，上面的行为特效应仍在运行\n{同时震动+波浪} @ f.shake(10).wave",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "braceGroupId": 4,
+            "commands": [],
+            "content": "同时震动+波浪",
+            "effects": [
+              {
+                "blocking": false,
+                "name": "shake",
+                "params": {
+                  "0": 10
+                }
+              },
+              {
+                "blocking": false,
+                "name": "wave",
+                "params": {}
+              }
+            ],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 16,
+            "params": {},
+            "range": {
+              "end": 8,
+              "start": 1
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 15,
+      "tokens": [
+        {
+          "braceGroupId": 4,
+          "commands": [],
+          "content": "同时震动+波浪",
+          "effects": [
+            {
+              "blocking": false,
+              "name": "shake",
+              "params": {
+                "0": 10
+              }
+            },
+            {
+              "blocking": false,
+              "name": "wave",
+              "params": {}
+            }
+          ],
+          "isBraced": true,
+          "layoutInstructions": [],
+          "line": 16,
+          "params": {},
+          "range": {
+            "end": 8,
+            "start": 1
+          },
+          "sugar": []
+        }
+      ]
+    }
+  ],
+  "rawParagraphs": [
+    "// 预期：seek 后 shake/wave/rainbow 仍然激活\n{震动} @ f.shake(15)",
+    "{波浪} @ f.wave",
+    "{彩虹} @ f.rainbow",
+    "// 测试：seek 到中间位置后，上面的行为特效应仍在运行\n{同时震动+波浪} @ f.shake(10).wave"
+  ]
+}

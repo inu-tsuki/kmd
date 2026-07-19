@@ -1,0 +1,2644 @@
+{
+  "diagnostics": [
+    {
+      "code": "container-incompatible",
+      "line": 46,
+      "message": "Command \"gray\" is char-only but was forced to :bg",
+      "severity": "warning"
+    },
+    {
+      "code": "container-incompatible",
+      "line": 54,
+      "message": "Command \"gray\" is char-only but was forced to :bg",
+      "severity": "warning"
+    }
+  ],
+  "metadata": {
+    "bgColor": "#000000",
+    "designHeight": 1080,
+    "designWidth": 1920,
+    "fontColor": "#ffffff",
+    "mode": "stage",
+    "speed": 50,
+    "title": "fx - bg 背景图基础 (DIP-FX M2 Task B)",
+    "variables": {}
+  },
+  "paragraphs": [
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 10,
+        "lines": [
+          {
+            "body": [],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "stage",
+                    "name": "bg",
+                    "params": {
+                      "color": "#1a0a2e"
+                    },
+                    "prefix": "bare",
+                    "raw": "bg(color=\"#1a0a2e\")"
+                  }
+                ],
+                "line": 11,
+                "prefix": "bare",
+                "range": {
+                  "end": 21,
+                  "start": 2
+                },
+                "raw": "bg(color=\"#1a0a2e\")",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "command-only",
+            "line": 11,
+            "range": {
+              "end": 21,
+              "start": 0
+            },
+            "raw": "@ bg(color=\"#1a0a2e\")",
+            "type": "line"
+          },
+          {
+            "body": [
+              {
+                "children": [
+                  {
+                    "groupId": 1,
+                    "line": 12,
+                    "marks": [],
+                    "range": {
+                      "end": 5,
+                      "start": 1
+                    },
+                    "text": "纯色背景",
+                    "type": "text"
+                  }
+                ],
+                "groupId": 1,
+                "line": 12,
+                "range": {
+                  "end": 6,
+                  "start": 0
+                },
+                "type": "group"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "style",
+                    "name": "gray",
+                    "params": {},
+                    "prefix": "f",
+                    "raw": "f.gray"
+                  }
+                ],
+                "line": 12,
+                "prefix": "f",
+                "range": {
+                  "end": 15,
+                  "start": 9
+                },
+                "raw": "f.gray",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 12,
+            "range": {
+              "end": 15,
+              "start": 0
+            },
+            "raw": "{纯色背景} @ f.gray",
+            "type": "line"
+          }
+        ],
+        "source": "// B1: 纯色背景\n@ bg(color=\"#1a0a2e\")\n{纯色背景} @ f.gray",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [
+        {
+          "blocking": false,
+          "level": "block",
+          "name": "bg",
+          "params": {
+            "color": "#1a0a2e"
+          }
+        }
+      ],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "braceGroupId": 1,
+            "commands": [],
+            "content": "纯色背景",
+            "effects": [
+              {
+                "blocking": false,
+                "name": "gray",
+                "params": {}
+              }
+            ],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 12,
+            "params": {},
+            "range": {
+              "end": 5,
+              "start": 1
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": [
+          {
+            "blocking": false,
+            "level": "block",
+            "name": "bg",
+            "params": {
+              "color": "#1a0a2e"
+            }
+          }
+        ]
+      },
+      "lineOffset": 10,
+      "tokens": [
+        {
+          "braceGroupId": 1,
+          "commands": [],
+          "content": "纯色背景",
+          "effects": [
+            {
+              "blocking": false,
+              "name": "gray",
+              "params": {}
+            }
+          ],
+          "isBraced": true,
+          "layoutInstructions": [],
+          "line": 12,
+          "params": {},
+          "range": {
+            "end": 5,
+            "start": 1
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 14,
+        "lines": [
+          {
+            "body": [],
+            "commandChains": [],
+            "heading": false,
+            "kind": "scene-clear",
+            "line": 14,
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "raw": "---",
+            "type": "line"
+          }
+        ],
+        "source": "---",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": true,
+            "isSugar": false,
+            "kind": "scene-clear",
+            "layoutInstructions": [
+              {
+                "blocking": false,
+                "line": 14,
+                "params": {},
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "scene.clear"
+              },
+              {
+                "blocking": true,
+                "line": 14,
+                "params": {
+                  "0": 0.5
+                },
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "pause"
+              }
+            ],
+            "line": 14,
+            "params": {},
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 14,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": true,
+          "isSugar": false,
+          "layoutInstructions": [
+            {
+              "blocking": false,
+              "line": 14,
+              "params": {},
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "scene.clear"
+            },
+            {
+              "blocking": true,
+              "line": 14,
+              "params": {
+                "0": 0.5
+              },
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "pause"
+            }
+          ],
+          "line": 14,
+          "params": {},
+          "range": {
+            "end": 3,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 16,
+        "lines": [
+          {
+            "body": [],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "stage",
+                    "name": "bg",
+                    "params": {
+                      "src": "tests/assets/sample-bg.jpg"
+                    },
+                    "prefix": "bare",
+                    "raw": "bg(src=\"tests/assets/sample-bg.jpg\")"
+                  }
+                ],
+                "line": 18,
+                "prefix": "bare",
+                "range": {
+                  "end": 38,
+                  "start": 2
+                },
+                "raw": "bg(src=\"tests/assets/sample-bg.jpg\")",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "command-only",
+            "line": 18,
+            "range": {
+              "end": 38,
+              "start": 0
+            },
+            "raw": "@ bg(src=\"tests/assets/sample-bg.jpg\")",
+            "type": "line"
+          },
+          {
+            "body": [
+              {
+                "children": [
+                  {
+                    "groupId": 2,
+                    "line": 19,
+                    "marks": [],
+                    "range": {
+                      "end": 5,
+                      "start": 1
+                    },
+                    "text": "图片背景",
+                    "type": "text"
+                  }
+                ],
+                "groupId": 2,
+                "line": 19,
+                "range": {
+                  "end": 6,
+                  "start": 0
+                },
+                "type": "group"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "name": "duotone",
+                    "params": {
+                      "highlight": "#e94560",
+                      "shadow": "#1a0a2e"
+                    },
+                    "prefix": "f",
+                    "raw": "f.duotone(shadow=\"#1a0a2e\", highlight=\"#e94560\")"
+                  }
+                ],
+                "line": 19,
+                "prefix": "f",
+                "range": {
+                  "end": 57,
+                  "start": 9
+                },
+                "raw": "f.duotone(shadow=\"#1a0a2e\", highlight=\"#e94560\")",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 19,
+            "range": {
+              "end": 57,
+              "start": 0
+            },
+            "raw": "{图片背景} @ f.duotone(shadow=\"#1a0a2e\", highlight=\"#e94560\")",
+            "type": "line"
+          }
+        ],
+        "source": "// B2: 图片背景（editor-dev 级，从 public/ 加载）\n// 图片异步加载，加载完成后替换纯色背景\n@ bg(src=\"tests/assets/sample-bg.jpg\")\n{图片背景} @ f.duotone(shadow=\"#1a0a2e\", highlight=\"#e94560\")",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [
+        {
+          "blocking": false,
+          "level": "block",
+          "name": "bg",
+          "params": {
+            "src": "tests/assets/sample-bg.jpg"
+          }
+        }
+      ],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "braceGroupId": 2,
+            "commands": [],
+            "content": "图片背景",
+            "effects": [
+              {
+                "blocking": false,
+                "name": "duotone",
+                "params": {
+                  "highlight": "#e94560",
+                  "shadow": "#1a0a2e"
+                }
+              }
+            ],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 19,
+            "params": {},
+            "range": {
+              "end": 5,
+              "start": 1
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": [
+          {
+            "blocking": false,
+            "level": "block",
+            "name": "bg",
+            "params": {
+              "src": "tests/assets/sample-bg.jpg"
+            }
+          }
+        ]
+      },
+      "lineOffset": 16,
+      "tokens": [
+        {
+          "braceGroupId": 2,
+          "commands": [],
+          "content": "图片背景",
+          "effects": [
+            {
+              "blocking": false,
+              "name": "duotone",
+              "params": {
+                "highlight": "#e94560",
+                "shadow": "#1a0a2e"
+              }
+            }
+          ],
+          "isBraced": true,
+          "layoutInstructions": [],
+          "line": 19,
+          "params": {},
+          "range": {
+            "end": 5,
+            "start": 1
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 21,
+        "lines": [
+          {
+            "body": [],
+            "commandChains": [],
+            "heading": false,
+            "kind": "scene-clear",
+            "line": 21,
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "raw": "---",
+            "type": "line"
+          }
+        ],
+        "source": "---",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": true,
+            "isSugar": false,
+            "kind": "scene-clear",
+            "layoutInstructions": [
+              {
+                "blocking": false,
+                "line": 21,
+                "params": {},
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "scene.clear"
+              },
+              {
+                "blocking": true,
+                "line": 21,
+                "params": {
+                  "0": 0.5
+                },
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "pause"
+              }
+            ],
+            "line": 21,
+            "params": {},
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 21,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": true,
+          "isSugar": false,
+          "layoutInstructions": [
+            {
+              "blocking": false,
+              "line": 21,
+              "params": {},
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "scene.clear"
+            },
+            {
+              "blocking": true,
+              "line": 21,
+              "params": {
+                "0": 0.5
+              },
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "pause"
+            }
+          ],
+          "line": 21,
+          "params": {},
+          "range": {
+            "end": 3,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 23,
+        "lines": [
+          {
+            "body": [],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "stage",
+                    "name": "bg",
+                    "params": {
+                      "color": "#0f3460",
+                      "src": "tests/assets/sample-bg.jpg"
+                    },
+                    "prefix": "bare",
+                    "raw": "bg(color=\"#0f3460\", src=\"tests/assets/sample-bg.jpg\")"
+                  }
+                ],
+                "line": 24,
+                "prefix": "bare",
+                "range": {
+                  "end": 55,
+                  "start": 2
+                },
+                "raw": "bg(color=\"#0f3460\", src=\"tests/assets/sample-bg.jpg\")",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "command-only",
+            "line": 24,
+            "range": {
+              "end": 55,
+              "start": 0
+            },
+            "raw": "@ bg(color=\"#0f3460\", src=\"tests/assets/sample-bg.jpg\")",
+            "type": "line"
+          },
+          {
+            "body": [
+              {
+                "children": [
+                  {
+                    "groupId": 3,
+                    "line": 25,
+                    "marks": [],
+                    "range": {
+                      "end": 6,
+                      "start": 1
+                    },
+                    "text": "色彩加图片",
+                    "type": "text"
+                  }
+                ],
+                "groupId": 3,
+                "line": 25,
+                "range": {
+                  "end": 7,
+                  "start": 0
+                },
+                "type": "group"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "style",
+                    "name": "gray",
+                    "params": {},
+                    "prefix": "f",
+                    "raw": "f.gray"
+                  }
+                ],
+                "line": 25,
+                "prefix": "f",
+                "range": {
+                  "end": 16,
+                  "start": 10
+                },
+                "raw": "f.gray",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 25,
+            "range": {
+              "end": 16,
+              "start": 0
+            },
+            "raw": "{色彩加图片} @ f.gray",
+            "type": "line"
+          }
+        ],
+        "source": "// B1 + B2 组合：先设色再加载图片（图片加载前可见纯色）\n@ bg(color=\"#0f3460\", src=\"tests/assets/sample-bg.jpg\")\n{色彩加图片} @ f.gray",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [
+        {
+          "blocking": false,
+          "level": "block",
+          "name": "bg",
+          "params": {
+            "color": "#0f3460",
+            "src": "tests/assets/sample-bg.jpg"
+          }
+        }
+      ],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "braceGroupId": 3,
+            "commands": [],
+            "content": "色彩加图片",
+            "effects": [
+              {
+                "blocking": false,
+                "name": "gray",
+                "params": {}
+              }
+            ],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 25,
+            "params": {},
+            "range": {
+              "end": 6,
+              "start": 1
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": [
+          {
+            "blocking": false,
+            "level": "block",
+            "name": "bg",
+            "params": {
+              "color": "#0f3460",
+              "src": "tests/assets/sample-bg.jpg"
+            }
+          }
+        ]
+      },
+      "lineOffset": 23,
+      "tokens": [
+        {
+          "braceGroupId": 3,
+          "commands": [],
+          "content": "色彩加图片",
+          "effects": [
+            {
+              "blocking": false,
+              "name": "gray",
+              "params": {}
+            }
+          ],
+          "isBraced": true,
+          "layoutInstructions": [],
+          "line": 25,
+          "params": {},
+          "range": {
+            "end": 6,
+            "start": 1
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 27,
+        "lines": [
+          {
+            "body": [],
+            "commandChains": [],
+            "heading": false,
+            "kind": "scene-clear",
+            "line": 27,
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "raw": "---",
+            "type": "line"
+          }
+        ],
+        "source": "---",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": true,
+            "isSugar": false,
+            "kind": "scene-clear",
+            "layoutInstructions": [
+              {
+                "blocking": false,
+                "line": 27,
+                "params": {},
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "scene.clear"
+              },
+              {
+                "blocking": true,
+                "line": 27,
+                "params": {
+                  "0": 0.5
+                },
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "pause"
+              }
+            ],
+            "line": 27,
+            "params": {},
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 27,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": true,
+          "isSugar": false,
+          "layoutInstructions": [
+            {
+              "blocking": false,
+              "line": 27,
+              "params": {},
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "scene.clear"
+            },
+            {
+              "blocking": true,
+              "line": 27,
+              "params": {
+                "0": 0.5
+              },
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "pause"
+            }
+          ],
+          "line": 27,
+          "params": {},
+          "range": {
+            "end": 3,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [
+          {
+            "chain": {
+              "commands": [
+                {
+                  "blocking": false,
+                  "family": "effect",
+                  "level": "bg",
+                  "name": "duotone",
+                  "params": {
+                    "highlight": "#e94560",
+                    "shadow": "#0d1b2a"
+                  },
+                  "prefix": "dot",
+                  "raw": ".duotone:bg(shadow=\"#0d1b2a\", highlight=\"#e94560\")"
+                }
+              ],
+              "line": 32,
+              "prefix": "dot",
+              "range": {
+                "end": 51,
+                "start": 1
+              },
+              "raw": ".duotone:bg(shadow=\"#0d1b2a\", highlight=\"#e94560\")",
+              "type": "command-chain"
+            },
+            "line": 32,
+            "range": {
+              "end": 51,
+              "start": 1
+            },
+            "type": "block-option-command"
+          }
+        ],
+        "lineOffset": 29,
+        "lines": [
+          {
+            "body": [],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "stage",
+                    "name": "bg",
+                    "params": {
+                      "src": "tests/assets/sample-bg.jpg"
+                    },
+                    "prefix": "bare",
+                    "raw": "bg(src=\"tests/assets/sample-bg.jpg\")"
+                  }
+                ],
+                "line": 31,
+                "prefix": "bare",
+                "range": {
+                  "end": 38,
+                  "start": 2
+                },
+                "raw": "bg(src=\"tests/assets/sample-bg.jpg\")",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "command-only",
+            "line": 31,
+            "range": {
+              "end": 38,
+              "start": 0
+            },
+            "raw": "@ bg(src=\"tests/assets/sample-bg.jpg\")",
+            "type": "line"
+          },
+          {
+            "body": [
+              {
+                "line": 33,
+                "marks": [],
+                "range": {
+                  "end": 7,
+                  "start": 0
+                },
+                "text": "背景图双色处理",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 33,
+            "range": {
+              "end": 7,
+              "start": 0
+            },
+            "raw": "背景图双色处理",
+            "type": "line"
+          }
+        ],
+        "source": "// B3: :bg filter 路由——DIP 滤镜作用于背景精灵而非文字\n// 背景图上 duotone 连续色调教科书级用法\n@ bg(src=\"tests/assets/sample-bg.jpg\")\n[.duotone:bg(shadow=\"#0d1b2a\", highlight=\"#e94560\")]\n背景图双色处理",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [
+        {
+          "blocking": false,
+          "level": "bg",
+          "name": "duotone",
+          "params": {
+            "highlight": "#e94560",
+            "shadow": "#0d1b2a"
+          }
+        },
+        {
+          "blocking": false,
+          "level": "block",
+          "name": "bg",
+          "params": {
+            "src": "tests/assets/sample-bg.jpg"
+          }
+        }
+      ],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "背景图双色处理",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 33,
+            "params": {},
+            "range": {
+              "end": 7,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": [
+          {
+            "blocking": false,
+            "level": "bg",
+            "name": "duotone",
+            "params": {
+              "highlight": "#e94560",
+              "shadow": "#0d1b2a"
+            }
+          },
+          {
+            "blocking": false,
+            "level": "block",
+            "name": "bg",
+            "params": {
+              "src": "tests/assets/sample-bg.jpg"
+            }
+          }
+        ]
+      },
+      "lineOffset": 29,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "背景图双色处理",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 33,
+          "params": {},
+          "range": {
+            "end": 7,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 35,
+        "lines": [
+          {
+            "body": [],
+            "commandChains": [],
+            "heading": false,
+            "kind": "scene-clear",
+            "line": 35,
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "raw": "---",
+            "type": "line"
+          }
+        ],
+        "source": "---",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": true,
+            "isSugar": false,
+            "kind": "scene-clear",
+            "layoutInstructions": [
+              {
+                "blocking": false,
+                "line": 35,
+                "params": {},
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "scene.clear"
+              },
+              {
+                "blocking": true,
+                "line": 35,
+                "params": {
+                  "0": 0.5
+                },
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "pause"
+              }
+            ],
+            "line": 35,
+            "params": {},
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 35,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": true,
+          "isSugar": false,
+          "layoutInstructions": [
+            {
+              "blocking": false,
+              "line": 35,
+              "params": {},
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "scene.clear"
+            },
+            {
+              "blocking": true,
+              "line": 35,
+              "params": {
+                "0": 0.5
+              },
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "pause"
+            }
+          ],
+          "line": 35,
+          "params": {},
+          "range": {
+            "end": 3,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [
+          {
+            "chain": {
+              "commands": [
+                {
+                  "blocking": false,
+                  "family": "effect",
+                  "level": "bg",
+                  "name": "emboss",
+                  "params": {},
+                  "prefix": "dot",
+                  "raw": ".emboss:bg"
+                }
+              ],
+              "line": 39,
+              "prefix": "dot",
+              "range": {
+                "end": 11,
+                "start": 1
+              },
+              "raw": ".emboss:bg",
+              "type": "command-chain"
+            },
+            "line": 39,
+            "range": {
+              "end": 11,
+              "start": 1
+            },
+            "type": "block-option-command"
+          }
+        ],
+        "lineOffset": 37,
+        "lines": [
+          {
+            "body": [],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "stage",
+                    "name": "bg",
+                    "params": {
+                      "src": "tests/assets/sample-bg.jpg"
+                    },
+                    "prefix": "bare",
+                    "raw": "bg(src=\"tests/assets/sample-bg.jpg\")"
+                  }
+                ],
+                "line": 38,
+                "prefix": "bare",
+                "range": {
+                  "end": 38,
+                  "start": 2
+                },
+                "raw": "bg(src=\"tests/assets/sample-bg.jpg\")",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "command-only",
+            "line": 38,
+            "range": {
+              "end": 38,
+              "start": 0
+            },
+            "raw": "@ bg(src=\"tests/assets/sample-bg.jpg\")",
+            "type": "line"
+          },
+          {
+            "body": [
+              {
+                "line": 40,
+                "marks": [],
+                "range": {
+                  "end": 7,
+                  "start": 0
+                },
+                "text": "背景图浮雕处理",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 40,
+            "range": {
+              "end": 7,
+              "start": 0
+            },
+            "raw": "背景图浮雕处理",
+            "type": "line"
+          }
+        ],
+        "source": "// :bg emboss——连续色调表面的浮雕效果\n@ bg(src=\"tests/assets/sample-bg.jpg\")\n[.emboss:bg]\n背景图浮雕处理",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [
+        {
+          "blocking": false,
+          "level": "bg",
+          "name": "emboss",
+          "params": {}
+        },
+        {
+          "blocking": false,
+          "level": "block",
+          "name": "bg",
+          "params": {
+            "src": "tests/assets/sample-bg.jpg"
+          }
+        }
+      ],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "背景图浮雕处理",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 40,
+            "params": {},
+            "range": {
+              "end": 7,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": [
+          {
+            "blocking": false,
+            "level": "bg",
+            "name": "emboss",
+            "params": {}
+          },
+          {
+            "blocking": false,
+            "level": "block",
+            "name": "bg",
+            "params": {
+              "src": "tests/assets/sample-bg.jpg"
+            }
+          }
+        ]
+      },
+      "lineOffset": 37,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "背景图浮雕处理",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 40,
+          "params": {},
+          "range": {
+            "end": 7,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 42,
+        "lines": [
+          {
+            "body": [],
+            "commandChains": [],
+            "heading": false,
+            "kind": "scene-clear",
+            "line": 42,
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "raw": "---",
+            "type": "line"
+          }
+        ],
+        "source": "---",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": true,
+            "isSugar": false,
+            "kind": "scene-clear",
+            "layoutInstructions": [
+              {
+                "blocking": false,
+                "line": 42,
+                "params": {},
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "scene.clear"
+              },
+              {
+                "blocking": true,
+                "line": 42,
+                "params": {
+                  "0": 0.5
+                },
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "pause"
+              }
+            ],
+            "line": 42,
+            "params": {},
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 42,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": true,
+          "isSugar": false,
+          "layoutInstructions": [
+            {
+              "blocking": false,
+              "line": 42,
+              "params": {},
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "scene.clear"
+            },
+            {
+              "blocking": true,
+              "line": 42,
+              "params": {
+                "0": 0.5
+              },
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "pause"
+            }
+          ],
+          "line": 42,
+          "params": {},
+          "range": {
+            "end": 3,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [
+          {
+            "chain": {
+              "commands": [
+                {
+                  "blocking": false,
+                  "family": "style",
+                  "level": "bg",
+                  "name": "gray",
+                  "params": {},
+                  "prefix": "dot",
+                  "raw": ".gray:bg"
+                }
+              ],
+              "line": 46,
+              "prefix": "dot",
+              "range": {
+                "end": 9,
+                "start": 1
+              },
+              "raw": ".gray:bg",
+              "type": "command-chain"
+            },
+            "line": 46,
+            "range": {
+              "end": 9,
+              "start": 1
+            },
+            "type": "block-option-command"
+          }
+        ],
+        "lineOffset": 44,
+        "lines": [
+          {
+            "body": [],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "stage",
+                    "name": "bg",
+                    "params": {
+                      "src": "tests/assets/sample-bg.jpg"
+                    },
+                    "prefix": "bare",
+                    "raw": "bg(src=\"tests/assets/sample-bg.jpg\")"
+                  }
+                ],
+                "line": 45,
+                "prefix": "bare",
+                "range": {
+                  "end": 38,
+                  "start": 2
+                },
+                "raw": "bg(src=\"tests/assets/sample-bg.jpg\")",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "command-only",
+            "line": 45,
+            "range": {
+              "end": 38,
+              "start": 0
+            },
+            "raw": "@ bg(src=\"tests/assets/sample-bg.jpg\")",
+            "type": "line"
+          },
+          {
+            "body": [
+              {
+                "line": 47,
+                "marks": [],
+                "range": {
+                  "end": 10,
+                  "start": 0
+                },
+                "text": "灰度背景上的彩色文字",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 47,
+            "range": {
+              "end": 10,
+              "start": 0
+            },
+            "raw": "灰度背景上的彩色文字",
+            "type": "line"
+          }
+        ],
+        "source": "// :bg gray + 文字——背景灰度，文字保持原色\n@ bg(src=\"tests/assets/sample-bg.jpg\")\n[.gray:bg]\n灰度背景上的彩色文字",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [
+        {
+          "code": "container-incompatible",
+          "line": 46,
+          "message": "Command \"gray\" is char-only but was forced to :bg",
+          "severity": "warning"
+        }
+      ],
+      "globalEffects": [
+        {
+          "blocking": false,
+          "level": "bg",
+          "name": "gray",
+          "params": {}
+        },
+        {
+          "blocking": false,
+          "level": "block",
+          "name": "bg",
+          "params": {
+            "src": "tests/assets/sample-bg.jpg"
+          }
+        }
+      ],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [
+          {
+            "code": "container-incompatible",
+            "line": 46,
+            "message": "Command \"gray\" is char-only but was forced to :bg",
+            "severity": "warning"
+          }
+        ],
+        "inline": [
+          {
+            "commands": [],
+            "content": "灰度背景上的彩色文字",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 47,
+            "params": {},
+            "range": {
+              "end": 10,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": [
+          {
+            "blocking": false,
+            "level": "bg",
+            "name": "gray",
+            "params": {}
+          },
+          {
+            "blocking": false,
+            "level": "block",
+            "name": "bg",
+            "params": {
+              "src": "tests/assets/sample-bg.jpg"
+            }
+          }
+        ]
+      },
+      "lineOffset": 44,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "灰度背景上的彩色文字",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 47,
+          "params": {},
+          "range": {
+            "end": 10,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 49,
+        "lines": [
+          {
+            "body": [],
+            "commandChains": [],
+            "heading": false,
+            "kind": "scene-clear",
+            "line": 49,
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "raw": "---",
+            "type": "line"
+          }
+        ],
+        "source": "---",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": true,
+            "isSugar": false,
+            "kind": "scene-clear",
+            "layoutInstructions": [
+              {
+                "blocking": false,
+                "line": 49,
+                "params": {},
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "scene.clear"
+              },
+              {
+                "blocking": true,
+                "line": 49,
+                "params": {
+                  "0": 0.5
+                },
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "pause"
+              }
+            ],
+            "line": 49,
+            "params": {},
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 49,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": true,
+          "isSugar": false,
+          "layoutInstructions": [
+            {
+              "blocking": false,
+              "line": 49,
+              "params": {},
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "scene.clear"
+            },
+            {
+              "blocking": true,
+              "line": 49,
+              "params": {
+                "0": 0.5
+              },
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "pause"
+            }
+          ],
+          "line": 49,
+          "params": {},
+          "range": {
+            "end": 3,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [
+          {
+            "chain": {
+              "commands": [
+                {
+                  "blocking": false,
+                  "family": "style",
+                  "level": "bg",
+                  "name": "gray",
+                  "params": {},
+                  "prefix": "dot",
+                  "raw": ".gray:bg"
+                }
+              ],
+              "line": 54,
+              "prefix": "dot",
+              "range": {
+                "end": 9,
+                "start": 1
+              },
+              "raw": ".gray:bg",
+              "type": "command-chain"
+            },
+            "line": 54,
+            "range": {
+              "end": 9,
+              "start": 1
+            },
+            "type": "block-option-command"
+          }
+        ],
+        "lineOffset": 51,
+        "lines": [
+          {
+            "body": [],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "stage",
+                    "name": "bg",
+                    "params": {
+                      "src": "tests/assets/sample-bg.jpg"
+                    },
+                    "prefix": "bare",
+                    "raw": "bg(src=\"tests/assets/sample-bg.jpg\")"
+                  }
+                ],
+                "line": 53,
+                "prefix": "bare",
+                "range": {
+                  "end": 38,
+                  "start": 2
+                },
+                "raw": "bg(src=\"tests/assets/sample-bg.jpg\")",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "command-only",
+            "line": 53,
+            "range": {
+              "end": 38,
+              "start": 0
+            },
+            "raw": "@ bg(src=\"tests/assets/sample-bg.jpg\")",
+            "type": "line"
+          },
+          {
+            "body": [
+              {
+                "line": 55,
+                "marks": [],
+                "range": {
+                  "end": 12,
+                  "start": 0
+                },
+                "text": "gray:bg 回归验证",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 55,
+            "range": {
+              "end": 12,
+              "start": 0
+            },
+            "raw": "gray:bg 回归验证",
+            "type": "line"
+          }
+        ],
+        "source": "// :bg gray 回归用例——此前 bg 命令名碰撞导致 stage bg 死代码，:bg 静默失败\n// 修复后 bg 重命名为 box（元素级），stage bg 正常路由，:bg filter 作用于背景精灵\n@ bg(src=\"tests/assets/sample-bg.jpg\")\n[.gray:bg]\ngray:bg 回归验证",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [
+        {
+          "code": "container-incompatible",
+          "line": 54,
+          "message": "Command \"gray\" is char-only but was forced to :bg",
+          "severity": "warning"
+        }
+      ],
+      "globalEffects": [
+        {
+          "blocking": false,
+          "level": "bg",
+          "name": "gray",
+          "params": {}
+        },
+        {
+          "blocking": false,
+          "level": "block",
+          "name": "bg",
+          "params": {
+            "src": "tests/assets/sample-bg.jpg"
+          }
+        }
+      ],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [
+          {
+            "code": "container-incompatible",
+            "line": 54,
+            "message": "Command \"gray\" is char-only but was forced to :bg",
+            "severity": "warning"
+          }
+        ],
+        "inline": [
+          {
+            "commands": [],
+            "content": "gray:bg 回归验证",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 55,
+            "params": {},
+            "range": {
+              "end": 12,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": [
+          {
+            "blocking": false,
+            "level": "bg",
+            "name": "gray",
+            "params": {}
+          },
+          {
+            "blocking": false,
+            "level": "block",
+            "name": "bg",
+            "params": {
+              "src": "tests/assets/sample-bg.jpg"
+            }
+          }
+        ]
+      },
+      "lineOffset": 51,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "gray:bg 回归验证",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 55,
+          "params": {},
+          "range": {
+            "end": 12,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 57,
+        "lines": [
+          {
+            "body": [],
+            "commandChains": [],
+            "heading": false,
+            "kind": "scene-clear",
+            "line": 57,
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "raw": "---",
+            "type": "line"
+          }
+        ],
+        "source": "---",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": true,
+            "isSugar": false,
+            "kind": "scene-clear",
+            "layoutInstructions": [
+              {
+                "blocking": false,
+                "line": 57,
+                "params": {},
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "scene.clear"
+              },
+              {
+                "blocking": true,
+                "line": 57,
+                "params": {
+                  "0": 0.5
+                },
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "pause"
+              }
+            ],
+            "line": 57,
+            "params": {},
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 57,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": true,
+          "isSugar": false,
+          "layoutInstructions": [
+            {
+              "blocking": false,
+              "line": 57,
+              "params": {},
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "scene.clear"
+            },
+            {
+              "blocking": true,
+              "line": 57,
+              "params": {
+                "0": 0.5
+              },
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "pause"
+            }
+          ],
+          "line": 57,
+          "params": {},
+          "range": {
+            "end": 3,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 59,
+        "lines": [
+          {
+            "body": [],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "stage",
+                    "name": "bg",
+                    "params": {
+                      "src": "tests/assets/sample-bg.jpg"
+                    },
+                    "prefix": "bare",
+                    "raw": "bg(src=\"tests/assets/sample-bg.jpg\")"
+                  }
+                ],
+                "line": 61,
+                "prefix": "bare",
+                "range": {
+                  "end": 38,
+                  "start": 2
+                },
+                "raw": "bg(src=\"tests/assets/sample-bg.jpg\")",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "command-only",
+            "line": 61,
+            "range": {
+              "end": 38,
+              "start": 0
+            },
+            "raw": "@ bg(src=\"tests/assets/sample-bg.jpg\")",
+            "type": "line"
+          },
+          {
+            "body": [
+              {
+                "children": [
+                  {
+                    "groupId": 4,
+                    "line": 62,
+                    "marks": [],
+                    "range": {
+                      "end": 6,
+                      "start": 1
+                    },
+                    "text": "内联灰背景",
+                    "type": "text"
+                  }
+                ],
+                "groupId": 4,
+                "line": 62,
+                "range": {
+                  "end": 7,
+                  "start": 0
+                },
+                "type": "group"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "style",
+                    "level": "bg",
+                    "name": "gray",
+                    "params": {},
+                    "prefix": "f",
+                    "raw": "f.gray:bg"
+                  }
+                ],
+                "line": 62,
+                "prefix": "f",
+                "range": {
+                  "end": 19,
+                  "start": 10
+                },
+                "raw": "f.gray:bg",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 62,
+            "range": {
+              "end": 19,
+              "start": 0
+            },
+            "raw": "{内联灰背景} @ f.gray:bg",
+            "type": "line"
+          }
+        ],
+        "source": "// 内联 @ f.x:bg 链路——与块选项 [.x:bg] 走不同代码路径（TextPlayer.unrollGroupChain）\n// onBackgroundReady 延迟机制覆盖此路径\n@ bg(src=\"tests/assets/sample-bg.jpg\")\n{内联灰背景} @ f.gray:bg",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [
+        {
+          "blocking": false,
+          "level": "block",
+          "name": "bg",
+          "params": {
+            "src": "tests/assets/sample-bg.jpg"
+          }
+        }
+      ],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "braceGroupId": 4,
+            "commands": [],
+            "content": "内联灰背景",
+            "effects": [
+              {
+                "blocking": false,
+                "level": "bg",
+                "name": "gray",
+                "params": {}
+              }
+            ],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 62,
+            "params": {},
+            "range": {
+              "end": 6,
+              "start": 1
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": [
+          {
+            "blocking": false,
+            "level": "block",
+            "name": "bg",
+            "params": {
+              "src": "tests/assets/sample-bg.jpg"
+            }
+          }
+        ]
+      },
+      "lineOffset": 59,
+      "tokens": [
+        {
+          "braceGroupId": 4,
+          "commands": [],
+          "content": "内联灰背景",
+          "effects": [
+            {
+              "blocking": false,
+              "level": "bg",
+              "name": "gray",
+              "params": {}
+            }
+          ],
+          "isBraced": true,
+          "layoutInstructions": [],
+          "line": 62,
+          "params": {},
+          "range": {
+            "end": 6,
+            "start": 1
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 64,
+        "lines": [
+          {
+            "body": [],
+            "commandChains": [],
+            "heading": false,
+            "kind": "scene-clear",
+            "line": 64,
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "raw": "---",
+            "type": "line"
+          }
+        ],
+        "source": "---",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": true,
+            "isSugar": false,
+            "kind": "scene-clear",
+            "layoutInstructions": [
+              {
+                "blocking": false,
+                "line": 64,
+                "params": {},
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "scene.clear"
+              },
+              {
+                "blocking": true,
+                "line": 64,
+                "params": {
+                  "0": 0.5
+                },
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "pause"
+              }
+            ],
+            "line": 64,
+            "params": {},
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 64,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": true,
+          "isSugar": false,
+          "layoutInstructions": [
+            {
+              "blocking": false,
+              "line": 64,
+              "params": {},
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "scene.clear"
+            },
+            {
+              "blocking": true,
+              "line": 64,
+              "params": {
+                "0": 0.5
+              },
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "pause"
+            }
+          ],
+          "line": 64,
+          "params": {},
+          "range": {
+            "end": 3,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 66,
+        "lines": [
+          {
+            "body": [],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "stage",
+                    "name": "bg",
+                    "params": {
+                      "src": "tests/assets/sample-bg.jpg"
+                    },
+                    "prefix": "bare",
+                    "raw": "bg(src=\"tests/assets/sample-bg.jpg\")"
+                  }
+                ],
+                "line": 67,
+                "prefix": "bare",
+                "range": {
+                  "end": 38,
+                  "start": 2
+                },
+                "raw": "bg(src=\"tests/assets/sample-bg.jpg\")",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "command-only",
+            "line": 67,
+            "range": {
+              "end": 38,
+              "start": 0
+            },
+            "raw": "@ bg(src=\"tests/assets/sample-bg.jpg\")",
+            "type": "line"
+          },
+          {
+            "body": [],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "stage",
+                    "name": "bg",
+                    "params": {
+                      "color": "#1a0a2e"
+                    },
+                    "prefix": "bare",
+                    "raw": "bg(color=\"#1a0a2e\")"
+                  }
+                ],
+                "line": 68,
+                "prefix": "bare",
+                "range": {
+                  "end": 21,
+                  "start": 2
+                },
+                "raw": "bg(color=\"#1a0a2e\")",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "command-only",
+            "line": 68,
+            "range": {
+              "end": 21,
+              "start": 0
+            },
+            "raw": "@ bg(color=\"#1a0a2e\")",
+            "type": "line"
+          },
+          {
+            "body": [
+              {
+                "children": [
+                  {
+                    "groupId": 5,
+                    "line": 69,
+                    "marks": [],
+                    "range": {
+                      "end": 7,
+                      "start": 1
+                    },
+                    "text": "纯色替换图片",
+                    "type": "text"
+                  }
+                ],
+                "groupId": 5,
+                "line": 69,
+                "range": {
+                  "end": 8,
+                  "start": 0
+                },
+                "type": "group"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "style",
+                    "name": "gray",
+                    "params": {},
+                    "prefix": "f",
+                    "raw": "f.gray"
+                  }
+                ],
+                "line": 69,
+                "prefix": "f",
+                "range": {
+                  "end": 17,
+                  "start": 11
+                },
+                "raw": "f.gray",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 69,
+            "range": {
+              "end": 17,
+              "start": 0
+            },
+            "raw": "{纯色替换图片} @ f.gray",
+            "type": "line"
+          }
+        ],
+        "source": "// bg(color) 清除图片回归——先设图片再设纯色，图片应消失\n@ bg(src=\"tests/assets/sample-bg.jpg\")\n@ bg(color=\"#1a0a2e\")\n{纯色替换图片} @ f.gray",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [
+        {
+          "blocking": false,
+          "level": "block",
+          "name": "bg",
+          "params": {
+            "src": "tests/assets/sample-bg.jpg"
+          }
+        },
+        {
+          "blocking": false,
+          "level": "block",
+          "name": "bg",
+          "params": {
+            "color": "#1a0a2e"
+          }
+        }
+      ],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "braceGroupId": 5,
+            "commands": [],
+            "content": "纯色替换图片",
+            "effects": [
+              {
+                "blocking": false,
+                "name": "gray",
+                "params": {}
+              }
+            ],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 69,
+            "params": {},
+            "range": {
+              "end": 7,
+              "start": 1
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": [
+          {
+            "blocking": false,
+            "level": "block",
+            "name": "bg",
+            "params": {
+              "src": "tests/assets/sample-bg.jpg"
+            }
+          },
+          {
+            "blocking": false,
+            "level": "block",
+            "name": "bg",
+            "params": {
+              "color": "#1a0a2e"
+            }
+          }
+        ]
+      },
+      "lineOffset": 66,
+      "tokens": [
+        {
+          "braceGroupId": 5,
+          "commands": [],
+          "content": "纯色替换图片",
+          "effects": [
+            {
+              "blocking": false,
+              "name": "gray",
+              "params": {}
+            }
+          ],
+          "isBraced": true,
+          "layoutInstructions": [],
+          "line": 69,
+          "params": {},
+          "range": {
+            "end": 7,
+            "start": 1
+          },
+          "sugar": []
+        }
+      ]
+    }
+  ],
+  "rawParagraphs": [
+    "// B1: 纯色背景\n@ bg(color=\"#1a0a2e\")\n{纯色背景} @ f.gray",
+    "---",
+    "// B2: 图片背景（editor-dev 级，从 public/ 加载）\n// 图片异步加载，加载完成后替换纯色背景\n@ bg(src=\"tests/assets/sample-bg.jpg\")\n{图片背景} @ f.duotone(shadow=\"#1a0a2e\", highlight=\"#e94560\")",
+    "---",
+    "// B1 + B2 组合：先设色再加载图片（图片加载前可见纯色）\n@ bg(color=\"#0f3460\", src=\"tests/assets/sample-bg.jpg\")\n{色彩加图片} @ f.gray",
+    "---",
+    "// B3: :bg filter 路由——DIP 滤镜作用于背景精灵而非文字\n// 背景图上 duotone 连续色调教科书级用法\n@ bg(src=\"tests/assets/sample-bg.jpg\")\n[.duotone:bg(shadow=\"#0d1b2a\", highlight=\"#e94560\")]\n背景图双色处理",
+    "---",
+    "// :bg emboss——连续色调表面的浮雕效果\n@ bg(src=\"tests/assets/sample-bg.jpg\")\n[.emboss:bg]\n背景图浮雕处理",
+    "---",
+    "// :bg gray + 文字——背景灰度，文字保持原色\n@ bg(src=\"tests/assets/sample-bg.jpg\")\n[.gray:bg]\n灰度背景上的彩色文字",
+    "---",
+    "// :bg gray 回归用例——此前 bg 命令名碰撞导致 stage bg 死代码，:bg 静默失败\n// 修复后 bg 重命名为 box（元素级），stage bg 正常路由，:bg filter 作用于背景精灵\n@ bg(src=\"tests/assets/sample-bg.jpg\")\n[.gray:bg]\ngray:bg 回归验证",
+    "---",
+    "// 内联 @ f.x:bg 链路——与块选项 [.x:bg] 走不同代码路径（TextPlayer.unrollGroupChain）\n// onBackgroundReady 延迟机制覆盖此路径\n@ bg(src=\"tests/assets/sample-bg.jpg\")\n{内联灰背景} @ f.gray:bg",
+    "---",
+    "// bg(color) 清除图片回归——先设图片再设纯色，图片应消失\n@ bg(src=\"tests/assets/sample-bg.jpg\")\n@ bg(color=\"#1a0a2e\")\n{纯色替换图片} @ f.gray"
+  ]
+}

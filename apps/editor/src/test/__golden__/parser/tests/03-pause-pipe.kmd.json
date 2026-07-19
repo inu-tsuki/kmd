@@ -1,0 +1,859 @@
+{
+  "diagnostics": [],
+  "metadata": {
+    "designHeight": 1080,
+    "designWidth": 1920,
+    "mode": "stage",
+    "speed": 50,
+    "title": "03 - pause 管道符和 pause 指令",
+    "variables": {}
+  },
+  "paragraphs": [
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 8,
+        "lines": [
+          {
+            "body": [
+              {
+                "line": 9,
+                "marks": [],
+                "range": {
+                  "end": 4,
+                  "start": 0
+                },
+                "text": "我在这里",
+                "type": "text"
+              },
+              {
+                "line": 9,
+                "params": {
+                  "0": 0.5
+                },
+                "range": {
+                  "end": 5,
+                  "start": 4
+                },
+                "type": "pause"
+              },
+              {
+                "line": 9,
+                "marks": [],
+                "range": {
+                  "end": 9,
+                  "start": 5
+                },
+                "text": "停一下。",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 9,
+            "range": {
+              "end": 9,
+              "start": 0
+            },
+            "raw": "我在这里|停一下。",
+            "type": "line"
+          }
+        ],
+        "source": "// 预期：| 在此处暂停0.5s\n我在这里|停一下。",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "我在这里",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 9,
+            "params": {},
+            "range": {
+              "end": 4,
+              "start": 0
+            },
+            "sugar": []
+          },
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": true,
+            "isSceneClear": false,
+            "isSugar": false,
+            "kind": "pause",
+            "layoutInstructions": [
+              {
+                "blocking": true,
+                "line": 9,
+                "params": {
+                  "0": 0.5
+                },
+                "range": {
+                  "end": 5,
+                  "start": 4
+                },
+                "type": "pause"
+              }
+            ],
+            "line": 9,
+            "params": {},
+            "range": {
+              "end": 5,
+              "start": 4
+            },
+            "sugar": []
+          },
+          {
+            "commands": [],
+            "content": "停一下。",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 9,
+            "params": {},
+            "range": {
+              "end": 9,
+              "start": 5
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 8,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "我在这里",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 9,
+          "params": {},
+          "range": {
+            "end": 4,
+            "start": 0
+          },
+          "sugar": []
+        },
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": true,
+          "isSceneClear": false,
+          "isSugar": false,
+          "layoutInstructions": [
+            {
+              "blocking": true,
+              "line": 9,
+              "params": {
+                "0": 0.5
+              },
+              "range": {
+                "end": 5,
+                "start": 4
+              },
+              "type": "pause"
+            }
+          ],
+          "line": 9,
+          "params": {},
+          "range": {
+            "end": 5,
+            "start": 4
+          },
+          "sugar": []
+        },
+        {
+          "commands": [],
+          "content": "停一下。",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 9,
+          "params": {},
+          "range": {
+            "end": 9,
+            "start": 5
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 11,
+        "lines": [
+          {
+            "body": [
+              {
+                "line": 12,
+                "marks": [],
+                "range": {
+                  "end": 4,
+                  "start": 0
+                },
+                "text": "这是一个",
+                "type": "text"
+              },
+              {
+                "line": 12,
+                "params": {
+                  "0": 1
+                },
+                "range": {
+                  "end": 9,
+                  "start": 4
+                },
+                "type": "pause"
+              },
+              {
+                "line": 12,
+                "marks": [],
+                "range": {
+                  "end": 18,
+                  "start": 9
+                },
+                "text": "超长停顿之后继续。",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 12,
+            "range": {
+              "end": 18,
+              "start": 0
+            },
+            "raw": "这是一个|(1s)超长停顿之后继续。",
+            "type": "line"
+          }
+        ],
+        "source": "// 预期：|(1s) 暂停1秒\n这是一个|(1s)超长停顿之后继续。",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "这是一个",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 12,
+            "params": {},
+            "range": {
+              "end": 4,
+              "start": 0
+            },
+            "sugar": []
+          },
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": true,
+            "isSceneClear": false,
+            "isSugar": false,
+            "kind": "pause",
+            "layoutInstructions": [
+              {
+                "blocking": true,
+                "line": 12,
+                "params": {
+                  "0": 1
+                },
+                "range": {
+                  "end": 9,
+                  "start": 4
+                },
+                "type": "pause"
+              }
+            ],
+            "line": 12,
+            "params": {},
+            "range": {
+              "end": 9,
+              "start": 4
+            },
+            "sugar": []
+          },
+          {
+            "commands": [],
+            "content": "超长停顿之后继续。",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 12,
+            "params": {},
+            "range": {
+              "end": 18,
+              "start": 9
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 11,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "这是一个",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 12,
+          "params": {},
+          "range": {
+            "end": 4,
+            "start": 0
+          },
+          "sugar": []
+        },
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": true,
+          "isSceneClear": false,
+          "isSugar": false,
+          "layoutInstructions": [
+            {
+              "blocking": true,
+              "line": 12,
+              "params": {
+                "0": 1
+              },
+              "range": {
+                "end": 9,
+                "start": 4
+              },
+              "type": "pause"
+            }
+          ],
+          "line": 12,
+          "params": {},
+          "range": {
+            "end": 9,
+            "start": 4
+          },
+          "sugar": []
+        },
+        {
+          "commands": [],
+          "content": "超长停顿之后继续。",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 12,
+          "params": {},
+          "range": {
+            "end": 18,
+            "start": 9
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 14,
+        "lines": [
+          {
+            "body": [
+              {
+                "line": 15,
+                "marks": [],
+                "range": {
+                  "end": 2,
+                  "start": 0
+                },
+                "text": "连续",
+                "type": "text"
+              },
+              {
+                "line": 15,
+                "params": {
+                  "0": 0.5
+                },
+                "range": {
+                  "end": 3,
+                  "start": 2
+                },
+                "type": "pause"
+              },
+              {
+                "line": 15,
+                "params": {
+                  "0": 0.5
+                },
+                "range": {
+                  "end": 4,
+                  "start": 3
+                },
+                "type": "pause"
+              },
+              {
+                "line": 15,
+                "marks": [],
+                "range": {
+                  "end": 9,
+                  "start": 4
+                },
+                "text": "停顿两次。",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 15,
+            "range": {
+              "end": 9,
+              "start": 0
+            },
+            "raw": "连续||停顿两次。",
+            "type": "line"
+          }
+        ],
+        "source": "// 预期：连续两个管道符\n连续||停顿两次。",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "连续",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 15,
+            "params": {},
+            "range": {
+              "end": 2,
+              "start": 0
+            },
+            "sugar": []
+          },
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": true,
+            "isSceneClear": false,
+            "isSugar": false,
+            "kind": "pause",
+            "layoutInstructions": [
+              {
+                "blocking": true,
+                "line": 15,
+                "params": {
+                  "0": 0.5
+                },
+                "range": {
+                  "end": 3,
+                  "start": 2
+                },
+                "type": "pause"
+              }
+            ],
+            "line": 15,
+            "params": {},
+            "range": {
+              "end": 3,
+              "start": 2
+            },
+            "sugar": []
+          },
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": true,
+            "isSceneClear": false,
+            "isSugar": false,
+            "kind": "pause",
+            "layoutInstructions": [
+              {
+                "blocking": true,
+                "line": 15,
+                "params": {
+                  "0": 0.5
+                },
+                "range": {
+                  "end": 4,
+                  "start": 3
+                },
+                "type": "pause"
+              }
+            ],
+            "line": 15,
+            "params": {},
+            "range": {
+              "end": 4,
+              "start": 3
+            },
+            "sugar": []
+          },
+          {
+            "commands": [],
+            "content": "停顿两次。",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 15,
+            "params": {},
+            "range": {
+              "end": 9,
+              "start": 4
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 14,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "连续",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 15,
+          "params": {},
+          "range": {
+            "end": 2,
+            "start": 0
+          },
+          "sugar": []
+        },
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": true,
+          "isSceneClear": false,
+          "isSugar": false,
+          "layoutInstructions": [
+            {
+              "blocking": true,
+              "line": 15,
+              "params": {
+                "0": 0.5
+              },
+              "range": {
+                "end": 3,
+                "start": 2
+              },
+              "type": "pause"
+            }
+          ],
+          "line": 15,
+          "params": {},
+          "range": {
+            "end": 3,
+            "start": 2
+          },
+          "sugar": []
+        },
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": true,
+          "isSceneClear": false,
+          "isSugar": false,
+          "layoutInstructions": [
+            {
+              "blocking": true,
+              "line": 15,
+              "params": {
+                "0": 0.5
+              },
+              "range": {
+                "end": 4,
+                "start": 3
+              },
+              "type": "pause"
+            }
+          ],
+          "line": 15,
+          "params": {},
+          "range": {
+            "end": 4,
+            "start": 3
+          },
+          "sugar": []
+        },
+        {
+          "commands": [],
+          "content": "停顿两次。",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 15,
+          "params": {},
+          "range": {
+            "end": 9,
+            "start": 4
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 17,
+        "lines": [
+          {
+            "body": [
+              {
+                "children": [
+                  {
+                    "groupId": 1,
+                    "line": 18,
+                    "marks": [],
+                    "range": {
+                      "end": 4,
+                      "start": 1
+                    },
+                    "text": "等一下",
+                    "type": "text"
+                  }
+                ],
+                "groupId": 1,
+                "line": 18,
+                "range": {
+                  "end": 5,
+                  "start": 0
+                },
+                "type": "group"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "stage",
+                    "name": "pause",
+                    "params": {
+                      "0": 2
+                    },
+                    "prefix": "bare",
+                    "raw": "pause(2s)"
+                  }
+                ],
+                "line": 18,
+                "prefix": "bare",
+                "range": {
+                  "end": 17,
+                  "start": 8
+                },
+                "raw": "pause(2s)",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 18,
+            "range": {
+              "end": 17,
+              "start": 0
+            },
+            "raw": "{等一下} @ pause(2s)",
+            "type": "line"
+          },
+          {
+            "body": [
+              {
+                "line": 19,
+                "marks": [],
+                "range": {
+                  "end": 13,
+                  "start": 0
+                },
+                "text": "这段出现时上面已经暂停了。",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 19,
+            "range": {
+              "end": 13,
+              "start": 0
+            },
+            "raw": "这段出现时上面已经暂停了。",
+            "type": "line"
+          }
+        ],
+        "source": "// 预期：pause 作为全局stage指令（暂停揭示）\n{等一下} @ pause(2s)\n这段出现时上面已经暂停了。",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "braceGroupId": 1,
+            "commands": [],
+            "content": "等一下",
+            "effects": [],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [
+              {
+                "blocking": false,
+                "params": {
+                  "0": 2
+                },
+                "type": "pause"
+              }
+            ],
+            "line": 18,
+            "params": {},
+            "range": {
+              "end": 4,
+              "start": 1
+            },
+            "sugar": []
+          },
+          {
+            "commands": [],
+            "content": "\n",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": false,
+            "isSugar": false,
+            "kind": "newline",
+            "layoutInstructions": [],
+            "line": 18,
+            "params": {},
+            "range": {
+              "end": 17,
+              "start": 17
+            },
+            "sugar": []
+          },
+          {
+            "commands": [],
+            "content": "这段出现时上面已经暂停了。",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 19,
+            "params": {},
+            "range": {
+              "end": 13,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 17,
+      "tokens": [
+        {
+          "braceGroupId": 1,
+          "commands": [],
+          "content": "等一下",
+          "effects": [],
+          "isBraced": true,
+          "layoutInstructions": [
+            {
+              "blocking": false,
+              "params": {
+                "0": 2
+              },
+              "type": "pause"
+            }
+          ],
+          "line": 18,
+          "params": {},
+          "range": {
+            "end": 4,
+            "start": 1
+          },
+          "sugar": []
+        },
+        {
+          "commands": [],
+          "content": "\n",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": false,
+          "isSugar": false,
+          "layoutInstructions": [],
+          "line": 18,
+          "params": {},
+          "range": {
+            "end": 17,
+            "start": 17
+          },
+          "sugar": []
+        },
+        {
+          "commands": [],
+          "content": "这段出现时上面已经暂停了。",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 19,
+          "params": {},
+          "range": {
+            "end": 13,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    }
+  ],
+  "rawParagraphs": [
+    "// 预期：| 在此处暂停0.5s\n我在这里|停一下。",
+    "// 预期：|(1s) 暂停1秒\n这是一个|(1s)超长停顿之后继续。",
+    "// 预期：连续两个管道符\n连续||停顿两次。",
+    "// 预期：pause 作为全局stage指令（暂停揭示）\n{等一下} @ pause(2s)\n这段出现时上面已经暂停了。"
+  ]
+}

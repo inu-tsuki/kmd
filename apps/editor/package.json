@@ -10,6 +10,7 @@
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:golden:write": "node --import tsx scripts/generate-parser-goldens.ts",
     "test:parser": "node --import tsx src/final-parser-test.ts",
     "test:shaders": "node --import tsx src/final-shader-test.ts",
     "test:invariants": "node --import tsx src/test-invariants.ts",

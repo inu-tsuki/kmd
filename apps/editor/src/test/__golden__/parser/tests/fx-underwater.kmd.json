@@ -1,0 +1,1128 @@
+{
+  "diagnostics": [],
+  "metadata": {
+    "bgColor": "#0a1e3f",
+    "designHeight": 1080,
+    "designWidth": 1920,
+    "fontColor": "#5fb8d6",
+    "mode": "stage",
+    "speed": 50,
+    "title": "fx - underwater 水下组合滤镜",
+    "variables": {}
+  },
+  "paragraphs": [
+    {
+      "ast": {
+        "blockOptions": [
+          {
+            "chain": {
+              "commands": [
+                {
+                  "blocking": false,
+                  "family": "effect",
+                  "level": "block",
+                  "name": "underwater",
+                  "params": {},
+                  "prefix": "dot",
+                  "raw": ".underwater:block"
+                }
+              ],
+              "line": 12,
+              "prefix": "dot",
+              "range": {
+                "end": 18,
+                "start": 1
+              },
+              "raw": ".underwater:block",
+              "type": "command-chain"
+            },
+            "line": 12,
+            "range": {
+              "end": 18,
+              "start": 1
+            },
+            "type": "block-option-command"
+          }
+        ],
+        "lineOffset": 10,
+        "lines": [
+          {
+            "body": [
+              {
+                "line": 13,
+                "marks": [],
+                "range": {
+                  "end": 22,
+                  "start": 0
+                },
+                "text": "整段水下效果，波纹位移叠加蓝移色调与轻模糊。",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 13,
+            "range": {
+              "end": 22,
+              "start": 0
+            },
+            "raw": "整段水下效果，波纹位移叠加蓝移色调与轻模糊。",
+            "type": "line"
+          }
+        ],
+        "source": "// :block 整段水下——M2 旗舰组合（displace + duotone 蓝移 + blur）\n// 三个 filter 串进 target.filters，一个 ticker 驱动 displace 的 uTime\n[.underwater:block]\n整段水下效果，波纹位移叠加蓝移色调与轻模糊。",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [
+        {
+          "blocking": false,
+          "level": "block",
+          "name": "underwater",
+          "params": {}
+        }
+      ],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "整段水下效果，波纹位移叠加蓝移色调与轻模糊。",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 13,
+            "params": {},
+            "range": {
+              "end": 22,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": [
+          {
+            "blocking": false,
+            "level": "block",
+            "name": "underwater",
+            "params": {}
+          }
+        ]
+      },
+      "lineOffset": 10,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "整段水下效果，波纹位移叠加蓝移色调与轻模糊。",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 13,
+          "params": {},
+          "range": {
+            "end": 22,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 15,
+        "lines": [
+          {
+            "body": [],
+            "commandChains": [],
+            "heading": false,
+            "kind": "scene-clear",
+            "line": 15,
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "raw": "---",
+            "type": "line"
+          }
+        ],
+        "source": "---",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": true,
+            "isSugar": false,
+            "kind": "scene-clear",
+            "layoutInstructions": [
+              {
+                "blocking": false,
+                "line": 15,
+                "params": {},
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "scene.clear"
+              },
+              {
+                "blocking": true,
+                "line": 15,
+                "params": {
+                  "0": 0.5
+                },
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "pause"
+              }
+            ],
+            "line": 15,
+            "params": {},
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 15,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": true,
+          "isSugar": false,
+          "layoutInstructions": [
+            {
+              "blocking": false,
+              "line": 15,
+              "params": {},
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "scene.clear"
+            },
+            {
+              "blocking": true,
+              "line": 15,
+              "params": {
+                "0": 0.5
+              },
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "pause"
+            }
+          ],
+          "line": 15,
+          "params": {},
+          "range": {
+            "end": 3,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 17,
+        "lines": [
+          {
+            "body": [
+              {
+                "children": [
+                  {
+                    "groupId": 1,
+                    "line": 18,
+                    "marks": [],
+                    "range": {
+                      "end": 3,
+                      "start": 1
+                    },
+                    "text": "水下",
+                    "type": "text"
+                  }
+                ],
+                "groupId": 1,
+                "line": 18,
+                "range": {
+                  "end": 4,
+                  "start": 0
+                },
+                "type": "group"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "name": "underwater",
+                    "params": {},
+                    "prefix": "f",
+                    "raw": "f.underwater"
+                  }
+                ],
+                "line": 18,
+                "prefix": "f",
+                "range": {
+                  "end": 19,
+                  "start": 7
+                },
+                "raw": "f.underwater",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 18,
+            "range": {
+              "end": 19,
+              "start": 0
+            },
+            "raw": "{水下} @ f.underwater",
+            "type": "line"
+          }
+        ],
+        "source": "// 逐字水下——char 级 addModifier 驱动\n{水下} @ f.underwater",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "braceGroupId": 1,
+            "commands": [],
+            "content": "水下",
+            "effects": [
+              {
+                "blocking": false,
+                "name": "underwater",
+                "params": {}
+              }
+            ],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 18,
+            "params": {},
+            "range": {
+              "end": 3,
+              "start": 1
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 17,
+      "tokens": [
+        {
+          "braceGroupId": 1,
+          "commands": [],
+          "content": "水下",
+          "effects": [
+            {
+              "blocking": false,
+              "name": "underwater",
+              "params": {}
+            }
+          ],
+          "isBraced": true,
+          "layoutInstructions": [],
+          "line": 18,
+          "params": {},
+          "range": {
+            "end": 3,
+            "start": 1
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 20,
+        "lines": [
+          {
+            "body": [],
+            "commandChains": [],
+            "heading": false,
+            "kind": "scene-clear",
+            "line": 20,
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "raw": "---",
+            "type": "line"
+          }
+        ],
+        "source": "---",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": true,
+            "isSugar": false,
+            "kind": "scene-clear",
+            "layoutInstructions": [
+              {
+                "blocking": false,
+                "line": 20,
+                "params": {},
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "scene.clear"
+              },
+              {
+                "blocking": true,
+                "line": 20,
+                "params": {
+                  "0": 0.5
+                },
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "pause"
+              }
+            ],
+            "line": 20,
+            "params": {},
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 20,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": true,
+          "isSugar": false,
+          "layoutInstructions": [
+            {
+              "blocking": false,
+              "line": 20,
+              "params": {},
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "scene.clear"
+            },
+            {
+              "blocking": true,
+              "line": 20,
+              "params": {
+                "0": 0.5
+              },
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "pause"
+            }
+          ],
+          "line": 20,
+          "params": {},
+          "range": {
+            "end": 3,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [
+          {
+            "chain": {
+              "commands": [
+                {
+                  "blocking": false,
+                  "family": "effect",
+                  "level": "block",
+                  "name": "underwater",
+                  "params": {
+                    "amount": 20,
+                    "blur": 2,
+                    "highlight": "#3aa0c0",
+                    "scale": 6,
+                    "tint": "#061230"
+                  },
+                  "prefix": "dot",
+                  "raw": ".underwater:block(amount=20, scale=6, tint=\"#061230\", highlight=\"#3aa0c0\", blur=2)"
+                }
+              ],
+              "line": 23,
+              "prefix": "dot",
+              "range": {
+                "end": 83,
+                "start": 1
+              },
+              "raw": ".underwater:block(amount=20, scale=6, tint=\"#061230\", highlight=\"#3aa0c0\", blur=2)",
+              "type": "command-chain"
+            },
+            "line": 23,
+            "range": {
+              "end": 83,
+              "start": 1
+            },
+            "type": "block-option-command"
+          }
+        ],
+        "lineOffset": 22,
+        "lines": [
+          {
+            "body": [
+              {
+                "line": 24,
+                "marks": [],
+                "range": {
+                  "end": 15,
+                  "start": 0
+                },
+                "text": "深蓝水下，更强波纹与更深色调。",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 24,
+            "range": {
+              "end": 15,
+              "start": 0
+            },
+            "raw": "深蓝水下，更强波纹与更深色调。",
+            "type": "line"
+          }
+        ],
+        "source": "// 改参：强位移 + 深蓝 tint（amount 是像素值）\n[.underwater:block(amount=20, scale=6, tint=\"#061230\", highlight=\"#3aa0c0\", blur=2)]\n深蓝水下，更强波纹与更深色调。",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [
+        {
+          "blocking": false,
+          "level": "block",
+          "name": "underwater",
+          "params": {
+            "amount": 20,
+            "blur": 2,
+            "highlight": "#3aa0c0",
+            "scale": 6,
+            "tint": "#061230"
+          }
+        }
+      ],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "深蓝水下，更强波纹与更深色调。",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 24,
+            "params": {},
+            "range": {
+              "end": 15,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": [
+          {
+            "blocking": false,
+            "level": "block",
+            "name": "underwater",
+            "params": {
+              "amount": 20,
+              "blur": 2,
+              "highlight": "#3aa0c0",
+              "scale": 6,
+              "tint": "#061230"
+            }
+          }
+        ]
+      },
+      "lineOffset": 22,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "深蓝水下，更强波纹与更深色调。",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 24,
+          "params": {},
+          "range": {
+            "end": 15,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 26,
+        "lines": [
+          {
+            "body": [],
+            "commandChains": [],
+            "heading": false,
+            "kind": "scene-clear",
+            "line": 26,
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "raw": "---",
+            "type": "line"
+          }
+        ],
+        "source": "---",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": true,
+            "isSugar": false,
+            "kind": "scene-clear",
+            "layoutInstructions": [
+              {
+                "blocking": false,
+                "line": 26,
+                "params": {},
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "scene.clear"
+              },
+              {
+                "blocking": true,
+                "line": 26,
+                "params": {
+                  "0": 0.5
+                },
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "pause"
+              }
+            ],
+            "line": 26,
+            "params": {},
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 26,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": true,
+          "isSugar": false,
+          "layoutInstructions": [
+            {
+              "blocking": false,
+              "line": 26,
+              "params": {},
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "scene.clear"
+            },
+            {
+              "blocking": true,
+              "line": 26,
+              "params": {
+                "0": 0.5
+              },
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "pause"
+            }
+          ],
+          "line": 26,
+          "params": {},
+          "range": {
+            "end": 3,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 28,
+        "lines": [
+          {
+            "body": [
+              {
+                "children": [
+                  {
+                    "groupId": 2,
+                    "line": 29,
+                    "marks": [],
+                    "range": {
+                      "end": 6,
+                      "start": 1
+                    },
+                    "text": "水下加波浪",
+                    "type": "text"
+                  }
+                ],
+                "groupId": 2,
+                "line": 29,
+                "range": {
+                  "end": 7,
+                  "start": 0
+                },
+                "type": "group"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "name": "underwater",
+                    "params": {},
+                    "prefix": "f",
+                    "raw": "f.underwater.wave"
+                  },
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "name": "wave",
+                    "params": {},
+                    "prefix": "f",
+                    "raw": "f.underwater.wave"
+                  }
+                ],
+                "line": 29,
+                "prefix": "f",
+                "range": {
+                  "end": 27,
+                  "start": 10
+                },
+                "raw": "f.underwater.wave",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 29,
+            "range": {
+              "end": 27,
+              "start": 0
+            },
+            "raw": "{水下加波浪} @ f.underwater.wave",
+            "type": "line"
+          }
+        ],
+        "source": "// 与 behavior 组合：水下 + 波浪\n{水下加波浪} @ f.underwater.wave",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "braceGroupId": 2,
+            "commands": [],
+            "content": "水下加波浪",
+            "effects": [
+              {
+                "blocking": false,
+                "name": "underwater",
+                "params": {}
+              },
+              {
+                "blocking": false,
+                "name": "wave",
+                "params": {}
+              }
+            ],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 29,
+            "params": {},
+            "range": {
+              "end": 6,
+              "start": 1
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 28,
+      "tokens": [
+        {
+          "braceGroupId": 2,
+          "commands": [],
+          "content": "水下加波浪",
+          "effects": [
+            {
+              "blocking": false,
+              "name": "underwater",
+              "params": {}
+            },
+            {
+              "blocking": false,
+              "name": "wave",
+              "params": {}
+            }
+          ],
+          "isBraced": true,
+          "layoutInstructions": [],
+          "line": 29,
+          "params": {},
+          "range": {
+            "end": 6,
+            "start": 1
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 31,
+        "lines": [
+          {
+            "body": [],
+            "commandChains": [],
+            "heading": false,
+            "kind": "scene-clear",
+            "line": 31,
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "raw": "---",
+            "type": "line"
+          }
+        ],
+        "source": "---",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": true,
+            "isSugar": false,
+            "kind": "scene-clear",
+            "layoutInstructions": [
+              {
+                "blocking": false,
+                "line": 31,
+                "params": {},
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "scene.clear"
+              },
+              {
+                "blocking": true,
+                "line": 31,
+                "params": {
+                  "0": 0.5
+                },
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "pause"
+              }
+            ],
+            "line": 31,
+            "params": {},
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 31,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": true,
+          "isSugar": false,
+          "layoutInstructions": [
+            {
+              "blocking": false,
+              "line": 31,
+              "params": {},
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "scene.clear"
+            },
+            {
+              "blocking": true,
+              "line": 31,
+              "params": {
+                "0": 0.5
+              },
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "pause"
+            }
+          ],
+          "line": 31,
+          "params": {},
+          "range": {
+            "end": 3,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [
+          {
+            "chain": {
+              "commands": [
+                {
+                  "blocking": false,
+                  "family": "effect",
+                  "level": "block",
+                  "name": "underwater",
+                  "params": {},
+                  "prefix": "dot",
+                  "raw": ".underwater:block"
+                }
+              ],
+              "line": 35,
+              "prefix": "dot",
+              "range": {
+                "end": 18,
+                "start": 1
+              },
+              "raw": ".underwater:block",
+              "type": "command-chain"
+            },
+            "line": 35,
+            "range": {
+              "end": 18,
+              "start": 1
+            },
+            "type": "block-option-command"
+          }
+        ],
+        "lineOffset": 33,
+        "lines": [
+          {
+            "body": [
+              {
+                "line": 36,
+                "marks": [],
+                "range": {
+                  "end": 43,
+                  "start": 0
+                },
+                "text": "水下 seek 回归——此段反复 seek 后 filter 数量应保持 3 不堆积。",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 36,
+            "range": {
+              "end": 43,
+              "start": 0
+            },
+            "raw": "水下 seek 回归——此段反复 seek 后 filter 数量应保持 3 不堆积。",
+            "type": "line"
+          }
+        ],
+        "source": "// seek 回归用例：反复 seek 应无 filter 堆积\n// （underwater 是首个返回 filters:Filter[] 的 preset，clearBehaviors Array.isArray 分支验证）\n[.underwater:block]\n水下 seek 回归——此段反复 seek 后 filter 数量应保持 3 不堆积。",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [
+        {
+          "blocking": false,
+          "level": "block",
+          "name": "underwater",
+          "params": {}
+        }
+      ],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "水下 seek 回归——此段反复 seek 后 filter 数量应保持 3 不堆积。",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 36,
+            "params": {},
+            "range": {
+              "end": 43,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": [
+          {
+            "blocking": false,
+            "level": "block",
+            "name": "underwater",
+            "params": {}
+          }
+        ]
+      },
+      "lineOffset": 33,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "水下 seek 回归——此段反复 seek 后 filter 数量应保持 3 不堆积。",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 36,
+          "params": {},
+          "range": {
+            "end": 43,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    }
+  ],
+  "rawParagraphs": [
+    "// :block 整段水下——M2 旗舰组合（displace + duotone 蓝移 + blur）\n// 三个 filter 串进 target.filters，一个 ticker 驱动 displace 的 uTime\n[.underwater:block]\n整段水下效果，波纹位移叠加蓝移色调与轻模糊。",
+    "---",
+    "// 逐字水下——char 级 addModifier 驱动\n{水下} @ f.underwater",
+    "---",
+    "// 改参：强位移 + 深蓝 tint（amount 是像素值）\n[.underwater:block(amount=20, scale=6, tint=\"#061230\", highlight=\"#3aa0c0\", blur=2)]\n深蓝水下，更强波纹与更深色调。",
+    "---",
+    "// 与 behavior 组合：水下 + 波浪\n{水下加波浪} @ f.underwater.wave",
+    "---",
+    "// seek 回归用例：反复 seek 应无 filter 堆积\n// （underwater 是首个返回 filters:Filter[] 的 preset，clearBehaviors Array.isArray 分支验证）\n[.underwater:block]\n水下 seek 回归——此段反复 seek 后 filter 数量应保持 3 不堆积。"
+  ]
+}

@@ -1,0 +1,1922 @@
+{
+  "diagnostics": [],
+  "metadata": {
+    "designHeight": 1080,
+    "designWidth": 1920,
+    "mode": "stage",
+    "speed": 50,
+    "title": "坐标稳定性压力测试",
+    "variables": {
+      "intro_zoom": 1.1,
+      "shake_heavy": 50
+    }
+  },
+  "paragraphs": [
+    {
+      "ast": {
+        "blockOptions": [
+          {
+            "chain": {
+              "commands": [
+                {
+                  "blocking": true,
+                  "family": "stage",
+                  "name": "cam.zoom",
+                  "params": {
+                    "0": 0.5,
+                    "1": 1
+                  },
+                  "prefix": "bare",
+                  "raw": "cam.zoom(0.5, 1s)!"
+                }
+              ],
+              "line": 11,
+              "prefix": "bare",
+              "range": {
+                "end": 19,
+                "start": 1
+              },
+              "raw": "cam.zoom(0.5, 1s)!",
+              "type": "command-chain"
+            },
+            "line": 11,
+            "range": {
+              "end": 19,
+              "start": 1
+            },
+            "type": "block-option-command"
+          }
+        ],
+        "lineOffset": 11,
+        "lines": [
+          {
+            "body": [
+              {
+                "line": 12,
+                "marks": [],
+                "range": {
+                  "end": 12,
+                  "start": 0
+                },
+                "text": "我会等镜头缩放完才出现。",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 12,
+            "range": {
+              "end": 12,
+              "start": 0
+            },
+            "raw": "我会等镜头缩放完才出现。",
+            "type": "line"
+          }
+        ],
+        "source": "[cam.zoom(0.5, 1s)!]\n我会等镜头缩放完才出现。",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [
+        {
+          "blocking": true,
+          "level": "block",
+          "name": "cam.zoom",
+          "params": {
+            "0": 0.5,
+            "1": 1
+          }
+        }
+      ],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "我会等镜头缩放完才出现。",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 12,
+            "params": {},
+            "range": {
+              "end": 12,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": [
+          {
+            "blocking": true,
+            "level": "block",
+            "name": "cam.zoom",
+            "params": {
+              "0": 0.5,
+              "1": 1
+            }
+          }
+        ]
+      },
+      "lineOffset": 11,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "我会等镜头缩放完才出现。",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 12,
+          "params": {},
+          "range": {
+            "end": 12,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 14,
+        "lines": [
+          {
+            "body": [
+              {
+                "children": [
+                  {
+                    "groupId": 1,
+                    "line": 14,
+                    "marks": [],
+                    "range": {
+                      "end": 6,
+                      "start": 1
+                    },
+                    "text": "我要停一下",
+                    "type": "text"
+                  }
+                ],
+                "groupId": 1,
+                "line": 14,
+                "range": {
+                  "end": 7,
+                  "start": 0
+                },
+                "type": "group"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "stage",
+                    "name": "pause",
+                    "params": {
+                      "0": 1
+                    },
+                    "prefix": "bare",
+                    "raw": "pause(1s)"
+                  }
+                ],
+                "line": 14,
+                "prefix": "bare",
+                "range": {
+                  "end": 19,
+                  "start": 10
+                },
+                "raw": "pause(1s)",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 14,
+            "range": {
+              "end": 19,
+              "start": 0
+            },
+            "raw": "{我要停一下} @ pause(1s)",
+            "type": "line"
+          },
+          {
+            "body": [
+              {
+                "line": 15,
+                "marks": [],
+                "range": {
+                  "end": 2,
+                  "start": 0
+                },
+                "text": "打完",
+                "type": "text"
+              },
+              {
+                "children": [
+                  {
+                    "groupId": 2,
+                    "line": 15,
+                    "marks": [],
+                    "range": {
+                      "end": 8,
+                      "start": 3
+                    },
+                    "text": "“停一下”",
+                    "type": "text"
+                  }
+                ],
+                "groupId": 2,
+                "line": 15,
+                "range": {
+                  "end": 9,
+                  "start": 2
+                },
+                "type": "group"
+              },
+              {
+                "line": 15,
+                "marks": [],
+                "range": {
+                  "end": 19,
+                  "start": 9
+                },
+                "text": "后，我会消失一秒钟。",
+                "type": "text"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "level": "group",
+                    "name": "hold",
+                    "params": {
+                      "0": 1
+                    },
+                    "prefix": "f",
+                    "raw": "f.hold:group(1s)"
+                  }
+                ],
+                "line": 15,
+                "prefix": "f",
+                "range": {
+                  "end": 38,
+                  "start": 22
+                },
+                "raw": "f.hold:group(1s)",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 15,
+            "range": {
+              "end": 38,
+              "start": 0
+            },
+            "raw": "打完{“停一下”}后，我会消失一秒钟。 @ f.hold:group(1s)",
+            "type": "line"
+          }
+        ],
+        "source": "{我要停一下} @ pause(1s)\n打完{“停一下”}后，我会消失一秒钟。 @ f.hold:group(1s)",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "braceGroupId": 1,
+            "commands": [],
+            "content": "我要停一下",
+            "effects": [],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [
+              {
+                "blocking": false,
+                "params": {
+                  "0": 1
+                },
+                "type": "pause"
+              }
+            ],
+            "line": 14,
+            "params": {},
+            "range": {
+              "end": 6,
+              "start": 1
+            },
+            "sugar": []
+          },
+          {
+            "commands": [],
+            "content": "\n",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": false,
+            "isSugar": false,
+            "kind": "newline",
+            "layoutInstructions": [],
+            "line": 14,
+            "params": {},
+            "range": {
+              "end": 19,
+              "start": 19
+            },
+            "sugar": []
+          },
+          {
+            "commands": [],
+            "content": "打完",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 15,
+            "params": {},
+            "range": {
+              "end": 2,
+              "start": 0
+            },
+            "sugar": []
+          },
+          {
+            "braceGroupId": 2,
+            "commands": [],
+            "content": "“停一下”",
+            "effects": [
+              {
+                "blocking": false,
+                "level": "group",
+                "name": "hold",
+                "params": {
+                  "0": 1
+                }
+              }
+            ],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 15,
+            "params": {},
+            "range": {
+              "end": 8,
+              "start": 3
+            },
+            "sugar": []
+          },
+          {
+            "commands": [],
+            "content": "后，我会消失一秒钟。",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 15,
+            "params": {},
+            "range": {
+              "end": 19,
+              "start": 9
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 14,
+      "tokens": [
+        {
+          "braceGroupId": 1,
+          "commands": [],
+          "content": "我要停一下",
+          "effects": [],
+          "isBraced": true,
+          "layoutInstructions": [
+            {
+              "blocking": false,
+              "params": {
+                "0": 1
+              },
+              "type": "pause"
+            }
+          ],
+          "line": 14,
+          "params": {},
+          "range": {
+            "end": 6,
+            "start": 1
+          },
+          "sugar": []
+        },
+        {
+          "commands": [],
+          "content": "\n",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": false,
+          "isSugar": false,
+          "layoutInstructions": [],
+          "line": 14,
+          "params": {},
+          "range": {
+            "end": 19,
+            "start": 19
+          },
+          "sugar": []
+        },
+        {
+          "commands": [],
+          "content": "打完",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 15,
+          "params": {},
+          "range": {
+            "end": 2,
+            "start": 0
+          },
+          "sugar": []
+        },
+        {
+          "braceGroupId": 2,
+          "commands": [],
+          "content": "“停一下”",
+          "effects": [
+            {
+              "blocking": false,
+              "level": "group",
+              "name": "hold",
+              "params": {
+                "0": 1
+              }
+            }
+          ],
+          "isBraced": true,
+          "layoutInstructions": [],
+          "line": 15,
+          "params": {},
+          "range": {
+            "end": 8,
+            "start": 3
+          },
+          "sugar": []
+        },
+        {
+          "commands": [],
+          "content": "后，我会消失一秒钟。",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 15,
+          "params": {},
+          "range": {
+            "end": 19,
+            "start": 9
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 17,
+        "lines": [
+          {
+            "body": [
+              {
+                "line": 17,
+                "marks": [],
+                "range": {
+                  "end": 12,
+                  "start": 0
+                },
+                "text": "我要在打完字后才重置镜头",
+                "type": "text"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": true,
+                    "family": "stage",
+                    "name": "cam.reset",
+                    "params": {
+                      "0": 2
+                    },
+                    "prefix": "bare",
+                    "raw": "cam.reset(2s)!"
+                  }
+                ],
+                "line": 17,
+                "prefix": "bare",
+                "range": {
+                  "end": 29,
+                  "start": 15
+                },
+                "raw": "cam.reset(2s)!",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 17,
+            "range": {
+              "end": 29,
+              "start": 0
+            },
+            "raw": "我要在打完字后才重置镜头 @ cam.reset(2s)!",
+            "type": "line"
+          },
+          {
+            "body": [
+              {
+                "line": 18,
+                "marks": [],
+                "range": {
+                  "end": 18,
+                  "start": 0
+                },
+                "text": "你会看到这句话全显后，镜头才开始慢慢",
+                "type": "text"
+              },
+              {
+                "children": [
+                  {
+                    "groupId": 3,
+                    "line": 18,
+                    "marks": [],
+                    "range": {
+                      "end": 21,
+                      "start": 19
+                    },
+                    "text": "回位",
+                    "type": "text"
+                  }
+                ],
+                "groupId": 3,
+                "line": 18,
+                "range": {
+                  "end": 22,
+                  "start": 18
+                },
+                "type": "group"
+              },
+              {
+                "line": 18,
+                "marks": [],
+                "range": {
+                  "end": 23,
+                  "start": 22
+                },
+                "text": "。",
+                "type": "text"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "name": "glitch",
+                    "params": {},
+                    "prefix": "f",
+                    "raw": "f.glitch"
+                  }
+                ],
+                "line": 18,
+                "prefix": "f",
+                "range": {
+                  "end": 34,
+                  "start": 26
+                },
+                "raw": "f.glitch",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 18,
+            "range": {
+              "end": 34,
+              "start": 0
+            },
+            "raw": "你会看到这句话全显后，镜头才开始慢慢{回位}。 @ f.glitch",
+            "type": "line"
+          }
+        ],
+        "source": "我要在打完字后才重置镜头 @ cam.reset(2s)!\n你会看到这句话全显后，镜头才开始慢慢{回位}。 @ f.glitch",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "我要在打完字后才重置镜头",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [
+              {
+                "blocking": true,
+                "params": {
+                  "0": 2
+                },
+                "type": "cam.reset"
+              }
+            ],
+            "line": 17,
+            "params": {},
+            "range": {
+              "end": 12,
+              "start": 0
+            },
+            "sugar": []
+          },
+          {
+            "commands": [],
+            "content": "\n",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": false,
+            "isSugar": false,
+            "kind": "newline",
+            "layoutInstructions": [],
+            "line": 17,
+            "params": {},
+            "range": {
+              "end": 29,
+              "start": 29
+            },
+            "sugar": []
+          },
+          {
+            "commands": [],
+            "content": "你会看到这句话全显后，镜头才开始慢慢",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 18,
+            "params": {},
+            "range": {
+              "end": 18,
+              "start": 0
+            },
+            "sugar": []
+          },
+          {
+            "braceGroupId": 3,
+            "commands": [],
+            "content": "回位",
+            "effects": [
+              {
+                "blocking": false,
+                "name": "glitch",
+                "params": {}
+              }
+            ],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 18,
+            "params": {},
+            "range": {
+              "end": 21,
+              "start": 19
+            },
+            "sugar": []
+          },
+          {
+            "commands": [],
+            "content": "。",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 18,
+            "params": {},
+            "range": {
+              "end": 23,
+              "start": 22
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 17,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "我要在打完字后才重置镜头",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [
+            {
+              "blocking": true,
+              "params": {
+                "0": 2
+              },
+              "type": "cam.reset"
+            }
+          ],
+          "line": 17,
+          "params": {},
+          "range": {
+            "end": 12,
+            "start": 0
+          },
+          "sugar": []
+        },
+        {
+          "commands": [],
+          "content": "\n",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": false,
+          "isSugar": false,
+          "layoutInstructions": [],
+          "line": 17,
+          "params": {},
+          "range": {
+            "end": 29,
+            "start": 29
+          },
+          "sugar": []
+        },
+        {
+          "commands": [],
+          "content": "你会看到这句话全显后，镜头才开始慢慢",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 18,
+          "params": {},
+          "range": {
+            "end": 18,
+            "start": 0
+          },
+          "sugar": []
+        },
+        {
+          "braceGroupId": 3,
+          "commands": [],
+          "content": "回位",
+          "effects": [
+            {
+              "blocking": false,
+              "name": "glitch",
+              "params": {}
+            }
+          ],
+          "isBraced": true,
+          "layoutInstructions": [],
+          "line": 18,
+          "params": {},
+          "range": {
+            "end": 21,
+            "start": 19
+          },
+          "sugar": []
+        },
+        {
+          "commands": [],
+          "content": "。",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 18,
+          "params": {},
+          "range": {
+            "end": 23,
+            "start": 22
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 20,
+        "lines": [
+          {
+            "body": [
+              {
+                "children": [
+                  {
+                    "groupId": 4,
+                    "line": 20,
+                    "marks": [],
+                    "range": {
+                      "end": 4,
+                      "start": 1
+                    },
+                    "text": "一二三",
+                    "type": "text"
+                  }
+                ],
+                "groupId": 4,
+                "line": 20,
+                "range": {
+                  "end": 5,
+                  "start": 0
+                },
+                "type": "group"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "style",
+                    "name": "yellow",
+                    "params": {},
+                    "prefix": "f",
+                    "raw": "f.yellow.hold(1s).green.hold(1s).red"
+                  },
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "name": "hold",
+                    "params": {
+                      "0": 1
+                    },
+                    "prefix": "f",
+                    "raw": "f.yellow.hold(1s).green.hold(1s).red"
+                  },
+                  {
+                    "blocking": false,
+                    "family": "style",
+                    "name": "green",
+                    "params": {},
+                    "prefix": "f",
+                    "raw": "f.yellow.hold(1s).green.hold(1s).red"
+                  },
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "name": "hold",
+                    "params": {
+                      "0": 1
+                    },
+                    "prefix": "f",
+                    "raw": "f.yellow.hold(1s).green.hold(1s).red"
+                  },
+                  {
+                    "blocking": false,
+                    "family": "style",
+                    "name": "red",
+                    "params": {},
+                    "prefix": "f",
+                    "raw": "f.yellow.hold(1s).green.hold(1s).red"
+                  }
+                ],
+                "line": 20,
+                "prefix": "f",
+                "range": {
+                  "end": 44,
+                  "start": 8
+                },
+                "raw": "f.yellow.hold(1s).green.hold(1s).red",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 20,
+            "range": {
+              "end": 44,
+              "start": 0
+            },
+            "raw": "{一二三} @ f.yellow.hold(1s).green.hold(1s).red",
+            "type": "line"
+          }
+        ],
+        "source": "{一二三} @ f.yellow.hold(1s).green.hold(1s).red",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "braceGroupId": 4,
+            "commands": [],
+            "content": "一二三",
+            "effects": [
+              {
+                "blocking": false,
+                "name": "yellow",
+                "params": {}
+              },
+              {
+                "blocking": false,
+                "name": "hold",
+                "params": {
+                  "0": 1
+                }
+              },
+              {
+                "blocking": false,
+                "name": "green",
+                "params": {}
+              },
+              {
+                "blocking": false,
+                "name": "hold",
+                "params": {
+                  "0": 1
+                }
+              },
+              {
+                "blocking": false,
+                "name": "red",
+                "params": {}
+              }
+            ],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 20,
+            "params": {},
+            "range": {
+              "end": 4,
+              "start": 1
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 20,
+      "tokens": [
+        {
+          "braceGroupId": 4,
+          "commands": [],
+          "content": "一二三",
+          "effects": [
+            {
+              "blocking": false,
+              "name": "yellow",
+              "params": {}
+            },
+            {
+              "blocking": false,
+              "name": "hold",
+              "params": {
+                "0": 1
+              }
+            },
+            {
+              "blocking": false,
+              "name": "green",
+              "params": {}
+            },
+            {
+              "blocking": false,
+              "name": "hold",
+              "params": {
+                "0": 1
+              }
+            },
+            {
+              "blocking": false,
+              "name": "red",
+              "params": {}
+            }
+          ],
+          "isBraced": true,
+          "layoutInstructions": [],
+          "line": 20,
+          "params": {},
+          "range": {
+            "end": 4,
+            "start": 1
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 22,
+        "lines": [
+          {
+            "body": [
+              {
+                "children": [
+                  {
+                    "groupId": 5,
+                    "line": 22,
+                    "marks": [],
+                    "range": {
+                      "end": 5,
+                      "start": 1
+                    },
+                    "text": "你说什么",
+                    "type": "text"
+                  }
+                ],
+                "groupId": 5,
+                "line": 22,
+                "range": {
+                  "end": 6,
+                  "start": 0
+                },
+                "type": "group"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "level": "char",
+                    "name": "hold",
+                    "params": {
+                      "0": 1
+                    },
+                    "prefix": "f",
+                    "raw": "f.hold:char(1s).shake:char"
+                  },
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "level": "char",
+                    "name": "shake",
+                    "params": {},
+                    "prefix": "f",
+                    "raw": "f.hold:char(1s).shake:char"
+                  }
+                ],
+                "line": 22,
+                "prefix": "f",
+                "range": {
+                  "end": 35,
+                  "start": 9
+                },
+                "raw": "f.hold:char(1s).shake:char",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 22,
+            "range": {
+              "end": 35,
+              "start": 0
+            },
+            "raw": "{你说什么} @ f.hold:char(1s).shake:char",
+            "type": "line"
+          }
+        ],
+        "source": "{你说什么} @ f.hold:char(1s).shake:char",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "braceGroupId": 5,
+            "commands": [],
+            "content": "你说什么",
+            "effects": [
+              {
+                "blocking": false,
+                "level": "char",
+                "name": "hold",
+                "params": {
+                  "0": 1
+                }
+              },
+              {
+                "blocking": false,
+                "level": "char",
+                "name": "shake",
+                "params": {}
+              }
+            ],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 22,
+            "params": {},
+            "range": {
+              "end": 5,
+              "start": 1
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 22,
+      "tokens": [
+        {
+          "braceGroupId": 5,
+          "commands": [],
+          "content": "你说什么",
+          "effects": [
+            {
+              "blocking": false,
+              "level": "char",
+              "name": "hold",
+              "params": {
+                "0": 1
+              }
+            },
+            {
+              "blocking": false,
+              "level": "char",
+              "name": "shake",
+              "params": {}
+            }
+          ],
+          "isBraced": true,
+          "layoutInstructions": [],
+          "line": 22,
+          "params": {},
+          "range": {
+            "end": 5,
+            "start": 1
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 24,
+        "lines": [
+          {
+            "body": [
+              {
+                "line": 24,
+                "marks": [],
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "text": "我很忙",
+                "type": "text"
+              },
+              {
+                "line": 24,
+                "params": {
+                  "0": 0.5
+                },
+                "range": {
+                  "end": 4,
+                  "start": 3
+                },
+                "type": "pause"
+              },
+              {
+                "line": 24,
+                "marks": [],
+                "range": {
+                  "end": 10,
+                  "start": 4
+                },
+                "text": "，请稍等一下",
+                "type": "text"
+              },
+              {
+                "line": 24,
+                "params": {
+                  "0": 0.5
+                },
+                "range": {
+                  "end": 11,
+                  "start": 10
+                },
+                "type": "pause"
+              },
+              {
+                "line": 24,
+                "params": {
+                  "0": 0.5
+                },
+                "range": {
+                  "end": 12,
+                  "start": 11
+                },
+                "type": "pause"
+              },
+              {
+                "line": 24,
+                "marks": [],
+                "range": {
+                  "end": 13,
+                  "start": 12
+                },
+                "text": "。",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 24,
+            "range": {
+              "end": 13,
+              "start": 0
+            },
+            "raw": "我很忙|，请稍等一下||。",
+            "type": "line"
+          }
+        ],
+        "source": "我很忙|，请稍等一下||。",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "我很忙",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 24,
+            "params": {},
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "sugar": []
+          },
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": true,
+            "isSceneClear": false,
+            "isSugar": false,
+            "kind": "pause",
+            "layoutInstructions": [
+              {
+                "blocking": true,
+                "line": 24,
+                "params": {
+                  "0": 0.5
+                },
+                "range": {
+                  "end": 4,
+                  "start": 3
+                },
+                "type": "pause"
+              }
+            ],
+            "line": 24,
+            "params": {},
+            "range": {
+              "end": 4,
+              "start": 3
+            },
+            "sugar": []
+          },
+          {
+            "commands": [],
+            "content": "，请稍等一下",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 24,
+            "params": {},
+            "range": {
+              "end": 10,
+              "start": 4
+            },
+            "sugar": []
+          },
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": true,
+            "isSceneClear": false,
+            "isSugar": false,
+            "kind": "pause",
+            "layoutInstructions": [
+              {
+                "blocking": true,
+                "line": 24,
+                "params": {
+                  "0": 0.5
+                },
+                "range": {
+                  "end": 11,
+                  "start": 10
+                },
+                "type": "pause"
+              }
+            ],
+            "line": 24,
+            "params": {},
+            "range": {
+              "end": 11,
+              "start": 10
+            },
+            "sugar": []
+          },
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": true,
+            "isSceneClear": false,
+            "isSugar": false,
+            "kind": "pause",
+            "layoutInstructions": [
+              {
+                "blocking": true,
+                "line": 24,
+                "params": {
+                  "0": 0.5
+                },
+                "range": {
+                  "end": 12,
+                  "start": 11
+                },
+                "type": "pause"
+              }
+            ],
+            "line": 24,
+            "params": {},
+            "range": {
+              "end": 12,
+              "start": 11
+            },
+            "sugar": []
+          },
+          {
+            "commands": [],
+            "content": "。",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 24,
+            "params": {},
+            "range": {
+              "end": 13,
+              "start": 12
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 24,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "我很忙",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 24,
+          "params": {},
+          "range": {
+            "end": 3,
+            "start": 0
+          },
+          "sugar": []
+        },
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": true,
+          "isSceneClear": false,
+          "isSugar": false,
+          "layoutInstructions": [
+            {
+              "blocking": true,
+              "line": 24,
+              "params": {
+                "0": 0.5
+              },
+              "range": {
+                "end": 4,
+                "start": 3
+              },
+              "type": "pause"
+            }
+          ],
+          "line": 24,
+          "params": {},
+          "range": {
+            "end": 4,
+            "start": 3
+          },
+          "sugar": []
+        },
+        {
+          "commands": [],
+          "content": "，请稍等一下",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 24,
+          "params": {},
+          "range": {
+            "end": 10,
+            "start": 4
+          },
+          "sugar": []
+        },
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": true,
+          "isSceneClear": false,
+          "isSugar": false,
+          "layoutInstructions": [
+            {
+              "blocking": true,
+              "line": 24,
+              "params": {
+                "0": 0.5
+              },
+              "range": {
+                "end": 11,
+                "start": 10
+              },
+              "type": "pause"
+            }
+          ],
+          "line": 24,
+          "params": {},
+          "range": {
+            "end": 11,
+            "start": 10
+          },
+          "sugar": []
+        },
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": true,
+          "isSceneClear": false,
+          "isSugar": false,
+          "layoutInstructions": [
+            {
+              "blocking": true,
+              "line": 24,
+              "params": {
+                "0": 0.5
+              },
+              "range": {
+                "end": 12,
+                "start": 11
+              },
+              "type": "pause"
+            }
+          ],
+          "line": 24,
+          "params": {},
+          "range": {
+            "end": 12,
+            "start": 11
+          },
+          "sugar": []
+        },
+        {
+          "commands": [],
+          "content": "。",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 24,
+          "params": {},
+          "range": {
+            "end": 13,
+            "start": 12
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 26,
+        "lines": [
+          {
+            "body": [
+              {
+                "line": 26,
+                "marks": [],
+                "range": {
+                  "end": 4,
+                  "start": 0
+                },
+                "text": "这是一个",
+                "type": "text"
+              },
+              {
+                "line": 26,
+                "params": {
+                  "0": 2
+                },
+                "range": {
+                  "end": 9,
+                  "start": 4
+                },
+                "type": "pause"
+              },
+              {
+                "line": 26,
+                "marks": [],
+                "range": {
+                  "end": 14,
+                  "start": 9
+                },
+                "text": "超长停顿。",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 26,
+            "range": {
+              "end": 14,
+              "start": 0
+            },
+            "raw": "这是一个|(2s)超长停顿。",
+            "type": "line"
+          }
+        ],
+        "source": "这是一个|(2s)超长停顿。",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "这是一个",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 26,
+            "params": {},
+            "range": {
+              "end": 4,
+              "start": 0
+            },
+            "sugar": []
+          },
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": true,
+            "isSceneClear": false,
+            "isSugar": false,
+            "kind": "pause",
+            "layoutInstructions": [
+              {
+                "blocking": true,
+                "line": 26,
+                "params": {
+                  "0": 2
+                },
+                "range": {
+                  "end": 9,
+                  "start": 4
+                },
+                "type": "pause"
+              }
+            ],
+            "line": 26,
+            "params": {},
+            "range": {
+              "end": 9,
+              "start": 4
+            },
+            "sugar": []
+          },
+          {
+            "commands": [],
+            "content": "超长停顿。",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 26,
+            "params": {},
+            "range": {
+              "end": 14,
+              "start": 9
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 26,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "这是一个",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 26,
+          "params": {},
+          "range": {
+            "end": 4,
+            "start": 0
+          },
+          "sugar": []
+        },
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": true,
+          "isSceneClear": false,
+          "isSugar": false,
+          "layoutInstructions": [
+            {
+              "blocking": true,
+              "line": 26,
+              "params": {
+                "0": 2
+              },
+              "range": {
+                "end": 9,
+                "start": 4
+              },
+              "type": "pause"
+            }
+          ],
+          "line": 26,
+          "params": {},
+          "range": {
+            "end": 9,
+            "start": 4
+          },
+          "sugar": []
+        },
+        {
+          "commands": [],
+          "content": "超长停顿。",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 26,
+          "params": {},
+          "range": {
+            "end": 14,
+            "start": 9
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 28,
+        "lines": [
+          {
+            "body": [
+              {
+                "line": 28,
+                "params": {
+                  "0": 0.5
+                },
+                "range": {
+                  "end": 1,
+                  "start": 0
+                },
+                "type": "pause"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 28,
+            "range": {
+              "end": 1,
+              "start": 0
+            },
+            "raw": "|",
+            "type": "line"
+          }
+        ],
+        "source": "|",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": true,
+            "isSceneClear": false,
+            "isSugar": false,
+            "kind": "pause",
+            "layoutInstructions": [
+              {
+                "blocking": true,
+                "line": 28,
+                "params": {
+                  "0": 0.5
+                },
+                "range": {
+                  "end": 1,
+                  "start": 0
+                },
+                "type": "pause"
+              }
+            ],
+            "line": 28,
+            "params": {},
+            "range": {
+              "end": 1,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 28,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": true,
+          "isSceneClear": false,
+          "isSugar": false,
+          "layoutInstructions": [
+            {
+              "blocking": true,
+              "line": 28,
+              "params": {
+                "0": 0.5
+              },
+              "range": {
+                "end": 1,
+                "start": 0
+              },
+              "type": "pause"
+            }
+          ],
+          "line": 28,
+          "params": {},
+          "range": {
+            "end": 1,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 30,
+        "lines": [
+          {
+            "body": [
+              {
+                "line": 30,
+                "marks": [],
+                "range": {
+                  "end": 2,
+                  "start": 0
+                },
+                "text": "ok",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 30,
+            "range": {
+              "end": 2,
+              "start": 0
+            },
+            "raw": "ok",
+            "type": "line"
+          }
+        ],
+        "source": "ok",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "ok",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 30,
+            "params": {},
+            "range": {
+              "end": 2,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 30,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "ok",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 30,
+          "params": {},
+          "range": {
+            "end": 2,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    }
+  ],
+  "rawParagraphs": [
+    "[cam.zoom(0.5, 1s)!]\n我会等镜头缩放完才出现。",
+    "{我要停一下} @ pause(1s)\n打完{“停一下”}后，我会消失一秒钟。 @ f.hold:group(1s)",
+    "我要在打完字后才重置镜头 @ cam.reset(2s)!\n你会看到这句话全显后，镜头才开始慢慢{回位}。 @ f.glitch",
+    "{一二三} @ f.yellow.hold(1s).green.hold(1s).red",
+    "{你说什么} @ f.hold:char(1s).shake:char",
+    "我很忙|，请稍等一下||。",
+    "这是一个|(2s)超长停顿。",
+    "|",
+    "ok"
+  ]
+}

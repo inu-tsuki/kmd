@@ -1,0 +1,2017 @@
+{
+  "diagnostics": [],
+  "metadata": {
+    "designHeight": 1080,
+    "designWidth": 1920,
+    "mode": "stage",
+    "speed": 50,
+    "title": "08 - 时序语法糖",
+    "variables": {}
+  },
+  "paragraphs": [
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 8,
+        "lines": [
+          {
+            "body": [
+              {
+                "line": 9,
+                "marks": [],
+                "range": {
+                  "end": 1,
+                  "start": 0
+                },
+                "text": "快",
+                "type": "text"
+              },
+              {
+                "level": "char",
+                "line": 9,
+                "name": "go",
+                "params": {},
+                "range": {
+                  "end": 2,
+                  "start": 1
+                },
+                "type": "sugar"
+              },
+              {
+                "line": 9,
+                "marks": [],
+                "range": {
+                  "end": 3,
+                  "start": 2
+                },
+                "text": "速",
+                "type": "text"
+              },
+              {
+                "level": "char",
+                "line": 9,
+                "name": "go",
+                "params": {},
+                "range": {
+                  "end": 4,
+                  "start": 3
+                },
+                "type": "sugar"
+              },
+              {
+                "line": 9,
+                "marks": [],
+                "range": {
+                  "end": 5,
+                  "start": 4
+                },
+                "text": "推",
+                "type": "text"
+              },
+              {
+                "level": "char",
+                "line": 9,
+                "name": "go",
+                "params": {},
+                "range": {
+                  "end": 6,
+                  "start": 5
+                },
+                "type": "sugar"
+              },
+              {
+                "line": 9,
+                "marks": [],
+                "range": {
+                  "end": 7,
+                  "start": 6
+                },
+                "text": "进",
+                "type": "text"
+              },
+              {
+                "level": "char",
+                "line": 9,
+                "name": "go",
+                "params": {},
+                "range": {
+                  "end": 8,
+                  "start": 7
+                },
+                "type": "sugar"
+              },
+              {
+                "line": 9,
+                "marks": [],
+                "range": {
+                  "end": 9,
+                  "start": 8
+                },
+                "text": "不",
+                "type": "text"
+              },
+              {
+                "level": "char",
+                "line": 9,
+                "name": "go",
+                "params": {},
+                "range": {
+                  "end": 10,
+                  "start": 9
+                },
+                "type": "sugar"
+              },
+              {
+                "line": 9,
+                "marks": [],
+                "range": {
+                  "end": 11,
+                  "start": 10
+                },
+                "text": "停",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 9,
+            "range": {
+              "end": 11,
+              "start": 0
+            },
+            "raw": "快>速>推>进>不>停",
+            "type": "line"
+          }
+        ],
+        "source": "// 预期：> 即时连接\n快>速>推>进>不>停",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "快",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 9,
+            "params": {},
+            "range": {
+              "end": 1,
+              "start": 0
+            },
+            "sugar": []
+          },
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": false,
+            "isSugar": true,
+            "kind": "sugar",
+            "layoutInstructions": [],
+            "line": 9,
+            "params": {},
+            "range": {
+              "end": 2,
+              "start": 1
+            },
+            "sugar": [
+              {
+                "level": "char",
+                "name": "go",
+                "params": {}
+              }
+            ]
+          },
+          {
+            "commands": [],
+            "content": "速",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 9,
+            "params": {},
+            "range": {
+              "end": 3,
+              "start": 2
+            },
+            "sugar": []
+          },
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": false,
+            "isSugar": true,
+            "kind": "sugar",
+            "layoutInstructions": [],
+            "line": 9,
+            "params": {},
+            "range": {
+              "end": 4,
+              "start": 3
+            },
+            "sugar": [
+              {
+                "level": "char",
+                "name": "go",
+                "params": {}
+              }
+            ]
+          },
+          {
+            "commands": [],
+            "content": "推",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 9,
+            "params": {},
+            "range": {
+              "end": 5,
+              "start": 4
+            },
+            "sugar": []
+          },
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": false,
+            "isSugar": true,
+            "kind": "sugar",
+            "layoutInstructions": [],
+            "line": 9,
+            "params": {},
+            "range": {
+              "end": 6,
+              "start": 5
+            },
+            "sugar": [
+              {
+                "level": "char",
+                "name": "go",
+                "params": {}
+              }
+            ]
+          },
+          {
+            "commands": [],
+            "content": "进",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 9,
+            "params": {},
+            "range": {
+              "end": 7,
+              "start": 6
+            },
+            "sugar": []
+          },
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": false,
+            "isSugar": true,
+            "kind": "sugar",
+            "layoutInstructions": [],
+            "line": 9,
+            "params": {},
+            "range": {
+              "end": 8,
+              "start": 7
+            },
+            "sugar": [
+              {
+                "level": "char",
+                "name": "go",
+                "params": {}
+              }
+            ]
+          },
+          {
+            "commands": [],
+            "content": "不",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 9,
+            "params": {},
+            "range": {
+              "end": 9,
+              "start": 8
+            },
+            "sugar": []
+          },
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": false,
+            "isSugar": true,
+            "kind": "sugar",
+            "layoutInstructions": [],
+            "line": 9,
+            "params": {},
+            "range": {
+              "end": 10,
+              "start": 9
+            },
+            "sugar": [
+              {
+                "level": "char",
+                "name": "go",
+                "params": {}
+              }
+            ]
+          },
+          {
+            "commands": [],
+            "content": "停",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 9,
+            "params": {},
+            "range": {
+              "end": 11,
+              "start": 10
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 8,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "快",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 9,
+          "params": {},
+          "range": {
+            "end": 1,
+            "start": 0
+          },
+          "sugar": []
+        },
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": false,
+          "isSugar": true,
+          "layoutInstructions": [],
+          "line": 9,
+          "params": {},
+          "range": {
+            "end": 2,
+            "start": 1
+          },
+          "sugar": [
+            {
+              "level": "char",
+              "name": "go",
+              "params": {}
+            }
+          ]
+        },
+        {
+          "commands": [],
+          "content": "速",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 9,
+          "params": {},
+          "range": {
+            "end": 3,
+            "start": 2
+          },
+          "sugar": []
+        },
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": false,
+          "isSugar": true,
+          "layoutInstructions": [],
+          "line": 9,
+          "params": {},
+          "range": {
+            "end": 4,
+            "start": 3
+          },
+          "sugar": [
+            {
+              "level": "char",
+              "name": "go",
+              "params": {}
+            }
+          ]
+        },
+        {
+          "commands": [],
+          "content": "推",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 9,
+          "params": {},
+          "range": {
+            "end": 5,
+            "start": 4
+          },
+          "sugar": []
+        },
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": false,
+          "isSugar": true,
+          "layoutInstructions": [],
+          "line": 9,
+          "params": {},
+          "range": {
+            "end": 6,
+            "start": 5
+          },
+          "sugar": [
+            {
+              "level": "char",
+              "name": "go",
+              "params": {}
+            }
+          ]
+        },
+        {
+          "commands": [],
+          "content": "进",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 9,
+          "params": {},
+          "range": {
+            "end": 7,
+            "start": 6
+          },
+          "sugar": []
+        },
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": false,
+          "isSugar": true,
+          "layoutInstructions": [],
+          "line": 9,
+          "params": {},
+          "range": {
+            "end": 8,
+            "start": 7
+          },
+          "sugar": [
+            {
+              "level": "char",
+              "name": "go",
+              "params": {}
+            }
+          ]
+        },
+        {
+          "commands": [],
+          "content": "不",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 9,
+          "params": {},
+          "range": {
+            "end": 9,
+            "start": 8
+          },
+          "sugar": []
+        },
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": false,
+          "isSugar": true,
+          "layoutInstructions": [],
+          "line": 9,
+          "params": {},
+          "range": {
+            "end": 10,
+            "start": 9
+          },
+          "sugar": [
+            {
+              "level": "char",
+              "name": "go",
+              "params": {}
+            }
+          ]
+        },
+        {
+          "commands": [],
+          "content": "停",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 9,
+          "params": {},
+          "range": {
+            "end": 11,
+            "start": 10
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 11,
+        "lines": [
+          {
+            "body": [
+              {
+                "line": 12,
+                "marks": [],
+                "range": {
+                  "end": 8,
+                  "start": 0
+                },
+                "text": "这一行打到一半 ",
+                "type": "text"
+              },
+              {
+                "level": "group",
+                "line": 12,
+                "name": "go",
+                "params": {},
+                "range": {
+                  "end": 10,
+                  "start": 8
+                },
+                "type": "sugar"
+              },
+              {
+                "line": 12,
+                "marks": [],
+                "range": {
+                  "end": 19,
+                  "start": 10
+                },
+                "text": " 下一行就会开始。",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 12,
+            "range": {
+              "end": 19,
+              "start": 0
+            },
+            "raw": "这一行打到一半 >> 下一行就会开始。",
+            "type": "line"
+          },
+          {
+            "body": [
+              {
+                "line": 13,
+                "marks": [],
+                "range": {
+                  "end": 11,
+                  "start": 0
+                },
+                "text": "我是提前开始的那一行。",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 13,
+            "range": {
+              "end": 11,
+              "start": 0
+            },
+            "raw": "我是提前开始的那一行。",
+            "type": "line"
+          }
+        ],
+        "source": "// 预期：>> 行级并发（下一行提前开始）\n这一行打到一半 >> 下一行就会开始。\n我是提前开始的那一行。",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "这一行打到一半 ",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 12,
+            "params": {},
+            "range": {
+              "end": 8,
+              "start": 0
+            },
+            "sugar": []
+          },
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": false,
+            "isSugar": true,
+            "kind": "sugar",
+            "layoutInstructions": [],
+            "line": 12,
+            "params": {},
+            "range": {
+              "end": 10,
+              "start": 8
+            },
+            "sugar": [
+              {
+                "level": "group",
+                "name": "go",
+                "params": {}
+              }
+            ]
+          },
+          {
+            "commands": [],
+            "content": " 下一行就会开始。",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 12,
+            "params": {},
+            "range": {
+              "end": 19,
+              "start": 10
+            },
+            "sugar": []
+          },
+          {
+            "commands": [],
+            "content": "\n",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": false,
+            "isSugar": false,
+            "kind": "newline",
+            "layoutInstructions": [],
+            "line": 12,
+            "params": {},
+            "range": {
+              "end": 19,
+              "start": 19
+            },
+            "sugar": []
+          },
+          {
+            "commands": [],
+            "content": "我是提前开始的那一行。",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 13,
+            "params": {},
+            "range": {
+              "end": 11,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 11,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "这一行打到一半 ",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 12,
+          "params": {},
+          "range": {
+            "end": 8,
+            "start": 0
+          },
+          "sugar": []
+        },
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": false,
+          "isSugar": true,
+          "layoutInstructions": [],
+          "line": 12,
+          "params": {},
+          "range": {
+            "end": 10,
+            "start": 8
+          },
+          "sugar": [
+            {
+              "level": "group",
+              "name": "go",
+              "params": {}
+            }
+          ]
+        },
+        {
+          "commands": [],
+          "content": " 下一行就会开始。",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 12,
+          "params": {},
+          "range": {
+            "end": 19,
+            "start": 10
+          },
+          "sugar": []
+        },
+        {
+          "commands": [],
+          "content": "\n",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": false,
+          "isSugar": false,
+          "layoutInstructions": [],
+          "line": 12,
+          "params": {},
+          "range": {
+            "end": 19,
+            "start": 19
+          },
+          "sugar": []
+        },
+        {
+          "commands": [],
+          "content": "我是提前开始的那一行。",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 13,
+          "params": {},
+          "range": {
+            "end": 11,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 15,
+        "lines": [
+          {
+            "body": [
+              {
+                "children": [
+                  {
+                    "groupId": 1,
+                    "line": 16,
+                    "marks": [],
+                    "range": {
+                      "end": 6,
+                      "start": 1
+                    },
+                    "text": "我是段落A",
+                    "type": "text"
+                  }
+                ],
+                "groupId": 1,
+                "line": 16,
+                "range": {
+                  "end": 7,
+                  "start": 0
+                },
+                "type": "group"
+              },
+              {
+                "line": 16,
+                "marks": [],
+                "range": {
+                  "end": 8,
+                  "start": 7
+                },
+                "text": " ",
+                "type": "text"
+              },
+              {
+                "level": "block",
+                "line": 16,
+                "name": "go",
+                "params": {},
+                "range": {
+                  "end": 11,
+                  "start": 8
+                },
+                "type": "sugar"
+              },
+              {
+                "line": 16,
+                "marks": [],
+                "range": {
+                  "end": 21,
+                  "start": 11
+                },
+                "text": " 此后和段落B并行。",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 16,
+            "range": {
+              "end": 21,
+              "start": 0
+            },
+            "raw": "{我是段落A} >>> 此后和段落B并行。",
+            "type": "line"
+          }
+        ],
+        "source": "// 预期：>>> 段落级并发\n{我是段落A} >>> 此后和段落B并行。",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "braceGroupId": 1,
+            "commands": [],
+            "content": "我是段落A",
+            "effects": [],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 16,
+            "params": {},
+            "range": {
+              "end": 6,
+              "start": 1
+            },
+            "sugar": []
+          },
+          {
+            "commands": [],
+            "content": " ",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 16,
+            "params": {},
+            "range": {
+              "end": 8,
+              "start": 7
+            },
+            "sugar": []
+          },
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": false,
+            "isSugar": true,
+            "kind": "sugar",
+            "layoutInstructions": [],
+            "line": 16,
+            "params": {},
+            "range": {
+              "end": 11,
+              "start": 8
+            },
+            "sugar": [
+              {
+                "level": "block",
+                "name": "go",
+                "params": {}
+              }
+            ]
+          },
+          {
+            "commands": [],
+            "content": " 此后和段落B并行。",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 16,
+            "params": {},
+            "range": {
+              "end": 21,
+              "start": 11
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 15,
+      "tokens": [
+        {
+          "braceGroupId": 1,
+          "commands": [],
+          "content": "我是段落A",
+          "effects": [],
+          "isBraced": true,
+          "layoutInstructions": [],
+          "line": 16,
+          "params": {},
+          "range": {
+            "end": 6,
+            "start": 1
+          },
+          "sugar": []
+        },
+        {
+          "commands": [],
+          "content": " ",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 16,
+          "params": {},
+          "range": {
+            "end": 8,
+            "start": 7
+          },
+          "sugar": []
+        },
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": false,
+          "isSugar": true,
+          "layoutInstructions": [],
+          "line": 16,
+          "params": {},
+          "range": {
+            "end": 11,
+            "start": 8
+          },
+          "sugar": [
+            {
+              "level": "block",
+              "name": "go",
+              "params": {}
+            }
+          ]
+        },
+        {
+          "commands": [],
+          "content": " 此后和段落B并行。",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 16,
+          "params": {},
+          "range": {
+            "end": 21,
+            "start": 11
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 18,
+        "lines": [
+          {
+            "body": [
+              {
+                "line": 18,
+                "marks": [],
+                "range": {
+                  "end": 19,
+                  "start": 0
+                },
+                "text": "我是段落B，和段落A的后半段同时出现。",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 18,
+            "range": {
+              "end": 19,
+              "start": 0
+            },
+            "raw": "我是段落B，和段落A的后半段同时出现。",
+            "type": "line"
+          }
+        ],
+        "source": "我是段落B，和段落A的后半段同时出现。",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "我是段落B，和段落A的后半段同时出现。",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 18,
+            "params": {},
+            "range": {
+              "end": 19,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 18,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "我是段落B，和段落A的后半段同时出现。",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 18,
+          "params": {},
+          "range": {
+            "end": 19,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 20,
+        "lines": [
+          {
+            "body": [
+              {
+                "children": [
+                  {
+                    "groupId": 2,
+                    "level": "char",
+                    "line": 21,
+                    "name": "slow",
+                    "params": {},
+                    "range": {
+                      "end": 2,
+                      "start": 1
+                    },
+                    "type": "sugar"
+                  },
+                  {
+                    "groupId": 2,
+                    "line": 21,
+                    "marks": [],
+                    "range": {
+                      "end": 3,
+                      "start": 2
+                    },
+                    "text": "慢",
+                    "type": "text"
+                  },
+                  {
+                    "groupId": 2,
+                    "level": "char",
+                    "line": 21,
+                    "name": "slow",
+                    "params": {},
+                    "range": {
+                      "end": 4,
+                      "start": 3
+                    },
+                    "type": "sugar"
+                  },
+                  {
+                    "groupId": 2,
+                    "line": 21,
+                    "marks": [],
+                    "range": {
+                      "end": 5,
+                      "start": 4
+                    },
+                    "text": "慢",
+                    "type": "text"
+                  },
+                  {
+                    "groupId": 2,
+                    "level": "char",
+                    "line": 21,
+                    "name": "slow",
+                    "params": {},
+                    "range": {
+                      "end": 6,
+                      "start": 5
+                    },
+                    "type": "sugar"
+                  },
+                  {
+                    "groupId": 2,
+                    "line": 21,
+                    "marks": [],
+                    "range": {
+                      "end": 7,
+                      "start": 6
+                    },
+                    "text": "慢",
+                    "type": "text"
+                  },
+                  {
+                    "groupId": 2,
+                    "level": "char",
+                    "line": 21,
+                    "name": "slow",
+                    "params": {},
+                    "range": {
+                      "end": 8,
+                      "start": 7
+                    },
+                    "type": "sugar"
+                  },
+                  {
+                    "groupId": 2,
+                    "line": 21,
+                    "marks": [],
+                    "range": {
+                      "end": 9,
+                      "start": 8
+                    },
+                    "text": "速",
+                    "type": "text"
+                  }
+                ],
+                "groupId": 2,
+                "line": 21,
+                "range": {
+                  "end": 10,
+                  "start": 0
+                },
+                "type": "group"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 21,
+            "range": {
+              "end": 10,
+              "start": 0
+            },
+            "raw": "{~慢~慢~慢~速}",
+            "type": "line"
+          }
+        ],
+        "source": "// 预期：~ 慢速\n{~慢~慢~慢~速}",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": false,
+            "isSugar": true,
+            "kind": "sugar",
+            "layoutInstructions": [],
+            "line": 21,
+            "params": {},
+            "range": {
+              "end": 2,
+              "start": 1
+            },
+            "sugar": [
+              {
+                "level": "char",
+                "name": "slow",
+                "params": {}
+              }
+            ]
+          },
+          {
+            "braceGroupId": 2,
+            "commands": [],
+            "content": "慢",
+            "effects": [],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 21,
+            "params": {},
+            "range": {
+              "end": 3,
+              "start": 2
+            },
+            "sugar": []
+          },
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": false,
+            "isSugar": true,
+            "kind": "sugar",
+            "layoutInstructions": [],
+            "line": 21,
+            "params": {},
+            "range": {
+              "end": 4,
+              "start": 3
+            },
+            "sugar": [
+              {
+                "level": "char",
+                "name": "slow",
+                "params": {}
+              }
+            ]
+          },
+          {
+            "braceGroupId": 2,
+            "commands": [],
+            "content": "慢",
+            "effects": [],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 21,
+            "params": {},
+            "range": {
+              "end": 5,
+              "start": 4
+            },
+            "sugar": []
+          },
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": false,
+            "isSugar": true,
+            "kind": "sugar",
+            "layoutInstructions": [],
+            "line": 21,
+            "params": {},
+            "range": {
+              "end": 6,
+              "start": 5
+            },
+            "sugar": [
+              {
+                "level": "char",
+                "name": "slow",
+                "params": {}
+              }
+            ]
+          },
+          {
+            "braceGroupId": 2,
+            "commands": [],
+            "content": "慢",
+            "effects": [],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 21,
+            "params": {},
+            "range": {
+              "end": 7,
+              "start": 6
+            },
+            "sugar": []
+          },
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": false,
+            "isSugar": true,
+            "kind": "sugar",
+            "layoutInstructions": [],
+            "line": 21,
+            "params": {},
+            "range": {
+              "end": 8,
+              "start": 7
+            },
+            "sugar": [
+              {
+                "level": "char",
+                "name": "slow",
+                "params": {}
+              }
+            ]
+          },
+          {
+            "braceGroupId": 2,
+            "commands": [],
+            "content": "速",
+            "effects": [],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 21,
+            "params": {},
+            "range": {
+              "end": 9,
+              "start": 8
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 20,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": false,
+          "isSugar": true,
+          "layoutInstructions": [],
+          "line": 21,
+          "params": {},
+          "range": {
+            "end": 2,
+            "start": 1
+          },
+          "sugar": [
+            {
+              "level": "char",
+              "name": "slow",
+              "params": {}
+            }
+          ]
+        },
+        {
+          "braceGroupId": 2,
+          "commands": [],
+          "content": "慢",
+          "effects": [],
+          "isBraced": true,
+          "layoutInstructions": [],
+          "line": 21,
+          "params": {},
+          "range": {
+            "end": 3,
+            "start": 2
+          },
+          "sugar": []
+        },
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": false,
+          "isSugar": true,
+          "layoutInstructions": [],
+          "line": 21,
+          "params": {},
+          "range": {
+            "end": 4,
+            "start": 3
+          },
+          "sugar": [
+            {
+              "level": "char",
+              "name": "slow",
+              "params": {}
+            }
+          ]
+        },
+        {
+          "braceGroupId": 2,
+          "commands": [],
+          "content": "慢",
+          "effects": [],
+          "isBraced": true,
+          "layoutInstructions": [],
+          "line": 21,
+          "params": {},
+          "range": {
+            "end": 5,
+            "start": 4
+          },
+          "sugar": []
+        },
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": false,
+          "isSugar": true,
+          "layoutInstructions": [],
+          "line": 21,
+          "params": {},
+          "range": {
+            "end": 6,
+            "start": 5
+          },
+          "sugar": [
+            {
+              "level": "char",
+              "name": "slow",
+              "params": {}
+            }
+          ]
+        },
+        {
+          "braceGroupId": 2,
+          "commands": [],
+          "content": "慢",
+          "effects": [],
+          "isBraced": true,
+          "layoutInstructions": [],
+          "line": 21,
+          "params": {},
+          "range": {
+            "end": 7,
+            "start": 6
+          },
+          "sugar": []
+        },
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": false,
+          "isSugar": true,
+          "layoutInstructions": [],
+          "line": 21,
+          "params": {},
+          "range": {
+            "end": 8,
+            "start": 7
+          },
+          "sugar": [
+            {
+              "level": "char",
+              "name": "slow",
+              "params": {}
+            }
+          ]
+        },
+        {
+          "braceGroupId": 2,
+          "commands": [],
+          "content": "速",
+          "effects": [],
+          "isBraced": true,
+          "layoutInstructions": [],
+          "line": 21,
+          "params": {},
+          "range": {
+            "end": 9,
+            "start": 8
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 23,
+        "lines": [
+          {
+            "body": [
+              {
+                "children": [
+                  {
+                    "groupId": 3,
+                    "level": "char",
+                    "line": 24,
+                    "name": "fast",
+                    "params": {},
+                    "range": {
+                      "end": 2,
+                      "start": 1
+                    },
+                    "type": "sugar"
+                  },
+                  {
+                    "groupId": 3,
+                    "line": 24,
+                    "marks": [],
+                    "range": {
+                      "end": 3,
+                      "start": 2
+                    },
+                    "text": "快",
+                    "type": "text"
+                  },
+                  {
+                    "groupId": 3,
+                    "level": "char",
+                    "line": 24,
+                    "name": "fast",
+                    "params": {},
+                    "range": {
+                      "end": 4,
+                      "start": 3
+                    },
+                    "type": "sugar"
+                  },
+                  {
+                    "groupId": 3,
+                    "line": 24,
+                    "marks": [],
+                    "range": {
+                      "end": 5,
+                      "start": 4
+                    },
+                    "text": "快",
+                    "type": "text"
+                  },
+                  {
+                    "groupId": 3,
+                    "level": "char",
+                    "line": 24,
+                    "name": "fast",
+                    "params": {},
+                    "range": {
+                      "end": 6,
+                      "start": 5
+                    },
+                    "type": "sugar"
+                  },
+                  {
+                    "groupId": 3,
+                    "line": 24,
+                    "marks": [],
+                    "range": {
+                      "end": 7,
+                      "start": 6
+                    },
+                    "text": "快",
+                    "type": "text"
+                  },
+                  {
+                    "groupId": 3,
+                    "level": "char",
+                    "line": 24,
+                    "name": "fast",
+                    "params": {},
+                    "range": {
+                      "end": 8,
+                      "start": 7
+                    },
+                    "type": "sugar"
+                  },
+                  {
+                    "groupId": 3,
+                    "line": 24,
+                    "marks": [],
+                    "range": {
+                      "end": 9,
+                      "start": 8
+                    },
+                    "text": "速",
+                    "type": "text"
+                  }
+                ],
+                "groupId": 3,
+                "line": 24,
+                "range": {
+                  "end": 10,
+                  "start": 0
+                },
+                "type": "group"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 24,
+            "range": {
+              "end": 10,
+              "start": 0
+            },
+            "raw": "{^快^快^快^速}",
+            "type": "line"
+          }
+        ],
+        "source": "// 预期：^ 快速\n{^快^快^快^速}",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": false,
+            "isSugar": true,
+            "kind": "sugar",
+            "layoutInstructions": [],
+            "line": 24,
+            "params": {},
+            "range": {
+              "end": 2,
+              "start": 1
+            },
+            "sugar": [
+              {
+                "level": "char",
+                "name": "fast",
+                "params": {}
+              }
+            ]
+          },
+          {
+            "braceGroupId": 3,
+            "commands": [],
+            "content": "快",
+            "effects": [],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 24,
+            "params": {},
+            "range": {
+              "end": 3,
+              "start": 2
+            },
+            "sugar": []
+          },
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": false,
+            "isSugar": true,
+            "kind": "sugar",
+            "layoutInstructions": [],
+            "line": 24,
+            "params": {},
+            "range": {
+              "end": 4,
+              "start": 3
+            },
+            "sugar": [
+              {
+                "level": "char",
+                "name": "fast",
+                "params": {}
+              }
+            ]
+          },
+          {
+            "braceGroupId": 3,
+            "commands": [],
+            "content": "快",
+            "effects": [],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 24,
+            "params": {},
+            "range": {
+              "end": 5,
+              "start": 4
+            },
+            "sugar": []
+          },
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": false,
+            "isSugar": true,
+            "kind": "sugar",
+            "layoutInstructions": [],
+            "line": 24,
+            "params": {},
+            "range": {
+              "end": 6,
+              "start": 5
+            },
+            "sugar": [
+              {
+                "level": "char",
+                "name": "fast",
+                "params": {}
+              }
+            ]
+          },
+          {
+            "braceGroupId": 3,
+            "commands": [],
+            "content": "快",
+            "effects": [],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 24,
+            "params": {},
+            "range": {
+              "end": 7,
+              "start": 6
+            },
+            "sugar": []
+          },
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": false,
+            "isSugar": true,
+            "kind": "sugar",
+            "layoutInstructions": [],
+            "line": 24,
+            "params": {},
+            "range": {
+              "end": 8,
+              "start": 7
+            },
+            "sugar": [
+              {
+                "level": "char",
+                "name": "fast",
+                "params": {}
+              }
+            ]
+          },
+          {
+            "braceGroupId": 3,
+            "commands": [],
+            "content": "速",
+            "effects": [],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 24,
+            "params": {},
+            "range": {
+              "end": 9,
+              "start": 8
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 23,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": false,
+          "isSugar": true,
+          "layoutInstructions": [],
+          "line": 24,
+          "params": {},
+          "range": {
+            "end": 2,
+            "start": 1
+          },
+          "sugar": [
+            {
+              "level": "char",
+              "name": "fast",
+              "params": {}
+            }
+          ]
+        },
+        {
+          "braceGroupId": 3,
+          "commands": [],
+          "content": "快",
+          "effects": [],
+          "isBraced": true,
+          "layoutInstructions": [],
+          "line": 24,
+          "params": {},
+          "range": {
+            "end": 3,
+            "start": 2
+          },
+          "sugar": []
+        },
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": false,
+          "isSugar": true,
+          "layoutInstructions": [],
+          "line": 24,
+          "params": {},
+          "range": {
+            "end": 4,
+            "start": 3
+          },
+          "sugar": [
+            {
+              "level": "char",
+              "name": "fast",
+              "params": {}
+            }
+          ]
+        },
+        {
+          "braceGroupId": 3,
+          "commands": [],
+          "content": "快",
+          "effects": [],
+          "isBraced": true,
+          "layoutInstructions": [],
+          "line": 24,
+          "params": {},
+          "range": {
+            "end": 5,
+            "start": 4
+          },
+          "sugar": []
+        },
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": false,
+          "isSugar": true,
+          "layoutInstructions": [],
+          "line": 24,
+          "params": {},
+          "range": {
+            "end": 6,
+            "start": 5
+          },
+          "sugar": [
+            {
+              "level": "char",
+              "name": "fast",
+              "params": {}
+            }
+          ]
+        },
+        {
+          "braceGroupId": 3,
+          "commands": [],
+          "content": "快",
+          "effects": [],
+          "isBraced": true,
+          "layoutInstructions": [],
+          "line": 24,
+          "params": {},
+          "range": {
+            "end": 7,
+            "start": 6
+          },
+          "sugar": []
+        },
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": false,
+          "isSugar": true,
+          "layoutInstructions": [],
+          "line": 24,
+          "params": {},
+          "range": {
+            "end": 8,
+            "start": 7
+          },
+          "sugar": [
+            {
+              "level": "char",
+              "name": "fast",
+              "params": {}
+            }
+          ]
+        },
+        {
+          "braceGroupId": 3,
+          "commands": [],
+          "content": "速",
+          "effects": [],
+          "isBraced": true,
+          "layoutInstructions": [],
+          "line": 24,
+          "params": {},
+          "range": {
+            "end": 9,
+            "start": 8
+          },
+          "sugar": []
+        }
+      ]
+    }
+  ],
+  "rawParagraphs": [
+    "// 预期：> 即时连接\n快>速>推>进>不>停",
+    "// 预期：>> 行级并发（下一行提前开始）\n这一行打到一半 >> 下一行就会开始。\n我是提前开始的那一行。",
+    "// 预期：>>> 段落级并发\n{我是段落A} >>> 此后和段落B并行。",
+    "我是段落B，和段落A的后半段同时出现。",
+    "// 预期：~ 慢速\n{~慢~慢~慢~速}",
+    "// 预期：^ 快速\n{^快^快^快^速}"
+  ]
+}

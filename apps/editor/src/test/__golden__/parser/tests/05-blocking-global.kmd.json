@@ -1,0 +1,407 @@
+{
+  "diagnostics": [],
+  "metadata": {
+    "designHeight": 1080,
+    "designWidth": 1920,
+    "mode": "stage",
+    "speed": 50,
+    "title": "05 - 阻塞指令 (!) 在 globalEffects 路径",
+    "variables": {}
+  },
+  "paragraphs": [
+    {
+      "ast": {
+        "blockOptions": [
+          {
+            "chain": {
+              "commands": [
+                {
+                  "blocking": true,
+                  "family": "stage",
+                  "name": "cam.zoom",
+                  "params": {
+                    "0": 0.7,
+                    "1": 1.5
+                  },
+                  "prefix": "bare",
+                  "raw": "cam.zoom(0.7, 1.5s)!"
+                }
+              ],
+              "line": 9,
+              "prefix": "bare",
+              "range": {
+                "end": 21,
+                "start": 1
+              },
+              "raw": "cam.zoom(0.7, 1.5s)!",
+              "type": "command-chain"
+            },
+            "line": 9,
+            "range": {
+              "end": 21,
+              "start": 1
+            },
+            "type": "block-option-command"
+          }
+        ],
+        "lineOffset": 8,
+        "lines": [
+          {
+            "body": [
+              {
+                "line": 10,
+                "marks": [],
+                "range": {
+                  "end": 15,
+                  "start": 0
+                },
+                "text": "这句话在镜头缩放完成后才出现。",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 10,
+            "range": {
+              "end": 15,
+              "start": 0
+            },
+            "raw": "这句话在镜头缩放完成后才出现。",
+            "type": "line"
+          }
+        ],
+        "source": "// 预期：镜头缩放完毕后，文字才出现\n[cam.zoom(0.7, 1.5s)!]\n这句话在镜头缩放完成后才出现。",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [
+        {
+          "blocking": true,
+          "level": "block",
+          "name": "cam.zoom",
+          "params": {
+            "0": 0.7,
+            "1": 1.5
+          }
+        }
+      ],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "这句话在镜头缩放完成后才出现。",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 10,
+            "params": {},
+            "range": {
+              "end": 15,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": [
+          {
+            "blocking": true,
+            "level": "block",
+            "name": "cam.zoom",
+            "params": {
+              "0": 0.7,
+              "1": 1.5
+            }
+          }
+        ]
+      },
+      "lineOffset": 8,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "这句话在镜头缩放完成后才出现。",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 10,
+          "params": {},
+          "range": {
+            "end": 15,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 12,
+        "lines": [
+          {
+            "body": [],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": true,
+                    "family": "stage",
+                    "name": "cam.move",
+                    "params": {
+                      "0": 0,
+                      "1": 300,
+                      "2": 2
+                    },
+                    "prefix": "bare",
+                    "raw": "cam.move(0, 300, 2s)!"
+                  }
+                ],
+                "line": 13,
+                "prefix": "bare",
+                "range": {
+                  "end": 23,
+                  "start": 2
+                },
+                "raw": "cam.move(0, 300, 2s)!",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "command-only",
+            "line": 13,
+            "range": {
+              "end": 23,
+              "start": 0
+            },
+            "raw": "@ cam.move(0, 300, 2s)!",
+            "type": "line"
+          },
+          {
+            "body": [
+              {
+                "line": 14,
+                "marks": [],
+                "range": {
+                  "end": 17,
+                  "start": 0
+                },
+                "text": "这句话在镜头向下移动完成后才出现。",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 14,
+            "range": {
+              "end": 17,
+              "start": 0
+            },
+            "raw": "这句话在镜头向下移动完成后才出现。",
+            "type": "line"
+          }
+        ],
+        "source": "// 预期：镜头平移完毕后才继续\n@ cam.move(0, 300, 2s)!\n这句话在镜头向下移动完成后才出现。",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [
+        {
+          "blocking": true,
+          "level": "block",
+          "name": "cam.move",
+          "params": {
+            "0": 0,
+            "1": 300,
+            "2": 2
+          }
+        }
+      ],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "这句话在镜头向下移动完成后才出现。",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 14,
+            "params": {},
+            "range": {
+              "end": 17,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": [
+          {
+            "blocking": true,
+            "level": "block",
+            "name": "cam.move",
+            "params": {
+              "0": 0,
+              "1": 300,
+              "2": 2
+            }
+          }
+        ]
+      },
+      "lineOffset": 12,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "这句话在镜头向下移动完成后才出现。",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 14,
+          "params": {},
+          "range": {
+            "end": 17,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [
+          {
+            "chain": {
+              "commands": [
+                {
+                  "blocking": true,
+                  "family": "stage",
+                  "name": "cam.reset",
+                  "params": {
+                    "0": 1
+                  },
+                  "prefix": "bare",
+                  "raw": "cam.reset(1s)!"
+                }
+              ],
+              "line": 17,
+              "prefix": "bare",
+              "range": {
+                "end": 15,
+                "start": 1
+              },
+              "raw": "cam.reset(1s)!",
+              "type": "command-chain"
+            },
+            "line": 17,
+            "range": {
+              "end": 15,
+              "start": 1
+            },
+            "type": "block-option-command"
+          }
+        ],
+        "lineOffset": 16,
+        "lines": [
+          {
+            "body": [
+              {
+                "line": 18,
+                "marks": [],
+                "range": {
+                  "end": 5,
+                  "start": 0
+                },
+                "text": "演出结束。",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 18,
+            "range": {
+              "end": 5,
+              "start": 0
+            },
+            "raw": "演出结束。",
+            "type": "line"
+          }
+        ],
+        "source": "// 预期：镜头重置后结束\n[cam.reset(1s)!]\n演出结束。",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [
+        {
+          "blocking": true,
+          "level": "block",
+          "name": "cam.reset",
+          "params": {
+            "0": 1
+          }
+        }
+      ],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "演出结束。",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 18,
+            "params": {},
+            "range": {
+              "end": 5,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": [
+          {
+            "blocking": true,
+            "level": "block",
+            "name": "cam.reset",
+            "params": {
+              "0": 1
+            }
+          }
+        ]
+      },
+      "lineOffset": 16,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "演出结束。",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 18,
+          "params": {},
+          "range": {
+            "end": 5,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    }
+  ],
+  "rawParagraphs": [
+    "// 预期：镜头缩放完毕后，文字才出现\n[cam.zoom(0.7, 1.5s)!]\n这句话在镜头缩放完成后才出现。",
+    "// 预期：镜头平移完毕后才继续\n@ cam.move(0, 300, 2s)!\n这句话在镜头向下移动完成后才出现。",
+    "// 预期：镜头重置后结束\n[cam.reset(1s)!]\n演出结束。"
+  ]
+}

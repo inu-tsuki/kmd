@@ -1,0 +1,1368 @@
+{
+  "diagnostics": [],
+  "metadata": {
+    "bgColor": "#0d1b2a",
+    "designHeight": 1080,
+    "designWidth": 1920,
+    "fontColor": "#e0e0e0",
+    "mode": "stage",
+    "speed": 50,
+    "title": "fx - noise 噪声滤镜",
+    "variables": {}
+  },
+  "paragraphs": [
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 10,
+        "lines": [
+          {
+            "body": [
+              {
+                "children": [
+                  {
+                    "groupId": 1,
+                    "line": 11,
+                    "marks": [],
+                    "range": {
+                      "end": 3,
+                      "start": 1
+                    },
+                    "text": "噪声",
+                    "type": "text"
+                  }
+                ],
+                "groupId": 1,
+                "line": 11,
+                "range": {
+                  "end": 4,
+                  "start": 0
+                },
+                "type": "group"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "name": "noise",
+                    "params": {},
+                    "prefix": "f",
+                    "raw": "f.noise"
+                  }
+                ],
+                "line": 11,
+                "prefix": "f",
+                "range": {
+                  "end": 14,
+                  "start": 7
+                },
+                "raw": "f.noise",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 11,
+            "range": {
+              "end": 14,
+              "start": 0
+            },
+            "raw": "{噪声} @ f.noise",
+            "type": "line"
+          }
+        ],
+        "source": "// 逐字单色噪声\n{噪声} @ f.noise",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "braceGroupId": 1,
+            "commands": [],
+            "content": "噪声",
+            "effects": [
+              {
+                "blocking": false,
+                "name": "noise",
+                "params": {}
+              }
+            ],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 11,
+            "params": {},
+            "range": {
+              "end": 3,
+              "start": 1
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 10,
+      "tokens": [
+        {
+          "braceGroupId": 1,
+          "commands": [],
+          "content": "噪声",
+          "effects": [
+            {
+              "blocking": false,
+              "name": "noise",
+              "params": {}
+            }
+          ],
+          "isBraced": true,
+          "layoutInstructions": [],
+          "line": 11,
+          "params": {},
+          "range": {
+            "end": 3,
+            "start": 1
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 13,
+        "lines": [
+          {
+            "body": [],
+            "commandChains": [],
+            "heading": false,
+            "kind": "scene-clear",
+            "line": 13,
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "raw": "---",
+            "type": "line"
+          }
+        ],
+        "source": "---",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": true,
+            "isSugar": false,
+            "kind": "scene-clear",
+            "layoutInstructions": [
+              {
+                "blocking": false,
+                "line": 13,
+                "params": {},
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "scene.clear"
+              },
+              {
+                "blocking": true,
+                "line": 13,
+                "params": {
+                  "0": 0.5
+                },
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "pause"
+              }
+            ],
+            "line": 13,
+            "params": {},
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 13,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": true,
+          "isSugar": false,
+          "layoutInstructions": [
+            {
+              "blocking": false,
+              "line": 13,
+              "params": {},
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "scene.clear"
+            },
+            {
+              "blocking": true,
+              "line": 13,
+              "params": {
+                "0": 0.5
+              },
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "pause"
+            }
+          ],
+          "line": 13,
+          "params": {},
+          "range": {
+            "end": 3,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [
+          {
+            "chain": {
+              "commands": [
+                {
+                  "blocking": false,
+                  "family": "effect",
+                  "level": "block",
+                  "name": "noise",
+                  "params": {},
+                  "prefix": "dot",
+                  "raw": ".noise:block"
+                }
+              ],
+              "line": 16,
+              "prefix": "dot",
+              "range": {
+                "end": 13,
+                "start": 1
+              },
+              "raw": ".noise:block",
+              "type": "command-chain"
+            },
+            "line": 16,
+            "range": {
+              "end": 13,
+              "start": 1
+            },
+            "type": "block-option-command"
+          }
+        ],
+        "lineOffset": 15,
+        "lines": [
+          {
+            "body": [
+              {
+                "line": 17,
+                "marks": [],
+                "range": {
+                  "end": 19,
+                  "start": 0
+                },
+                "text": "整段噪声效果，模拟信号干扰和数字降解。",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 17,
+            "range": {
+              "end": 19,
+              "start": 0
+            },
+            "raw": "整段噪声效果，模拟信号干扰和数字降解。",
+            "type": "line"
+          }
+        ],
+        "source": "// :block 整段噪声——推荐用法（数字降解）\n[.noise:block]\n整段噪声效果，模拟信号干扰和数字降解。",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [
+        {
+          "blocking": false,
+          "level": "block",
+          "name": "noise",
+          "params": {}
+        }
+      ],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "整段噪声效果，模拟信号干扰和数字降解。",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 17,
+            "params": {},
+            "range": {
+              "end": 19,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": [
+          {
+            "blocking": false,
+            "level": "block",
+            "name": "noise",
+            "params": {}
+          }
+        ]
+      },
+      "lineOffset": 15,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "整段噪声效果，模拟信号干扰和数字降解。",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 17,
+          "params": {},
+          "range": {
+            "end": 19,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 19,
+        "lines": [
+          {
+            "body": [],
+            "commandChains": [],
+            "heading": false,
+            "kind": "scene-clear",
+            "line": 19,
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "raw": "---",
+            "type": "line"
+          }
+        ],
+        "source": "---",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": true,
+            "isSugar": false,
+            "kind": "scene-clear",
+            "layoutInstructions": [
+              {
+                "blocking": false,
+                "line": 19,
+                "params": {},
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "scene.clear"
+              },
+              {
+                "blocking": true,
+                "line": 19,
+                "params": {
+                  "0": 0.5
+                },
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "pause"
+              }
+            ],
+            "line": 19,
+            "params": {},
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 19,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": true,
+          "isSugar": false,
+          "layoutInstructions": [
+            {
+              "blocking": false,
+              "line": 19,
+              "params": {},
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "scene.clear"
+            },
+            {
+              "blocking": true,
+              "line": 19,
+              "params": {
+                "0": 0.5
+              },
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "pause"
+            }
+          ],
+          "line": 19,
+          "params": {},
+          "range": {
+            "end": 3,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [
+          {
+            "chain": {
+              "commands": [
+                {
+                  "blocking": false,
+                  "family": "effect",
+                  "level": "block",
+                  "name": "noise",
+                  "params": {
+                    "amount": 0.3,
+                    "mono": false
+                  },
+                  "prefix": "dot",
+                  "raw": ".noise:block(amount=0.3, mono=false)"
+                }
+              ],
+              "line": 22,
+              "prefix": "dot",
+              "range": {
+                "end": 37,
+                "start": 1
+              },
+              "raw": ".noise:block(amount=0.3, mono=false)",
+              "type": "command-chain"
+            },
+            "line": 22,
+            "range": {
+              "end": 37,
+              "start": 1
+            },
+            "type": "block-option-command"
+          }
+        ],
+        "lineOffset": 21,
+        "lines": [
+          {
+            "body": [
+              {
+                "line": 23,
+                "marks": [],
+                "range": {
+                  "end": 14,
+                  "start": 0
+                },
+                "text": "彩色噪声，三通道独立噪声场。",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 23,
+            "range": {
+              "end": 14,
+              "start": 0
+            },
+            "raw": "彩色噪声，三通道独立噪声场。",
+            "type": "line"
+          }
+        ],
+        "source": "// 改参：彩噪\n[.noise:block(amount=0.3, mono=false)]\n彩色噪声，三通道独立噪声场。",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [
+        {
+          "blocking": false,
+          "level": "block",
+          "name": "noise",
+          "params": {
+            "amount": 0.3,
+            "mono": false
+          }
+        }
+      ],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "彩色噪声，三通道独立噪声场。",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 23,
+            "params": {},
+            "range": {
+              "end": 14,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": [
+          {
+            "blocking": false,
+            "level": "block",
+            "name": "noise",
+            "params": {
+              "amount": 0.3,
+              "mono": false
+            }
+          }
+        ]
+      },
+      "lineOffset": 21,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "彩色噪声，三通道独立噪声场。",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 23,
+          "params": {},
+          "range": {
+            "end": 14,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 25,
+        "lines": [
+          {
+            "body": [],
+            "commandChains": [],
+            "heading": false,
+            "kind": "scene-clear",
+            "line": 25,
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "raw": "---",
+            "type": "line"
+          }
+        ],
+        "source": "---",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": true,
+            "isSugar": false,
+            "kind": "scene-clear",
+            "layoutInstructions": [
+              {
+                "blocking": false,
+                "line": 25,
+                "params": {},
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "scene.clear"
+              },
+              {
+                "blocking": true,
+                "line": 25,
+                "params": {
+                  "0": 0.5
+                },
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "pause"
+              }
+            ],
+            "line": 25,
+            "params": {},
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 25,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": true,
+          "isSugar": false,
+          "layoutInstructions": [
+            {
+              "blocking": false,
+              "line": 25,
+              "params": {},
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "scene.clear"
+            },
+            {
+              "blocking": true,
+              "line": 25,
+              "params": {
+                "0": 0.5
+              },
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "pause"
+            }
+          ],
+          "line": 25,
+          "params": {},
+          "range": {
+            "end": 3,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [
+          {
+            "chain": {
+              "commands": [
+                {
+                  "blocking": false,
+                  "family": "effect",
+                  "level": "block",
+                  "name": "noise",
+                  "params": {
+                    "amount": 0.5
+                  },
+                  "prefix": "dot",
+                  "raw": ".noise:block(amount=0.5)"
+                }
+              ],
+              "line": 28,
+              "prefix": "dot",
+              "range": {
+                "end": 25,
+                "start": 1
+              },
+              "raw": ".noise:block(amount=0.5)",
+              "type": "command-chain"
+            },
+            "line": 28,
+            "range": {
+              "end": 25,
+              "start": 1
+            },
+            "type": "block-option-command"
+          }
+        ],
+        "lineOffset": 27,
+        "lines": [
+          {
+            "body": [
+              {
+                "line": 29,
+                "marks": [],
+                "range": {
+                  "end": 10,
+                  "start": 0
+                },
+                "text": "强噪声，接近纯噪点。",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 29,
+            "range": {
+              "end": 10,
+              "start": 0
+            },
+            "raw": "强噪声，接近纯噪点。",
+            "type": "line"
+          }
+        ],
+        "source": "// 改参：强噪声\n[.noise:block(amount=0.5)]\n强噪声，接近纯噪点。",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [
+        {
+          "blocking": false,
+          "level": "block",
+          "name": "noise",
+          "params": {
+            "amount": 0.5
+          }
+        }
+      ],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "强噪声，接近纯噪点。",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 29,
+            "params": {},
+            "range": {
+              "end": 10,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": [
+          {
+            "blocking": false,
+            "level": "block",
+            "name": "noise",
+            "params": {
+              "amount": 0.5
+            }
+          }
+        ]
+      },
+      "lineOffset": 27,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "强噪声，接近纯噪点。",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 29,
+          "params": {},
+          "range": {
+            "end": 10,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 31,
+        "lines": [
+          {
+            "body": [],
+            "commandChains": [],
+            "heading": false,
+            "kind": "scene-clear",
+            "line": 31,
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "raw": "---",
+            "type": "line"
+          }
+        ],
+        "source": "---",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": true,
+            "isSugar": false,
+            "kind": "scene-clear",
+            "layoutInstructions": [
+              {
+                "blocking": false,
+                "line": 31,
+                "params": {},
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "scene.clear"
+              },
+              {
+                "blocking": true,
+                "line": 31,
+                "params": {
+                  "0": 0.5
+                },
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "pause"
+              }
+            ],
+            "line": 31,
+            "params": {},
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 31,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": true,
+          "isSugar": false,
+          "layoutInstructions": [
+            {
+              "blocking": false,
+              "line": 31,
+              "params": {},
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "scene.clear"
+            },
+            {
+              "blocking": true,
+              "line": 31,
+              "params": {
+                "0": 0.5
+              },
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "pause"
+            }
+          ],
+          "line": 31,
+          "params": {},
+          "range": {
+            "end": 3,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [
+          {
+            "chain": {
+              "commands": [
+                {
+                  "blocking": false,
+                  "family": "effect",
+                  "level": "block",
+                  "name": "noise",
+                  "params": {
+                    "scale": 1
+                  },
+                  "prefix": "dot",
+                  "raw": ".noise:block(scale=1)"
+                }
+              ],
+              "line": 34,
+              "prefix": "dot",
+              "range": {
+                "end": 22,
+                "start": 1
+              },
+              "raw": ".noise:block(scale=1)",
+              "type": "command-chain"
+            },
+            "line": 34,
+            "range": {
+              "end": 22,
+              "start": 1
+            },
+            "type": "block-option-command"
+          }
+        ],
+        "lineOffset": 33,
+        "lines": [
+          {
+            "body": [
+              {
+                "line": 35,
+                "marks": [],
+                "range": {
+                  "end": 14,
+                  "start": 0
+                },
+                "text": "粗粒噪声，噪声块更大更明显。",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 35,
+            "range": {
+              "end": 14,
+              "start": 0
+            },
+            "raw": "粗粒噪声，噪声块更大更明显。",
+            "type": "line"
+          }
+        ],
+        "source": "// 改参：粗粒噪声\n[.noise:block(scale=1)]\n粗粒噪声，噪声块更大更明显。",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [
+        {
+          "blocking": false,
+          "level": "block",
+          "name": "noise",
+          "params": {
+            "scale": 1
+          }
+        }
+      ],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "粗粒噪声，噪声块更大更明显。",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 35,
+            "params": {},
+            "range": {
+              "end": 14,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": [
+          {
+            "blocking": false,
+            "level": "block",
+            "name": "noise",
+            "params": {
+              "scale": 1
+            }
+          }
+        ]
+      },
+      "lineOffset": 33,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "粗粒噪声，噪声块更大更明显。",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 35,
+          "params": {},
+          "range": {
+            "end": 14,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 37,
+        "lines": [
+          {
+            "body": [],
+            "commandChains": [],
+            "heading": false,
+            "kind": "scene-clear",
+            "line": 37,
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "raw": "---",
+            "type": "line"
+          }
+        ],
+        "source": "---",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": true,
+            "isSugar": false,
+            "kind": "scene-clear",
+            "layoutInstructions": [
+              {
+                "blocking": false,
+                "line": 37,
+                "params": {},
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "scene.clear"
+              },
+              {
+                "blocking": true,
+                "line": 37,
+                "params": {
+                  "0": 0.5
+                },
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "pause"
+              }
+            ],
+            "line": 37,
+            "params": {},
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 37,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": true,
+          "isSugar": false,
+          "layoutInstructions": [
+            {
+              "blocking": false,
+              "line": 37,
+              "params": {},
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "scene.clear"
+            },
+            {
+              "blocking": true,
+              "line": 37,
+              "params": {
+                "0": 0.5
+              },
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "pause"
+            }
+          ],
+          "line": 37,
+          "params": {},
+          "range": {
+            "end": 3,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 39,
+        "lines": [
+          {
+            "body": [
+              {
+                "children": [
+                  {
+                    "groupId": 2,
+                    "line": 40,
+                    "marks": [],
+                    "range": {
+                      "end": 6,
+                      "start": 1
+                    },
+                    "text": "噪声加波浪",
+                    "type": "text"
+                  }
+                ],
+                "groupId": 2,
+                "line": 40,
+                "range": {
+                  "end": 7,
+                  "start": 0
+                },
+                "type": "group"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "name": "noise",
+                    "params": {},
+                    "prefix": "f",
+                    "raw": "f.noise.wave"
+                  },
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "name": "wave",
+                    "params": {},
+                    "prefix": "f",
+                    "raw": "f.noise.wave"
+                  }
+                ],
+                "line": 40,
+                "prefix": "f",
+                "range": {
+                  "end": 22,
+                  "start": 10
+                },
+                "raw": "f.noise.wave",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 40,
+            "range": {
+              "end": 22,
+              "start": 0
+            },
+            "raw": "{噪声加波浪} @ f.noise.wave",
+            "type": "line"
+          }
+        ],
+        "source": "// 与 behavior 组合：噪声 + 波浪\n{噪声加波浪} @ f.noise.wave",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "braceGroupId": 2,
+            "commands": [],
+            "content": "噪声加波浪",
+            "effects": [
+              {
+                "blocking": false,
+                "name": "noise",
+                "params": {}
+              },
+              {
+                "blocking": false,
+                "name": "wave",
+                "params": {}
+              }
+            ],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 40,
+            "params": {},
+            "range": {
+              "end": 6,
+              "start": 1
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 39,
+      "tokens": [
+        {
+          "braceGroupId": 2,
+          "commands": [],
+          "content": "噪声加波浪",
+          "effects": [
+            {
+              "blocking": false,
+              "name": "noise",
+              "params": {}
+            },
+            {
+              "blocking": false,
+              "name": "wave",
+              "params": {}
+            }
+          ],
+          "isBraced": true,
+          "layoutInstructions": [],
+          "line": 40,
+          "params": {},
+          "range": {
+            "end": 6,
+            "start": 1
+          },
+          "sugar": []
+        }
+      ]
+    }
+  ],
+  "rawParagraphs": [
+    "// 逐字单色噪声\n{噪声} @ f.noise",
+    "---",
+    "// :block 整段噪声——推荐用法（数字降解）\n[.noise:block]\n整段噪声效果，模拟信号干扰和数字降解。",
+    "---",
+    "// 改参：彩噪\n[.noise:block(amount=0.3, mono=false)]\n彩色噪声，三通道独立噪声场。",
+    "---",
+    "// 改参：强噪声\n[.noise:block(amount=0.5)]\n强噪声，接近纯噪点。",
+    "---",
+    "// 改参：粗粒噪声\n[.noise:block(scale=1)]\n粗粒噪声，噪声块更大更明显。",
+    "---",
+    "// 与 behavior 组合：噪声 + 波浪\n{噪声加波浪} @ f.noise.wave"
+  ]
+}

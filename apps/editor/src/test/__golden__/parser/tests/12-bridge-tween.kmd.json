@@ -1,0 +1,1232 @@
+{
+  "diagnostics": [],
+  "metadata": {
+    "designHeight": 1080,
+    "designWidth": 1920,
+    "mode": "stage",
+    "speed": 40,
+    "variables": {}
+  },
+  "paragraphs": [
+    {
+      "ast": {
+        "blockOptions": [
+          {
+            "chain": {
+              "commands": [
+                {
+                  "blocking": false,
+                  "family": "stage",
+                  "name": "cam.move",
+                  "params": {
+                    "0": 500,
+                    "1": 0,
+                    "2": 15
+                  },
+                  "prefix": "bare",
+                  "raw": "cam.move(500, 0, 15s)"
+                }
+              ],
+              "line": 9,
+              "prefix": "bare",
+              "range": {
+                "end": 22,
+                "start": 1
+              },
+              "raw": "cam.move(500, 0, 15s)",
+              "type": "command-chain"
+            },
+            "line": 9,
+            "range": {
+              "end": 22,
+              "start": 1
+            },
+            "type": "block-option-command"
+          }
+        ],
+        "lineOffset": 7,
+        "lines": [
+          {
+            "body": [
+              {
+                "line": 10,
+                "marks": [],
+                "range": {
+                  "end": 18,
+                  "start": 0
+                },
+                "text": "第一段：camera 开始缓慢右移。",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 10,
+            "range": {
+              "end": 18,
+              "start": 0
+            },
+            "raw": "第一段：camera 开始缓慢右移。",
+            "type": "line"
+          }
+        ],
+        "source": "// 测试 1: 非阻塞的长持续时间 cam.move\n// 预期：camera 在整个脚本期间持续向右平移\n[cam.move(500, 0, 15s)]\n第一段：camera 开始缓慢右移。",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [
+        {
+          "blocking": false,
+          "level": "block",
+          "name": "cam.move",
+          "params": {
+            "0": 500,
+            "1": 0,
+            "2": 15
+          }
+        }
+      ],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "第一段：camera 开始缓慢右移。",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 10,
+            "params": {},
+            "range": {
+              "end": 18,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": [
+          {
+            "blocking": false,
+            "level": "block",
+            "name": "cam.move",
+            "params": {
+              "0": 500,
+              "1": 0,
+              "2": 15
+            }
+          }
+        ]
+      },
+      "lineOffset": 7,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "第一段：camera 开始缓慢右移。",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 10,
+          "params": {},
+          "range": {
+            "end": 18,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 12,
+        "lines": [
+          {
+            "body": [
+              {
+                "line": 12,
+                "marks": [],
+                "range": {
+                  "end": 29,
+                  "start": 0
+                },
+                "text": "第二段：camera 应该仍在平移中（约 33% 进度）。",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 12,
+            "range": {
+              "end": 29,
+              "start": 0
+            },
+            "raw": "第二段：camera 应该仍在平移中（约 33% 进度）。",
+            "type": "line"
+          }
+        ],
+        "source": "第二段：camera 应该仍在平移中（约 33% 进度）。",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "第二段：camera 应该仍在平移中（约 33% 进度）。",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 12,
+            "params": {},
+            "range": {
+              "end": 29,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 12,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "第二段：camera 应该仍在平移中（约 33% 进度）。",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 12,
+          "params": {},
+          "range": {
+            "end": 29,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 14,
+        "lines": [
+          {
+            "body": [
+              {
+                "line": 14,
+                "marks": [],
+                "range": {
+                  "end": 11,
+                  "start": 0
+                },
+                "text": "第三段：平移接近完成。",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 14,
+            "range": {
+              "end": 11,
+              "start": 0
+            },
+            "raw": "第三段：平移接近完成。",
+            "type": "line"
+          }
+        ],
+        "source": "第三段：平移接近完成。",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "第三段：平移接近完成。",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 14,
+            "params": {},
+            "range": {
+              "end": 11,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 14,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "第三段：平移接近完成。",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 14,
+          "params": {},
+          "range": {
+            "end": 11,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 16,
+        "lines": [
+          {
+            "body": [],
+            "commandChains": [],
+            "heading": false,
+            "kind": "scene-clear",
+            "line": 16,
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "raw": "---",
+            "type": "line"
+          }
+        ],
+        "source": "---",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": true,
+            "isSugar": false,
+            "kind": "scene-clear",
+            "layoutInstructions": [
+              {
+                "blocking": false,
+                "line": 16,
+                "params": {},
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "scene.clear"
+              },
+              {
+                "blocking": true,
+                "line": 16,
+                "params": {
+                  "0": 0.5
+                },
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "pause"
+              }
+            ],
+            "line": 16,
+            "params": {},
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 16,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": true,
+          "isSugar": false,
+          "layoutInstructions": [
+            {
+              "blocking": false,
+              "line": 16,
+              "params": {},
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "scene.clear"
+            },
+            {
+              "blocking": true,
+              "line": 16,
+              "params": {
+                "0": 0.5
+              },
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "pause"
+            }
+          ],
+          "line": 16,
+          "params": {},
+          "range": {
+            "end": 3,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [
+          {
+            "chain": {
+              "commands": [
+                {
+                  "blocking": true,
+                  "family": "stage",
+                  "name": "cam.move",
+                  "params": {
+                    "0": 0,
+                    "1": 300,
+                    "2": 3
+                  },
+                  "prefix": "bare",
+                  "raw": "cam.move(0, 300, 3s)!"
+                }
+              ],
+              "line": 20,
+              "prefix": "bare",
+              "range": {
+                "end": 22,
+                "start": 1
+              },
+              "raw": "cam.move(0, 300, 3s)!",
+              "type": "command-chain"
+            },
+            "line": 20,
+            "range": {
+              "end": 22,
+              "start": 1
+            },
+            "type": "block-option-command"
+          }
+        ],
+        "lineOffset": 18,
+        "lines": [
+          {
+            "body": [
+              {
+                "line": 21,
+                "marks": [],
+                "range": {
+                  "end": 30,
+                  "start": 0
+                },
+                "text": "第四段：这段文字在 camera 下移 300px 后出现。",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 21,
+            "range": {
+              "end": 30,
+              "start": 0
+            },
+            "raw": "第四段：这段文字在 camera 下移 300px 后出现。",
+            "type": "line"
+          }
+        ],
+        "source": "// 测试 2: 阻塞 cam.move + 后续 cam.reset\n// 预期：cam.move 完成后才出文字，然后 cam.reset 覆盖\n[cam.move(0, 300, 3s)!]\n第四段：这段文字在 camera 下移 300px 后出现。",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [
+        {
+          "blocking": true,
+          "level": "block",
+          "name": "cam.move",
+          "params": {
+            "0": 0,
+            "1": 300,
+            "2": 3
+          }
+        }
+      ],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "第四段：这段文字在 camera 下移 300px 后出现。",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 21,
+            "params": {},
+            "range": {
+              "end": 30,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": [
+          {
+            "blocking": true,
+            "level": "block",
+            "name": "cam.move",
+            "params": {
+              "0": 0,
+              "1": 300,
+              "2": 3
+            }
+          }
+        ]
+      },
+      "lineOffset": 18,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "第四段：这段文字在 camera 下移 300px 后出现。",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 21,
+          "params": {},
+          "range": {
+            "end": 30,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [
+          {
+            "chain": {
+              "commands": [
+                {
+                  "blocking": true,
+                  "family": "stage",
+                  "name": "cam.reset",
+                  "params": {
+                    "0": 2
+                  },
+                  "prefix": "bare",
+                  "raw": "cam.reset(2s)!"
+                }
+              ],
+              "line": 23,
+              "prefix": "bare",
+              "range": {
+                "end": 15,
+                "start": 1
+              },
+              "raw": "cam.reset(2s)!",
+              "type": "command-chain"
+            },
+            "line": 23,
+            "range": {
+              "end": 15,
+              "start": 1
+            },
+            "type": "block-option-command"
+          }
+        ],
+        "lineOffset": 23,
+        "lines": [
+          {
+            "body": [
+              {
+                "line": 24,
+                "marks": [],
+                "range": {
+                  "end": 19,
+                  "start": 0
+                },
+                "text": "第五段：camera 已回到初始位置。",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 24,
+            "range": {
+              "end": 19,
+              "start": 0
+            },
+            "raw": "第五段：camera 已回到初始位置。",
+            "type": "line"
+          }
+        ],
+        "source": "[cam.reset(2s)!]\n第五段：camera 已回到初始位置。",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [
+        {
+          "blocking": true,
+          "level": "block",
+          "name": "cam.reset",
+          "params": {
+            "0": 2
+          }
+        }
+      ],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "第五段：camera 已回到初始位置。",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 24,
+            "params": {},
+            "range": {
+              "end": 19,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": [
+          {
+            "blocking": true,
+            "level": "block",
+            "name": "cam.reset",
+            "params": {
+              "0": 2
+            }
+          }
+        ]
+      },
+      "lineOffset": 23,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "第五段：camera 已回到初始位置。",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 24,
+          "params": {},
+          "range": {
+            "end": 19,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 26,
+        "lines": [
+          {
+            "body": [],
+            "commandChains": [],
+            "heading": false,
+            "kind": "scene-clear",
+            "line": 26,
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "raw": "---",
+            "type": "line"
+          }
+        ],
+        "source": "---",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": true,
+            "isSugar": false,
+            "kind": "scene-clear",
+            "layoutInstructions": [
+              {
+                "blocking": false,
+                "line": 26,
+                "params": {},
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "scene.clear"
+              },
+              {
+                "blocking": true,
+                "line": 26,
+                "params": {
+                  "0": 0.5
+                },
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "pause"
+              }
+            ],
+            "line": 26,
+            "params": {},
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 26,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": true,
+          "isSugar": false,
+          "layoutInstructions": [
+            {
+              "blocking": false,
+              "line": 26,
+              "params": {},
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "scene.clear"
+            },
+            {
+              "blocking": true,
+              "line": 26,
+              "params": {
+                "0": 0.5
+              },
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "pause"
+            }
+          ],
+          "line": 26,
+          "params": {},
+          "range": {
+            "end": 3,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [
+          {
+            "chain": {
+              "commands": [
+                {
+                  "blocking": false,
+                  "family": "stage",
+                  "name": "cam.move",
+                  "params": {
+                    "0": 300,
+                    "1": 0,
+                    "2": 4
+                  },
+                  "prefix": "bare",
+                  "raw": "cam.move(300, 0, 4s)"
+                }
+              ],
+              "line": 30,
+              "prefix": "bare",
+              "range": {
+                "end": 21,
+                "start": 1
+              },
+              "raw": "cam.move(300, 0, 4s)",
+              "type": "command-chain"
+            },
+            "line": 30,
+            "range": {
+              "end": 21,
+              "start": 1
+            },
+            "type": "block-option-command"
+          },
+          {
+            "chain": {
+              "commands": [
+                {
+                  "blocking": false,
+                  "family": "stage",
+                  "name": "cam.offset",
+                  "params": {
+                    "0": 0,
+                    "1": -100,
+                    "2": 4
+                  },
+                  "prefix": "bare",
+                  "raw": "cam.offset(0, -100, 4s)"
+                }
+              ],
+              "line": 30,
+              "prefix": "bare",
+              "range": {
+                "end": 45,
+                "start": 22
+              },
+              "raw": "cam.offset(0, -100, 4s)",
+              "type": "command-chain"
+            },
+            "line": 30,
+            "range": {
+              "end": 45,
+              "start": 22
+            },
+            "type": "block-option-command"
+          }
+        ],
+        "lineOffset": 28,
+        "lines": [
+          {
+            "body": [
+              {
+                "line": 31,
+                "marks": [],
+                "range": {
+                  "end": 36,
+                  "start": 0
+                },
+                "text": "第六段：camera 右移 + offset 上移，视觉上斜向右上运动。",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 31,
+            "range": {
+              "end": 36,
+              "start": 0
+            },
+            "raw": "第六段：camera 右移 + offset 上移，视觉上斜向右上运动。",
+            "type": "line"
+          }
+        ],
+        "source": "// 测试 3: cam.offset 叠加层 — 与 cam.move 不冲突\n// 预期：camera 向右移同时 offset 向上叠加，两者独立不冲突\n[cam.move(300, 0, 4s) cam.offset(0, -100, 4s)]\n第六段：camera 右移 + offset 上移，视觉上斜向右上运动。",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [
+        {
+          "blocking": false,
+          "level": "block",
+          "name": "cam.move",
+          "params": {
+            "0": 300,
+            "1": 0,
+            "2": 4
+          }
+        },
+        {
+          "blocking": false,
+          "level": "block",
+          "name": "cam.offset",
+          "params": {
+            "0": 0,
+            "1": -100,
+            "2": 4
+          }
+        }
+      ],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "第六段：camera 右移 + offset 上移，视觉上斜向右上运动。",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 31,
+            "params": {},
+            "range": {
+              "end": 36,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": [
+          {
+            "blocking": false,
+            "level": "block",
+            "name": "cam.move",
+            "params": {
+              "0": 300,
+              "1": 0,
+              "2": 4
+            }
+          },
+          {
+            "blocking": false,
+            "level": "block",
+            "name": "cam.offset",
+            "params": {
+              "0": 0,
+              "1": -100,
+              "2": 4
+            }
+          }
+        ]
+      },
+      "lineOffset": 28,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "第六段：camera 右移 + offset 上移，视觉上斜向右上运动。",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 31,
+          "params": {},
+          "range": {
+            "end": 36,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [
+          {
+            "chain": {
+              "commands": [
+                {
+                  "blocking": true,
+                  "family": "stage",
+                  "name": "cam.offset",
+                  "params": {
+                    "0": 0,
+                    "1": 200,
+                    "2": 2
+                  },
+                  "prefix": "bare",
+                  "raw": "cam.offset(0, 200, 2s)!"
+                }
+              ],
+              "line": 35,
+              "prefix": "bare",
+              "range": {
+                "end": 24,
+                "start": 1
+              },
+              "raw": "cam.offset(0, 200, 2s)!",
+              "type": "command-chain"
+            },
+            "line": 35,
+            "range": {
+              "end": 24,
+              "start": 1
+            },
+            "type": "block-option-command"
+          }
+        ],
+        "lineOffset": 33,
+        "lines": [
+          {
+            "body": [
+              {
+                "line": 36,
+                "marks": [],
+                "range": {
+                  "end": 30,
+                  "start": 0
+                },
+                "text": "第七段：仅 offset 下移，camera 本身没有变化。",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 36,
+            "range": {
+              "end": 30,
+              "start": 0
+            },
+            "raw": "第七段：仅 offset 下移，camera 本身没有变化。",
+            "type": "line"
+          }
+        ],
+        "source": "// 测试 4: cam.offset 单独使用\n// 预期：base camera 不动，offset 添加独立偏移\n[cam.offset(0, 200, 2s)!]\n第七段：仅 offset 下移，camera 本身没有变化。",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [
+        {
+          "blocking": true,
+          "level": "block",
+          "name": "cam.offset",
+          "params": {
+            "0": 0,
+            "1": 200,
+            "2": 2
+          }
+        }
+      ],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "第七段：仅 offset 下移，camera 本身没有变化。",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 36,
+            "params": {},
+            "range": {
+              "end": 30,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": [
+          {
+            "blocking": true,
+            "level": "block",
+            "name": "cam.offset",
+            "params": {
+              "0": 0,
+              "1": 200,
+              "2": 2
+            }
+          }
+        ]
+      },
+      "lineOffset": 33,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "第七段：仅 offset 下移，camera 本身没有变化。",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 36,
+          "params": {},
+          "range": {
+            "end": 30,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [
+          {
+            "chain": {
+              "commands": [
+                {
+                  "blocking": true,
+                  "family": "stage",
+                  "name": "cam.reset",
+                  "params": {
+                    "0": 1
+                  },
+                  "prefix": "bare",
+                  "raw": "cam.reset(1s)!"
+                }
+              ],
+              "line": 39,
+              "prefix": "bare",
+              "range": {
+                "end": 15,
+                "start": 1
+              },
+              "raw": "cam.reset(1s)!",
+              "type": "command-chain"
+            },
+            "line": 39,
+            "range": {
+              "end": 15,
+              "start": 1
+            },
+            "type": "block-option-command"
+          }
+        ],
+        "lineOffset": 38,
+        "lines": [
+          {
+            "body": [
+              {
+                "line": 40,
+                "marks": [],
+                "range": {
+                  "end": 25,
+                  "start": 0
+                },
+                "text": "第八段：camera 和 offset 都已归零。",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 40,
+            "range": {
+              "end": 25,
+              "start": 0
+            },
+            "raw": "第八段：camera 和 offset 都已归零。",
+            "type": "line"
+          }
+        ],
+        "source": "// 测试 5: cam.reset 同时重置 camera 和 offset\n[cam.reset(1s)!]\n第八段：camera 和 offset 都已归零。",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [
+        {
+          "blocking": true,
+          "level": "block",
+          "name": "cam.reset",
+          "params": {
+            "0": 1
+          }
+        }
+      ],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "第八段：camera 和 offset 都已归零。",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 40,
+            "params": {},
+            "range": {
+              "end": 25,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": [
+          {
+            "blocking": true,
+            "level": "block",
+            "name": "cam.reset",
+            "params": {
+              "0": 1
+            }
+          }
+        ]
+      },
+      "lineOffset": 38,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "第八段：camera 和 offset 都已归零。",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 40,
+          "params": {},
+          "range": {
+            "end": 25,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    }
+  ],
+  "rawParagraphs": [
+    "// 测试 1: 非阻塞的长持续时间 cam.move\n// 预期：camera 在整个脚本期间持续向右平移\n[cam.move(500, 0, 15s)]\n第一段：camera 开始缓慢右移。",
+    "第二段：camera 应该仍在平移中（约 33% 进度）。",
+    "第三段：平移接近完成。",
+    "---",
+    "// 测试 2: 阻塞 cam.move + 后续 cam.reset\n// 预期：cam.move 完成后才出文字，然后 cam.reset 覆盖\n[cam.move(0, 300, 3s)!]\n第四段：这段文字在 camera 下移 300px 后出现。",
+    "[cam.reset(2s)!]\n第五段：camera 已回到初始位置。",
+    "---",
+    "// 测试 3: cam.offset 叠加层 — 与 cam.move 不冲突\n// 预期：camera 向右移同时 offset 向上叠加，两者独立不冲突\n[cam.move(300, 0, 4s) cam.offset(0, -100, 4s)]\n第六段：camera 右移 + offset 上移，视觉上斜向右上运动。",
+    "// 测试 4: cam.offset 单独使用\n// 预期：base camera 不动，offset 添加独立偏移\n[cam.offset(0, 200, 2s)!]\n第七段：仅 offset 下移，camera 本身没有变化。",
+    "// 测试 5: cam.reset 同时重置 camera 和 offset\n[cam.reset(1s)!]\n第八段：camera 和 offset 都已归零。"
+  ]
+}

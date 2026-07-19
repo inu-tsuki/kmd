@@ -1,0 +1,662 @@
+{
+  "diagnostics": [],
+  "metadata": {
+    "designHeight": 1080,
+    "designWidth": 1920,
+    "mode": "stage",
+    "speed": 50,
+    "title": "10 - 变量解析",
+    "variables": {
+      "delay_val": 1.5,
+      "my_zoom": 0.7,
+      "shake_val": 20
+    }
+  },
+  "paragraphs": [
+    {
+      "ast": {
+        "blockOptions": [
+          {
+            "chain": {
+              "commands": [
+                {
+                  "blocking": true,
+                  "family": "stage",
+                  "name": "cam.zoom",
+                  "params": {
+                    "0": "var.my_zoom",
+                    "1": 1
+                  },
+                  "prefix": "bare",
+                  "raw": "cam.zoom(var.my_zoom, 1s)!"
+                }
+              ],
+              "line": 13,
+              "prefix": "bare",
+              "range": {
+                "end": 27,
+                "start": 1
+              },
+              "raw": "cam.zoom(var.my_zoom, 1s)!",
+              "type": "command-chain"
+            },
+            "line": 13,
+            "range": {
+              "end": 27,
+              "start": 1
+            },
+            "type": "block-option-command"
+          }
+        ],
+        "lineOffset": 12,
+        "lines": [
+          {
+            "body": [
+              {
+                "line": 14,
+                "marks": [],
+                "range": {
+                  "end": 23,
+                  "start": 0
+                },
+                "text": "镜头使用变量 var.my_zoom 缩放到 ",
+                "type": "text"
+              },
+              {
+                "children": [
+                  {
+                    "groupId": 1,
+                    "line": 14,
+                    "marks": [],
+                    "range": {
+                      "end": 35,
+                      "start": 24
+                    },
+                    "text": "var.my_zoom",
+                    "type": "text"
+                  }
+                ],
+                "groupId": 1,
+                "line": 14,
+                "range": {
+                  "end": 36,
+                  "start": 23
+                },
+                "type": "group"
+              },
+              {
+                "line": 14,
+                "marks": [],
+                "range": {
+                  "end": 37,
+                  "start": 36
+                },
+                "text": "。",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 14,
+            "range": {
+              "end": 37,
+              "start": 0
+            },
+            "raw": "镜头使用变量 var.my_zoom 缩放到 {var.my_zoom}。",
+            "type": "line"
+          }
+        ],
+        "source": "// 预期：使用 var.my_zoom 进行缩放\n[cam.zoom(var.my_zoom, 1s)!]\n镜头使用变量 var.my_zoom 缩放到 {var.my_zoom}。",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [
+        {
+          "blocking": true,
+          "level": "block",
+          "name": "cam.zoom",
+          "params": {
+            "0": "var.my_zoom",
+            "1": 1
+          }
+        }
+      ],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "镜头使用变量 var.my_zoom 缩放到 ",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 14,
+            "params": {},
+            "range": {
+              "end": 23,
+              "start": 0
+            },
+            "sugar": []
+          },
+          {
+            "braceGroupId": 1,
+            "commands": [],
+            "content": "var.my_zoom",
+            "effects": [],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 14,
+            "params": {},
+            "range": {
+              "end": 35,
+              "start": 24
+            },
+            "sugar": []
+          },
+          {
+            "commands": [],
+            "content": "。",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 14,
+            "params": {},
+            "range": {
+              "end": 37,
+              "start": 36
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": [
+          {
+            "blocking": true,
+            "level": "block",
+            "name": "cam.zoom",
+            "params": {
+              "0": "var.my_zoom",
+              "1": 1
+            }
+          }
+        ]
+      },
+      "lineOffset": 12,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "镜头使用变量 var.my_zoom 缩放到 ",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 14,
+          "params": {},
+          "range": {
+            "end": 23,
+            "start": 0
+          },
+          "sugar": []
+        },
+        {
+          "braceGroupId": 1,
+          "commands": [],
+          "content": "var.my_zoom",
+          "effects": [],
+          "isBraced": true,
+          "layoutInstructions": [],
+          "line": 14,
+          "params": {},
+          "range": {
+            "end": 35,
+            "start": 24
+          },
+          "sugar": []
+        },
+        {
+          "commands": [],
+          "content": "。",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 14,
+          "params": {},
+          "range": {
+            "end": 37,
+            "start": 36
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 16,
+        "lines": [
+          {
+            "body": [
+              {
+                "children": [
+                  {
+                    "groupId": 2,
+                    "line": 17,
+                    "marks": [],
+                    "range": {
+                      "end": 3,
+                      "start": 1
+                    },
+                    "text": "震动",
+                    "type": "text"
+                  }
+                ],
+                "groupId": 2,
+                "line": 17,
+                "range": {
+                  "end": 4,
+                  "start": 0
+                },
+                "type": "group"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "name": "shake",
+                    "params": {
+                      "strength": "var.shake_val"
+                    },
+                    "prefix": "f",
+                    "raw": "f.shake(strength=var.shake_val)"
+                  }
+                ],
+                "line": 17,
+                "prefix": "f",
+                "range": {
+                  "end": 38,
+                  "start": 7
+                },
+                "raw": "f.shake(strength=var.shake_val)",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 17,
+            "range": {
+              "end": 38,
+              "start": 0
+            },
+            "raw": "{震动} @ f.shake(strength=var.shake_val)",
+            "type": "line"
+          }
+        ],
+        "source": "// 预期：使用 var.shake_val 震动\n{震动} @ f.shake(strength=var.shake_val)",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "braceGroupId": 2,
+            "commands": [],
+            "content": "震动",
+            "effects": [
+              {
+                "blocking": false,
+                "name": "shake",
+                "params": {
+                  "strength": "var.shake_val"
+                }
+              }
+            ],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 17,
+            "params": {},
+            "range": {
+              "end": 3,
+              "start": 1
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 16,
+      "tokens": [
+        {
+          "braceGroupId": 2,
+          "commands": [],
+          "content": "震动",
+          "effects": [
+            {
+              "blocking": false,
+              "name": "shake",
+              "params": {
+                "strength": "var.shake_val"
+              }
+            }
+          ],
+          "isBraced": true,
+          "layoutInstructions": [],
+          "line": 17,
+          "params": {},
+          "range": {
+            "end": 3,
+            "start": 1
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 19,
+        "lines": [
+          {
+            "body": [
+              {
+                "children": [
+                  {
+                    "groupId": 3,
+                    "line": 20,
+                    "marks": [],
+                    "range": {
+                      "end": 7,
+                      "start": 1
+                    },
+                    "text": "变量hold",
+                    "type": "text"
+                  }
+                ],
+                "groupId": 3,
+                "line": 20,
+                "range": {
+                  "end": 8,
+                  "start": 0
+                },
+                "type": "group"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "style",
+                    "name": "red",
+                    "params": {},
+                    "prefix": "f",
+                    "raw": "f.red.hold(var.delay_val).blue"
+                  },
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "name": "hold",
+                    "params": {
+                      "0": "var.delay_val"
+                    },
+                    "prefix": "f",
+                    "raw": "f.red.hold(var.delay_val).blue"
+                  },
+                  {
+                    "blocking": false,
+                    "family": "style",
+                    "name": "blue",
+                    "params": {},
+                    "prefix": "f",
+                    "raw": "f.red.hold(var.delay_val).blue"
+                  }
+                ],
+                "line": 20,
+                "prefix": "f",
+                "range": {
+                  "end": 41,
+                  "start": 11
+                },
+                "raw": "f.red.hold(var.delay_val).blue",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 20,
+            "range": {
+              "end": 41,
+              "start": 0
+            },
+            "raw": "{变量hold} @ f.red.hold(var.delay_val).blue",
+            "type": "line"
+          }
+        ],
+        "source": "// 预期：使用 var.delay_val 作为 hold 时长\n{变量hold} @ f.red.hold(var.delay_val).blue",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "braceGroupId": 3,
+            "commands": [],
+            "content": "变量hold",
+            "effects": [
+              {
+                "blocking": false,
+                "name": "red",
+                "params": {}
+              },
+              {
+                "blocking": false,
+                "name": "hold",
+                "params": {
+                  "0": "var.delay_val"
+                }
+              },
+              {
+                "blocking": false,
+                "name": "blue",
+                "params": {}
+              }
+            ],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 20,
+            "params": {},
+            "range": {
+              "end": 7,
+              "start": 1
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 19,
+      "tokens": [
+        {
+          "braceGroupId": 3,
+          "commands": [],
+          "content": "变量hold",
+          "effects": [
+            {
+              "blocking": false,
+              "name": "red",
+              "params": {}
+            },
+            {
+              "blocking": false,
+              "name": "hold",
+              "params": {
+                "0": "var.delay_val"
+              }
+            },
+            {
+              "blocking": false,
+              "name": "blue",
+              "params": {}
+            }
+          ],
+          "isBraced": true,
+          "layoutInstructions": [],
+          "line": 20,
+          "params": {},
+          "range": {
+            "end": 7,
+            "start": 1
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [
+          {
+            "chain": {
+              "commands": [
+                {
+                  "blocking": true,
+                  "family": "stage",
+                  "name": "cam.reset",
+                  "params": {
+                    "0": 1
+                  },
+                  "prefix": "bare",
+                  "raw": "cam.reset(1s)!"
+                }
+              ],
+              "line": 22,
+              "prefix": "bare",
+              "range": {
+                "end": 15,
+                "start": 1
+              },
+              "raw": "cam.reset(1s)!",
+              "type": "command-chain"
+            },
+            "line": 22,
+            "range": {
+              "end": 15,
+              "start": 1
+            },
+            "type": "block-option-command"
+          }
+        ],
+        "lineOffset": 22,
+        "lines": [
+          {
+            "body": [
+              {
+                "line": 23,
+                "marks": [],
+                "range": {
+                  "end": 5,
+                  "start": 0
+                },
+                "text": "演出结束。",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 23,
+            "range": {
+              "end": 5,
+              "start": 0
+            },
+            "raw": "演出结束。",
+            "type": "line"
+          }
+        ],
+        "source": "[cam.reset(1s)!]\n演出结束。",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [
+        {
+          "blocking": true,
+          "level": "block",
+          "name": "cam.reset",
+          "params": {
+            "0": 1
+          }
+        }
+      ],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "演出结束。",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 23,
+            "params": {},
+            "range": {
+              "end": 5,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": [
+          {
+            "blocking": true,
+            "level": "block",
+            "name": "cam.reset",
+            "params": {
+              "0": 1
+            }
+          }
+        ]
+      },
+      "lineOffset": 22,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "演出结束。",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 23,
+          "params": {},
+          "range": {
+            "end": 5,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    }
+  ],
+  "rawParagraphs": [
+    "// 预期：使用 var.my_zoom 进行缩放\n[cam.zoom(var.my_zoom, 1s)!]\n镜头使用变量 var.my_zoom 缩放到 {var.my_zoom}。",
+    "// 预期：使用 var.shake_val 震动\n{震动} @ f.shake(strength=var.shake_val)",
+    "// 预期：使用 var.delay_val 作为 hold 时长\n{变量hold} @ f.red.hold(var.delay_val).blue",
+    "[cam.reset(1s)!]\n演出结束。"
+  ]
+}

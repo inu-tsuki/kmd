@@ -1,0 +1,2014 @@
+{
+  "diagnostics": [],
+  "metadata": {
+    "designHeight": 1080,
+    "designWidth": 1920,
+    "mode": "stage",
+    "title": "实操用例 - 审讯室",
+    "variables": {}
+  },
+  "paragraphs": [
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 7,
+        "lines": [
+          {
+            "body": [
+              {
+                "children": [
+                  {
+                    "groupId": 1,
+                    "line": 7,
+                    "marks": [],
+                    "range": {
+                      "end": 3,
+                      "start": 1
+                    },
+                    "text": "说吧",
+                    "type": "text"
+                  }
+                ],
+                "groupId": 1,
+                "line": 7,
+                "range": {
+                  "end": 4,
+                  "start": 0
+                },
+                "type": "group"
+              },
+              {
+                "line": 7,
+                "marks": [],
+                "range": {
+                  "end": 5,
+                  "start": 4
+                },
+                "text": "，",
+                "type": "text"
+              },
+              {
+                "line": 7,
+                "params": {
+                  "0": 0.5
+                },
+                "range": {
+                  "end": 6,
+                  "start": 5
+                },
+                "type": "pause"
+              },
+              {
+                "level": "char",
+                "line": 7,
+                "name": "fast",
+                "params": {},
+                "range": {
+                  "end": 7,
+                  "start": 6
+                },
+                "type": "sugar"
+              },
+              {
+                "line": 7,
+                "marks": [],
+                "range": {
+                  "end": 15,
+                  "start": 7
+                },
+                "text": "你把东西藏哪了？",
+                "type": "text"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "layout",
+                    "name": "offset",
+                    "params": {
+                      "0": 200,
+                      "1": 0
+                    },
+                    "prefix": "dot",
+                    "raw": ".offset(200, 0).mark(left).shake"
+                  },
+                  {
+                    "blocking": false,
+                    "family": "layout",
+                    "name": "mark",
+                    "params": {
+                      "0": "left"
+                    },
+                    "prefix": "dot",
+                    "raw": ".offset(200, 0).mark(left).shake"
+                  },
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "name": "shake",
+                    "params": {},
+                    "prefix": "dot",
+                    "raw": ".offset(200, 0).mark(left).shake"
+                  }
+                ],
+                "line": 7,
+                "prefix": "dot",
+                "range": {
+                  "end": 50,
+                  "start": 18
+                },
+                "raw": ".offset(200, 0).mark(left).shake",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 7,
+            "range": {
+              "end": 50,
+              "start": 0
+            },
+            "raw": "{说吧}，|^你把东西藏哪了？ @ .offset(200, 0).mark(left).shake",
+            "type": "line"
+          }
+        ],
+        "source": "{说吧}，|^你把东西藏哪了？ @ .offset(200, 0).mark(left).shake",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "braceGroupId": 1,
+            "commands": [],
+            "content": "说吧",
+            "effects": [
+              {
+                "blocking": false,
+                "name": "shake",
+                "params": {}
+              }
+            ],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [
+              {
+                "blocking": false,
+                "lineScope": "pre",
+                "params": {
+                  "0": 200,
+                  "1": 0
+                },
+                "type": "offset"
+              },
+              {
+                "blocking": false,
+                "lineScope": "pre",
+                "params": {
+                  "0": "left"
+                },
+                "type": "mark"
+              }
+            ],
+            "line": 7,
+            "params": {},
+            "range": {
+              "end": 3,
+              "start": 1
+            },
+            "sugar": []
+          },
+          {
+            "commands": [],
+            "content": "，",
+            "effects": [
+              {
+                "blocking": false,
+                "name": "shake",
+                "params": {}
+              }
+            ],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 7,
+            "params": {},
+            "range": {
+              "end": 5,
+              "start": 4
+            },
+            "sugar": []
+          },
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": true,
+            "isSceneClear": false,
+            "isSugar": false,
+            "kind": "pause",
+            "layoutInstructions": [
+              {
+                "blocking": true,
+                "line": 7,
+                "params": {
+                  "0": 0.5
+                },
+                "range": {
+                  "end": 6,
+                  "start": 5
+                },
+                "type": "pause"
+              }
+            ],
+            "line": 7,
+            "params": {},
+            "range": {
+              "end": 6,
+              "start": 5
+            },
+            "sugar": []
+          },
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": false,
+            "isSugar": true,
+            "kind": "sugar",
+            "layoutInstructions": [],
+            "line": 7,
+            "params": {},
+            "range": {
+              "end": 7,
+              "start": 6
+            },
+            "sugar": [
+              {
+                "level": "char",
+                "name": "fast",
+                "params": {}
+              }
+            ]
+          },
+          {
+            "commands": [],
+            "content": "你把东西藏哪了？",
+            "effects": [
+              {
+                "blocking": false,
+                "name": "shake",
+                "params": {}
+              }
+            ],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [
+              {
+                "blocking": false,
+                "lineScope": "post",
+                "params": {
+                  "0": 200,
+                  "1": 0
+                },
+                "type": "offset"
+              },
+              {
+                "blocking": false,
+                "lineScope": "post",
+                "params": {
+                  "0": "left"
+                },
+                "type": "mark"
+              }
+            ],
+            "line": 7,
+            "params": {},
+            "range": {
+              "end": 15,
+              "start": 7
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 7,
+      "tokens": [
+        {
+          "braceGroupId": 1,
+          "commands": [],
+          "content": "说吧",
+          "effects": [
+            {
+              "blocking": false,
+              "name": "shake",
+              "params": {}
+            }
+          ],
+          "isBraced": true,
+          "layoutInstructions": [
+            {
+              "blocking": false,
+              "lineScope": "pre",
+              "params": {
+                "0": 200,
+                "1": 0
+              },
+              "type": "offset"
+            },
+            {
+              "blocking": false,
+              "lineScope": "pre",
+              "params": {
+                "0": "left"
+              },
+              "type": "mark"
+            }
+          ],
+          "line": 7,
+          "params": {},
+          "range": {
+            "end": 3,
+            "start": 1
+          },
+          "sugar": []
+        },
+        {
+          "commands": [],
+          "content": "，",
+          "effects": [
+            {
+              "blocking": false,
+              "name": "shake",
+              "params": {}
+            }
+          ],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 7,
+          "params": {},
+          "range": {
+            "end": 5,
+            "start": 4
+          },
+          "sugar": []
+        },
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": true,
+          "isSceneClear": false,
+          "isSugar": false,
+          "layoutInstructions": [
+            {
+              "blocking": true,
+              "line": 7,
+              "params": {
+                "0": 0.5
+              },
+              "range": {
+                "end": 6,
+                "start": 5
+              },
+              "type": "pause"
+            }
+          ],
+          "line": 7,
+          "params": {},
+          "range": {
+            "end": 6,
+            "start": 5
+          },
+          "sugar": []
+        },
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": false,
+          "isSugar": true,
+          "layoutInstructions": [],
+          "line": 7,
+          "params": {},
+          "range": {
+            "end": 7,
+            "start": 6
+          },
+          "sugar": [
+            {
+              "level": "char",
+              "name": "fast",
+              "params": {}
+            }
+          ]
+        },
+        {
+          "commands": [],
+          "content": "你把东西藏哪了？",
+          "effects": [
+            {
+              "blocking": false,
+              "name": "shake",
+              "params": {}
+            }
+          ],
+          "isBraced": false,
+          "layoutInstructions": [
+            {
+              "blocking": false,
+              "lineScope": "post",
+              "params": {
+                "0": 200,
+                "1": 0
+              },
+              "type": "offset"
+            },
+            {
+              "blocking": false,
+              "lineScope": "post",
+              "params": {
+                "0": "left"
+              },
+              "type": "mark"
+            }
+          ],
+          "line": 7,
+          "params": {},
+          "range": {
+            "end": 15,
+            "start": 7
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 9,
+        "lines": [
+          {
+            "body": [
+              {
+                "level": "char",
+                "line": 9,
+                "name": "slow",
+                "params": {},
+                "range": {
+                  "end": 1,
+                  "start": 0
+                },
+                "type": "sugar"
+              },
+              {
+                "level": "char",
+                "line": 9,
+                "name": "slow",
+                "params": {},
+                "range": {
+                  "end": 2,
+                  "start": 1
+                },
+                "type": "sugar"
+              },
+              {
+                "line": 9,
+                "marks": [],
+                "range": {
+                  "end": 5,
+                  "start": 2
+                },
+                "text": "我……",
+                "type": "text"
+              },
+              {
+                "line": 9,
+                "params": {
+                  "0": 0.5
+                },
+                "range": {
+                  "end": 6,
+                  "start": 5
+                },
+                "type": "pause"
+              },
+              {
+                "level": "char",
+                "line": 9,
+                "name": "slow",
+                "params": {},
+                "range": {
+                  "end": 7,
+                  "start": 6
+                },
+                "type": "sugar"
+              },
+              {
+                "line": 9,
+                "marks": [],
+                "range": {
+                  "end": 15,
+                  "start": 7
+                },
+                "text": "我真的不知道……",
+                "type": "text"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "name": "shake",
+                    "params": {
+                      "strength": 2
+                    },
+                    "prefix": "dot",
+                    "raw": ".shake(strength=2).offset(800, 0)"
+                  },
+                  {
+                    "blocking": false,
+                    "family": "layout",
+                    "name": "offset",
+                    "params": {
+                      "0": 800,
+                      "1": 0
+                    },
+                    "prefix": "dot",
+                    "raw": ".shake(strength=2).offset(800, 0)"
+                  }
+                ],
+                "line": 9,
+                "prefix": "dot",
+                "range": {
+                  "end": 51,
+                  "start": 18
+                },
+                "raw": ".shake(strength=2).offset(800, 0)",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 9,
+            "range": {
+              "end": 51,
+              "start": 0
+            },
+            "raw": "~~我……|~我真的不知道…… @ .shake(strength=2).offset(800, 0)",
+            "type": "line"
+          }
+        ],
+        "source": "~~我……|~我真的不知道…… @ .shake(strength=2).offset(800, 0)",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": false,
+            "isSugar": true,
+            "kind": "sugar",
+            "layoutInstructions": [],
+            "line": 9,
+            "params": {},
+            "range": {
+              "end": 1,
+              "start": 0
+            },
+            "sugar": [
+              {
+                "level": "char",
+                "name": "slow",
+                "params": {}
+              }
+            ]
+          },
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": false,
+            "isSugar": true,
+            "kind": "sugar",
+            "layoutInstructions": [],
+            "line": 9,
+            "params": {},
+            "range": {
+              "end": 2,
+              "start": 1
+            },
+            "sugar": [
+              {
+                "level": "char",
+                "name": "slow",
+                "params": {}
+              }
+            ]
+          },
+          {
+            "commands": [],
+            "content": "我……",
+            "effects": [
+              {
+                "blocking": false,
+                "name": "shake",
+                "params": {
+                  "strength": 2
+                }
+              }
+            ],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [
+              {
+                "blocking": false,
+                "lineScope": "pre",
+                "params": {
+                  "0": 800,
+                  "1": 0
+                },
+                "type": "offset"
+              }
+            ],
+            "line": 9,
+            "params": {},
+            "range": {
+              "end": 5,
+              "start": 2
+            },
+            "sugar": []
+          },
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": true,
+            "isSceneClear": false,
+            "isSugar": false,
+            "kind": "pause",
+            "layoutInstructions": [
+              {
+                "blocking": true,
+                "line": 9,
+                "params": {
+                  "0": 0.5
+                },
+                "range": {
+                  "end": 6,
+                  "start": 5
+                },
+                "type": "pause"
+              }
+            ],
+            "line": 9,
+            "params": {},
+            "range": {
+              "end": 6,
+              "start": 5
+            },
+            "sugar": []
+          },
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": false,
+            "isSugar": true,
+            "kind": "sugar",
+            "layoutInstructions": [],
+            "line": 9,
+            "params": {},
+            "range": {
+              "end": 7,
+              "start": 6
+            },
+            "sugar": [
+              {
+                "level": "char",
+                "name": "slow",
+                "params": {}
+              }
+            ]
+          },
+          {
+            "commands": [],
+            "content": "我真的不知道……",
+            "effects": [
+              {
+                "blocking": false,
+                "name": "shake",
+                "params": {
+                  "strength": 2
+                }
+              }
+            ],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [
+              {
+                "blocking": false,
+                "lineScope": "post",
+                "params": {
+                  "0": 800,
+                  "1": 0
+                },
+                "type": "offset"
+              }
+            ],
+            "line": 9,
+            "params": {},
+            "range": {
+              "end": 15,
+              "start": 7
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 9,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": false,
+          "isSugar": true,
+          "layoutInstructions": [],
+          "line": 9,
+          "params": {},
+          "range": {
+            "end": 1,
+            "start": 0
+          },
+          "sugar": [
+            {
+              "level": "char",
+              "name": "slow",
+              "params": {}
+            }
+          ]
+        },
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": false,
+          "isSugar": true,
+          "layoutInstructions": [],
+          "line": 9,
+          "params": {},
+          "range": {
+            "end": 2,
+            "start": 1
+          },
+          "sugar": [
+            {
+              "level": "char",
+              "name": "slow",
+              "params": {}
+            }
+          ]
+        },
+        {
+          "commands": [],
+          "content": "我……",
+          "effects": [
+            {
+              "blocking": false,
+              "name": "shake",
+              "params": {
+                "strength": 2
+              }
+            }
+          ],
+          "isBraced": false,
+          "layoutInstructions": [
+            {
+              "blocking": false,
+              "lineScope": "pre",
+              "params": {
+                "0": 800,
+                "1": 0
+              },
+              "type": "offset"
+            }
+          ],
+          "line": 9,
+          "params": {},
+          "range": {
+            "end": 5,
+            "start": 2
+          },
+          "sugar": []
+        },
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": true,
+          "isSceneClear": false,
+          "isSugar": false,
+          "layoutInstructions": [
+            {
+              "blocking": true,
+              "line": 9,
+              "params": {
+                "0": 0.5
+              },
+              "range": {
+                "end": 6,
+                "start": 5
+              },
+              "type": "pause"
+            }
+          ],
+          "line": 9,
+          "params": {},
+          "range": {
+            "end": 6,
+            "start": 5
+          },
+          "sugar": []
+        },
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": false,
+          "isSugar": true,
+          "layoutInstructions": [],
+          "line": 9,
+          "params": {},
+          "range": {
+            "end": 7,
+            "start": 6
+          },
+          "sugar": [
+            {
+              "level": "char",
+              "name": "slow",
+              "params": {}
+            }
+          ]
+        },
+        {
+          "commands": [],
+          "content": "我真的不知道……",
+          "effects": [
+            {
+              "blocking": false,
+              "name": "shake",
+              "params": {
+                "strength": 2
+              }
+            }
+          ],
+          "isBraced": false,
+          "layoutInstructions": [
+            {
+              "blocking": false,
+              "lineScope": "post",
+              "params": {
+                "0": 800,
+                "1": 0
+              },
+              "type": "offset"
+            }
+          ],
+          "line": 9,
+          "params": {},
+          "range": {
+            "end": 15,
+            "start": 7
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 11,
+        "lines": [
+          {
+            "body": [
+              {
+                "children": [
+                  {
+                    "groupId": 2,
+                    "level": "char",
+                    "line": 11,
+                    "name": "fast",
+                    "params": {},
+                    "range": {
+                      "end": 2,
+                      "start": 1
+                    },
+                    "type": "sugar"
+                  },
+                  {
+                    "groupId": 2,
+                    "level": "char",
+                    "line": 11,
+                    "name": "fast",
+                    "params": {},
+                    "range": {
+                      "end": 3,
+                      "start": 2
+                    },
+                    "type": "sugar"
+                  },
+                  {
+                    "groupId": 2,
+                    "line": 11,
+                    "marks": [],
+                    "range": {
+                      "end": 11,
+                      "start": 3
+                    },
+                    "text": "你还想狡辩吗？！",
+                    "type": "text"
+                  }
+                ],
+                "groupId": 2,
+                "line": 11,
+                "range": {
+                  "end": 12,
+                  "start": 0
+                },
+                "type": "group"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "name": "shake",
+                    "params": {
+                      "strength": 3
+                    },
+                    "prefix": "f",
+                    "raw": "f.shake(strength=3)"
+                  }
+                ],
+                "line": 11,
+                "prefix": "f",
+                "range": {
+                  "end": 34,
+                  "start": 15
+                },
+                "raw": "f.shake(strength=3)",
+                "type": "command-chain"
+              },
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "layout",
+                    "name": "offset",
+                    "params": {
+                      "0": 200,
+                      "1": 0
+                    },
+                    "prefix": "dot",
+                    "raw": ".offset(200, 0)"
+                  }
+                ],
+                "line": 11,
+                "prefix": "dot",
+                "range": {
+                  "end": 50,
+                  "start": 35
+                },
+                "raw": ".offset(200, 0)",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 11,
+            "range": {
+              "end": 50,
+              "start": 0
+            },
+            "raw": "{^^你还想狡辩吗？！} @ f.shake(strength=3) .offset(200, 0)",
+            "type": "line"
+          }
+        ],
+        "source": "{^^你还想狡辩吗？！} @ f.shake(strength=3) .offset(200, 0)",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": false,
+            "isSugar": true,
+            "kind": "sugar",
+            "layoutInstructions": [],
+            "line": 11,
+            "params": {},
+            "range": {
+              "end": 2,
+              "start": 1
+            },
+            "sugar": [
+              {
+                "level": "char",
+                "name": "fast",
+                "params": {}
+              }
+            ]
+          },
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": false,
+            "isSugar": true,
+            "kind": "sugar",
+            "layoutInstructions": [],
+            "line": 11,
+            "params": {},
+            "range": {
+              "end": 3,
+              "start": 2
+            },
+            "sugar": [
+              {
+                "level": "char",
+                "name": "fast",
+                "params": {}
+              }
+            ]
+          },
+          {
+            "braceGroupId": 2,
+            "commands": [],
+            "content": "你还想狡辩吗？！",
+            "effects": [
+              {
+                "blocking": false,
+                "name": "shake",
+                "params": {
+                  "strength": 3
+                }
+              }
+            ],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [
+              {
+                "blocking": false,
+                "lineScope": "pre",
+                "params": {
+                  "0": 200,
+                  "1": 0
+                },
+                "type": "offset"
+              },
+              {
+                "blocking": false,
+                "lineScope": "post",
+                "params": {
+                  "0": 200,
+                  "1": 0
+                },
+                "type": "offset"
+              }
+            ],
+            "line": 11,
+            "params": {},
+            "range": {
+              "end": 11,
+              "start": 3
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 11,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": false,
+          "isSugar": true,
+          "layoutInstructions": [],
+          "line": 11,
+          "params": {},
+          "range": {
+            "end": 2,
+            "start": 1
+          },
+          "sugar": [
+            {
+              "level": "char",
+              "name": "fast",
+              "params": {}
+            }
+          ]
+        },
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": false,
+          "isSugar": true,
+          "layoutInstructions": [],
+          "line": 11,
+          "params": {},
+          "range": {
+            "end": 3,
+            "start": 2
+          },
+          "sugar": [
+            {
+              "level": "char",
+              "name": "fast",
+              "params": {}
+            }
+          ]
+        },
+        {
+          "braceGroupId": 2,
+          "commands": [],
+          "content": "你还想狡辩吗？！",
+          "effects": [
+            {
+              "blocking": false,
+              "name": "shake",
+              "params": {
+                "strength": 3
+              }
+            }
+          ],
+          "isBraced": true,
+          "layoutInstructions": [
+            {
+              "blocking": false,
+              "lineScope": "pre",
+              "params": {
+                "0": 200,
+                "1": 0
+              },
+              "type": "offset"
+            },
+            {
+              "blocking": false,
+              "lineScope": "post",
+              "params": {
+                "0": 200,
+                "1": 0
+              },
+              "type": "offset"
+            }
+          ],
+          "line": 11,
+          "params": {},
+          "range": {
+            "end": 11,
+            "start": 3
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 13,
+        "lines": [
+          {
+            "body": [
+              {
+                "level": "char",
+                "line": 13,
+                "name": "slow",
+                "params": {},
+                "range": {
+                  "end": 1,
+                  "start": 0
+                },
+                "type": "sugar"
+              },
+              {
+                "line": 13,
+                "marks": [],
+                "range": {
+                  "end": 4,
+                  "start": 1
+                },
+                "text": "我……",
+                "type": "text"
+              },
+              {
+                "level": "char",
+                "line": 13,
+                "name": "slow",
+                "params": {},
+                "range": {
+                  "end": 5,
+                  "start": 4
+                },
+                "type": "sugar"
+              },
+              {
+                "line": 13,
+                "params": {
+                  "0": 0.5
+                },
+                "range": {
+                  "end": 6,
+                  "start": 5
+                },
+                "type": "pause"
+              },
+              {
+                "line": 13,
+                "marks": [],
+                "range": {
+                  "end": 9,
+                  "start": 6
+                },
+                "text": "我……",
+                "type": "text"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "name": "shake",
+                    "params": {
+                      "strength": 5
+                    },
+                    "prefix": "dot",
+                    "raw": ".shake(strength=5).offset(800, 0)"
+                  },
+                  {
+                    "blocking": false,
+                    "family": "layout",
+                    "name": "offset",
+                    "params": {
+                      "0": 800,
+                      "1": 0
+                    },
+                    "prefix": "dot",
+                    "raw": ".shake(strength=5).offset(800, 0)"
+                  }
+                ],
+                "line": 13,
+                "prefix": "dot",
+                "range": {
+                  "end": 45,
+                  "start": 12
+                },
+                "raw": ".shake(strength=5).offset(800, 0)",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 13,
+            "range": {
+              "end": 45,
+              "start": 0
+            },
+            "raw": "~我……~|我…… @ .shake(strength=5).offset(800, 0)",
+            "type": "line"
+          }
+        ],
+        "source": "~我……~|我…… @ .shake(strength=5).offset(800, 0)",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": false,
+            "isSugar": true,
+            "kind": "sugar",
+            "layoutInstructions": [],
+            "line": 13,
+            "params": {},
+            "range": {
+              "end": 1,
+              "start": 0
+            },
+            "sugar": [
+              {
+                "level": "char",
+                "name": "slow",
+                "params": {}
+              }
+            ]
+          },
+          {
+            "commands": [],
+            "content": "我……",
+            "effects": [
+              {
+                "blocking": false,
+                "name": "shake",
+                "params": {
+                  "strength": 5
+                }
+              }
+            ],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [
+              {
+                "blocking": false,
+                "lineScope": "pre",
+                "params": {
+                  "0": 800,
+                  "1": 0
+                },
+                "type": "offset"
+              }
+            ],
+            "line": 13,
+            "params": {},
+            "range": {
+              "end": 4,
+              "start": 1
+            },
+            "sugar": []
+          },
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": false,
+            "isSugar": true,
+            "kind": "sugar",
+            "layoutInstructions": [],
+            "line": 13,
+            "params": {},
+            "range": {
+              "end": 5,
+              "start": 4
+            },
+            "sugar": [
+              {
+                "level": "char",
+                "name": "slow",
+                "params": {}
+              }
+            ]
+          },
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": true,
+            "isSceneClear": false,
+            "isSugar": false,
+            "kind": "pause",
+            "layoutInstructions": [
+              {
+                "blocking": true,
+                "line": 13,
+                "params": {
+                  "0": 0.5
+                },
+                "range": {
+                  "end": 6,
+                  "start": 5
+                },
+                "type": "pause"
+              }
+            ],
+            "line": 13,
+            "params": {},
+            "range": {
+              "end": 6,
+              "start": 5
+            },
+            "sugar": []
+          },
+          {
+            "commands": [],
+            "content": "我……",
+            "effects": [
+              {
+                "blocking": false,
+                "name": "shake",
+                "params": {
+                  "strength": 5
+                }
+              }
+            ],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [
+              {
+                "blocking": false,
+                "lineScope": "post",
+                "params": {
+                  "0": 800,
+                  "1": 0
+                },
+                "type": "offset"
+              }
+            ],
+            "line": 13,
+            "params": {},
+            "range": {
+              "end": 9,
+              "start": 6
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 13,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": false,
+          "isSugar": true,
+          "layoutInstructions": [],
+          "line": 13,
+          "params": {},
+          "range": {
+            "end": 1,
+            "start": 0
+          },
+          "sugar": [
+            {
+              "level": "char",
+              "name": "slow",
+              "params": {}
+            }
+          ]
+        },
+        {
+          "commands": [],
+          "content": "我……",
+          "effects": [
+            {
+              "blocking": false,
+              "name": "shake",
+              "params": {
+                "strength": 5
+              }
+            }
+          ],
+          "isBraced": false,
+          "layoutInstructions": [
+            {
+              "blocking": false,
+              "lineScope": "pre",
+              "params": {
+                "0": 800,
+                "1": 0
+              },
+              "type": "offset"
+            }
+          ],
+          "line": 13,
+          "params": {},
+          "range": {
+            "end": 4,
+            "start": 1
+          },
+          "sugar": []
+        },
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": false,
+          "isSugar": true,
+          "layoutInstructions": [],
+          "line": 13,
+          "params": {},
+          "range": {
+            "end": 5,
+            "start": 4
+          },
+          "sugar": [
+            {
+              "level": "char",
+              "name": "slow",
+              "params": {}
+            }
+          ]
+        },
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": true,
+          "isSceneClear": false,
+          "isSugar": false,
+          "layoutInstructions": [
+            {
+              "blocking": true,
+              "line": 13,
+              "params": {
+                "0": 0.5
+              },
+              "range": {
+                "end": 6,
+                "start": 5
+              },
+              "type": "pause"
+            }
+          ],
+          "line": 13,
+          "params": {},
+          "range": {
+            "end": 6,
+            "start": 5
+          },
+          "sugar": []
+        },
+        {
+          "commands": [],
+          "content": "我……",
+          "effects": [
+            {
+              "blocking": false,
+              "name": "shake",
+              "params": {
+                "strength": 5
+              }
+            }
+          ],
+          "isBraced": false,
+          "layoutInstructions": [
+            {
+              "blocking": false,
+              "lineScope": "post",
+              "params": {
+                "0": 800,
+                "1": 0
+              },
+              "type": "offset"
+            }
+          ],
+          "line": 13,
+          "params": {},
+          "range": {
+            "end": 9,
+            "start": 6
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 15,
+        "lines": [
+          {
+            "body": [
+              {
+                "level": "char",
+                "line": 15,
+                "name": "slow",
+                "params": {},
+                "range": {
+                  "end": 1,
+                  "start": 0
+                },
+                "type": "sugar"
+              },
+              {
+                "line": 15,
+                "marks": [],
+                "range": {
+                  "end": 4,
+                  "start": 1
+                },
+                "text": "求求你",
+                "type": "text"
+              },
+              {
+                "line": 15,
+                "params": {
+                  "0": 0.5
+                },
+                "range": {
+                  "end": 5,
+                  "start": 4
+                },
+                "type": "pause"
+              },
+              {
+                "line": 15,
+                "marks": [],
+                "range": {
+                  "end": 10,
+                  "start": 5
+                },
+                "text": "放过我……",
+                "type": "text"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "name": "shake",
+                    "params": {
+                      "strength": 1.5
+                    },
+                    "prefix": "dot",
+                    "raw": ".shake(strength=1.5).dim(0.7).offset(800, 0)"
+                  },
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "name": "dim",
+                    "params": {
+                      "0": 0.7
+                    },
+                    "prefix": "dot",
+                    "raw": ".shake(strength=1.5).dim(0.7).offset(800, 0)"
+                  },
+                  {
+                    "blocking": false,
+                    "family": "layout",
+                    "name": "offset",
+                    "params": {
+                      "0": 800,
+                      "1": 0
+                    },
+                    "prefix": "dot",
+                    "raw": ".shake(strength=1.5).dim(0.7).offset(800, 0)"
+                  }
+                ],
+                "line": 15,
+                "prefix": "dot",
+                "range": {
+                  "end": 57,
+                  "start": 13
+                },
+                "raw": ".shake(strength=1.5).dim(0.7).offset(800, 0)",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 15,
+            "range": {
+              "end": 57,
+              "start": 0
+            },
+            "raw": "~求求你|放过我…… @ .shake(strength=1.5).dim(0.7).offset(800, 0)",
+            "type": "line"
+          }
+        ],
+        "source": "~求求你|放过我…… @ .shake(strength=1.5).dim(0.7).offset(800, 0)",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": false,
+            "isSugar": true,
+            "kind": "sugar",
+            "layoutInstructions": [],
+            "line": 15,
+            "params": {},
+            "range": {
+              "end": 1,
+              "start": 0
+            },
+            "sugar": [
+              {
+                "level": "char",
+                "name": "slow",
+                "params": {}
+              }
+            ]
+          },
+          {
+            "commands": [],
+            "content": "求求你",
+            "effects": [
+              {
+                "blocking": false,
+                "name": "shake",
+                "params": {
+                  "strength": 1.5
+                }
+              },
+              {
+                "blocking": false,
+                "name": "dim",
+                "params": {
+                  "0": 0.7
+                }
+              }
+            ],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [
+              {
+                "blocking": false,
+                "lineScope": "pre",
+                "params": {
+                  "0": 800,
+                  "1": 0
+                },
+                "type": "offset"
+              }
+            ],
+            "line": 15,
+            "params": {},
+            "range": {
+              "end": 4,
+              "start": 1
+            },
+            "sugar": []
+          },
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": true,
+            "isSceneClear": false,
+            "isSugar": false,
+            "kind": "pause",
+            "layoutInstructions": [
+              {
+                "blocking": true,
+                "line": 15,
+                "params": {
+                  "0": 0.5
+                },
+                "range": {
+                  "end": 5,
+                  "start": 4
+                },
+                "type": "pause"
+              }
+            ],
+            "line": 15,
+            "params": {},
+            "range": {
+              "end": 5,
+              "start": 4
+            },
+            "sugar": []
+          },
+          {
+            "commands": [],
+            "content": "放过我……",
+            "effects": [
+              {
+                "blocking": false,
+                "name": "shake",
+                "params": {
+                  "strength": 1.5
+                }
+              },
+              {
+                "blocking": false,
+                "name": "dim",
+                "params": {
+                  "0": 0.7
+                }
+              }
+            ],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [
+              {
+                "blocking": false,
+                "lineScope": "post",
+                "params": {
+                  "0": 800,
+                  "1": 0
+                },
+                "type": "offset"
+              }
+            ],
+            "line": 15,
+            "params": {},
+            "range": {
+              "end": 10,
+              "start": 5
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 15,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": false,
+          "isSugar": true,
+          "layoutInstructions": [],
+          "line": 15,
+          "params": {},
+          "range": {
+            "end": 1,
+            "start": 0
+          },
+          "sugar": [
+            {
+              "level": "char",
+              "name": "slow",
+              "params": {}
+            }
+          ]
+        },
+        {
+          "commands": [],
+          "content": "求求你",
+          "effects": [
+            {
+              "blocking": false,
+              "name": "shake",
+              "params": {
+                "strength": 1.5
+              }
+            },
+            {
+              "blocking": false,
+              "name": "dim",
+              "params": {
+                "0": 0.7
+              }
+            }
+          ],
+          "isBraced": false,
+          "layoutInstructions": [
+            {
+              "blocking": false,
+              "lineScope": "pre",
+              "params": {
+                "0": 800,
+                "1": 0
+              },
+              "type": "offset"
+            }
+          ],
+          "line": 15,
+          "params": {},
+          "range": {
+            "end": 4,
+            "start": 1
+          },
+          "sugar": []
+        },
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": true,
+          "isSceneClear": false,
+          "isSugar": false,
+          "layoutInstructions": [
+            {
+              "blocking": true,
+              "line": 15,
+              "params": {
+                "0": 0.5
+              },
+              "range": {
+                "end": 5,
+                "start": 4
+              },
+              "type": "pause"
+            }
+          ],
+          "line": 15,
+          "params": {},
+          "range": {
+            "end": 5,
+            "start": 4
+          },
+          "sugar": []
+        },
+        {
+          "commands": [],
+          "content": "放过我……",
+          "effects": [
+            {
+              "blocking": false,
+              "name": "shake",
+              "params": {
+                "strength": 1.5
+              }
+            },
+            {
+              "blocking": false,
+              "name": "dim",
+              "params": {
+                "0": 0.7
+              }
+            }
+          ],
+          "isBraced": false,
+          "layoutInstructions": [
+            {
+              "blocking": false,
+              "lineScope": "post",
+              "params": {
+                "0": 800,
+                "1": 0
+              },
+              "type": "offset"
+            }
+          ],
+          "line": 15,
+          "params": {},
+          "range": {
+            "end": 10,
+            "start": 5
+          },
+          "sugar": []
+        }
+      ]
+    }
+  ],
+  "rawParagraphs": [
+    "{说吧}，|^你把东西藏哪了？ @ .offset(200, 0).mark(left).shake",
+    "~~我……|~我真的不知道…… @ .shake(strength=2).offset(800, 0)",
+    "{^^你还想狡辩吗？！} @ f.shake(strength=3) .offset(200, 0)",
+    "~我……~|我…… @ .shake(strength=5).offset(800, 0)",
+    "~求求你|放过我…… @ .shake(strength=1.5).dim(0.7).offset(800, 0)"
+  ]
+}

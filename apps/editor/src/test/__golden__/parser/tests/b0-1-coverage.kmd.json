@@ -1,0 +1,2478 @@
+{
+  "diagnostics": [
+    {
+      "code": "unknown-command",
+      "line": 42,
+      "message": "Unknown command \"ease\"",
+      "range": {
+        "end": 24,
+        "start": 14
+      },
+      "severity": "warning"
+    },
+    {
+      "code": "container-incompatible",
+      "line": 46,
+      "message": "Command \"gray\" is char-only but was forced to :bg",
+      "severity": "warning"
+    }
+  ],
+  "metadata": {
+    "mode": "normal",
+    "speed": 40,
+    "title": "B0.1 语法覆盖审计 fixture",
+    "variables": {
+      "delay_val": 1,
+      "shake_val": 10,
+      "zoom_val": 0.8
+    }
+  },
+  "paragraphs": [
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 14,
+        "lines": [
+          {
+            "body": [
+              {
+                "line": 15,
+                "marks": [],
+                "range": {
+                  "end": 15,
+                  "start": 0
+                },
+                "text": "f.red.bold.blur",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 15,
+            "range": {
+              "end": 15,
+              "start": 0
+            },
+            "raw": "f.red.bold.blur",
+            "type": "line"
+          },
+          {
+            "body": [
+              {
+                "children": [
+                  {
+                    "groupId": 1,
+                    "line": 16,
+                    "marks": [],
+                    "range": {
+                      "end": 11,
+                      "start": 1
+                    },
+                    "text": "deep chain",
+                    "type": "text"
+                  }
+                ],
+                "groupId": 1,
+                "line": 16,
+                "range": {
+                  "end": 12,
+                  "start": 0
+                },
+                "type": "group"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "style",
+                    "name": "red",
+                    "params": {},
+                    "prefix": "f",
+                    "raw": "f.red.bold.blur"
+                  },
+                  {
+                    "blocking": false,
+                    "family": "style",
+                    "name": "bold",
+                    "params": {},
+                    "prefix": "f",
+                    "raw": "f.red.bold.blur"
+                  },
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "name": "blur",
+                    "params": {},
+                    "prefix": "f",
+                    "raw": "f.red.bold.blur"
+                  }
+                ],
+                "line": 16,
+                "prefix": "f",
+                "range": {
+                  "end": 30,
+                  "start": 15
+                },
+                "raw": "f.red.bold.blur",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 16,
+            "range": {
+              "end": 30,
+              "start": 0
+            },
+            "raw": "{deep chain} @ f.red.bold.blur",
+            "type": "line"
+          }
+        ],
+        "source": "// 1. 成员解析：3+ 元素链（f.a.b.c），当前 parser 接受，B0.1 递归下降应保持。\nf.red.bold.blur\n{deep chain} @ f.red.bold.blur",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "f.red.bold.blur",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 15,
+            "params": {},
+            "range": {
+              "end": 15,
+              "start": 0
+            },
+            "sugar": []
+          },
+          {
+            "commands": [],
+            "content": "\n",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": false,
+            "isSugar": false,
+            "kind": "newline",
+            "layoutInstructions": [],
+            "line": 15,
+            "params": {},
+            "range": {
+              "end": 15,
+              "start": 15
+            },
+            "sugar": []
+          },
+          {
+            "braceGroupId": 1,
+            "commands": [],
+            "content": "deep chain",
+            "effects": [
+              {
+                "blocking": false,
+                "name": "red",
+                "params": {}
+              },
+              {
+                "blocking": false,
+                "name": "bold",
+                "params": {}
+              },
+              {
+                "blocking": false,
+                "name": "blur",
+                "params": {}
+              }
+            ],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 16,
+            "params": {},
+            "range": {
+              "end": 11,
+              "start": 1
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 14,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "f.red.bold.blur",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 15,
+          "params": {},
+          "range": {
+            "end": 15,
+            "start": 0
+          },
+          "sugar": []
+        },
+        {
+          "commands": [],
+          "content": "\n",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": false,
+          "isSugar": false,
+          "layoutInstructions": [],
+          "line": 15,
+          "params": {},
+          "range": {
+            "end": 15,
+            "start": 15
+          },
+          "sugar": []
+        },
+        {
+          "braceGroupId": 1,
+          "commands": [],
+          "content": "deep chain",
+          "effects": [
+            {
+              "blocking": false,
+              "name": "red",
+              "params": {}
+            },
+            {
+              "blocking": false,
+              "name": "bold",
+              "params": {}
+            },
+            {
+              "blocking": false,
+              "name": "blur",
+              "params": {}
+            }
+          ],
+          "isBraced": true,
+          "layoutInstructions": [],
+          "line": 16,
+          "params": {},
+          "range": {
+            "end": 11,
+            "start": 1
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 18,
+        "lines": [
+          {
+            "body": [
+              {
+                "line": 20,
+                "marks": [],
+                "range": {
+                  "end": 13,
+                  "start": 0
+                },
+                "text": "hold(0.5line)",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 20,
+            "range": {
+              "end": 13,
+              "start": 0
+            },
+            "raw": "hold(0.5line)",
+            "type": "line"
+          },
+          {
+            "body": [
+              {
+                "children": [
+                  {
+                    "groupId": 2,
+                    "line": 21,
+                    "marks": [],
+                    "range": {
+                      "end": 10,
+                      "start": 1
+                    },
+                    "text": "line unit",
+                    "type": "text"
+                  }
+                ],
+                "groupId": 2,
+                "line": 21,
+                "range": {
+                  "end": 11,
+                  "start": 0
+                },
+                "type": "group"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "name": "hold",
+                    "params": {
+                      "0": "0.5line"
+                    },
+                    "prefix": "f",
+                    "raw": "f.hold(0.5line)"
+                  }
+                ],
+                "line": 21,
+                "prefix": "f",
+                "range": {
+                  "end": 29,
+                  "start": 14
+                },
+                "raw": "f.hold(0.5line)",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 21,
+            "range": {
+              "end": 29,
+              "start": 0
+            },
+            "raw": "{line unit} @ f.hold(0.5line)",
+            "type": "line"
+          }
+        ],
+        "source": "// 2. 量词类型化（D24 债务）：\n//    2a. line 单位——当前 parser 退化为字符串 \"0.5line\"，B0.1 应类型化为空间量词。\nhold(0.5line)\n{line unit} @ f.hold(0.5line)",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "hold(0.5line)",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 20,
+            "params": {},
+            "range": {
+              "end": 13,
+              "start": 0
+            },
+            "sugar": []
+          },
+          {
+            "commands": [],
+            "content": "\n",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": false,
+            "isSugar": false,
+            "kind": "newline",
+            "layoutInstructions": [],
+            "line": 20,
+            "params": {},
+            "range": {
+              "end": 13,
+              "start": 13
+            },
+            "sugar": []
+          },
+          {
+            "braceGroupId": 2,
+            "commands": [],
+            "content": "line unit",
+            "effects": [
+              {
+                "blocking": false,
+                "name": "hold",
+                "params": {
+                  "0": "0.5line"
+                }
+              }
+            ],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 21,
+            "params": {},
+            "range": {
+              "end": 10,
+              "start": 1
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 18,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "hold(0.5line)",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 20,
+          "params": {},
+          "range": {
+            "end": 13,
+            "start": 0
+          },
+          "sugar": []
+        },
+        {
+          "commands": [],
+          "content": "\n",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": false,
+          "isSugar": false,
+          "layoutInstructions": [],
+          "line": 20,
+          "params": {},
+          "range": {
+            "end": 13,
+            "start": 13
+          },
+          "sugar": []
+        },
+        {
+          "braceGroupId": 2,
+          "commands": [],
+          "content": "line unit",
+          "effects": [
+            {
+              "blocking": false,
+              "name": "hold",
+              "params": {
+                "0": "0.5line"
+              }
+            }
+          ],
+          "isBraced": true,
+          "layoutInstructions": [],
+          "line": 21,
+          "params": {},
+          "range": {
+            "end": 10,
+            "start": 1
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 23,
+        "lines": [
+          {
+            "body": [
+              {
+                "line": 24,
+                "marks": [],
+                "range": {
+                  "end": 11,
+                  "start": 0
+                },
+                "text": "hold(500ms)",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 24,
+            "range": {
+              "end": 11,
+              "start": 0
+            },
+            "raw": "hold(500ms)",
+            "type": "line"
+          },
+          {
+            "body": [
+              {
+                "children": [
+                  {
+                    "groupId": 3,
+                    "line": 25,
+                    "marks": [],
+                    "range": {
+                      "end": 8,
+                      "start": 1
+                    },
+                    "text": "ms unit",
+                    "type": "text"
+                  }
+                ],
+                "groupId": 3,
+                "line": 25,
+                "range": {
+                  "end": 9,
+                  "start": 0
+                },
+                "type": "group"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "name": "hold",
+                    "params": {
+                      "0": 0.5
+                    },
+                    "prefix": "f",
+                    "raw": "f.hold(500ms)"
+                  }
+                ],
+                "line": 25,
+                "prefix": "f",
+                "range": {
+                  "end": 25,
+                  "start": 12
+                },
+                "raw": "f.hold(500ms)",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 25,
+            "range": {
+              "end": 25,
+              "start": 0
+            },
+            "raw": "{ms unit} @ f.hold(500ms)",
+            "type": "line"
+          }
+        ],
+        "source": "//    2b. ms 单位——当前 parser 静默转秒（500ms → 0.5），单位信息丢失，B0.1 应保留单位。\nhold(500ms)\n{ms unit} @ f.hold(500ms)",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "hold(500ms)",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 24,
+            "params": {},
+            "range": {
+              "end": 11,
+              "start": 0
+            },
+            "sugar": []
+          },
+          {
+            "commands": [],
+            "content": "\n",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": false,
+            "isSugar": false,
+            "kind": "newline",
+            "layoutInstructions": [],
+            "line": 24,
+            "params": {},
+            "range": {
+              "end": 11,
+              "start": 11
+            },
+            "sugar": []
+          },
+          {
+            "braceGroupId": 3,
+            "commands": [],
+            "content": "ms unit",
+            "effects": [
+              {
+                "blocking": false,
+                "name": "hold",
+                "params": {
+                  "0": 0.5
+                }
+              }
+            ],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 25,
+            "params": {},
+            "range": {
+              "end": 8,
+              "start": 1
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 23,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "hold(500ms)",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 24,
+          "params": {},
+          "range": {
+            "end": 11,
+            "start": 0
+          },
+          "sugar": []
+        },
+        {
+          "commands": [],
+          "content": "\n",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": false,
+          "isSugar": false,
+          "layoutInstructions": [],
+          "line": 24,
+          "params": {},
+          "range": {
+            "end": 11,
+            "start": 11
+          },
+          "sugar": []
+        },
+        {
+          "braceGroupId": 3,
+          "commands": [],
+          "content": "ms unit",
+          "effects": [
+            {
+              "blocking": false,
+              "name": "hold",
+              "params": {
+                "0": 0.5
+              }
+            }
+          ],
+          "isBraced": true,
+          "layoutInstructions": [],
+          "line": 25,
+          "params": {},
+          "range": {
+            "end": 8,
+            "start": 1
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 27,
+        "lines": [
+          {
+            "body": [
+              {
+                "line": 28,
+                "marks": [],
+                "range": {
+                  "end": 11,
+                  "start": 0
+                },
+                "text": "left(1self)",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 28,
+            "range": {
+              "end": 11,
+              "start": 0
+            },
+            "raw": "left(1self)",
+            "type": "line"
+          },
+          {
+            "body": [
+              {
+                "children": [
+                  {
+                    "groupId": 4,
+                    "line": 29,
+                    "marks": [],
+                    "range": {
+                      "end": 10,
+                      "start": 1
+                    },
+                    "text": "self unit",
+                    "type": "text"
+                  }
+                ],
+                "groupId": 4,
+                "line": 29,
+                "range": {
+                  "end": 11,
+                  "start": 0
+                },
+                "type": "group"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "layout",
+                    "name": "left",
+                    "params": {
+                      "0": "1self"
+                    },
+                    "prefix": "f",
+                    "raw": "f.left(1self)"
+                  }
+                ],
+                "line": 29,
+                "prefix": "f",
+                "range": {
+                  "end": 27,
+                  "start": 14
+                },
+                "raw": "f.left(1self)",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 29,
+            "range": {
+              "end": 27,
+              "start": 0
+            },
+            "raw": "{self unit} @ f.left(1self)",
+            "type": "line"
+          }
+        ],
+        "source": "//    2c. self 单位——当前 parser 退化为字符串 \"1self\"，B0.1 应类型化。\nleft(1self)\n{self unit} @ f.left(1self)",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "left(1self)",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 28,
+            "params": {},
+            "range": {
+              "end": 11,
+              "start": 0
+            },
+            "sugar": []
+          },
+          {
+            "commands": [],
+            "content": "\n",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": false,
+            "isSugar": false,
+            "kind": "newline",
+            "layoutInstructions": [],
+            "line": 28,
+            "params": {},
+            "range": {
+              "end": 11,
+              "start": 11
+            },
+            "sugar": []
+          },
+          {
+            "braceGroupId": 4,
+            "commands": [],
+            "content": "self unit",
+            "effects": [
+              {
+                "blocking": false,
+                "name": "left",
+                "params": {
+                  "0": "1self"
+                }
+              }
+            ],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 29,
+            "params": {},
+            "range": {
+              "end": 10,
+              "start": 1
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 27,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "left(1self)",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 28,
+          "params": {},
+          "range": {
+            "end": 11,
+            "start": 0
+          },
+          "sugar": []
+        },
+        {
+          "commands": [],
+          "content": "\n",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": false,
+          "isSugar": false,
+          "layoutInstructions": [],
+          "line": 28,
+          "params": {},
+          "range": {
+            "end": 11,
+            "start": 11
+          },
+          "sugar": []
+        },
+        {
+          "braceGroupId": 4,
+          "commands": [],
+          "content": "self unit",
+          "effects": [
+            {
+              "blocking": false,
+              "name": "left",
+              "params": {
+                "0": "1self"
+              }
+            }
+          ],
+          "isBraced": true,
+          "layoutInstructions": [],
+          "line": 29,
+          "params": {},
+          "range": {
+            "end": 10,
+            "start": 1
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 31,
+        "lines": [
+          {
+            "body": [
+              {
+                "line": 32,
+                "marks": [],
+                "range": {
+                  "end": 13,
+                  "start": 0
+                },
+                "text": "rotate(15deg)",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 32,
+            "range": {
+              "end": 13,
+              "start": 0
+            },
+            "raw": "rotate(15deg)",
+            "type": "line"
+          },
+          {
+            "body": [
+              {
+                "children": [
+                  {
+                    "groupId": 5,
+                    "line": 33,
+                    "marks": [],
+                    "range": {
+                      "end": 9,
+                      "start": 1
+                    },
+                    "text": "deg unit",
+                    "type": "text"
+                  }
+                ],
+                "groupId": 5,
+                "line": 33,
+                "range": {
+                  "end": 10,
+                  "start": 0
+                },
+                "type": "group"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "name": "rotate",
+                    "params": {
+                      "0": "15deg"
+                    },
+                    "prefix": "f",
+                    "raw": "f.rotate(15deg)"
+                  }
+                ],
+                "line": 33,
+                "prefix": "f",
+                "range": {
+                  "end": 28,
+                  "start": 13
+                },
+                "raw": "f.rotate(15deg)",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 33,
+            "range": {
+              "end": 28,
+              "start": 0
+            },
+            "raw": "{deg unit} @ f.rotate(15deg)",
+            "type": "line"
+          }
+        ],
+        "source": "//    2d. deg 单位——当前 parser 退化为字符串 \"15deg\"，B0.1 应类型化。\nrotate(15deg)\n{deg unit} @ f.rotate(15deg)",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "rotate(15deg)",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 32,
+            "params": {},
+            "range": {
+              "end": 13,
+              "start": 0
+            },
+            "sugar": []
+          },
+          {
+            "commands": [],
+            "content": "\n",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": false,
+            "isSugar": false,
+            "kind": "newline",
+            "layoutInstructions": [],
+            "line": 32,
+            "params": {},
+            "range": {
+              "end": 13,
+              "start": 13
+            },
+            "sugar": []
+          },
+          {
+            "braceGroupId": 5,
+            "commands": [],
+            "content": "deg unit",
+            "effects": [
+              {
+                "blocking": false,
+                "name": "rotate",
+                "params": {
+                  "0": "15deg"
+                }
+              }
+            ],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 33,
+            "params": {},
+            "range": {
+              "end": 9,
+              "start": 1
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 31,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "rotate(15deg)",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 32,
+          "params": {},
+          "range": {
+            "end": 13,
+            "start": 0
+          },
+          "sugar": []
+        },
+        {
+          "commands": [],
+          "content": "\n",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": false,
+          "isSugar": false,
+          "layoutInstructions": [],
+          "line": 32,
+          "params": {},
+          "range": {
+            "end": 13,
+            "start": 13
+          },
+          "sugar": []
+        },
+        {
+          "braceGroupId": 5,
+          "commands": [],
+          "content": "deg unit",
+          "effects": [
+            {
+              "blocking": false,
+              "name": "rotate",
+              "params": {
+                "0": "15deg"
+              }
+            }
+          ],
+          "isBraced": true,
+          "layoutInstructions": [],
+          "line": 33,
+          "params": {},
+          "range": {
+            "end": 9,
+            "start": 1
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 35,
+        "lines": [
+          {
+            "body": [
+              {
+                "line": 37,
+                "marks": [],
+                "range": {
+                  "end": 18,
+                  "start": 0
+                },
+                "text": "hold(1s, ease=out)",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 37,
+            "range": {
+              "end": 18,
+              "start": 0
+            },
+            "raw": "hold(1s, ease=out)",
+            "type": "line"
+          },
+          {
+            "body": [
+              {
+                "children": [
+                  {
+                    "groupId": 6,
+                    "line": 38,
+                    "marks": [],
+                    "range": {
+                      "end": 11,
+                      "start": 1
+                    },
+                    "text": "ease named",
+                    "type": "text"
+                  }
+                ],
+                "groupId": 6,
+                "line": 38,
+                "range": {
+                  "end": 12,
+                  "start": 0
+                },
+                "type": "group"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "name": "hold",
+                    "params": {
+                      "0": 1,
+                      "ease": "out"
+                    },
+                    "prefix": "f",
+                    "raw": "f.hold(1s, ease=out)"
+                  }
+                ],
+                "line": 38,
+                "prefix": "f",
+                "range": {
+                  "end": 35,
+                  "start": 15
+                },
+                "raw": "f.hold(1s, ease=out)",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 38,
+            "range": {
+              "end": 35,
+              "start": 0
+            },
+            "raw": "{ease named} @ f.hold(1s, ease=out)",
+            "type": "line"
+          }
+        ],
+        "source": "// 3. ease 词形：spec 已废弃单词形态（migration.md:15），改用连接符 ~d~>。\n//    3a. ease=out 作为命名参数——当前 parser 当普通 key=val 处理（params.ease=\"out\"），非 ease 语法。\nhold(1s, ease=out)\n{ease named} @ f.hold(1s, ease=out)",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "hold(1s, ease=out)",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 37,
+            "params": {},
+            "range": {
+              "end": 18,
+              "start": 0
+            },
+            "sugar": []
+          },
+          {
+            "commands": [],
+            "content": "\n",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": false,
+            "isSugar": false,
+            "kind": "newline",
+            "layoutInstructions": [],
+            "line": 37,
+            "params": {},
+            "range": {
+              "end": 18,
+              "start": 18
+            },
+            "sugar": []
+          },
+          {
+            "braceGroupId": 6,
+            "commands": [],
+            "content": "ease named",
+            "effects": [
+              {
+                "blocking": false,
+                "name": "hold",
+                "params": {
+                  "0": 1,
+                  "ease": "out"
+                }
+              }
+            ],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 38,
+            "params": {},
+            "range": {
+              "end": 11,
+              "start": 1
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 35,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "hold(1s, ease=out)",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 37,
+          "params": {},
+          "range": {
+            "end": 18,
+            "start": 0
+          },
+          "sugar": []
+        },
+        {
+          "commands": [],
+          "content": "\n",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": false,
+          "isSugar": false,
+          "layoutInstructions": [],
+          "line": 37,
+          "params": {},
+          "range": {
+            "end": 18,
+            "start": 18
+          },
+          "sugar": []
+        },
+        {
+          "braceGroupId": 6,
+          "commands": [],
+          "content": "ease named",
+          "effects": [
+            {
+              "blocking": false,
+              "name": "hold",
+              "params": {
+                "0": 1,
+                "ease": "out"
+              }
+            }
+          ],
+          "isBraced": true,
+          "layoutInstructions": [],
+          "line": 38,
+          "params": {},
+          "range": {
+            "end": 11,
+            "start": 1
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 40,
+        "lines": [
+          {
+            "body": [
+              {
+                "line": 41,
+                "marks": [],
+                "range": {
+                  "end": 8,
+                  "start": 0
+                },
+                "text": "ease(1s)",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 41,
+            "range": {
+              "end": 8,
+              "start": 0
+            },
+            "raw": "ease(1s)",
+            "type": "line"
+          },
+          {
+            "body": [
+              {
+                "children": [
+                  {
+                    "groupId": 7,
+                    "line": 42,
+                    "marks": [],
+                    "range": {
+                      "end": 10,
+                      "start": 1
+                    },
+                    "text": "ease word",
+                    "type": "text"
+                  }
+                ],
+                "groupId": 7,
+                "line": 42,
+                "range": {
+                  "end": 11,
+                  "start": 0
+                },
+                "type": "group"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "unknown",
+                    "name": "ease",
+                    "params": {
+                      "0": 1
+                    },
+                    "prefix": "f",
+                    "raw": "f.ease(1s)"
+                  }
+                ],
+                "line": 42,
+                "prefix": "f",
+                "range": {
+                  "end": 24,
+                  "start": 14
+                },
+                "raw": "f.ease(1s)",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 42,
+            "range": {
+              "end": 24,
+              "start": 0
+            },
+            "raw": "{ease word} @ f.ease(1s)",
+            "type": "line"
+          }
+        ],
+        "source": "//    3b. 废弃单词形态 ease(d)——当前 parser 当普通命令名处理（若未注册则 unknown-command 诊断）。\nease(1s)\n{ease word} @ f.ease(1s)",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [
+        {
+          "code": "unknown-command",
+          "line": 42,
+          "message": "Unknown command \"ease\"",
+          "range": {
+            "end": 24,
+            "start": 14
+          },
+          "severity": "warning"
+        }
+      ],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [
+          {
+            "code": "unknown-command",
+            "line": 42,
+            "message": "Unknown command \"ease\"",
+            "range": {
+              "end": 24,
+              "start": 14
+            },
+            "severity": "warning"
+          }
+        ],
+        "inline": [
+          {
+            "commands": [],
+            "content": "ease(1s)",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 41,
+            "params": {},
+            "range": {
+              "end": 8,
+              "start": 0
+            },
+            "sugar": []
+          },
+          {
+            "commands": [],
+            "content": "\n",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": false,
+            "isSugar": false,
+            "kind": "newline",
+            "layoutInstructions": [],
+            "line": 41,
+            "params": {},
+            "range": {
+              "end": 8,
+              "start": 8
+            },
+            "sugar": []
+          },
+          {
+            "braceGroupId": 7,
+            "commands": [],
+            "content": "ease word",
+            "effects": [
+              {
+                "blocking": false,
+                "name": "ease",
+                "params": {
+                  "0": 1
+                }
+              }
+            ],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 42,
+            "params": {},
+            "range": {
+              "end": 10,
+              "start": 1
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 40,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "ease(1s)",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 41,
+          "params": {},
+          "range": {
+            "end": 8,
+            "start": 0
+          },
+          "sugar": []
+        },
+        {
+          "commands": [],
+          "content": "\n",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": false,
+          "isSugar": false,
+          "layoutInstructions": [],
+          "line": 41,
+          "params": {},
+          "range": {
+            "end": 8,
+            "start": 8
+          },
+          "sugar": []
+        },
+        {
+          "braceGroupId": 7,
+          "commands": [],
+          "content": "ease word",
+          "effects": [
+            {
+              "blocking": false,
+              "name": "ease",
+              "params": {
+                "0": 1
+              }
+            }
+          ],
+          "isBraced": true,
+          "layoutInstructions": [],
+          "line": 42,
+          "params": {},
+          "range": {
+            "end": 10,
+            "start": 1
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [
+          {
+            "chain": {
+              "commands": [
+                {
+                  "blocking": false,
+                  "family": "style",
+                  "level": "bg",
+                  "name": "gray",
+                  "params": {},
+                  "prefix": "dot",
+                  "raw": ".gray:bg"
+                }
+              ],
+              "line": 46,
+              "prefix": "dot",
+              "range": {
+                "end": 9,
+                "start": 1
+              },
+              "raw": ".gray:bg",
+              "type": "command-chain"
+            },
+            "line": 46,
+            "range": {
+              "end": 9,
+              "start": 1
+            },
+            "type": "block-option-command"
+          }
+        ],
+        "lineOffset": 44,
+        "lines": [
+          {
+            "body": [],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "stage",
+                    "name": "bg",
+                    "params": {
+                      "src": "tests/assets/sample-bg.jpg"
+                    },
+                    "prefix": "bare",
+                    "raw": "bg(src=tests/assets/sample-bg.jpg)"
+                  }
+                ],
+                "line": 45,
+                "prefix": "bare",
+                "range": {
+                  "end": 36,
+                  "start": 2
+                },
+                "raw": "bg(src=tests/assets/sample-bg.jpg)",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "command-only",
+            "line": 45,
+            "range": {
+              "end": 36,
+              "start": 0
+            },
+            "raw": "@ bg(src=tests/assets/sample-bg.jpg)",
+            "type": "line"
+          },
+          {
+            "body": [
+              {
+                "line": 46,
+                "marks": [],
+                "range": {
+                  "end": 12,
+                  "start": 0
+                },
+                "text": "背景 bg 上的灰度滤镜",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 46,
+            "range": {
+              "end": 12,
+              "start": 0
+            },
+            "raw": "背景 bg 上的灰度滤镜",
+            "type": "line"
+          },
+          {
+            "body": [
+              {
+                "line": 47,
+                "marks": [],
+                "range": {
+                  "end": 6,
+                  "start": 0
+                },
+                "text": "inline",
+                "type": "text"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "style",
+                    "level": "bg",
+                    "name": "gray",
+                    "params": {},
+                    "prefix": "f",
+                    "raw": "f.gray:bg"
+                  }
+                ],
+                "line": 47,
+                "prefix": "f",
+                "range": {
+                  "end": 18,
+                  "start": 9
+                },
+                "raw": "f.gray:bg",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 47,
+            "range": {
+              "end": 18,
+              "start": 0
+            },
+            "raw": "inline @ f.gray:bg",
+            "type": "line"
+          }
+        ],
+        "source": "// 4. :bg 作用域（处方 11/12 过渡期兼容写法）。\n@ bg(src=tests/assets/sample-bg.jpg)\n[.gray:bg] 背景 bg 上的灰度滤镜\ninline @ f.gray:bg",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [
+        {
+          "code": "container-incompatible",
+          "line": 46,
+          "message": "Command \"gray\" is char-only but was forced to :bg",
+          "severity": "warning"
+        }
+      ],
+      "globalEffects": [
+        {
+          "blocking": false,
+          "level": "bg",
+          "name": "gray",
+          "params": {}
+        },
+        {
+          "blocking": false,
+          "level": "block",
+          "name": "bg",
+          "params": {
+            "src": "tests/assets/sample-bg.jpg"
+          }
+        }
+      ],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [
+          {
+            "code": "container-incompatible",
+            "line": 46,
+            "message": "Command \"gray\" is char-only but was forced to :bg",
+            "severity": "warning"
+          }
+        ],
+        "inline": [
+          {
+            "commands": [],
+            "content": "背景 bg 上的灰度滤镜",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 46,
+            "params": {},
+            "range": {
+              "end": 12,
+              "start": 0
+            },
+            "sugar": []
+          },
+          {
+            "commands": [],
+            "content": "\n",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": false,
+            "isSugar": false,
+            "kind": "newline",
+            "layoutInstructions": [],
+            "line": 46,
+            "params": {},
+            "range": {
+              "end": 12,
+              "start": 12
+            },
+            "sugar": []
+          },
+          {
+            "commands": [],
+            "content": "inline",
+            "effects": [
+              {
+                "blocking": false,
+                "level": "bg",
+                "name": "gray",
+                "params": {}
+              }
+            ],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 47,
+            "params": {},
+            "range": {
+              "end": 6,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": [
+          {
+            "blocking": false,
+            "level": "bg",
+            "name": "gray",
+            "params": {}
+          },
+          {
+            "blocking": false,
+            "level": "block",
+            "name": "bg",
+            "params": {
+              "src": "tests/assets/sample-bg.jpg"
+            }
+          }
+        ]
+      },
+      "lineOffset": 44,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "背景 bg 上的灰度滤镜",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 46,
+          "params": {},
+          "range": {
+            "end": 12,
+            "start": 0
+          },
+          "sugar": []
+        },
+        {
+          "commands": [],
+          "content": "\n",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": false,
+          "isSugar": false,
+          "layoutInstructions": [],
+          "line": 46,
+          "params": {},
+          "range": {
+            "end": 12,
+            "start": 12
+          },
+          "sugar": []
+        },
+        {
+          "commands": [],
+          "content": "inline",
+          "effects": [
+            {
+              "blocking": false,
+              "level": "bg",
+              "name": "gray",
+              "params": {}
+            }
+          ],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 47,
+          "params": {},
+          "range": {
+            "end": 6,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 49,
+        "lines": [
+          {
+            "body": [
+              {
+                "children": [
+                  {
+                    "groupId": 8,
+                    "line": 50,
+                    "marks": [],
+                    "range": {
+                      "end": 2,
+                      "start": 1
+                    },
+                    "text": "A",
+                    "type": "text"
+                  }
+                ],
+                "groupId": 8,
+                "line": 50,
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "group"
+              },
+              {
+                "children": [
+                  {
+                    "groupId": 9,
+                    "line": 50,
+                    "marks": [],
+                    "range": {
+                      "end": 5,
+                      "start": 4
+                    },
+                    "text": "B",
+                    "type": "text"
+                  }
+                ],
+                "groupId": 9,
+                "line": 50,
+                "range": {
+                  "end": 6,
+                  "start": 3
+                },
+                "type": "group"
+              },
+              {
+                "children": [
+                  {
+                    "groupId": 10,
+                    "line": 50,
+                    "marks": [],
+                    "range": {
+                      "end": 8,
+                      "start": 7
+                    },
+                    "text": "C",
+                    "type": "text"
+                  }
+                ],
+                "groupId": 10,
+                "line": 50,
+                "range": {
+                  "end": 9,
+                  "start": 6
+                },
+                "type": "group"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "style",
+                    "name": "red",
+                    "params": {},
+                    "prefix": "f",
+                    "raw": "f.red"
+                  }
+                ],
+                "line": 50,
+                "prefix": "f",
+                "range": {
+                  "end": 17,
+                  "start": 12
+                },
+                "raw": "f.red",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 50,
+            "range": {
+              "end": 17,
+              "start": 0
+            },
+            "raw": "{A}{B}{C} @ f.red",
+            "type": "line"
+          },
+          {
+            "body": [
+              {
+                "children": [
+                  {
+                    "groupId": 11,
+                    "line": 51,
+                    "marks": [],
+                    "range": {
+                      "end": 14,
+                      "start": 1
+                    },
+                    "text": "group mapping",
+                    "type": "text"
+                  }
+                ],
+                "groupId": 11,
+                "line": 51,
+                "range": {
+                  "end": 15,
+                  "start": 0
+                },
+                "type": "group"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "name": "wave",
+                    "params": {},
+                    "prefix": "f",
+                    "raw": "f.wave.hold(1s).red"
+                  },
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "name": "hold",
+                    "params": {
+                      "0": 1
+                    },
+                    "prefix": "f",
+                    "raw": "f.wave.hold(1s).red"
+                  },
+                  {
+                    "blocking": false,
+                    "family": "style",
+                    "name": "red",
+                    "params": {},
+                    "prefix": "f",
+                    "raw": "f.wave.hold(1s).red"
+                  }
+                ],
+                "line": 51,
+                "prefix": "f",
+                "range": {
+                  "end": 37,
+                  "start": 18
+                },
+                "raw": "f.wave.hold(1s).red",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 51,
+            "range": {
+              "end": 37,
+              "start": 0
+            },
+            "raw": "{group mapping} @ f.wave.hold(1s).red",
+            "type": "line"
+          }
+        ],
+        "source": "// 5. 括号组嵌套与多组映射（braceGroupId）。\n{A}{B}{C} @ f.red\n{group mapping} @ f.wave.hold(1s).red",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "braceGroupId": 8,
+            "commands": [],
+            "content": "A",
+            "effects": [
+              {
+                "blocking": false,
+                "name": "red",
+                "params": {}
+              }
+            ],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 50,
+            "params": {},
+            "range": {
+              "end": 2,
+              "start": 1
+            },
+            "sugar": []
+          },
+          {
+            "braceGroupId": 9,
+            "commands": [],
+            "content": "B",
+            "effects": [],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 50,
+            "params": {},
+            "range": {
+              "end": 5,
+              "start": 4
+            },
+            "sugar": []
+          },
+          {
+            "braceGroupId": 10,
+            "commands": [],
+            "content": "C",
+            "effects": [],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 50,
+            "params": {},
+            "range": {
+              "end": 8,
+              "start": 7
+            },
+            "sugar": []
+          },
+          {
+            "commands": [],
+            "content": "\n",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": false,
+            "isSugar": false,
+            "kind": "newline",
+            "layoutInstructions": [],
+            "line": 50,
+            "params": {},
+            "range": {
+              "end": 17,
+              "start": 17
+            },
+            "sugar": []
+          },
+          {
+            "braceGroupId": 11,
+            "commands": [],
+            "content": "group mapping",
+            "effects": [
+              {
+                "blocking": false,
+                "name": "wave",
+                "params": {}
+              },
+              {
+                "blocking": false,
+                "name": "hold",
+                "params": {
+                  "0": 1
+                }
+              },
+              {
+                "blocking": false,
+                "name": "red",
+                "params": {}
+              }
+            ],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 51,
+            "params": {},
+            "range": {
+              "end": 14,
+              "start": 1
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 49,
+      "tokens": [
+        {
+          "braceGroupId": 8,
+          "commands": [],
+          "content": "A",
+          "effects": [
+            {
+              "blocking": false,
+              "name": "red",
+              "params": {}
+            }
+          ],
+          "isBraced": true,
+          "layoutInstructions": [],
+          "line": 50,
+          "params": {},
+          "range": {
+            "end": 2,
+            "start": 1
+          },
+          "sugar": []
+        },
+        {
+          "braceGroupId": 9,
+          "commands": [],
+          "content": "B",
+          "effects": [],
+          "isBraced": true,
+          "layoutInstructions": [],
+          "line": 50,
+          "params": {},
+          "range": {
+            "end": 5,
+            "start": 4
+          },
+          "sugar": []
+        },
+        {
+          "braceGroupId": 10,
+          "commands": [],
+          "content": "C",
+          "effects": [],
+          "isBraced": true,
+          "layoutInstructions": [],
+          "line": 50,
+          "params": {},
+          "range": {
+            "end": 8,
+            "start": 7
+          },
+          "sugar": []
+        },
+        {
+          "commands": [],
+          "content": "\n",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": false,
+          "isSugar": false,
+          "layoutInstructions": [],
+          "line": 50,
+          "params": {},
+          "range": {
+            "end": 17,
+            "start": 17
+          },
+          "sugar": []
+        },
+        {
+          "braceGroupId": 11,
+          "commands": [],
+          "content": "group mapping",
+          "effects": [
+            {
+              "blocking": false,
+              "name": "wave",
+              "params": {}
+            },
+            {
+              "blocking": false,
+              "name": "hold",
+              "params": {
+                "0": 1
+              }
+            },
+            {
+              "blocking": false,
+              "name": "red",
+              "params": {}
+            }
+          ],
+          "isBraced": true,
+          "layoutInstructions": [],
+          "line": 51,
+          "params": {},
+          "range": {
+            "end": 14,
+            "start": 1
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 53,
+        "lines": [
+          {
+            "body": [
+              {
+                "line": 54,
+                "marks": [],
+                "range": {
+                  "end": 19,
+                  "start": 0
+                },
+                "text": "f.hold:char(1s).red",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 54,
+            "range": {
+              "end": 19,
+              "start": 0
+            },
+            "raw": "f.hold:char(1s).red",
+            "type": "line"
+          },
+          {
+            "body": [
+              {
+                "line": 55,
+                "marks": [],
+                "range": {
+                  "end": 21,
+                  "start": 0
+                },
+                "text": "f.wave.hold:group(2s)",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 55,
+            "range": {
+              "end": 21,
+              "start": 0
+            },
+            "raw": "f.wave.hold:group(2s)",
+            "type": "line"
+          }
+        ],
+        "source": "// 6. hold/ease 词形的 level 后缀（:char / :group / :block）。\nf.hold:char(1s).red\nf.wave.hold:group(2s)",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "f.hold:char(1s).red",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 54,
+            "params": {},
+            "range": {
+              "end": 19,
+              "start": 0
+            },
+            "sugar": []
+          },
+          {
+            "commands": [],
+            "content": "\n",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": false,
+            "isSugar": false,
+            "kind": "newline",
+            "layoutInstructions": [],
+            "line": 54,
+            "params": {},
+            "range": {
+              "end": 19,
+              "start": 19
+            },
+            "sugar": []
+          },
+          {
+            "commands": [],
+            "content": "f.wave.hold:group(2s)",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 55,
+            "params": {},
+            "range": {
+              "end": 21,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 53,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "f.hold:char(1s).red",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 54,
+          "params": {},
+          "range": {
+            "end": 19,
+            "start": 0
+          },
+          "sugar": []
+        },
+        {
+          "commands": [],
+          "content": "\n",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": false,
+          "isSugar": false,
+          "layoutInstructions": [],
+          "line": 54,
+          "params": {},
+          "range": {
+            "end": 19,
+            "start": 19
+          },
+          "sugar": []
+        },
+        {
+          "commands": [],
+          "content": "f.wave.hold:group(2s)",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 55,
+          "params": {},
+          "range": {
+            "end": 21,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    }
+  ],
+  "rawParagraphs": [
+    "// 1. 成员解析：3+ 元素链（f.a.b.c），当前 parser 接受，B0.1 递归下降应保持。\nf.red.bold.blur\n{deep chain} @ f.red.bold.blur",
+    "// 2. 量词类型化（D24 债务）：\n//    2a. line 单位——当前 parser 退化为字符串 \"0.5line\"，B0.1 应类型化为空间量词。\nhold(0.5line)\n{line unit} @ f.hold(0.5line)",
+    "//    2b. ms 单位——当前 parser 静默转秒（500ms → 0.5），单位信息丢失，B0.1 应保留单位。\nhold(500ms)\n{ms unit} @ f.hold(500ms)",
+    "//    2c. self 单位——当前 parser 退化为字符串 \"1self\"，B0.1 应类型化。\nleft(1self)\n{self unit} @ f.left(1self)",
+    "//    2d. deg 单位——当前 parser 退化为字符串 \"15deg\"，B0.1 应类型化。\nrotate(15deg)\n{deg unit} @ f.rotate(15deg)",
+    "// 3. ease 词形：spec 已废弃单词形态（migration.md:15），改用连接符 ~d~>。\n//    3a. ease=out 作为命名参数——当前 parser 当普通 key=val 处理（params.ease=\"out\"），非 ease 语法。\nhold(1s, ease=out)\n{ease named} @ f.hold(1s, ease=out)",
+    "//    3b. 废弃单词形态 ease(d)——当前 parser 当普通命令名处理（若未注册则 unknown-command 诊断）。\nease(1s)\n{ease word} @ f.ease(1s)",
+    "// 4. :bg 作用域（处方 11/12 过渡期兼容写法）。\n@ bg(src=tests/assets/sample-bg.jpg)\n[.gray:bg] 背景 bg 上的灰度滤镜\ninline @ f.gray:bg",
+    "// 5. 括号组嵌套与多组映射（braceGroupId）。\n{A}{B}{C} @ f.red\n{group mapping} @ f.wave.hold(1s).red",
+    "// 6. hold/ease 词形的 level 后缀（:char / :group / :block）。\nf.hold:char(1s).red\nf.wave.hold:group(2s)"
+  ]
+}

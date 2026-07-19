@@ -1,0 +1,447 @@
+{
+  "diagnostics": [],
+  "metadata": {
+    "designHeight": 1080,
+    "designWidth": 1920,
+    "mode": "stage",
+    "speed": 50,
+    "title": "02 - hold:char 逐字特效链",
+    "variables": {}
+  },
+  "paragraphs": [
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 8,
+        "lines": [
+          {
+            "body": [
+              {
+                "children": [
+                  {
+                    "groupId": 1,
+                    "line": 9,
+                    "marks": [],
+                    "range": {
+                      "end": 5,
+                      "start": 1
+                    },
+                    "text": "逐字变红",
+                    "type": "text"
+                  }
+                ],
+                "groupId": 1,
+                "line": 9,
+                "range": {
+                  "end": 6,
+                  "start": 0
+                },
+                "type": "group"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "style",
+                    "level": "char",
+                    "name": "red",
+                    "params": {},
+                    "prefix": "f",
+                    "raw": "f.red:char"
+                  }
+                ],
+                "line": 9,
+                "prefix": "f",
+                "range": {
+                  "end": 19,
+                  "start": 9
+                },
+                "raw": "f.red:char",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 9,
+            "range": {
+              "end": 19,
+              "start": 0
+            },
+            "raw": "{逐字变红} @ f.red:char",
+            "type": "line"
+          }
+        ],
+        "source": "// 预期：每个字间隔0.5s依次变红\n{逐字变红} @ f.red:char",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "braceGroupId": 1,
+            "commands": [],
+            "content": "逐字变红",
+            "effects": [
+              {
+                "blocking": false,
+                "level": "char",
+                "name": "red",
+                "params": {}
+              }
+            ],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 9,
+            "params": {},
+            "range": {
+              "end": 5,
+              "start": 1
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 8,
+      "tokens": [
+        {
+          "braceGroupId": 1,
+          "commands": [],
+          "content": "逐字变红",
+          "effects": [
+            {
+              "blocking": false,
+              "level": "char",
+              "name": "red",
+              "params": {}
+            }
+          ],
+          "isBraced": true,
+          "layoutInstructions": [],
+          "line": 9,
+          "params": {},
+          "range": {
+            "end": 5,
+            "start": 1
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 11,
+        "lines": [
+          {
+            "body": [
+              {
+                "children": [
+                  {
+                    "groupId": 2,
+                    "line": 12,
+                    "marks": [],
+                    "range": {
+                      "end": 7,
+                      "start": 1
+                    },
+                    "text": "逐字hold",
+                    "type": "text"
+                  }
+                ],
+                "groupId": 2,
+                "line": 12,
+                "range": {
+                  "end": 8,
+                  "start": 0
+                },
+                "type": "group"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "level": "char",
+                    "name": "hold",
+                    "params": {
+                      "0": 1
+                    },
+                    "prefix": "f",
+                    "raw": "f.hold:char(1s).red"
+                  },
+                  {
+                    "blocking": false,
+                    "family": "style",
+                    "name": "red",
+                    "params": {},
+                    "prefix": "f",
+                    "raw": "f.hold:char(1s).red"
+                  }
+                ],
+                "line": 12,
+                "prefix": "f",
+                "range": {
+                  "end": 30,
+                  "start": 11
+                },
+                "raw": "f.hold:char(1s).red",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 12,
+            "range": {
+              "end": 30,
+              "start": 0
+            },
+            "raw": "{逐字hold} @ f.hold:char(1s).red",
+            "type": "line"
+          }
+        ],
+        "source": "// 预期：hold:char — 每字间隔1s着红\n{逐字hold} @ f.hold:char(1s).red",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "braceGroupId": 2,
+            "commands": [],
+            "content": "逐字hold",
+            "effects": [
+              {
+                "blocking": false,
+                "level": "char",
+                "name": "hold",
+                "params": {
+                  "0": 1
+                }
+              },
+              {
+                "blocking": false,
+                "name": "red",
+                "params": {}
+              }
+            ],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 12,
+            "params": {},
+            "range": {
+              "end": 7,
+              "start": 1
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 11,
+      "tokens": [
+        {
+          "braceGroupId": 2,
+          "commands": [],
+          "content": "逐字hold",
+          "effects": [
+            {
+              "blocking": false,
+              "level": "char",
+              "name": "hold",
+              "params": {
+                "0": 1
+              }
+            },
+            {
+              "blocking": false,
+              "name": "red",
+              "params": {}
+            }
+          ],
+          "isBraced": true,
+          "layoutInstructions": [],
+          "line": 12,
+          "params": {},
+          "range": {
+            "end": 7,
+            "start": 1
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 14,
+        "lines": [
+          {
+            "body": [
+              {
+                "children": [
+                  {
+                    "groupId": 3,
+                    "line": 15,
+                    "marks": [],
+                    "range": {
+                      "end": 8,
+                      "start": 1
+                    },
+                    "text": "逐字shake",
+                    "type": "text"
+                  }
+                ],
+                "groupId": 3,
+                "line": 15,
+                "range": {
+                  "end": 9,
+                  "start": 0
+                },
+                "type": "group"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "level": "char",
+                    "name": "hold",
+                    "params": {
+                      "0": 0.5
+                    },
+                    "prefix": "f",
+                    "raw": "f.hold:char(0.5s).shake:char"
+                  },
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "level": "char",
+                    "name": "shake",
+                    "params": {},
+                    "prefix": "f",
+                    "raw": "f.hold:char(0.5s).shake:char"
+                  }
+                ],
+                "line": 15,
+                "prefix": "f",
+                "range": {
+                  "end": 40,
+                  "start": 12
+                },
+                "raw": "f.hold:char(0.5s).shake:char",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 15,
+            "range": {
+              "end": 40,
+              "start": 0
+            },
+            "raw": "{逐字shake} @ f.hold:char(0.5s).shake:char",
+            "type": "line"
+          }
+        ],
+        "source": "// 预期：hold:char + shake:char — 每字先hold后shake\n{逐字shake} @ f.hold:char(0.5s).shake:char",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "braceGroupId": 3,
+            "commands": [],
+            "content": "逐字shake",
+            "effects": [
+              {
+                "blocking": false,
+                "level": "char",
+                "name": "hold",
+                "params": {
+                  "0": 0.5
+                }
+              },
+              {
+                "blocking": false,
+                "level": "char",
+                "name": "shake",
+                "params": {}
+              }
+            ],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 15,
+            "params": {},
+            "range": {
+              "end": 8,
+              "start": 1
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 14,
+      "tokens": [
+        {
+          "braceGroupId": 3,
+          "commands": [],
+          "content": "逐字shake",
+          "effects": [
+            {
+              "blocking": false,
+              "level": "char",
+              "name": "hold",
+              "params": {
+                "0": 0.5
+              }
+            },
+            {
+              "blocking": false,
+              "level": "char",
+              "name": "shake",
+              "params": {}
+            }
+          ],
+          "isBraced": true,
+          "layoutInstructions": [],
+          "line": 15,
+          "params": {},
+          "range": {
+            "end": 8,
+            "start": 1
+          },
+          "sugar": []
+        }
+      ]
+    }
+  ],
+  "rawParagraphs": [
+    "// 预期：每个字间隔0.5s依次变红\n{逐字变红} @ f.red:char",
+    "// 预期：hold:char — 每字间隔1s着红\n{逐字hold} @ f.hold:char(1s).red",
+    "// 预期：hold:char + shake:char — 每字先hold后shake\n{逐字shake} @ f.hold:char(0.5s).shake:char"
+  ]
+}

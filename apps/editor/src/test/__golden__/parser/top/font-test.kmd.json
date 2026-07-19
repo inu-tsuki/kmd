@@ -1,0 +1,1398 @@
+{
+  "diagnostics": [],
+  "metadata": {
+    "speed": 50,
+    "title": "Font Test",
+    "variables": {}
+  },
+  "paragraphs": [
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 5,
+        "lines": [
+          {
+            "body": [
+              {
+                "line": 5,
+                "marks": [],
+                "range": {
+                  "end": 18,
+                  "start": 0
+                },
+                "text": "This is Fira Code.",
+                "type": "text"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "style",
+                    "name": "font",
+                    "params": {
+                      "0": "Fira Code"
+                    },
+                    "prefix": "dot",
+                    "raw": ".font('Fira Code')"
+                  }
+                ],
+                "line": 5,
+                "prefix": "dot",
+                "range": {
+                  "end": 39,
+                  "start": 21
+                },
+                "raw": ".font('Fira Code')",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 5,
+            "range": {
+              "end": 39,
+              "start": 0
+            },
+            "raw": "This is Fira Code. @ .font('Fira Code')",
+            "type": "line"
+          }
+        ],
+        "source": "This is Fira Code. @ .font('Fira Code')",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "This is Fira Code.",
+            "effects": [
+              {
+                "blocking": false,
+                "name": "font",
+                "params": {
+                  "0": "Fira Code"
+                }
+              }
+            ],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 5,
+            "params": {},
+            "range": {
+              "end": 18,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 5,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "This is Fira Code.",
+          "effects": [
+            {
+              "blocking": false,
+              "name": "font",
+              "params": {
+                "0": "Fira Code"
+              }
+            }
+          ],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 5,
+          "params": {},
+          "range": {
+            "end": 18,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 7,
+        "lines": [
+          {
+            "body": [
+              {
+                "line": 7,
+                "marks": [],
+                "range": {
+                  "end": 13,
+                  "start": 0
+                },
+                "text": "这是默认字体 Arial。",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 7,
+            "range": {
+              "end": 13,
+              "start": 0
+            },
+            "raw": "这是默认字体 Arial。",
+            "type": "line"
+          }
+        ],
+        "source": "这是默认字体 Arial。",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "这是默认字体 Arial。",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 7,
+            "params": {},
+            "range": {
+              "end": 13,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 7,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "这是默认字体 Arial。",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 7,
+          "params": {},
+          "range": {
+            "end": 13,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 9,
+        "lines": [
+          {
+            "body": [
+              {
+                "line": 9,
+                "marks": [],
+                "range": {
+                  "end": 33,
+                  "start": 0
+                },
+                "text": "这是 special 预设字体（应该是 Smiley Sans）。",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": true,
+            "kind": "content",
+            "line": 9,
+            "range": {
+              "end": 35,
+              "start": 0
+            },
+            "raw": "# 这是 special 预设字体（应该是 Smiley Sans）。",
+            "type": "line"
+          }
+        ],
+        "source": "# 这是 special 预设字体（应该是 Smiley Sans）。",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "这是 special 预设字体（应该是 Smiley Sans）。",
+            "effects": [
+              {
+                "level": "char",
+                "line": 9,
+                "name": "special",
+                "params": {},
+                "range": {
+                  "end": 33,
+                  "start": 0
+                }
+              }
+            ],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 9,
+            "params": {},
+            "range": {
+              "end": 33,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 9,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "这是 special 预设字体（应该是 Smiley Sans）。",
+          "effects": [
+            {
+              "level": "char",
+              "line": 9,
+              "name": "special",
+              "params": {},
+              "range": {
+                "end": 33,
+                "start": 0
+              }
+            }
+          ],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 9,
+          "params": {},
+          "range": {
+            "end": 33,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 11,
+        "lines": [
+          {
+            "body": [
+              {
+                "line": 11,
+                "marks": [],
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "text": "这是 ",
+                "type": "text"
+              },
+              {
+                "children": [
+                  {
+                    "groupId": 1,
+                    "line": 11,
+                    "marks": [],
+                    "range": {
+                      "end": 20,
+                      "start": 4
+                    },
+                    "text": "Smiley Sans 显式设置",
+                    "type": "text"
+                  }
+                ],
+                "groupId": 1,
+                "line": 11,
+                "range": {
+                  "end": 21,
+                  "start": 3
+                },
+                "type": "group"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "style",
+                    "name": "font",
+                    "params": {
+                      "0": "Smiley Sans"
+                    },
+                    "prefix": "f",
+                    "raw": "f.font('Smiley Sans')"
+                  }
+                ],
+                "line": 11,
+                "prefix": "f",
+                "range": {
+                  "end": 45,
+                  "start": 24
+                },
+                "raw": "f.font('Smiley Sans')",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 11,
+            "range": {
+              "end": 45,
+              "start": 0
+            },
+            "raw": "这是 {Smiley Sans 显式设置} @ f.font('Smiley Sans')",
+            "type": "line"
+          }
+        ],
+        "source": "这是 {Smiley Sans 显式设置} @ f.font('Smiley Sans')",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "这是 ",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 11,
+            "params": {},
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "sugar": []
+          },
+          {
+            "braceGroupId": 1,
+            "commands": [],
+            "content": "Smiley Sans 显式设置",
+            "effects": [
+              {
+                "blocking": false,
+                "name": "font",
+                "params": {
+                  "0": "Smiley Sans"
+                }
+              }
+            ],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 11,
+            "params": {},
+            "range": {
+              "end": 20,
+              "start": 4
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 11,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "这是 ",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 11,
+          "params": {},
+          "range": {
+            "end": 3,
+            "start": 0
+          },
+          "sugar": []
+        },
+        {
+          "braceGroupId": 1,
+          "commands": [],
+          "content": "Smiley Sans 显式设置",
+          "effects": [
+            {
+              "blocking": false,
+              "name": "font",
+              "params": {
+                "0": "Smiley Sans"
+              }
+            }
+          ],
+          "isBraced": true,
+          "layoutInstructions": [],
+          "line": 11,
+          "params": {},
+          "range": {
+            "end": 20,
+            "start": 4
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 13,
+        "lines": [
+          {
+            "body": [
+              {
+                "line": 13,
+                "marks": [],
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "text": "这是 ",
+                "type": "text"
+              },
+              {
+                "children": [
+                  {
+                    "groupId": 2,
+                    "line": 13,
+                    "marks": [],
+                    "range": {
+                      "end": 13,
+                      "start": 4
+                    },
+                    "text": "霞鹜文楷 显式设置",
+                    "type": "text"
+                  }
+                ],
+                "groupId": 2,
+                "line": 13,
+                "range": {
+                  "end": 14,
+                  "start": 3
+                },
+                "type": "group"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "style",
+                    "name": "font",
+                    "params": {
+                      "0": "LXGW WenKai"
+                    },
+                    "prefix": "f",
+                    "raw": "f.font('LXGW WenKai')"
+                  }
+                ],
+                "line": 13,
+                "prefix": "f",
+                "range": {
+                  "end": 38,
+                  "start": 17
+                },
+                "raw": "f.font('LXGW WenKai')",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 13,
+            "range": {
+              "end": 38,
+              "start": 0
+            },
+            "raw": "这是 {霞鹜文楷 显式设置} @ f.font('LXGW WenKai')",
+            "type": "line"
+          }
+        ],
+        "source": "这是 {霞鹜文楷 显式设置} @ f.font('LXGW WenKai')",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "这是 ",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 13,
+            "params": {},
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "sugar": []
+          },
+          {
+            "braceGroupId": 2,
+            "commands": [],
+            "content": "霞鹜文楷 显式设置",
+            "effects": [
+              {
+                "blocking": false,
+                "name": "font",
+                "params": {
+                  "0": "LXGW WenKai"
+                }
+              }
+            ],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 13,
+            "params": {},
+            "range": {
+              "end": 13,
+              "start": 4
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 13,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "这是 ",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 13,
+          "params": {},
+          "range": {
+            "end": 3,
+            "start": 0
+          },
+          "sugar": []
+        },
+        {
+          "braceGroupId": 2,
+          "commands": [],
+          "content": "霞鹜文楷 显式设置",
+          "effects": [
+            {
+              "blocking": false,
+              "name": "font",
+              "params": {
+                "0": "LXGW WenKai"
+              }
+            }
+          ],
+          "isBraced": true,
+          "layoutInstructions": [],
+          "line": 13,
+          "params": {},
+          "range": {
+            "end": 13,
+            "start": 4
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 15,
+        "lines": [
+          {
+            "body": [
+              {
+                "line": 15,
+                "marks": [],
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "text": "这是 ",
+                "type": "text"
+              },
+              {
+                "line": 15,
+                "marks": [
+                  "bold"
+                ],
+                "range": {
+                  "end": 7,
+                  "start": 5
+                },
+                "text": "粗体",
+                "type": "text"
+              },
+              {
+                "line": 15,
+                "marks": [],
+                "range": {
+                  "end": 12,
+                  "start": 9
+                },
+                "text": " 和 ",
+                "type": "text"
+              },
+              {
+                "line": 15,
+                "marks": [
+                  "italic"
+                ],
+                "range": {
+                  "end": 15,
+                  "start": 13
+                },
+                "text": "斜体",
+                "type": "text"
+              },
+              {
+                "line": 15,
+                "marks": [],
+                "range": {
+                  "end": 27,
+                  "start": 16
+                },
+                "text": " 在默认字体下的样子。",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 15,
+            "range": {
+              "end": 27,
+              "start": 0
+            },
+            "raw": "这是 **粗体** 和 *斜体* 在默认字体下的样子。",
+            "type": "line"
+          }
+        ],
+        "source": "这是 **粗体** 和 *斜体* 在默认字体下的样子。",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "这是 ",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 15,
+            "params": {},
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "sugar": []
+          },
+          {
+            "commands": [],
+            "content": "粗体",
+            "effects": [
+              {
+                "level": "char",
+                "line": 15,
+                "name": "bold",
+                "params": {},
+                "range": {
+                  "end": 7,
+                  "start": 5
+                }
+              }
+            ],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 15,
+            "params": {},
+            "range": {
+              "end": 7,
+              "start": 5
+            },
+            "sugar": [
+              {
+                "level": "char",
+                "name": "slow",
+                "params": {}
+              }
+            ]
+          },
+          {
+            "commands": [],
+            "content": " 和 ",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 15,
+            "params": {},
+            "range": {
+              "end": 12,
+              "start": 9
+            },
+            "sugar": []
+          },
+          {
+            "commands": [],
+            "content": "斜体",
+            "effects": [
+              {
+                "level": "char",
+                "line": 15,
+                "name": "thin",
+                "params": {},
+                "range": {
+                  "end": 15,
+                  "start": 13
+                }
+              },
+              {
+                "level": "char",
+                "line": 15,
+                "name": "dim",
+                "params": {},
+                "range": {
+                  "end": 15,
+                  "start": 13
+                }
+              }
+            ],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 15,
+            "params": {},
+            "range": {
+              "end": 15,
+              "start": 13
+            },
+            "sugar": [
+              {
+                "level": "char",
+                "name": "fast",
+                "params": {}
+              }
+            ]
+          },
+          {
+            "commands": [],
+            "content": " 在默认字体下的样子。",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 15,
+            "params": {},
+            "range": {
+              "end": 27,
+              "start": 16
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 15,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "这是 ",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 15,
+          "params": {},
+          "range": {
+            "end": 3,
+            "start": 0
+          },
+          "sugar": []
+        },
+        {
+          "commands": [],
+          "content": "粗体",
+          "effects": [
+            {
+              "level": "char",
+              "line": 15,
+              "name": "bold",
+              "params": {},
+              "range": {
+                "end": 7,
+                "start": 5
+              }
+            }
+          ],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 15,
+          "params": {},
+          "range": {
+            "end": 7,
+            "start": 5
+          },
+          "sugar": [
+            {
+              "level": "char",
+              "name": "slow",
+              "params": {}
+            }
+          ]
+        },
+        {
+          "commands": [],
+          "content": " 和 ",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 15,
+          "params": {},
+          "range": {
+            "end": 12,
+            "start": 9
+          },
+          "sugar": []
+        },
+        {
+          "commands": [],
+          "content": "斜体",
+          "effects": [
+            {
+              "level": "char",
+              "line": 15,
+              "name": "thin",
+              "params": {},
+              "range": {
+                "end": 15,
+                "start": 13
+              }
+            },
+            {
+              "level": "char",
+              "line": 15,
+              "name": "dim",
+              "params": {},
+              "range": {
+                "end": 15,
+                "start": 13
+              }
+            }
+          ],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 15,
+          "params": {},
+          "range": {
+            "end": 15,
+            "start": 13
+          },
+          "sugar": [
+            {
+              "level": "char",
+              "name": "fast",
+              "params": {}
+            }
+          ]
+        },
+        {
+          "commands": [],
+          "content": " 在默认字体下的样子。",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 15,
+          "params": {},
+          "range": {
+            "end": 27,
+            "start": 16
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 17,
+        "lines": [
+          {
+            "body": [
+              {
+                "line": 17,
+                "marks": [],
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "text": "这是 ",
+                "type": "text"
+              },
+              {
+                "line": 17,
+                "marks": [
+                  "bold"
+                ],
+                "range": {
+                  "end": 7,
+                  "start": 5
+                },
+                "text": "粗体",
+                "type": "text"
+              },
+              {
+                "line": 17,
+                "marks": [],
+                "range": {
+                  "end": 12,
+                  "start": 9
+                },
+                "text": " 和 ",
+                "type": "text"
+              },
+              {
+                "line": 17,
+                "marks": [
+                  "italic"
+                ],
+                "range": {
+                  "end": 15,
+                  "start": 13
+                },
+                "text": "斜体",
+                "type": "text"
+              },
+              {
+                "line": 17,
+                "marks": [],
+                "range": {
+                  "end": 34,
+                  "start": 16
+                },
+                "text": " 在 special 字体下的样子。",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": true,
+            "kind": "content",
+            "line": 17,
+            "range": {
+              "end": 36,
+              "start": 0
+            },
+            "raw": "# 这是 **粗体** 和 *斜体* 在 special 字体下的样子。",
+            "type": "line"
+          }
+        ],
+        "source": "# 这是 **粗体** 和 *斜体* 在 special 字体下的样子。",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "这是 ",
+            "effects": [
+              {
+                "level": "char",
+                "line": 17,
+                "name": "special",
+                "params": {},
+                "range": {
+                  "end": 3,
+                  "start": 0
+                }
+              }
+            ],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 17,
+            "params": {},
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "sugar": []
+          },
+          {
+            "commands": [],
+            "content": "粗体",
+            "effects": [
+              {
+                "level": "char",
+                "line": 17,
+                "name": "bold",
+                "params": {},
+                "range": {
+                  "end": 7,
+                  "start": 5
+                }
+              },
+              {
+                "level": "char",
+                "line": 17,
+                "name": "special",
+                "params": {},
+                "range": {
+                  "end": 7,
+                  "start": 5
+                }
+              }
+            ],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 17,
+            "params": {},
+            "range": {
+              "end": 7,
+              "start": 5
+            },
+            "sugar": [
+              {
+                "level": "char",
+                "name": "slow",
+                "params": {}
+              }
+            ]
+          },
+          {
+            "commands": [],
+            "content": " 和 ",
+            "effects": [
+              {
+                "level": "char",
+                "line": 17,
+                "name": "special",
+                "params": {},
+                "range": {
+                  "end": 12,
+                  "start": 9
+                }
+              }
+            ],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 17,
+            "params": {},
+            "range": {
+              "end": 12,
+              "start": 9
+            },
+            "sugar": []
+          },
+          {
+            "commands": [],
+            "content": "斜体",
+            "effects": [
+              {
+                "level": "char",
+                "line": 17,
+                "name": "thin",
+                "params": {},
+                "range": {
+                  "end": 15,
+                  "start": 13
+                }
+              },
+              {
+                "level": "char",
+                "line": 17,
+                "name": "dim",
+                "params": {},
+                "range": {
+                  "end": 15,
+                  "start": 13
+                }
+              },
+              {
+                "level": "char",
+                "line": 17,
+                "name": "special",
+                "params": {},
+                "range": {
+                  "end": 15,
+                  "start": 13
+                }
+              }
+            ],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 17,
+            "params": {},
+            "range": {
+              "end": 15,
+              "start": 13
+            },
+            "sugar": [
+              {
+                "level": "char",
+                "name": "fast",
+                "params": {}
+              }
+            ]
+          },
+          {
+            "commands": [],
+            "content": " 在 special 字体下的样子。",
+            "effects": [
+              {
+                "level": "char",
+                "line": 17,
+                "name": "special",
+                "params": {},
+                "range": {
+                  "end": 34,
+                  "start": 16
+                }
+              }
+            ],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 17,
+            "params": {},
+            "range": {
+              "end": 34,
+              "start": 16
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 17,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "这是 ",
+          "effects": [
+            {
+              "level": "char",
+              "line": 17,
+              "name": "special",
+              "params": {},
+              "range": {
+                "end": 3,
+                "start": 0
+              }
+            }
+          ],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 17,
+          "params": {},
+          "range": {
+            "end": 3,
+            "start": 0
+          },
+          "sugar": []
+        },
+        {
+          "commands": [],
+          "content": "粗体",
+          "effects": [
+            {
+              "level": "char",
+              "line": 17,
+              "name": "bold",
+              "params": {},
+              "range": {
+                "end": 7,
+                "start": 5
+              }
+            },
+            {
+              "level": "char",
+              "line": 17,
+              "name": "special",
+              "params": {},
+              "range": {
+                "end": 7,
+                "start": 5
+              }
+            }
+          ],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 17,
+          "params": {},
+          "range": {
+            "end": 7,
+            "start": 5
+          },
+          "sugar": [
+            {
+              "level": "char",
+              "name": "slow",
+              "params": {}
+            }
+          ]
+        },
+        {
+          "commands": [],
+          "content": " 和 ",
+          "effects": [
+            {
+              "level": "char",
+              "line": 17,
+              "name": "special",
+              "params": {},
+              "range": {
+                "end": 12,
+                "start": 9
+              }
+            }
+          ],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 17,
+          "params": {},
+          "range": {
+            "end": 12,
+            "start": 9
+          },
+          "sugar": []
+        },
+        {
+          "commands": [],
+          "content": "斜体",
+          "effects": [
+            {
+              "level": "char",
+              "line": 17,
+              "name": "thin",
+              "params": {},
+              "range": {
+                "end": 15,
+                "start": 13
+              }
+            },
+            {
+              "level": "char",
+              "line": 17,
+              "name": "dim",
+              "params": {},
+              "range": {
+                "end": 15,
+                "start": 13
+              }
+            },
+            {
+              "level": "char",
+              "line": 17,
+              "name": "special",
+              "params": {},
+              "range": {
+                "end": 15,
+                "start": 13
+              }
+            }
+          ],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 17,
+          "params": {},
+          "range": {
+            "end": 15,
+            "start": 13
+          },
+          "sugar": [
+            {
+              "level": "char",
+              "name": "fast",
+              "params": {}
+            }
+          ]
+        },
+        {
+          "commands": [],
+          "content": " 在 special 字体下的样子。",
+          "effects": [
+            {
+              "level": "char",
+              "line": 17,
+              "name": "special",
+              "params": {},
+              "range": {
+                "end": 34,
+                "start": 16
+              }
+            }
+          ],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 17,
+          "params": {},
+          "range": {
+            "end": 34,
+            "start": 16
+          },
+          "sugar": []
+        }
+      ]
+    }
+  ],
+  "rawParagraphs": [
+    "This is Fira Code. @ .font('Fira Code')",
+    "这是默认字体 Arial。",
+    "# 这是 special 预设字体（应该是 Smiley Sans）。",
+    "这是 {Smiley Sans 显式设置} @ f.font('Smiley Sans')",
+    "这是 {霞鹜文楷 显式设置} @ f.font('LXGW WenKai')",
+    "这是 **粗体** 和 *斜体* 在默认字体下的样子。",
+    "# 这是 **粗体** 和 *斜体* 在 special 字体下的样子。"
+  ]
+}

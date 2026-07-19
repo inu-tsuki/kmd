@@ -1,0 +1,748 @@
+{
+  "diagnostics": [],
+  "metadata": {
+    "designHeight": 1080,
+    "designWidth": 1920,
+    "mode": "stage",
+    "speed": 50,
+    "title": "fx - threshold 阈值滤镜",
+    "variables": {}
+  },
+  "paragraphs": [
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 8,
+        "lines": [
+          {
+            "body": [
+              {
+                "line": 8,
+                "marks": [],
+                "range": {
+                  "end": 4,
+                  "start": 0
+                },
+                "text": "没有效果",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 8,
+            "range": {
+              "end": 4,
+              "start": 0
+            },
+            "raw": "没有效果",
+            "type": "line"
+          }
+        ],
+        "source": "没有效果",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "没有效果",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 8,
+            "params": {},
+            "range": {
+              "end": 4,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 8,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "没有效果",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 8,
+          "params": {},
+          "range": {
+            "end": 4,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 10,
+        "lines": [
+          {
+            "body": [
+              {
+                "children": [
+                  {
+                    "groupId": 1,
+                    "line": 11,
+                    "marks": [],
+                    "range": {
+                      "end": 5,
+                      "start": 1
+                    },
+                    "text": "黑白分明",
+                    "type": "text"
+                  }
+                ],
+                "groupId": 1,
+                "line": 11,
+                "range": {
+                  "end": 6,
+                  "start": 0
+                },
+                "type": "group"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "name": "threshold",
+                    "params": {},
+                    "prefix": "f",
+                    "raw": "f.threshold"
+                  }
+                ],
+                "line": 11,
+                "prefix": "f",
+                "range": {
+                  "end": 20,
+                  "start": 9
+                },
+                "raw": "f.threshold",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 11,
+            "range": {
+              "end": 20,
+              "start": 0
+            },
+            "raw": "{黑白分明} @ f.threshold",
+            "type": "line"
+          }
+        ],
+        "source": "// 逐字（笔画级风格化）：luma 高于 0.5 变白，低于变黑\n{黑白分明} @ f.threshold",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "braceGroupId": 1,
+            "commands": [],
+            "content": "黑白分明",
+            "effects": [
+              {
+                "blocking": false,
+                "name": "threshold",
+                "params": {}
+              }
+            ],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 11,
+            "params": {},
+            "range": {
+              "end": 5,
+              "start": 1
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 10,
+      "tokens": [
+        {
+          "braceGroupId": 1,
+          "commands": [],
+          "content": "黑白分明",
+          "effects": [
+            {
+              "blocking": false,
+              "name": "threshold",
+              "params": {}
+            }
+          ],
+          "isBraced": true,
+          "layoutInstructions": [],
+          "line": 11,
+          "params": {},
+          "range": {
+            "end": 5,
+            "start": 1
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 14,
+        "lines": [
+          {
+            "body": [
+              {
+                "children": [
+                  {
+                    "groupId": 2,
+                    "line": 15,
+                    "marks": [],
+                    "range": {
+                      "end": 5,
+                      "start": 1
+                    },
+                    "text": "柔和阈值",
+                    "type": "text"
+                  }
+                ],
+                "groupId": 2,
+                "line": 15,
+                "range": {
+                  "end": 6,
+                  "start": 0
+                },
+                "type": "group"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "name": "threshold",
+                    "params": {
+                      "level": 0.7,
+                      "soft": 0.1
+                    },
+                    "prefix": "f",
+                    "raw": "f.threshold(level=0.7, soft=0.1)"
+                  }
+                ],
+                "line": 15,
+                "prefix": "f",
+                "range": {
+                  "end": 41,
+                  "start": 9
+                },
+                "raw": "f.threshold(level=0.7, soft=0.1)",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 15,
+            "range": {
+              "end": 41,
+              "start": 0
+            },
+            "raw": "{柔和阈值} @ f.threshold(level=0.7, soft=0.1)",
+            "type": "line"
+          }
+        ],
+        "source": "// 逐字改参：高阈值 + 宽软带，只有很亮的字变白\n{柔和阈值} @ f.threshold(level=0.7, soft=0.1)",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "braceGroupId": 2,
+            "commands": [],
+            "content": "柔和阈值",
+            "effects": [
+              {
+                "blocking": false,
+                "name": "threshold",
+                "params": {
+                  "level": 0.7,
+                  "soft": 0.1
+                }
+              }
+            ],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 15,
+            "params": {},
+            "range": {
+              "end": 5,
+              "start": 1
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 14,
+      "tokens": [
+        {
+          "braceGroupId": 2,
+          "commands": [],
+          "content": "柔和阈值",
+          "effects": [
+            {
+              "blocking": false,
+              "name": "threshold",
+              "params": {
+                "level": 0.7,
+                "soft": 0.1
+              }
+            }
+          ],
+          "isBraced": true,
+          "layoutInstructions": [],
+          "line": 15,
+          "params": {},
+          "range": {
+            "end": 5,
+            "start": 1
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 18,
+        "lines": [
+          {
+            "body": [
+              {
+                "children": [
+                  {
+                    "groupId": 3,
+                    "line": 19,
+                    "marks": [],
+                    "range": {
+                      "end": 5,
+                      "start": 1
+                    },
+                    "text": "词组阈值",
+                    "type": "text"
+                  }
+                ],
+                "groupId": 3,
+                "line": 19,
+                "range": {
+                  "end": 6,
+                  "start": 0
+                },
+                "type": "group"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "level": "group",
+                    "name": "threshold",
+                    "params": {},
+                    "prefix": "f",
+                    "raw": "f.threshold:group"
+                  }
+                ],
+                "line": 19,
+                "prefix": "f",
+                "range": {
+                  "end": 26,
+                  "start": 9
+                },
+                "raw": "f.threshold:group",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 19,
+            "range": {
+              "end": 26,
+              "start": 0
+            },
+            "raw": "{词组阈值} @ f.threshold:group",
+            "type": "line"
+          }
+        ],
+        "source": "// group 作用域：整词组一起阈值化\n{词组阈值} @ f.threshold:group",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "braceGroupId": 3,
+            "commands": [],
+            "content": "词组阈值",
+            "effects": [
+              {
+                "blocking": false,
+                "level": "group",
+                "name": "threshold",
+                "params": {}
+              }
+            ],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 19,
+            "params": {},
+            "range": {
+              "end": 5,
+              "start": 1
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 18,
+      "tokens": [
+        {
+          "braceGroupId": 3,
+          "commands": [],
+          "content": "词组阈值",
+          "effects": [
+            {
+              "blocking": false,
+              "level": "group",
+              "name": "threshold",
+              "params": {}
+            }
+          ],
+          "isBraced": true,
+          "layoutInstructions": [],
+          "line": 19,
+          "params": {},
+          "range": {
+            "end": 5,
+            "start": 1
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [
+          {
+            "chain": {
+              "commands": [
+                {
+                  "blocking": false,
+                  "family": "effect",
+                  "level": "block",
+                  "name": "threshold",
+                  "params": {
+                    "level": 0.5,
+                    "soft": 0.02
+                  },
+                  "prefix": "dot",
+                  "raw": ".threshold:block(level=0.5, soft=0.02)"
+                }
+              ],
+              "line": 23,
+              "prefix": "dot",
+              "range": {
+                "end": 39,
+                "start": 1
+              },
+              "raw": ".threshold:block(level=0.5, soft=0.02)",
+              "type": "command-chain"
+            },
+            "line": 23,
+            "range": {
+              "end": 39,
+              "start": 1
+            },
+            "type": "block-option-command"
+          }
+        ],
+        "lineOffset": 22,
+        "lines": [
+          {
+            "body": [
+              {
+                "line": 24,
+                "marks": [],
+                "range": {
+                  "end": 23,
+                  "start": 0
+                },
+                "text": "整段文字阈值化，连续色调表面下黑白分界更清晰。",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 24,
+            "range": {
+              "end": 23,
+              "start": 0
+            },
+            "raw": "整段文字阈值化，连续色调表面下黑白分界更清晰。",
+            "type": "line"
+          }
+        ],
+        "source": "// block 作用域（连续色调表面，教科书用法）：整段一起阈值化\n[.threshold:block(level=0.5, soft=0.02)]\n整段文字阈值化，连续色调表面下黑白分界更清晰。",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [
+        {
+          "blocking": false,
+          "level": "block",
+          "name": "threshold",
+          "params": {
+            "level": 0.5,
+            "soft": 0.02
+          }
+        }
+      ],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "整段文字阈值化，连续色调表面下黑白分界更清晰。",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 24,
+            "params": {},
+            "range": {
+              "end": 23,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": [
+          {
+            "blocking": false,
+            "level": "block",
+            "name": "threshold",
+            "params": {
+              "level": 0.5,
+              "soft": 0.02
+            }
+          }
+        ]
+      },
+      "lineOffset": 22,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "整段文字阈值化，连续色调表面下黑白分界更清晰。",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 24,
+          "params": {},
+          "range": {
+            "end": 23,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 27,
+        "lines": [
+          {
+            "body": [
+              {
+                "children": [
+                  {
+                    "groupId": 4,
+                    "line": 28,
+                    "marks": [],
+                    "range": {
+                      "end": 6,
+                      "start": 1
+                    },
+                    "text": "阈值加波浪",
+                    "type": "text"
+                  }
+                ],
+                "groupId": 4,
+                "line": 28,
+                "range": {
+                  "end": 7,
+                  "start": 0
+                },
+                "type": "group"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "name": "threshold",
+                    "params": {},
+                    "prefix": "f",
+                    "raw": "f.threshold.wave"
+                  },
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "name": "wave",
+                    "params": {},
+                    "prefix": "f",
+                    "raw": "f.threshold.wave"
+                  }
+                ],
+                "line": 28,
+                "prefix": "f",
+                "range": {
+                  "end": 26,
+                  "start": 10
+                },
+                "raw": "f.threshold.wave",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 28,
+            "range": {
+              "end": 26,
+              "start": 0
+            },
+            "raw": "{阈值加波浪} @ f.threshold.wave",
+            "type": "line"
+          }
+        ],
+        "source": "// 与 behavior 组合：滤镜静态挂载，wave 逐字波动\n{阈值加波浪} @ f.threshold.wave",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "braceGroupId": 4,
+            "commands": [],
+            "content": "阈值加波浪",
+            "effects": [
+              {
+                "blocking": false,
+                "name": "threshold",
+                "params": {}
+              },
+              {
+                "blocking": false,
+                "name": "wave",
+                "params": {}
+              }
+            ],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 28,
+            "params": {},
+            "range": {
+              "end": 6,
+              "start": 1
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 27,
+      "tokens": [
+        {
+          "braceGroupId": 4,
+          "commands": [],
+          "content": "阈值加波浪",
+          "effects": [
+            {
+              "blocking": false,
+              "name": "threshold",
+              "params": {}
+            },
+            {
+              "blocking": false,
+              "name": "wave",
+              "params": {}
+            }
+          ],
+          "isBraced": true,
+          "layoutInstructions": [],
+          "line": 28,
+          "params": {},
+          "range": {
+            "end": 6,
+            "start": 1
+          },
+          "sugar": []
+        }
+      ]
+    }
+  ],
+  "rawParagraphs": [
+    "没有效果",
+    "// 逐字（笔画级风格化）：luma 高于 0.5 变白，低于变黑\n{黑白分明} @ f.threshold",
+    "// 逐字改参：高阈值 + 宽软带，只有很亮的字变白\n{柔和阈值} @ f.threshold(level=0.7, soft=0.1)",
+    "// group 作用域：整词组一起阈值化\n{词组阈值} @ f.threshold:group",
+    "// block 作用域（连续色调表面，教科书用法）：整段一起阈值化\n[.threshold:block(level=0.5, soft=0.02)]\n整段文字阈值化，连续色调表面下黑白分界更清晰。",
+    "// 与 behavior 组合：滤镜静态挂载，wave 逐字波动\n{阈值加波浪} @ f.threshold.wave"
+  ]
+}
