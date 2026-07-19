@@ -7,23 +7,13 @@ import type { KMDMetadata, KMDParagraphData } from "../parser/types";
 import type { Checkpoint, InFlightAnimation, ParagraphUnit, Segment, StageModifierRecord } from "../state/Segment";
 import type { BehaviorRecord, StyleRecord, InstantEffectRecord, EntranceFilterRecord } from "../render/text/TextPlayer";
 import { stageManager } from "../stage/StageManager";
-import { buildStageModifierRecord, buildStageModifierApplyParams } from "../stage/stagePresets";
 import { createParagraphExecutionPlan } from "../execution/paragraphExecutionPlan";
 import type { PlaybackRuntimeState } from "./PlaybackController";
 import type { ReaderRuntimeTimelineMarker } from "../runtime";
 import { BehaviorRecordBuilder } from "./BehaviorRecordBuilder";
 import { StyleRecordBuilder } from "./StyleRecordBuilder";
+import { StageModifierBuilder, type ActiveStageTweenEntry } from "./StageModifierBuilder";
 import gsap from "gsap";
-
-type ActiveStageTweenEntry = {
-  tween: gsap.core.Tween | gsap.core.Timeline;
-  startPosition: number;
-  originalDuration: number;
-  ease: string;
-  fromValues: Record<string, number>;
-  toValues: Record<string, number>;
-  target: any;
-};
 
 export interface SegmentBuildContext {
   container: Container;
@@ -38,68 +28,6 @@ export interface SegmentBuildResult {
   segment: Segment;
   timelineMarkers: ReaderRuntimeTimelineMarker[];
   activeTexts: KineticText[];
-}
-
-function extractTweenTargets(command: string, params: any): Record<string, number> {
-  switch (command) {
-    case "cam.move":
-      return { x: params.x ?? params[0] ?? 0, y: params.y ?? params[1] ?? 0 };
-    case "cam.offset":
-      return { x: params.x ?? params[0] ?? 0, y: params.y ?? params[1] ?? 0 };
-    case "cam.zoom":
-      return { zoom: params.val ?? params[0] ?? 1 };
-    case "cam.rotate":
-      return { rotation: params.val ?? params[0] ?? 0 };
-    case "cam.reset":
-      return { x: 0, y: 0, zoom: 1, rotation: 0 };
-    default:
-      return {};
-  }
-}
-
-function getStagePropertyKey(command: string): string | null {
-  const propertyKey = stageManager.getCommandMetadata(command)?.propertyKey;
-  if (
-    propertyKey === "camera.xy" ||
-    propertyKey === "camera.zoom" ||
-    propertyKey === "camera.rotation" ||
-    propertyKey === "offset.xy"
-  ) {
-    return propertyKey;
-  }
-  return null;
-}
-
-function trimActiveStageTween(
-  tl: gsap.core.Timeline,
-  entry: ActiveStageTweenEntry,
-  cutTime: number,
-): Record<string, number> | null {
-  if (cutTime >= entry.startPosition + entry.originalDuration) {
-    return null;
-  }
-  if (cutTime <= entry.startPosition) {
-    tl.remove(entry.tween);
-    return { ...entry.fromValues };
-  }
-
-  const trimDur = cutTime - entry.startPosition;
-  const cutRatio = trimDur / entry.originalDuration;
-  const easeFn = gsap.parseEase(entry.ease);
-  const progress = easeFn(cutRatio);
-  const cutValues: Record<string, number> = {};
-  for (const [prop, fromVal] of Object.entries(entry.fromValues)) {
-    cutValues[prop] = fromVal + ((entry.toValues[prop] ?? fromVal) - fromVal) * progress;
-  }
-
-  tl.remove(entry.tween);
-  const replacement = gsap.fromTo(
-    entry.target,
-    { ...entry.fromValues },
-    { ...cutValues, duration: trimDur, ease: entry.ease, overwrite: false, immediateRender: false },
-  );
-  tl.add(replacement, entry.startPosition);
-  return cutValues;
 }
 
 export class SegmentBuilder {
@@ -130,6 +58,16 @@ export class SegmentBuilder {
     const activeStageTweens = new Map<string, ActiveStageTweenEntry>();
     const virtualCam = { ...stageManager.camera };
     const virtualOff = { ...stageManager.cameraOffset };
+    // stage modifier 子构建器（处方 6）：global 路径分流 + trim/activeStageTweens 管理。
+    const stageModifierBuilder = new StageModifierBuilder({
+      segmentTl,
+      stageTweenRecords,
+      activeStageTweens,
+      virtualCam,
+      virtualOff,
+      allStageModifierRecords,
+      playbackState: context.playbackState,
+    });
     // page mode and authored scene.clear now share one clear path through StageRuntime.
     const clearActiveParagraphs = () => {
       const clearTl = gsap.timeline();
@@ -172,17 +110,10 @@ export class SegmentBuilder {
         const pos = await this.placeParagraph(paragraphText, context, pData);
 
         const { visualConfigs, stageConfigs } = EffectProcessor.partition(pData.globalEffects);
-        segmentCursor = this.applyStageConfigs(
-          segmentTl,
-          stageConfigs,
-          stageTweenRecords,
-          activeStageTweens,
-          virtualCam,
-          virtualOff,
-          segmentCursor,
-          allStageModifierRecords,
-          context.playbackState,
-        );
+        // stageConfigs（global 路径）由 StageModifierBuilder 接管（处方 6）。
+        // buildStageModifierRecord 分流、trimActiveStageTween、activeStageTweens 管理、
+        // R22/SA-37 exact-boundary guard——全部原样保留。
+        segmentCursor = stageModifierBuilder.applyStageConfigs(stageConfigs, segmentCursor);
 
         if (visualConfigs.length > 0) {
           // block 作用域 filter（char/group 路径 L251-315 的对称）：
@@ -326,21 +257,9 @@ export class SegmentBuilder {
           });
         }
 
-        // inline/token 级 stage modifier 记录（cam.reset/cam.drift/cam.shake 在文字 @ cam.xxx 或
-        // effect chain 里触发）：与 global 路径（applyStageConfigs 经 buildStageModifierRecord）共用同一
-        // allStageModifierRecords，seek 时 replayStageModifiers 按 timePosition + duration + isClearBoundary 重放。
-        // 必须 spread 全部片段字段——上一版只拷 command/params/timePosition/duration，漏掉 isClearBoundary，
-        // 导致 inline/token 级 cam.reset 边界丢失。
-        // R11：分配 sequence = allStageModifierRecords.length（build/push 顺序，表达 GSAP callback 执行序）。
-        //   不是 ordered 索引——>>> overlap 时不同 timePosition 的 push 顺序会被排序打乱
-        //   （p1 drift@2 先 push、p2 reset@1 后 push，reset effective@2 clear 时 drift 已 apply）。
-        for (const modRecord of buildResult.stageModifierRecords) {
-          allStageModifierRecords.push({
-            ...modRecord,
-            timePosition: modRecord.timePosition + segmentCursor,
-            sequence: allStageModifierRecords.length,
-          });
-        }
+        // inline/token 级 stage modifier 记录聚合由 StageModifierBuilder 接管（处方 6）。
+        // R11 sequence 分配（build/push 顺序）+ spread 全部字段（含 isClearBoundary）原样保留。
+        stageModifierBuilder.aggregateInlineRecords(buildResult.stageModifierRecords, segmentCursor);
 
         paragraphUnits.push({
           paragraphIndex: i,
@@ -492,147 +411,4 @@ export class SegmentBuilder {
     return { x, y };
   }
 
-  private static applyStageConfigs(
-    segmentTl: gsap.core.Timeline,
-    stageConfigs: any[],
-    stageTweenRecords: InFlightAnimation[],
-    activeStageTweens: Map<string, ActiveStageTweenEntry>,
-    virtualCam: Record<string, number>,
-    virtualOff: Record<string, number>,
-    segmentCursor: number,
-    stageModifierRecords: StageModifierRecord[],
-    playbackState?: { lastSeekTime?: number },
-  ) {
-    let cursor = segmentCursor;
-
-    for (const config of stageConfigs) {
-      if (config.name === "pause") {
-        const duration = EffectProcessor.resolvePauseDuration(config.params, 1);
-        cursor += duration;
-        continue;
-      }
-
-      // 单一真相源：buildStageModifierRecord 决定 cam.reset（clear boundary）、modifierBased
-      // （cam.shake/cam.drift，duration 按命令语义）与可 seek tween 命令的分流。
-      // 三路径（global/inline/token-chain）共用此 helper，SA-12 cam.reset boundary 在 inline/token-chain
-      // 的分裂由此从根上消除（`文字 @ cam.reset!` 与全局 cam.reset 现在同一处理）。
-      const stageRecord = buildStageModifierRecord(config.name, config.params);
-
-      if (stageRecord && !stageRecord.isClearBoundary) {
-        // modifierBased（cam.shake/cam.drift）：经 tl.call 延迟 apply（modifier 在 timeline 时间触发），
-        // 不在 build 期 apply。propertyKey 可能与活跃 tween 冲突（当前 modifierBased 命令均无 propKey，
-        // 但保留 trim 对称——若未来加 modifierBased+propertyKey 命令也能正确 trim）。
-        const propKey = getStagePropertyKey(config.name);
-        if (propKey) {
-          const existing = activeStageTweens.get(propKey);
-          if (existing) {
-            stageManager.reportConflictDiagnostic({
-              severity: "warning",
-              channel: propKey,
-              command: config.name,
-              message: `Trimmed active stage tween on channel "${propKey}" before applying "${config.name}".`,
-            });
-            const cutValues = trimActiveStageTween(segmentTl, existing, cursor);
-            if (cutValues) {
-              Object.assign(propKey.startsWith("offset") ? virtualOff : virtualCam, cutValues);
-            }
-            activeStageTweens.delete(propKey);
-          }
-        }
-        const configCopy = { name: config.name, params: buildStageModifierApplyParams(config.name, config.params) };
-        stageModifierRecords.push({ ...stageRecord, timePosition: cursor, sequence: stageModifierRecords.length });
-        // R22/SA-37：exact-boundary guard——seek 落在 cursor 上、随后 play 时 deferred tick 跨越会
-        // 重触发此 tl.call（与 seek 的 replayStageModifiers 双 apply，cam.shake 满强度覆盖中途剩余强度）。
-        // 检查 timePosition === lastSeekTime 则跳过，让 replayStageModifiers 单一拥有当前态。
-        // R22-followup（stage 默认参数对齐）：configCopy.params 是 buildStageModifierApplyParams
-        // 预解析的（缺失变量按命令预设默认值，与 seek 重放同源），不再传 raw params 让
-        // StageRuntime.apply fallback 0——自然播放与 seek 重放现在走同一份解析。
-        const modRecTime = cursor;
-        segmentTl.call(() => {
-          if (playbackState?.lastSeekTime === modRecTime) return;
-          stageManager.apply(configCopy.name, configCopy.params);
-        }, [], cursor);
-        continue;
-      }
-
-      if (stageRecord?.isClearBoundary) {
-        // cam.reset：记 clear boundary + 立即 trim active tween + 重置 virtualCam/Off。
-        // reset timeline 是可 seek tween，与 cam.move 等对称——落下方通用 apply + capture +
-        // stageTweenRecords（保留原行为：reset tween 仍计入 inFlight for Phase B 跨 Segment 衔接）。
-        for (const [, entry] of activeStageTweens) {
-          trimActiveStageTween(segmentTl, entry, cursor);
-        }
-        activeStageTweens.clear();
-        Object.assign(virtualCam, { x: 0, y: 0, zoom: 1, rotation: 0 });
-        Object.assign(virtualOff, { x: 0, y: 0, zoom: 1, rotation: 0 });
-        stageModifierRecords.push({ ...stageRecord, timePosition: cursor, sequence: stageModifierRecords.length });
-      }
-
-      const propKey = getStagePropertyKey(config.name);
-      if (propKey) {
-        const existing = activeStageTweens.get(propKey);
-        if (existing) {
-          stageManager.reportConflictDiagnostic({
-            severity: "warning",
-            channel: propKey,
-            command: config.name,
-            message: `Trimmed active stage tween on channel "${propKey}" before applying "${config.name}".`,
-          });
-          const cutValues = trimActiveStageTween(segmentTl, existing, cursor);
-          if (cutValues) {
-            Object.assign(propKey.startsWith("offset") ? virtualOff : virtualCam, cutValues);
-          }
-          activeStageTweens.delete(propKey);
-        }
-      }
-
-      const result = stageManager.apply(config.name, config.params);
-      this.captureTween(segmentTl, result, cursor);
-
-      if (propKey && (result instanceof gsap.core.Tween || result instanceof gsap.core.Timeline)) {
-        const duration = result.duration();
-        if (duration > 0) {
-          const toValues = extractTweenTargets(config.name, config.params);
-          const virtualState = propKey.startsWith("offset") ? virtualOff : virtualCam;
-          const fromValues: Record<string, number> = {};
-          for (const key of Object.keys(toValues)) fromValues[key] = virtualState[key] ?? 0;
-          activeStageTweens.set(propKey, {
-            tween: result,
-            startPosition: cursor,
-            originalDuration: duration,
-            ease: "power2.inOut",
-            fromValues,
-            toValues,
-            target: propKey.startsWith("offset") ? stageManager.cameraOffset : stageManager.camera,
-          });
-          Object.assign(virtualState, toValues);
-        }
-      }
-
-      if (result instanceof gsap.core.Tween || result instanceof gsap.core.Timeline) {
-        const duration = result.duration();
-        if (duration > 0) {
-          stageTweenRecords.push({
-            command: config.name,
-            targets: extractTweenTargets(config.name, config.params),
-            totalDuration: duration,
-            startTimeInSegment: cursor,
-            ease: duration > 0 ? "power2.inOut" : "none",
-          });
-        }
-      }
-
-      if (config.blocking && (result instanceof gsap.core.Tween || result instanceof gsap.core.Timeline)) {
-        cursor += result.duration();
-      }
-    }
-
-    return cursor;
-  }
-
-  private static captureTween(timeline: gsap.core.Timeline, result: any, position: number) {
-    if (result instanceof gsap.core.Tween || result instanceof gsap.core.Timeline) {
-      timeline.add(result, position);
-    }
-  }
 }
