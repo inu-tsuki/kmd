@@ -93,11 +93,21 @@
 
 ## 发现的现状 bug 清单（单独列，不顺手改）
 
-1. **KMDMetadata 类型声明缺 bgColor/fontColor/fontFamily/kmdVersion**——运行时 parseMetadata 读入这些字段，但 `parser/types.ts` 的 `KMDMetadata` 接口没声明。frontmatter-writeback 套件要断言它们，测试侧 cast 为 any 访问。与处方 10（globalThis.KmdRuntimeConfig schema 同源问题）相关，留独立修复。
-2. **量词类型化缺失（D24 债务）**——`autoConvert` 仅处理 s/ms，line/self/deg 退化为字符串，ms 静默转秒丢单位。已在 b0-1-coverage.kmd 黄金冻结现状；B0.1 D24 重写应改这些，届时黄金 diff 即暴露。非本任务顺手改。
-3. **ease 词形已废弃但 parser 仍发 unknown-command**——spec（migration.md:15）已改连接符 ~d~>，`ease(d)` 单词形态应过渡期兼容。当前 parser 对 `ease` 发 unknown 诊断。B0.1 应处理兼容。
-4. **裸行 f.:char / f.:group 未解析**——`f.hold:char(1s).red` 这类无 {…} 主语 token 的裸行被当纯文本，零 effect 零诊断。可能是设计（level 后缀需主语），也可能是 parser 缺口。黄金冻结现状，B0.1 递归下降重写后应明确。
-5. **braceIdCounter 单例累加**——parser 单例的 `AstParser.braceIdCounter` 跨 parse() 调用累加，导致同输入不同次 parse 的 braceGroupId 递增、序列化非确定。测试侧用 fresh KMDParser() 规避（不改被测代码）。这是潜在的生产侧确定性问题（若任何路径连续调用 parser.parse 多次并依赖 braceGroupId 稳定，会踩），留独立修复。
+织网过程中发现的、需独立修复或 Phase B 处理的问题。区分"真实 bug"与"已知 Phase B 范围"。
+
+### 真实 bug（需独立修复）
+
+1. **裸行 `f.:char` / `f.:group` 未解析、缺诊断**（parser bug）——`f.hold:char(1s).red` / `f.wave.hold:group(2s)` 这类无 `{...}` 主语 token 的裸行被当纯文本，零 effect、零诊断、静默降级。这是错误写法，parser 应解析报错（发 unknown / syntax 诊断），而非静默吞掉。b0-1-coverage.kmd 黄金已冻结现状（token.content 保留原始文本、effects 空），B0.1 递归下降重写时应明确报错路径。非本任务顺手改。
+2. **`AstParser.braceIdCounter` 单例累加，破坏连续 `parse()` 的确定性**（生产侧潜在风险）——parser 单例的 `AstParser.braceIdCounter` 跨 `parse()` 调用累加从不重置，同输入不同次 parse 的 `braceGroupId` 递增、序列化非确定。测试侧用 fresh `KMDParser()` 规避（不改被测代码）。当前生产未暴露（`braceGroupId` 只在 `ScopeRouter` 按 id 分组，不依赖具体数值），但是"恰好没踩"非"安全"。**已作为 R-P1 正式记录在 `docs/knowledge/runtime/core/parser-pipeline.md` "已知风险"节**，含修复方向。
+
+### 已知 Phase B 范围（非新发现，黄金冻结现状供 B0.1 diff）
+
+3. **量词类型化缺失（D24）**——`autoConvert` 仅处理 s/ms，line/self/deg 退化为字符串，ms 静默转秒丢单位。B0.1 D24 量词类型化重写覆盖，黄金 diff 将暴露语义变化。非新发现。
+4. **ease 从未实现**——spec 规划 ease 为 `~time~>` 语法糖（`docs/knowledge/language/chain-model.md:52`），当前 parser 从未实现 ease 词形，`ease(1s)` 发 unknown-command 诊断。Phase B 将以 `~time~>` 语法糖引入。非"已废弃"（前版描述有误，已更正）。
+
+### 非 bug（已澄清）
+
+- **KMDMetadata 灵活字段**——`bgColor`/`fontColor`/`fontFamily`/`kmdVersion` 等未在 `KMDMetadata` 接口显式声明是**有意设计**（frontmatter 为灵活字段，作者可加任意键，core 读入保留）。frontmatter-writeback 套件侧 cast 为 any 访问是正确做法，非类型债。前版误记为 bug，已移除。
 
 ## 仍存在的盲区
 

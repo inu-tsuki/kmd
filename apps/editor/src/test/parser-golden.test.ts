@@ -142,7 +142,8 @@ describe('parser golden: B0.1 coverage audit', () => {
   });
 
   it('covers ease word form — currently unknown-command diagnostic', () => {
-    // spec 已废弃 ease(d) 单词形态（migration.md:15），改连接符 ~d~>。当前 parser 对 ease 发 unknown 诊断。
+    // ease 词形从未实现；spec 规划为 ~time~> 语法糖（chain-model.md:52），Phase B 将引入。
+    // 当前 parser 对 ease 发 unknown-command 诊断。黄金冻结此现状。
     expect(allEffectNames).toContain('ease');
     const easeDiag = result.diagnostics?.find((d) => d.message.includes('ease'));
     expect(easeDiag).toBeDefined();
@@ -159,15 +160,17 @@ describe('parser golden: B0.1 coverage audit', () => {
     expect(braced).toBeDefined();
   });
 
-  it('covers hold level suffixes (:char / :group) — currently bare-line f. with level suffix parses as plain text', () => {
+  it('covers hold level suffixes (:char / :group) — currently bare-line f. with level suffix parses as plain text (parser bug)', () => {
     // 当前 parser：`f.hold:char(1s).red` / `f.wave.hold:group(2s)` 这类裸行（无 {…} 主语 token）
-    // 不被识别为命令链，整行降为纯文本 token，零 effect、零诊断。
-    // B0.1 递归下降重写后应能解析 level 后缀；届时此断言会红——正是安全网目的。
+    // 不被识别为命令链，整行降为纯文本 token，零 effect、零诊断、静默吞掉。
+    // 这是错误写法，parser 应解析报错（unknown / syntax 诊断）而非静默降级——真实 parser bug，
+    // 独立修复，非本任务顺手改（见 docs/planning/test-net-pr-summary-2026-07.md 现状 bug #1）。
+    // B0.1 递归下降重写时应明确报错路径；届时此断言会红——正是安全网目的。
     const holdCharPara = result.paragraphs.find((p) =>
       p.tokens.some((t) => t.content.includes('f.hold:char')));
     expect(holdCharPara).toBeDefined();
     const holdCharToken = holdCharPara!.tokens.find((t) => t.content.includes('f.hold:char'));
-    // 现状特征：裸行命令链未解析，content 保留原始文本，effects 为空。
+    // 现状特征（bug）：裸行命令链未解析，content 保留原始文本，effects 为空，零诊断。
     expect(holdCharToken!.effects).toHaveLength(0);
     expect(holdCharToken!.content).toContain('f.hold:char(1s).red');
 

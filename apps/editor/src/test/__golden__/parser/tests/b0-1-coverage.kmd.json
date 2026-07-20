@@ -2,7 +2,7 @@
   "diagnostics": [
     {
       "code": "unknown-command",
-      "line": 42,
+      "line": 43,
       "message": "Unknown command \"ease\"",
       "range": {
         "end": 24,
@@ -12,7 +12,7 @@
     },
     {
       "code": "container-incompatible",
-      "line": 46,
+      "line": 47,
       "message": "Command \"gray\" is char-only but was forced to :bg",
       "severity": "warning"
     }
@@ -1359,7 +1359,7 @@
           {
             "body": [
               {
-                "line": 41,
+                "line": 42,
                 "marks": [],
                 "range": {
                   "end": 8,
@@ -1372,7 +1372,7 @@
             "commandChains": [],
             "heading": false,
             "kind": "content",
-            "line": 41,
+            "line": 42,
             "range": {
               "end": 8,
               "start": 0
@@ -1386,7 +1386,7 @@
                 "children": [
                   {
                     "groupId": 7,
-                    "line": 42,
+                    "line": 43,
                     "marks": [],
                     "range": {
                       "end": 10,
@@ -1397,7 +1397,7 @@
                   }
                 ],
                 "groupId": 7,
-                "line": 42,
+                "line": 43,
                 "range": {
                   "end": 11,
                   "start": 0
@@ -1419,7 +1419,7 @@
                     "raw": "f.ease(1s)"
                   }
                 ],
-                "line": 42,
+                "line": 43,
                 "prefix": "f",
                 "range": {
                   "end": 24,
@@ -1431,7 +1431,7 @@
             ],
             "heading": false,
             "kind": "content",
-            "line": 42,
+            "line": 43,
             "range": {
               "end": 24,
               "start": 0
@@ -1440,14 +1440,14 @@
             "type": "line"
           }
         ],
-        "source": "//    3b. 废弃单词形态 ease(d)——当前 parser 当普通命令名处理（若未注册则 unknown-command 诊断）。\nease(1s)\n{ease word} @ f.ease(1s)",
+        "source": "//    3b. ease 词形从未实现——spec 规划 ease 为 ~time~> 语法糖（chain-model.md:52），\n//        Phase B 将引入。当前 parser 对 ease 发 unknown-command 诊断。\nease(1s)\n{ease word} @ f.ease(1s)",
         "type": "paragraph"
       },
       "blockOptions": {},
       "diagnostics": [
         {
           "code": "unknown-command",
-          "line": 42,
+          "line": 43,
           "message": "Unknown command \"ease\"",
           "range": {
             "end": 24,
@@ -1462,7 +1462,7 @@
         "diagnostics": [
           {
             "code": "unknown-command",
-            "line": 42,
+            "line": 43,
             "message": "Unknown command \"ease\"",
             "range": {
               "end": 24,
@@ -1479,7 +1479,7 @@
             "isBraced": false,
             "kind": "text",
             "layoutInstructions": [],
-            "line": 41,
+            "line": 42,
             "params": {},
             "range": {
               "end": 8,
@@ -1496,7 +1496,7 @@
             "isSugar": false,
             "kind": "newline",
             "layoutInstructions": [],
-            "line": 41,
+            "line": 42,
             "params": {},
             "range": {
               "end": 8,
@@ -1520,7 +1520,7 @@
             "isBraced": true,
             "kind": "text",
             "layoutInstructions": [],
-            "line": 42,
+            "line": 43,
             "params": {},
             "range": {
               "end": 10,
@@ -1539,7 +1539,7 @@
           "effects": [],
           "isBraced": false,
           "layoutInstructions": [],
-          "line": 41,
+          "line": 42,
           "params": {},
           "range": {
             "end": 8,
@@ -1555,7 +1555,7 @@
           "isSceneClear": false,
           "isSugar": false,
           "layoutInstructions": [],
-          "line": 41,
+          "line": 42,
           "params": {},
           "range": {
             "end": 8,
@@ -1578,7 +1578,7 @@
           ],
           "isBraced": true,
           "layoutInstructions": [],
-          "line": 42,
+          "line": 43,
           "params": {},
           "range": {
             "end": 10,
@@ -1604,7 +1604,7 @@
                   "raw": ".gray:bg"
                 }
               ],
-              "line": 46,
+              "line": 47,
               "prefix": "dot",
               "range": {
                 "end": 9,
@@ -1613,7 +1613,7 @@
               "raw": ".gray:bg",
               "type": "command-chain"
             },
-            "line": 46,
+            "line": 47,
             "range": {
               "end": 9,
               "start": 1
@@ -1621,7 +1621,7 @@
             "type": "block-option-command"
           }
         ],
-        "lineOffset": 44,
+        "lineOffset": 45,
         "lines": [
           {
             "body": [],
@@ -1639,7 +1639,7 @@
                     "raw": "bg(src=tests/assets/sample-bg.jpg)"
                   }
                 ],
-                "line": 45,
+                "line": 46,
                 "prefix": "bare",
                 "range": {
                   "end": 36,
@@ -1651,7 +1651,7 @@
             ],
             "heading": false,
             "kind": "command-only",
-            "line": 45,
+            "line": 46,
             "range": {
               "end": 36,
               "start": 0
@@ -1662,7 +1662,7 @@
           {
             "body": [
               {
-                "line": 46,
+                "line": 47,
                 "marks": [],
                 "range": {
                   "end": 12,
@@ -1675,7 +1675,7 @@
             "commandChains": [],
             "heading": false,
             "kind": "content",
-            "line": 46,
+            "line": 47,
             "range": {
               "end": 12,
               "start": 0
@@ -1686,7 +1686,7 @@
           {
             "body": [
               {
-                "line": 47,
+                "line": 48,
                 "marks": [],
                 "range": {
                   "end": 6,
@@ -1709,7 +1709,7 @@
                     "raw": "f.gray:bg"
                   }
                 ],
-                "line": 47,
+                "line": 48,
                 "prefix": "f",
                 "range": {
                   "end": 18,
@@ -1721,7 +1721,7 @@
             ],
             "heading": false,
             "kind": "content",
-            "line": 47,
+            "line": 48,
             "range": {
               "end": 18,
               "start": 0
@@ -1737,7 +1737,7 @@
       "diagnostics": [
         {
           "code": "container-incompatible",
-          "line": 46,
+          "line": 47,
           "message": "Command \"gray\" is char-only but was forced to :bg",
           "severity": "warning"
         }
@@ -1763,7 +1763,7 @@
         "diagnostics": [
           {
             "code": "container-incompatible",
-            "line": 46,
+            "line": 47,
             "message": "Command \"gray\" is char-only but was forced to :bg",
             "severity": "warning"
           }
@@ -1776,7 +1776,7 @@
             "isBraced": false,
             "kind": "text",
             "layoutInstructions": [],
-            "line": 46,
+            "line": 47,
             "params": {},
             "range": {
               "end": 12,
@@ -1793,7 +1793,7 @@
             "isSugar": false,
             "kind": "newline",
             "layoutInstructions": [],
-            "line": 46,
+            "line": 47,
             "params": {},
             "range": {
               "end": 12,
@@ -1815,7 +1815,7 @@
             "isBraced": false,
             "kind": "text",
             "layoutInstructions": [],
-            "line": 47,
+            "line": 48,
             "params": {},
             "range": {
               "end": 6,
@@ -1841,7 +1841,7 @@
           }
         ]
       },
-      "lineOffset": 44,
+      "lineOffset": 45,
       "tokens": [
         {
           "commands": [],
@@ -1849,7 +1849,7 @@
           "effects": [],
           "isBraced": false,
           "layoutInstructions": [],
-          "line": 46,
+          "line": 47,
           "params": {},
           "range": {
             "end": 12,
@@ -1865,7 +1865,7 @@
           "isSceneClear": false,
           "isSugar": false,
           "layoutInstructions": [],
-          "line": 46,
+          "line": 47,
           "params": {},
           "range": {
             "end": 12,
@@ -1886,7 +1886,7 @@
           ],
           "isBraced": false,
           "layoutInstructions": [],
-          "line": 47,
+          "line": 48,
           "params": {},
           "range": {
             "end": 6,
@@ -1899,7 +1899,7 @@
     {
       "ast": {
         "blockOptions": [],
-        "lineOffset": 49,
+        "lineOffset": 50,
         "lines": [
           {
             "body": [
@@ -1907,7 +1907,7 @@
                 "children": [
                   {
                     "groupId": 8,
-                    "line": 50,
+                    "line": 51,
                     "marks": [],
                     "range": {
                       "end": 2,
@@ -1918,7 +1918,7 @@
                   }
                 ],
                 "groupId": 8,
-                "line": 50,
+                "line": 51,
                 "range": {
                   "end": 3,
                   "start": 0
@@ -1929,7 +1929,7 @@
                 "children": [
                   {
                     "groupId": 9,
-                    "line": 50,
+                    "line": 51,
                     "marks": [],
                     "range": {
                       "end": 5,
@@ -1940,7 +1940,7 @@
                   }
                 ],
                 "groupId": 9,
-                "line": 50,
+                "line": 51,
                 "range": {
                   "end": 6,
                   "start": 3
@@ -1951,7 +1951,7 @@
                 "children": [
                   {
                     "groupId": 10,
-                    "line": 50,
+                    "line": 51,
                     "marks": [],
                     "range": {
                       "end": 8,
@@ -1962,7 +1962,7 @@
                   }
                 ],
                 "groupId": 10,
-                "line": 50,
+                "line": 51,
                 "range": {
                   "end": 9,
                   "start": 6
@@ -1982,7 +1982,7 @@
                     "raw": "f.red"
                   }
                 ],
-                "line": 50,
+                "line": 51,
                 "prefix": "f",
                 "range": {
                   "end": 17,
@@ -1994,7 +1994,7 @@
             ],
             "heading": false,
             "kind": "content",
-            "line": 50,
+            "line": 51,
             "range": {
               "end": 17,
               "start": 0
@@ -2008,7 +2008,7 @@
                 "children": [
                   {
                     "groupId": 11,
-                    "line": 51,
+                    "line": 52,
                     "marks": [],
                     "range": {
                       "end": 14,
@@ -2019,7 +2019,7 @@
                   }
                 ],
                 "groupId": 11,
-                "line": 51,
+                "line": 52,
                 "range": {
                   "end": 15,
                   "start": 0
@@ -2057,7 +2057,7 @@
                     "raw": "f.wave.hold(1s).red"
                   }
                 ],
-                "line": 51,
+                "line": 52,
                 "prefix": "f",
                 "range": {
                   "end": 37,
@@ -2069,7 +2069,7 @@
             ],
             "heading": false,
             "kind": "content",
-            "line": 51,
+            "line": 52,
             "range": {
               "end": 37,
               "start": 0
@@ -2102,7 +2102,7 @@
             "isBraced": true,
             "kind": "text",
             "layoutInstructions": [],
-            "line": 50,
+            "line": 51,
             "params": {},
             "range": {
               "end": 2,
@@ -2118,7 +2118,7 @@
             "isBraced": true,
             "kind": "text",
             "layoutInstructions": [],
-            "line": 50,
+            "line": 51,
             "params": {},
             "range": {
               "end": 5,
@@ -2134,7 +2134,7 @@
             "isBraced": true,
             "kind": "text",
             "layoutInstructions": [],
-            "line": 50,
+            "line": 51,
             "params": {},
             "range": {
               "end": 8,
@@ -2151,7 +2151,7 @@
             "isSugar": false,
             "kind": "newline",
             "layoutInstructions": [],
-            "line": 50,
+            "line": 51,
             "params": {},
             "range": {
               "end": 17,
@@ -2185,7 +2185,7 @@
             "isBraced": true,
             "kind": "text",
             "layoutInstructions": [],
-            "line": 51,
+            "line": 52,
             "params": {},
             "range": {
               "end": 14,
@@ -2196,7 +2196,7 @@
         ],
         "paragraphEffects": []
       },
-      "lineOffset": 49,
+      "lineOffset": 50,
       "tokens": [
         {
           "braceGroupId": 8,
@@ -2211,7 +2211,7 @@
           ],
           "isBraced": true,
           "layoutInstructions": [],
-          "line": 50,
+          "line": 51,
           "params": {},
           "range": {
             "end": 2,
@@ -2226,7 +2226,7 @@
           "effects": [],
           "isBraced": true,
           "layoutInstructions": [],
-          "line": 50,
+          "line": 51,
           "params": {},
           "range": {
             "end": 5,
@@ -2241,7 +2241,7 @@
           "effects": [],
           "isBraced": true,
           "layoutInstructions": [],
-          "line": 50,
+          "line": 51,
           "params": {},
           "range": {
             "end": 8,
@@ -2257,7 +2257,7 @@
           "isSceneClear": false,
           "isSugar": false,
           "layoutInstructions": [],
-          "line": 50,
+          "line": 51,
           "params": {},
           "range": {
             "end": 17,
@@ -2290,7 +2290,7 @@
           ],
           "isBraced": true,
           "layoutInstructions": [],
-          "line": 51,
+          "line": 52,
           "params": {},
           "range": {
             "end": 14,
@@ -2303,12 +2303,12 @@
     {
       "ast": {
         "blockOptions": [],
-        "lineOffset": 53,
+        "lineOffset": 54,
         "lines": [
           {
             "body": [
               {
-                "line": 54,
+                "line": 55,
                 "marks": [],
                 "range": {
                   "end": 19,
@@ -2321,7 +2321,7 @@
             "commandChains": [],
             "heading": false,
             "kind": "content",
-            "line": 54,
+            "line": 55,
             "range": {
               "end": 19,
               "start": 0
@@ -2332,7 +2332,7 @@
           {
             "body": [
               {
-                "line": 55,
+                "line": 56,
                 "marks": [],
                 "range": {
                   "end": 21,
@@ -2345,7 +2345,7 @@
             "commandChains": [],
             "heading": false,
             "kind": "content",
-            "line": 55,
+            "line": 56,
             "range": {
               "end": 21,
               "start": 0
@@ -2371,7 +2371,7 @@
             "isBraced": false,
             "kind": "text",
             "layoutInstructions": [],
-            "line": 54,
+            "line": 55,
             "params": {},
             "range": {
               "end": 19,
@@ -2388,7 +2388,7 @@
             "isSugar": false,
             "kind": "newline",
             "layoutInstructions": [],
-            "line": 54,
+            "line": 55,
             "params": {},
             "range": {
               "end": 19,
@@ -2403,7 +2403,7 @@
             "isBraced": false,
             "kind": "text",
             "layoutInstructions": [],
-            "line": 55,
+            "line": 56,
             "params": {},
             "range": {
               "end": 21,
@@ -2414,7 +2414,7 @@
         ],
         "paragraphEffects": []
       },
-      "lineOffset": 53,
+      "lineOffset": 54,
       "tokens": [
         {
           "commands": [],
@@ -2422,7 +2422,7 @@
           "effects": [],
           "isBraced": false,
           "layoutInstructions": [],
-          "line": 54,
+          "line": 55,
           "params": {},
           "range": {
             "end": 19,
@@ -2438,7 +2438,7 @@
           "isSceneClear": false,
           "isSugar": false,
           "layoutInstructions": [],
-          "line": 54,
+          "line": 55,
           "params": {},
           "range": {
             "end": 19,
@@ -2452,7 +2452,7 @@
           "effects": [],
           "isBraced": false,
           "layoutInstructions": [],
-          "line": 55,
+          "line": 56,
           "params": {},
           "range": {
             "end": 21,
@@ -2470,7 +2470,7 @@
     "//    2c. self 单位——当前 parser 退化为字符串 \"1self\"，B0.1 应类型化。\nleft(1self)\n{self unit} @ f.left(1self)",
     "//    2d. deg 单位——当前 parser 退化为字符串 \"15deg\"，B0.1 应类型化。\nrotate(15deg)\n{deg unit} @ f.rotate(15deg)",
     "// 3. ease 词形：spec 已废弃单词形态（migration.md:15），改用连接符 ~d~>。\n//    3a. ease=out 作为命名参数——当前 parser 当普通 key=val 处理（params.ease=\"out\"），非 ease 语法。\nhold(1s, ease=out)\n{ease named} @ f.hold(1s, ease=out)",
-    "//    3b. 废弃单词形态 ease(d)——当前 parser 当普通命令名处理（若未注册则 unknown-command 诊断）。\nease(1s)\n{ease word} @ f.ease(1s)",
+    "//    3b. ease 词形从未实现——spec 规划 ease 为 ~time~> 语法糖（chain-model.md:52），\n//        Phase B 将引入。当前 parser 对 ease 发 unknown-command 诊断。\nease(1s)\n{ease word} @ f.ease(1s)",
     "// 4. :bg 作用域（处方 11/12 过渡期兼容写法）。\n@ bg(src=tests/assets/sample-bg.jpg)\n[.gray:bg] 背景 bg 上的灰度滤镜\ninline @ f.gray:bg",
     "// 5. 括号组嵌套与多组映射（braceGroupId）。\n{A}{B}{C} @ f.red\n{group mapping} @ f.wave.hold(1s).red",
     "// 6. hold/ease 词形的 level 后缀（:char / :group / :block）。\nf.hold:char(1s).red\nf.wave.hold:group(2s)"

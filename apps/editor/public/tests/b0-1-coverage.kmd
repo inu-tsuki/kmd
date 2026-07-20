@@ -38,7 +38,8 @@ rotate(15deg)
 hold(1s, ease=out)
 {ease named} @ f.hold(1s, ease=out)
 
-//    3b. 废弃单词形态 ease(d)——当前 parser 当普通命令名处理（若未注册则 unknown-command 诊断）。
+//    3b. ease 词形从未实现——spec 规划 ease 为 ~time~> 语法糖（chain-model.md:52），
+//        Phase B 将引入。当前 parser 对 ease 发 unknown-command 诊断。
 ease(1s)
 {ease word} @ f.ease(1s)
 
