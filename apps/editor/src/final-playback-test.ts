@@ -39,63 +39,14 @@ import { GrayFilter } from "./core/filters/GrayFilter";
 import type { Segment } from "./core/state/Segment";
 import type { LayoutGlyphPlan } from "./core/layout/LayoutPlanner";
 
-// tsx 的 CJS/ESM 互操作把 gsap 当命名空间导入，默认导出落在 .default；
-// vite（生产）的标准 ESM 解析则直接给默认导出。两者统一到此，让测试/生产同源。
-// （§B-bis：已验证 tsx 运行时行为——gsap.default.timeline 是 function，gsap.timeline 是 undefined）
-const G = ((gsap as any).default ?? gsap) as typeof gsap;
-
-// R15（SA-30 / SA-27 教训）：为测 DisplayAssembler baseline 路径需构造真实 KineticChar，但其构造
-// 函数调 `gsap.ticker.add(this.update)`——tsx 下 gsap 命名空间的 .ticker 是 undefined（§B-bis 互操作
-// quirk），会抛 `Cannot read properties of undefined (reading 'add')`。此处给 gsap 命名空间对象
-// 注入 ticker stub（add/remove no-op），仅让 KineticChar 构造通过；timeline 走 G.timeline() 不经
-// ticker，不受影响。这使 §11b 能用真实 KineticChar 验证 DisplayAssembler 的 baseline 捕获逻辑
-//（而非用 fake 掩盖真实差异——SA-27：fake 满足守卫不等于真实 target 满足）。
-if (!(gsap as any).ticker) {
-  (gsap as any).ticker = { add: () => {}, remove: () => {} };
-}
-// R17/SA-32（§13 端到端管线）：SegmentBuilder/PlaybackController 等生产代码直接调 `gsap.timeline()`
-// / `gsap.core`（不经本文件的 G 别名）。tsx 互操作下 gsap 命名空间这些是 undefined（落在 .default）。
-// 把 G（= gsap.default）的属性提升到 gsap 命名空间，让生产代码的 `gsap.timeline()` 可用。这是 §13
-// 端到端真实管线的必要补丁（§1-§12 用 G.timeline() 别名绕过，但真实 SegmentBuilder 不绕过）。
-if ((gsap as any).timeline !== G.timeline) {
-  for (const k of Object.keys(G)) {
-    try { if (!(k in (gsap as any))) (gsap as any)[k] = (G as any)[k]; } catch { /* readonly prop */ }
-  }
-}
-
-// R17/SA-32（§13 端到端管线）：为驱动真实 `parser → SegmentBuilder.build → layout → seek`，需额外
-// 两个 headless shim（已验证可跑端到端，见 R17 调研探针）：
-// (1) document stub：KineticText.ts:82 读 `document.fonts`，node 下未定义会 ReferenceError。
-//     注意：**不要** stub `window`——LayoutPlanner.isDiagnosticsEnabled 检查 `typeof window`，
-//     window 未定义时早返回 false（line 348）；若 stub 了 window 会落到 `window.location.search` 崩溃。
-// (2) DOMAdapter canvas stub：layout 路径调 `CanvasTextMetrics.measureFont`（LayoutPlanner:97
-//     measureFontSafe），pixi v8 的 `_canvas` getter 先试 `OffscreenCanvas`（node 下 undefined）→
-//     fallback `DOMAdapter.get().createCanvas()` → 默认 BrowserAdapter 用 document.createElement
-//     （node 下崩）。注入合成 canvas（getContext 返回带 measureText 的 2d ctx）让字体度量通过。
-//     度量是合成的（width=charCount*fontSize*0.5），几何不真实但 style/baseline/timing/seek 语义
-//     真实——§13 测的是 R-B 单一真相源 + R13-R16 在真实管线的端到端正确性，不是布局几何。
-//     pixi 升级若改 measureFont 路径，此 shim 可能需更新（失效时 §13 报错 ≠ R-B 逻辑错，先查 shim）。
-if (!(globalThis as any).document) {
-  (globalThis as any).document = {
-    fonts: { ready: Promise.resolve() },
-    createElement: () => ({}) as any,
-  };
-}
-const _ctxProto = { prototype: { letterSpacing: undefined, textLetterSpacing: undefined } };
-const _makeCtx = () => ({
-  font: "",
-  measureText(t: string) {
-    const sz = parseFloat((this.font || "24px").match(/(\d+)px/)?.[1] || "24");
-    return { actualBoundingBoxAscent: sz * 0.8, actualBoundingBoxDescent: sz * 0.2, width: (t || "").length * sz * 0.5 };
-  },
-});
-DOMAdapter.set({
-  createCanvas: () => ({ width: 0, height: 0, getContext: () => _makeCtx(), style: {} }) as any,
-  getCanvasRenderingContext2D: () => _ctxProto as any,
-  createImage: () => ({}) as any,
-  getBaseUrl: () => "file:///",
-  getFontFaceSet: () => undefined,
-} as any);
+// Headless shim（gsap 互操作 / document stub / DOMAdapter 合成度量）从 src/test/setup.ts
+// 导入——单一真相源（架构体检处方 5 / 测试网支柱 1）。原内联 shim 已迁出，避免两份漂移；
+// setup.ts 的 measureText 含 actualBoundingBoxLeft/Right（pixi CanvasTextMetrics._measureText
+// 算 boundsWidth 需要），此 runner 同源受益。§B-bis 注释保留在 setup.ts。
+//
+// 注意：**不要** stub `window`——LayoutPlanner.isDiagnosticsEnabled 检查 `typeof window`，
+// window 未定义时早返回 false；若 stub 了 window 会落到 `window.location.search` 崩溃（setup.ts 遵守）。
+import { G } from "./test/setup";
 
 // ─── 测试骨架（对齐 final-parser-test.ts 风格） ──────────────────────────
 

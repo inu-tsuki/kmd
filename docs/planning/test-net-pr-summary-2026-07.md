@@ -1,8 +1,20 @@
 # PR: feat/test-net — 编辑器 Vitest 测试网（架构体检处方 5）
 
-> 分支：`feat/test-net`（7 commits，不自行合并，交主审审核）
+> 分支：`feat/test-net`（10 commits，不自行合并，交主审审核）
 > 设计文档：`docs/planning/test-net-design-2026-07.md`（§3 四根支柱）
 > 处方出处：`docs/planning/architecture-health-check-2026-07.md` 处方 5
+
+## 主审 review 修正（2026-07-20）
+
+回应主审 two changes requested：
+
+1. **布局测试缺段间状态面**（中等）——layout-coords.test.ts 对每段独立调用无状态 TextLayoutEngine.calculate()，没经过负责段间状态的 LayoutEngine（addLine 累加 currentY + 持久化 globalMarkers）。设计要求的段间垂直堆叠、marker 同步没被测。
+   - 修正：新增 `layout-stacking.test.ts`（5 tests）——模拟 LayoutEngine.addLine 的段间状态传递（共享 markers Map 跨段持久 + currentY 累加），断言段首字符 y 严格递增、delta 符合 ascent+descent+spacing 模型、point_a marker 跨段存活。
+   - 修正：layout-coords.test.ts 的 goto 断言从松散的 `x>100 && y>200` 改为精确的设计坐标语义（goto(x,y) 以设计中心 960,540 为原点 → goto(100,200) 落 x≈1066, y≈740, inFlow=false）；新增 mark+goto(mark) 段内同步断言（mark 写 point_a={0,0}，goto 读它跳回行首 out-of-flow）。
+2. **headless shim "单一真相源" 出现两份不同实现**（中等）——setup.ts 声称统一，但 playback-regression.test.ts 子进程跑旧 runner，后者在 final-playback-test.ts 内仍维护完整 shim。两份已漂移（setup 的 measureText 有 actualBoundingBoxLeft/Right，旧 runner 没有）。
+   - 修正：final-playback-test.ts 删除内联 shim（原 L42–98），改为 `import { G } from './test/setup'`——单一真相源。旧 runner 现与 vitest 套件同源，playback 331 用例复跑绿。§B-bis 注释保留在 setup.ts。
+
+附带：commit 数从 7 更正为 10（含 review 修正提交）。
 
 ## 改动摘要
 
@@ -12,7 +24,8 @@
 |---|---|---|---|
 | smoke | smoke.test.ts | 3 | runner + setup shim + parser 加载确认 |
 | parser golden | parser-golden.test.ts | 50 | 全语料规范化序列化黄金（39 文件）+ B0.1 覆盖审计（9 断言）+ 语料非空（1）+ 黄金比对（39）+1 |
-| layout 坐标 | layout-coords.test.ts | 8 | 合成度量下每字符 x/y/inFlow/offset 快照 + 堆叠/断行/up-down/left-right/align/goto 不变量 |
+| layout 坐标 | layout-coords.test.ts | 9 | 合成度量下每字符 x/y/inFlow/offset 快照 + 断行/up-down/left-right/align/goto（设计坐标原点 960,540）/mark+goto(mark) 段内同步 不变量 |
+| layout 段间状态 | layout-stacking.test.ts | 5 | 有状态段间堆叠（currentY 累加，首字符 y 严格递增 + delta 模型）+ 段间 marker 持久（globalMarkers 跨段存活）|
 | effects 分类 | effects-classification.test.ts | 6 | 47 effects + 22 styles 双向匹配分类表 + 四轨覆盖 + timing 无 mutex + filter mutex 族 + gray 重叠 |
 | parser 集成 | parser-integration.test.ts | 13 | Report 5.x 语义断言（收编 final-parser-test.ts） |
 | playback 回归 | playback-regression.test.ts | 1 | 331 用例整体包成 1 test（子进程跑 final-playback-test.ts，断言 fail===0） |
@@ -20,14 +33,14 @@
 | shader 门禁 | shader-gate.test.ts | 23 | 21 文件 23 shader glslangValidator 编译（收编 final-shader-test.ts，去 SKIP_SHADER_GATE 逃生门） |
 | frontmatter 写回 | frontmatter-writeback.test.ts | 13 | W1–W4 写回往返（收编 frontmatter-writeback-test.ts） |
 
-**vitest 合计：118 tests / 9 files 全绿。**
+**vitest 合计：124 tests / 10 files 全绿。**
 
 ### 收编 / 退役脚本
 
 | 脚本 | 去向 |
 |---|---|
 | final-parser-test.ts | 收编进 parser-integration.test.ts，退役 |
-| final-playback-test.ts | 保留（vitest 子进程包装调用它）；npm script 切指 vitest 套件 |
+| final-playback-test.ts | 保留（vitest 子进程包装调用它）；**shim 已改为从 src/test/setup.ts 导入（单一真相源，不再维护内联副本）**；npm script 切指 vitest 套件 |
 | test-invariants.ts | 收编进 invariants-guard.test.ts，退役 |
 | final-shader-test.ts | 收编进 shader-gate.test.ts，退役 |
 | frontmatter-writeback-test.ts | 收编进 frontmatter-writeback.test.ts，退役 |
@@ -84,7 +97,7 @@
 |---|---|
 | pnpm language:check | ✅ in sync |
 | pnpm build（vue-tsc -b + vite build） | ✅ 34.3s |
-| pnpm test（vitest） | ✅ 118 tests / 9 files / 5.9s |
+| pnpm test（vitest） | ✅ 124 tests / 10 files / 6.5s |
 | pnpm test:parser | ✅ 63 tests |
 | pnpm test:playback | ✅ 331 cases fail===0 |
 | pnpm test:invariants | ✅ 1 test（零违规） |
@@ -111,9 +124,9 @@
 
 ## 仍存在的盲区
 
-- **黄金只抓变化、不抓对错**——上述 5 个现状 bug 被一并冻结为"现状特征"，不是正确性裁判。
-- **合成字体度量**（width = 字符数 × fontSize × 0.5）——布局测试测的是布局逻辑，非真实渲染几何；真实渲染靠 Playwright e2e 补（当前 e2e 仅 2 用例覆盖 fx-bg）。
-- **playback 渐拆未做**——331 用例整体包成 1 test，子进程跑 tsx 脚本。后续应逐个 testXxx 拆成独立 it() 块搬进 vitest，最后退役子进程包装（设计文档 §3 支柱 3 明确"先整体包、再渐拆，勿大爆炸重写"）。
+- **黄金只抓变化、不抓对错**——上述现状 bug 被一并冻结为"现状特征"，不是正确性裁判。
+- **合成字体度量**（width = 字符数 × fontSize × 0.5）——布局测试测的是布局逻辑，非真实渲染几何；段间堆叠测试模拟 LayoutEngine 的 currentY 累加 + globalMarkers 持久，但不构造真实 Pixi Container/KineticText（那是 e2e 面）。真实渲染靠 Playwright e2e 补（当前 e2e 仅 2 用例覆盖 fx-bg）。
+- **playback 渐拆未做**——331 用例整体包成 1 test，子进程跑 tsx 脚本。后续应逐个 testXxx 拆成独立 it() 块搬进 vitest，最后退役子进程包装（设计文档 §3 支柱 3 明确"先整体包、再渐拆，勿大爆炸重写"）。shim 已统一从 setup.ts 导入，渐拆时 testXxx 可直接在 vitest 进程内跑（无需子进程）。
 - **覆盖率不追虚荣指标**——只盯 Phase B 风险面（parser / layout / effects 分类），单元测试层暂少（设计文档 §1.1 刻意把重心放集成/特征层）。
 - **CI 首跑未实测**——glslang-tools apt 安装与 vitest 步骤在本地用 glslang 11/16.3.0 验证，CI ubuntu-latest 的 glslang-tools 版本可能有差异，首次 CI 跑需观察。
 

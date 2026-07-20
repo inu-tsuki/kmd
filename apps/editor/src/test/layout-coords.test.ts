@@ -151,13 +151,33 @@ describe('layout coordinate stability', () => {
     expect(right![0]!.x).toBeGreaterThan(centered![0]!.x);
   });
 
-  it('goto (idx 7): cursor jumps to specified coordinates', () => {
+  it('goto (idx 7): cursor jumps to design-coordinate (origin 960,540), breaks flow', () => {
+    // goto(x,y) 的 x/y 是以设计中心 (960,540) 为原点的设计坐标（layoutPresets.ts:30-33），
+    // 非 raw 像素。goto(100,200) → activeCursor.x = 100+960 = 1060, y = 200+540 = 740；
+    // 首字符 x 再 + half-width(6) = 1066。isFlowBroken=true → inFlow=false。
     const snap = computeLayoutSnapshot();
     const jumped = snap[7];
     expect(jumped).toBeDefined();
-    // f.goto(100,200) → 首字符 x/y 应反映跳转后的坐标（非默认 0,0 起点）。
-    expect(jumped![0]!.x).toBeGreaterThan(100);
-    expect(jumped![0]!.y).toBeGreaterThan(200);
+    expect(jumped![0]!.x).toBeCloseTo(1066, 0);
+    expect(jumped![0]!.y).toBeCloseTo(740, 0);
+    expect(jumped!.every((c) => c.inFlow === false)).toBe(true);
+  });
+
+  it('mark + goto(mark) (idx 8): in-paragraph marker sync — goto reads mark written same paragraph', () => {
+    // para 8 = "锚点 @ f.mark(point_a)\n跳到锚点 @ f.goto(point_a)"。
+    // mark 在第一行写 point_a = {x:0,y:0}（行首），goto(point_a) 第二行读它 → 跳回行首。
+    // 这是**段内** marker 同步（TextLayoutEngine 无状态，段间同步见 layout-stacking.test.ts）。
+    const snap = computeLayoutSnapshot();
+    const markGoto = snap[8];
+    expect(markGoto).toBeDefined();
+    // 第一行（锚点）在流中，第二行（跳到锚点）跳转后 out-of-flow。
+    const firstRow = markGoto!.slice(0, 2); // "锚点"
+    const secondRow = markGoto!.slice(3);   // "跳到锚点"（跳过 \n）
+    expect(firstRow.every((c) => c.inFlow === true)).toBe(true);
+    expect(secondRow.every((c) => c.inFlow === false)).toBe(true);
+    // goto(point_a) 跳到 mark 位置（行首 {0,0}）→ 第二行首字符 x ≈ 0+half-width=6, y ≈ 0。
+    expect(secondRow[0]!.x).toBeCloseTo(6, 0);
+    expect(secondRow[0]!.y).toBeCloseTo(0, 0);
   });
 
   it('snapshot is deterministic across repeated computations', () => {
