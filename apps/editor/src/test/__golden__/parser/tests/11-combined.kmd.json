@@ -1,0 +1,1230 @@
+{
+  "diagnostics": [],
+  "metadata": {
+    "designHeight": 1080,
+    "designWidth": 1920,
+    "mode": "stage",
+    "speed": 40,
+    "title": "11 - hold + pause + blocking 组合测试",
+    "variables": {}
+  },
+  "paragraphs": [
+    {
+      "ast": {
+        "blockOptions": [
+          {
+            "chain": {
+              "commands": [
+                {
+                  "blocking": true,
+                  "family": "stage",
+                  "name": "cam.zoom",
+                  "params": {
+                    "0": 0.8,
+                    "1": 1
+                  },
+                  "prefix": "bare",
+                  "raw": "cam.zoom(0.8, 1s)!"
+                }
+              ],
+              "line": 9,
+              "prefix": "bare",
+              "range": {
+                "end": 19,
+                "start": 1
+              },
+              "raw": "cam.zoom(0.8, 1s)!",
+              "type": "command-chain"
+            },
+            "line": 9,
+            "range": {
+              "end": 19,
+              "start": 1
+            },
+            "type": "block-option-command"
+          }
+        ],
+        "lineOffset": 8,
+        "lines": [
+          {
+            "body": [
+              {
+                "line": 10,
+                "marks": [],
+                "range": {
+                  "end": 5,
+                  "start": 0
+                },
+                "text": "镜头就位。",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 10,
+            "range": {
+              "end": 5,
+              "start": 0
+            },
+            "raw": "镜头就位。",
+            "type": "line"
+          }
+        ],
+        "source": "// 组合：管道符 pause + hold 链 + 阻塞镜头\n[cam.zoom(0.8, 1s)!]\n镜头就位。",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [
+        {
+          "blocking": true,
+          "level": "block",
+          "name": "cam.zoom",
+          "params": {
+            "0": 0.8,
+            "1": 1
+          }
+        }
+      ],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "镜头就位。",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 10,
+            "params": {},
+            "range": {
+              "end": 5,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": [
+          {
+            "blocking": true,
+            "level": "block",
+            "name": "cam.zoom",
+            "params": {
+              "0": 0.8,
+              "1": 1
+            }
+          }
+        ]
+      },
+      "lineOffset": 8,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "镜头就位。",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 10,
+          "params": {},
+          "range": {
+            "end": 5,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 12,
+        "lines": [
+          {
+            "body": [
+              {
+                "children": [
+                  {
+                    "groupId": 1,
+                    "line": 12,
+                    "marks": [],
+                    "range": {
+                      "end": 3,
+                      "start": 1
+                    },
+                    "text": "先红",
+                    "type": "text"
+                  }
+                ],
+                "groupId": 1,
+                "line": 12,
+                "range": {
+                  "end": 4,
+                  "start": 0
+                },
+                "type": "group"
+              },
+              {
+                "line": 12,
+                "marks": [],
+                "range": {
+                  "end": 18,
+                  "start": 4
+                },
+                "text": " hold(1s) 后变蓝。",
+                "type": "text"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "style",
+                    "name": "red",
+                    "params": {},
+                    "prefix": "f",
+                    "raw": "f.red.hold(1s).blue"
+                  },
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "name": "hold",
+                    "params": {
+                      "0": 1
+                    },
+                    "prefix": "f",
+                    "raw": "f.red.hold(1s).blue"
+                  },
+                  {
+                    "blocking": false,
+                    "family": "style",
+                    "name": "blue",
+                    "params": {},
+                    "prefix": "f",
+                    "raw": "f.red.hold(1s).blue"
+                  }
+                ],
+                "line": 12,
+                "prefix": "f",
+                "range": {
+                  "end": 40,
+                  "start": 21
+                },
+                "raw": "f.red.hold(1s).blue",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 12,
+            "range": {
+              "end": 40,
+              "start": 0
+            },
+            "raw": "{先红} hold(1s) 后变蓝。 @ f.red.hold(1s).blue",
+            "type": "line"
+          }
+        ],
+        "source": "{先红} hold(1s) 后变蓝。 @ f.red.hold(1s).blue",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "braceGroupId": 1,
+            "commands": [],
+            "content": "先红",
+            "effects": [
+              {
+                "blocking": false,
+                "name": "red",
+                "params": {}
+              },
+              {
+                "blocking": false,
+                "name": "hold",
+                "params": {
+                  "0": 1
+                }
+              },
+              {
+                "blocking": false,
+                "name": "blue",
+                "params": {}
+              }
+            ],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 12,
+            "params": {},
+            "range": {
+              "end": 3,
+              "start": 1
+            },
+            "sugar": []
+          },
+          {
+            "commands": [],
+            "content": " hold(1s) 后变蓝。",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 12,
+            "params": {},
+            "range": {
+              "end": 18,
+              "start": 4
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 12,
+      "tokens": [
+        {
+          "braceGroupId": 1,
+          "commands": [],
+          "content": "先红",
+          "effects": [
+            {
+              "blocking": false,
+              "name": "red",
+              "params": {}
+            },
+            {
+              "blocking": false,
+              "name": "hold",
+              "params": {
+                "0": 1
+              }
+            },
+            {
+              "blocking": false,
+              "name": "blue",
+              "params": {}
+            }
+          ],
+          "isBraced": true,
+          "layoutInstructions": [],
+          "line": 12,
+          "params": {},
+          "range": {
+            "end": 3,
+            "start": 1
+          },
+          "sugar": []
+        },
+        {
+          "commands": [],
+          "content": " hold(1s) 后变蓝。",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 12,
+          "params": {},
+          "range": {
+            "end": 18,
+            "start": 4
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 14,
+        "lines": [
+          {
+            "body": [
+              {
+                "line": 14,
+                "marks": [],
+                "range": {
+                  "end": 4,
+                  "start": 0
+                },
+                "text": "我在这里",
+                "type": "text"
+              },
+              {
+                "line": 14,
+                "params": {
+                  "0": 0.5
+                },
+                "range": {
+                  "end": 5,
+                  "start": 4
+                },
+                "type": "pause"
+              },
+              {
+                "line": 14,
+                "marks": [],
+                "range": {
+                  "end": 9,
+                  "start": 5
+                },
+                "text": "停了一下",
+                "type": "text"
+              },
+              {
+                "line": 14,
+                "params": {
+                  "0": 1.5
+                },
+                "range": {
+                  "end": 16,
+                  "start": 9
+                },
+                "type": "pause"
+              },
+              {
+                "line": 14,
+                "marks": [],
+                "range": {
+                  "end": 20,
+                  "start": 16
+                },
+                "text": "再继续。",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 14,
+            "range": {
+              "end": 20,
+              "start": 0
+            },
+            "raw": "我在这里|停了一下|(1.5s)再继续。",
+            "type": "line"
+          }
+        ],
+        "source": "我在这里|停了一下|(1.5s)再继续。",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "我在这里",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 14,
+            "params": {},
+            "range": {
+              "end": 4,
+              "start": 0
+            },
+            "sugar": []
+          },
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": true,
+            "isSceneClear": false,
+            "isSugar": false,
+            "kind": "pause",
+            "layoutInstructions": [
+              {
+                "blocking": true,
+                "line": 14,
+                "params": {
+                  "0": 0.5
+                },
+                "range": {
+                  "end": 5,
+                  "start": 4
+                },
+                "type": "pause"
+              }
+            ],
+            "line": 14,
+            "params": {},
+            "range": {
+              "end": 5,
+              "start": 4
+            },
+            "sugar": []
+          },
+          {
+            "commands": [],
+            "content": "停了一下",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 14,
+            "params": {},
+            "range": {
+              "end": 9,
+              "start": 5
+            },
+            "sugar": []
+          },
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": true,
+            "isSceneClear": false,
+            "isSugar": false,
+            "kind": "pause",
+            "layoutInstructions": [
+              {
+                "blocking": true,
+                "line": 14,
+                "params": {
+                  "0": 1.5
+                },
+                "range": {
+                  "end": 16,
+                  "start": 9
+                },
+                "type": "pause"
+              }
+            ],
+            "line": 14,
+            "params": {},
+            "range": {
+              "end": 16,
+              "start": 9
+            },
+            "sugar": []
+          },
+          {
+            "commands": [],
+            "content": "再继续。",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 14,
+            "params": {},
+            "range": {
+              "end": 20,
+              "start": 16
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 14,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "我在这里",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 14,
+          "params": {},
+          "range": {
+            "end": 4,
+            "start": 0
+          },
+          "sugar": []
+        },
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": true,
+          "isSceneClear": false,
+          "isSugar": false,
+          "layoutInstructions": [
+            {
+              "blocking": true,
+              "line": 14,
+              "params": {
+                "0": 0.5
+              },
+              "range": {
+                "end": 5,
+                "start": 4
+              },
+              "type": "pause"
+            }
+          ],
+          "line": 14,
+          "params": {},
+          "range": {
+            "end": 5,
+            "start": 4
+          },
+          "sugar": []
+        },
+        {
+          "commands": [],
+          "content": "停了一下",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 14,
+          "params": {},
+          "range": {
+            "end": 9,
+            "start": 5
+          },
+          "sugar": []
+        },
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": true,
+          "isSceneClear": false,
+          "isSugar": false,
+          "layoutInstructions": [
+            {
+              "blocking": true,
+              "line": 14,
+              "params": {
+                "0": 1.5
+              },
+              "range": {
+                "end": 16,
+                "start": 9
+              },
+              "type": "pause"
+            }
+          ],
+          "line": 14,
+          "params": {},
+          "range": {
+            "end": 16,
+            "start": 9
+          },
+          "sugar": []
+        },
+        {
+          "commands": [],
+          "content": "再继续。",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 14,
+          "params": {},
+          "range": {
+            "end": 20,
+            "start": 16
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 16,
+        "lines": [
+          {
+            "body": [],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": true,
+                    "family": "stage",
+                    "name": "cam.move",
+                    "params": {
+                      "0": 0,
+                      "1": 200,
+                      "2": 2
+                    },
+                    "prefix": "bare",
+                    "raw": "cam.move(0, 200, 2s)!"
+                  }
+                ],
+                "line": 16,
+                "prefix": "bare",
+                "range": {
+                  "end": 23,
+                  "start": 2
+                },
+                "raw": "cam.move(0, 200, 2s)!",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "command-only",
+            "line": 16,
+            "range": {
+              "end": 23,
+              "start": 0
+            },
+            "raw": "@ cam.move(0, 200, 2s)!",
+            "type": "line"
+          },
+          {
+            "body": [
+              {
+                "line": 17,
+                "marks": [],
+                "range": {
+                  "end": 11,
+                  "start": 0
+                },
+                "text": "镜头平移完成后才出现。",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 17,
+            "range": {
+              "end": 11,
+              "start": 0
+            },
+            "raw": "镜头平移完成后才出现。",
+            "type": "line"
+          }
+        ],
+        "source": "@ cam.move(0, 200, 2s)!\n镜头平移完成后才出现。",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [
+        {
+          "blocking": true,
+          "level": "block",
+          "name": "cam.move",
+          "params": {
+            "0": 0,
+            "1": 200,
+            "2": 2
+          }
+        }
+      ],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "镜头平移完成后才出现。",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 17,
+            "params": {},
+            "range": {
+              "end": 11,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": [
+          {
+            "blocking": true,
+            "level": "block",
+            "name": "cam.move",
+            "params": {
+              "0": 0,
+              "1": 200,
+              "2": 2
+            }
+          }
+        ]
+      },
+      "lineOffset": 16,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "镜头平移完成后才出现。",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 17,
+          "params": {},
+          "range": {
+            "end": 11,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 19,
+        "lines": [
+          {
+            "body": [
+              {
+                "children": [
+                  {
+                    "groupId": 2,
+                    "line": 19,
+                    "marks": [],
+                    "range": {
+                      "end": 9,
+                      "start": 1
+                    },
+                    "text": "每字都有hold",
+                    "type": "text"
+                  }
+                ],
+                "groupId": 2,
+                "line": 19,
+                "range": {
+                  "end": 10,
+                  "start": 0
+                },
+                "type": "group"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "level": "char",
+                    "name": "hold",
+                    "params": {
+                      "0": 0.8
+                    },
+                    "prefix": "f",
+                    "raw": "f.hold:char(0.8s).wave"
+                  },
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "name": "wave",
+                    "params": {},
+                    "prefix": "f",
+                    "raw": "f.hold:char(0.8s).wave"
+                  }
+                ],
+                "line": 19,
+                "prefix": "f",
+                "range": {
+                  "end": 35,
+                  "start": 13
+                },
+                "raw": "f.hold:char(0.8s).wave",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 19,
+            "range": {
+              "end": 35,
+              "start": 0
+            },
+            "raw": "{每字都有hold} @ f.hold:char(0.8s).wave",
+            "type": "line"
+          }
+        ],
+        "source": "{每字都有hold} @ f.hold:char(0.8s).wave",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "braceGroupId": 2,
+            "commands": [],
+            "content": "每字都有hold",
+            "effects": [
+              {
+                "blocking": false,
+                "level": "char",
+                "name": "hold",
+                "params": {
+                  "0": 0.8
+                }
+              },
+              {
+                "blocking": false,
+                "name": "wave",
+                "params": {}
+              }
+            ],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 19,
+            "params": {},
+            "range": {
+              "end": 9,
+              "start": 1
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 19,
+      "tokens": [
+        {
+          "braceGroupId": 2,
+          "commands": [],
+          "content": "每字都有hold",
+          "effects": [
+            {
+              "blocking": false,
+              "level": "char",
+              "name": "hold",
+              "params": {
+                "0": 0.8
+              }
+            },
+            {
+              "blocking": false,
+              "name": "wave",
+              "params": {}
+            }
+          ],
+          "isBraced": true,
+          "layoutInstructions": [],
+          "line": 19,
+          "params": {},
+          "range": {
+            "end": 9,
+            "start": 1
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 21,
+        "lines": [
+          {
+            "body": [
+              {
+                "children": [
+                  {
+                    "groupId": 3,
+                    "line": 21,
+                    "marks": [],
+                    "range": {
+                      "end": 5,
+                      "start": 1
+                    },
+                    "text": "组合行为",
+                    "type": "text"
+                  }
+                ],
+                "groupId": 3,
+                "line": 21,
+                "range": {
+                  "end": 6,
+                  "start": 0
+                },
+                "type": "group"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "name": "shake",
+                    "params": {
+                      "0": 8
+                    },
+                    "prefix": "f",
+                    "raw": "f.shake(8).hold(2s).rainbow"
+                  },
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "name": "hold",
+                    "params": {
+                      "0": 2
+                    },
+                    "prefix": "f",
+                    "raw": "f.shake(8).hold(2s).rainbow"
+                  },
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "name": "rainbow",
+                    "params": {},
+                    "prefix": "f",
+                    "raw": "f.shake(8).hold(2s).rainbow"
+                  }
+                ],
+                "line": 21,
+                "prefix": "f",
+                "range": {
+                  "end": 36,
+                  "start": 9
+                },
+                "raw": "f.shake(8).hold(2s).rainbow",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 21,
+            "range": {
+              "end": 36,
+              "start": 0
+            },
+            "raw": "{组合行为} @ f.shake(8).hold(2s).rainbow",
+            "type": "line"
+          }
+        ],
+        "source": "{组合行为} @ f.shake(8).hold(2s).rainbow",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "braceGroupId": 3,
+            "commands": [],
+            "content": "组合行为",
+            "effects": [
+              {
+                "blocking": false,
+                "name": "shake",
+                "params": {
+                  "0": 8
+                }
+              },
+              {
+                "blocking": false,
+                "name": "hold",
+                "params": {
+                  "0": 2
+                }
+              },
+              {
+                "blocking": false,
+                "name": "rainbow",
+                "params": {}
+              }
+            ],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 21,
+            "params": {},
+            "range": {
+              "end": 5,
+              "start": 1
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 21,
+      "tokens": [
+        {
+          "braceGroupId": 3,
+          "commands": [],
+          "content": "组合行为",
+          "effects": [
+            {
+              "blocking": false,
+              "name": "shake",
+              "params": {
+                "0": 8
+              }
+            },
+            {
+              "blocking": false,
+              "name": "hold",
+              "params": {
+                "0": 2
+              }
+            },
+            {
+              "blocking": false,
+              "name": "rainbow",
+              "params": {}
+            }
+          ],
+          "isBraced": true,
+          "layoutInstructions": [],
+          "line": 21,
+          "params": {},
+          "range": {
+            "end": 5,
+            "start": 1
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [
+          {
+            "chain": {
+              "commands": [
+                {
+                  "blocking": true,
+                  "family": "stage",
+                  "name": "cam.reset",
+                  "params": {
+                    "0": 1
+                  },
+                  "prefix": "bare",
+                  "raw": "cam.reset(1s)!"
+                }
+              ],
+              "line": 23,
+              "prefix": "bare",
+              "range": {
+                "end": 15,
+                "start": 1
+              },
+              "raw": "cam.reset(1s)!",
+              "type": "command-chain"
+            },
+            "line": 23,
+            "range": {
+              "end": 15,
+              "start": 1
+            },
+            "type": "block-option-command"
+          }
+        ],
+        "lineOffset": 23,
+        "lines": [
+          {
+            "body": [
+              {
+                "line": 24,
+                "marks": [],
+                "range": {
+                  "end": 7,
+                  "start": 0
+                },
+                "text": "组合测试结束。",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 24,
+            "range": {
+              "end": 7,
+              "start": 0
+            },
+            "raw": "组合测试结束。",
+            "type": "line"
+          }
+        ],
+        "source": "[cam.reset(1s)!]\n组合测试结束。",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [
+        {
+          "blocking": true,
+          "level": "block",
+          "name": "cam.reset",
+          "params": {
+            "0": 1
+          }
+        }
+      ],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "组合测试结束。",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 24,
+            "params": {},
+            "range": {
+              "end": 7,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": [
+          {
+            "blocking": true,
+            "level": "block",
+            "name": "cam.reset",
+            "params": {
+              "0": 1
+            }
+          }
+        ]
+      },
+      "lineOffset": 23,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "组合测试结束。",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 24,
+          "params": {},
+          "range": {
+            "end": 7,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    }
+  ],
+  "rawParagraphs": [
+    "// 组合：管道符 pause + hold 链 + 阻塞镜头\n[cam.zoom(0.8, 1s)!]\n镜头就位。",
+    "{先红} hold(1s) 后变蓝。 @ f.red.hold(1s).blue",
+    "我在这里|停了一下|(1.5s)再继续。",
+    "@ cam.move(0, 200, 2s)!\n镜头平移完成后才出现。",
+    "{每字都有hold} @ f.hold:char(0.8s).wave",
+    "{组合行为} @ f.shake(8).hold(2s).rainbow",
+    "[cam.reset(1s)!]\n组合测试结束。"
+  ]
+}

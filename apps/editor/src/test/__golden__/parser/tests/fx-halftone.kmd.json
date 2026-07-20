@@ -1,0 +1,1386 @@
+{
+  "diagnostics": [],
+  "metadata": {
+    "bgColor": "#1a1a2e",
+    "designHeight": 1080,
+    "designWidth": 1920,
+    "fontColor": "#ffcc66",
+    "mode": "stage",
+    "speed": 50,
+    "title": "fx - halftone 半调滤镜",
+    "variables": {}
+  },
+  "paragraphs": [
+    {
+      "ast": {
+        "blockOptions": [
+          {
+            "chain": {
+              "commands": [
+                {
+                  "blocking": false,
+                  "family": "effect",
+                  "level": "block",
+                  "name": "halftone",
+                  "params": {
+                    "angle": 0,
+                    "scale": 6,
+                    "shape": "dot"
+                  },
+                  "prefix": "dot",
+                  "raw": ".halftone:block(scale=6, angle=0, shape=dot)"
+                }
+              ],
+              "line": 11,
+              "prefix": "dot",
+              "range": {
+                "end": 45,
+                "start": 1
+              },
+              "raw": ".halftone:block(scale=6, angle=0, shape=dot)",
+              "type": "command-chain"
+            },
+            "line": 11,
+            "range": {
+              "end": 45,
+              "start": 1
+            },
+            "type": "block-option-command"
+          }
+        ],
+        "lineOffset": 10,
+        "lines": [
+          {
+            "body": [
+              {
+                "line": 12,
+                "marks": [],
+                "range": {
+                  "end": 24,
+                  "start": 0
+                },
+                "text": "亮部网点小、暗部网点大，整段文字呈现报纸印刷感。",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 12,
+            "range": {
+              "end": 24,
+              "start": 0
+            },
+            "raw": "亮部网点小、暗部网点大，整段文字呈现报纸印刷感。",
+            "type": "line"
+          }
+        ],
+        "source": "// block 作用域：暖色字上网点（invert 默认=暗部大点，彩色字上有效）\n[.halftone:block(scale=6, angle=0, shape=dot)]\n亮部网点小、暗部网点大，整段文字呈现报纸印刷感。",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [
+        {
+          "blocking": false,
+          "level": "block",
+          "name": "halftone",
+          "params": {
+            "angle": 0,
+            "scale": 6,
+            "shape": "dot"
+          }
+        }
+      ],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "亮部网点小、暗部网点大，整段文字呈现报纸印刷感。",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 12,
+            "params": {},
+            "range": {
+              "end": 24,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": [
+          {
+            "blocking": false,
+            "level": "block",
+            "name": "halftone",
+            "params": {
+              "angle": 0,
+              "scale": 6,
+              "shape": "dot"
+            }
+          }
+        ]
+      },
+      "lineOffset": 10,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "亮部网点小、暗部网点大，整段文字呈现报纸印刷感。",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 12,
+          "params": {},
+          "range": {
+            "end": 24,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 14,
+        "lines": [
+          {
+            "body": [],
+            "commandChains": [],
+            "heading": false,
+            "kind": "scene-clear",
+            "line": 14,
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "raw": "---",
+            "type": "line"
+          }
+        ],
+        "source": "---",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": true,
+            "isSugar": false,
+            "kind": "scene-clear",
+            "layoutInstructions": [
+              {
+                "blocking": false,
+                "line": 14,
+                "params": {},
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "scene.clear"
+              },
+              {
+                "blocking": true,
+                "line": 14,
+                "params": {
+                  "0": 0.5
+                },
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "pause"
+              }
+            ],
+            "line": 14,
+            "params": {},
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 14,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": true,
+          "isSugar": false,
+          "layoutInstructions": [
+            {
+              "blocking": false,
+              "line": 14,
+              "params": {},
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "scene.clear"
+            },
+            {
+              "blocking": true,
+              "line": 14,
+              "params": {
+                "0": 0.5
+              },
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "pause"
+            }
+          ],
+          "line": 14,
+          "params": {},
+          "range": {
+            "end": 3,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [
+          {
+            "chain": {
+              "commands": [
+                {
+                  "blocking": false,
+                  "family": "effect",
+                  "level": "block",
+                  "name": "halftone",
+                  "params": {
+                    "angle": 0,
+                    "invert": true,
+                    "scale": 6,
+                    "shape": "dot"
+                  },
+                  "prefix": "dot",
+                  "raw": ".halftone:block(scale=6, angle=0, shape=dot, invert=true)"
+                }
+              ],
+              "line": 17,
+              "prefix": "dot",
+              "range": {
+                "end": 58,
+                "start": 1
+              },
+              "raw": ".halftone:block(scale=6, angle=0, shape=dot, invert=true)",
+              "type": "command-chain"
+            },
+            "line": 17,
+            "range": {
+              "end": 58,
+              "start": 1
+            },
+            "type": "block-option-command"
+          }
+        ],
+        "lineOffset": 16,
+        "lines": [
+          {
+            "body": [
+              {
+                "line": 18,
+                "marks": [],
+                "range": {
+                  "end": 32,
+                  "start": 0
+                },
+                "text": "invert=true 时白字出大网点——白字黑底场景用此模式。",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 18,
+            "range": {
+              "end": 32,
+              "start": 0
+            },
+            "raw": "invert=true 时白字出大网点——白字黑底场景用此模式。",
+            "type": "line"
+          }
+        ],
+        "source": "// 白字黑底场景：invert=true 让亮部（白字）出大点\n[.halftone:block(scale=6, angle=0, shape=dot, invert=true)]\ninvert=true 时白字出大网点——白字黑底场景用此模式。",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [
+        {
+          "blocking": false,
+          "level": "block",
+          "name": "halftone",
+          "params": {
+            "angle": 0,
+            "invert": true,
+            "scale": 6,
+            "shape": "dot"
+          }
+        }
+      ],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "invert=true 时白字出大网点——白字黑底场景用此模式。",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 18,
+            "params": {},
+            "range": {
+              "end": 32,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": [
+          {
+            "blocking": false,
+            "level": "block",
+            "name": "halftone",
+            "params": {
+              "angle": 0,
+              "invert": true,
+              "scale": 6,
+              "shape": "dot"
+            }
+          }
+        ]
+      },
+      "lineOffset": 16,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "invert=true 时白字出大网点——白字黑底场景用此模式。",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 18,
+          "params": {},
+          "range": {
+            "end": 32,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 20,
+        "lines": [
+          {
+            "body": [],
+            "commandChains": [],
+            "heading": false,
+            "kind": "scene-clear",
+            "line": 20,
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "raw": "---",
+            "type": "line"
+          }
+        ],
+        "source": "---",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": true,
+            "isSugar": false,
+            "kind": "scene-clear",
+            "layoutInstructions": [
+              {
+                "blocking": false,
+                "line": 20,
+                "params": {},
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "scene.clear"
+              },
+              {
+                "blocking": true,
+                "line": 20,
+                "params": {
+                  "0": 0.5
+                },
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "pause"
+              }
+            ],
+            "line": 20,
+            "params": {},
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 20,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": true,
+          "isSugar": false,
+          "layoutInstructions": [
+            {
+              "blocking": false,
+              "line": 20,
+              "params": {},
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "scene.clear"
+            },
+            {
+              "blocking": true,
+              "line": 20,
+              "params": {
+                "0": 0.5
+              },
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "pause"
+            }
+          ],
+          "line": 20,
+          "params": {},
+          "range": {
+            "end": 3,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [
+          {
+            "chain": {
+              "commands": [
+                {
+                  "blocking": false,
+                  "family": "effect",
+                  "level": "block",
+                  "name": "halftone",
+                  "params": {
+                    "angle": 45,
+                    "scale": 8,
+                    "shape": "line"
+                  },
+                  "prefix": "dot",
+                  "raw": ".halftone:block(scale=8, angle=45, shape=line)"
+                }
+              ],
+              "line": 23,
+              "prefix": "dot",
+              "range": {
+                "end": 47,
+                "start": 1
+              },
+              "raw": ".halftone:block(scale=8, angle=45, shape=line)",
+              "type": "command-chain"
+            },
+            "line": 23,
+            "range": {
+              "end": 47,
+              "start": 1
+            },
+            "type": "block-option-command"
+          }
+        ],
+        "lineOffset": 22,
+        "lines": [
+          {
+            "body": [
+              {
+                "line": 24,
+                "marks": [],
+                "range": {
+                  "end": 21,
+                  "start": 0
+                },
+                "text": "45 度旋转的线条半调，模拟雕版印刷质感。",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 24,
+            "range": {
+              "end": 21,
+              "start": 0
+            },
+            "raw": "45 度旋转的线条半调，模拟雕版印刷质感。",
+            "type": "line"
+          }
+        ],
+        "source": "// 改参线条半调（shape=line）\n[.halftone:block(scale=8, angle=45, shape=line)]\n45 度旋转的线条半调，模拟雕版印刷质感。",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [
+        {
+          "blocking": false,
+          "level": "block",
+          "name": "halftone",
+          "params": {
+            "angle": 45,
+            "scale": 8,
+            "shape": "line"
+          }
+        }
+      ],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "45 度旋转的线条半调，模拟雕版印刷质感。",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 24,
+            "params": {},
+            "range": {
+              "end": 21,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": [
+          {
+            "blocking": false,
+            "level": "block",
+            "name": "halftone",
+            "params": {
+              "angle": 45,
+              "scale": 8,
+              "shape": "line"
+            }
+          }
+        ]
+      },
+      "lineOffset": 22,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "45 度旋转的线条半调，模拟雕版印刷质感。",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 24,
+          "params": {},
+          "range": {
+            "end": 21,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 26,
+        "lines": [
+          {
+            "body": [],
+            "commandChains": [],
+            "heading": false,
+            "kind": "scene-clear",
+            "line": 26,
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "raw": "---",
+            "type": "line"
+          }
+        ],
+        "source": "---",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": true,
+            "isSugar": false,
+            "kind": "scene-clear",
+            "layoutInstructions": [
+              {
+                "blocking": false,
+                "line": 26,
+                "params": {},
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "scene.clear"
+              },
+              {
+                "blocking": true,
+                "line": 26,
+                "params": {
+                  "0": 0.5
+                },
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "pause"
+              }
+            ],
+            "line": 26,
+            "params": {},
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 26,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": true,
+          "isSugar": false,
+          "layoutInstructions": [
+            {
+              "blocking": false,
+              "line": 26,
+              "params": {},
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "scene.clear"
+            },
+            {
+              "blocking": true,
+              "line": 26,
+              "params": {
+                "0": 0.5
+              },
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "pause"
+            }
+          ],
+          "line": 26,
+          "params": {},
+          "range": {
+            "end": 3,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [
+          {
+            "chain": {
+              "commands": [
+                {
+                  "blocking": false,
+                  "family": "effect",
+                  "level": "block",
+                  "name": "halftone",
+                  "params": {
+                    "angle": 15,
+                    "scale": 12,
+                    "shape": "dot"
+                  },
+                  "prefix": "dot",
+                  "raw": ".halftone:block(scale=12, angle=15, shape=dot)"
+                }
+              ],
+              "line": 29,
+              "prefix": "dot",
+              "range": {
+                "end": 47,
+                "start": 1
+              },
+              "raw": ".halftone:block(scale=12, angle=15, shape=dot)",
+              "type": "command-chain"
+            },
+            "line": 29,
+            "range": {
+              "end": 47,
+              "start": 1
+            },
+            "type": "block-option-command"
+          }
+        ],
+        "lineOffset": 28,
+        "lines": [
+          {
+            "body": [
+              {
+                "line": 30,
+                "marks": [],
+                "range": {
+                  "end": 26,
+                  "start": 0
+                },
+                "text": "更大网格出更粗犷的网点，15 度旋转避免水平摩尔纹。",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 30,
+            "range": {
+              "end": 26,
+              "start": 0
+            },
+            "raw": "更大网格出更粗犷的网点，15 度旋转避免水平摩尔纹。",
+            "type": "line"
+          }
+        ],
+        "source": "// 改参大网格 + 旋转\n[.halftone:block(scale=12, angle=15, shape=dot)]\n更大网格出更粗犷的网点，15 度旋转避免水平摩尔纹。",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [
+        {
+          "blocking": false,
+          "level": "block",
+          "name": "halftone",
+          "params": {
+            "angle": 15,
+            "scale": 12,
+            "shape": "dot"
+          }
+        }
+      ],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "更大网格出更粗犷的网点，15 度旋转避免水平摩尔纹。",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 30,
+            "params": {},
+            "range": {
+              "end": 26,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": [
+          {
+            "blocking": false,
+            "level": "block",
+            "name": "halftone",
+            "params": {
+              "angle": 15,
+              "scale": 12,
+              "shape": "dot"
+            }
+          }
+        ]
+      },
+      "lineOffset": 28,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "更大网格出更粗犷的网点，15 度旋转避免水平摩尔纹。",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 30,
+          "params": {},
+          "range": {
+            "end": 26,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 32,
+        "lines": [
+          {
+            "body": [],
+            "commandChains": [],
+            "heading": false,
+            "kind": "scene-clear",
+            "line": 32,
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "raw": "---",
+            "type": "line"
+          }
+        ],
+        "source": "---",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": true,
+            "isSugar": false,
+            "kind": "scene-clear",
+            "layoutInstructions": [
+              {
+                "blocking": false,
+                "line": 32,
+                "params": {},
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "scene.clear"
+              },
+              {
+                "blocking": true,
+                "line": 32,
+                "params": {
+                  "0": 0.5
+                },
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "pause"
+              }
+            ],
+            "line": 32,
+            "params": {},
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 32,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": true,
+          "isSugar": false,
+          "layoutInstructions": [
+            {
+              "blocking": false,
+              "line": 32,
+              "params": {},
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "scene.clear"
+            },
+            {
+              "blocking": true,
+              "line": 32,
+              "params": {
+                "0": 0.5
+              },
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "pause"
+            }
+          ],
+          "line": 32,
+          "params": {},
+          "range": {
+            "end": 3,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 34,
+        "lines": [
+          {
+            "body": [
+              {
+                "children": [
+                  {
+                    "groupId": 1,
+                    "line": 35,
+                    "marks": [],
+                    "range": {
+                      "end": 5,
+                      "start": 1
+                    },
+                    "text": "词组半调",
+                    "type": "text"
+                  }
+                ],
+                "groupId": 1,
+                "line": 35,
+                "range": {
+                  "end": 6,
+                  "start": 0
+                },
+                "type": "group"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "level": "group",
+                    "name": "halftone",
+                    "params": {},
+                    "prefix": "f",
+                    "raw": "f.halftone:group"
+                  }
+                ],
+                "line": 35,
+                "prefix": "f",
+                "range": {
+                  "end": 25,
+                  "start": 9
+                },
+                "raw": "f.halftone:group",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 35,
+            "range": {
+              "end": 25,
+              "start": 0
+            },
+            "raw": "{词组半调} @ f.halftone:group",
+            "type": "line"
+          }
+        ],
+        "source": "// group 作用域：词组级网点\n{词组半调} @ f.halftone:group",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "braceGroupId": 1,
+            "commands": [],
+            "content": "词组半调",
+            "effects": [
+              {
+                "blocking": false,
+                "level": "group",
+                "name": "halftone",
+                "params": {}
+              }
+            ],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 35,
+            "params": {},
+            "range": {
+              "end": 5,
+              "start": 1
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 34,
+      "tokens": [
+        {
+          "braceGroupId": 1,
+          "commands": [],
+          "content": "词组半调",
+          "effects": [
+            {
+              "blocking": false,
+              "level": "group",
+              "name": "halftone",
+              "params": {}
+            }
+          ],
+          "isBraced": true,
+          "layoutInstructions": [],
+          "line": 35,
+          "params": {},
+          "range": {
+            "end": 5,
+            "start": 1
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 37,
+        "lines": [
+          {
+            "body": [],
+            "commandChains": [],
+            "heading": false,
+            "kind": "scene-clear",
+            "line": 37,
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "raw": "---",
+            "type": "line"
+          }
+        ],
+        "source": "---",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": true,
+            "isSugar": false,
+            "kind": "scene-clear",
+            "layoutInstructions": [
+              {
+                "blocking": false,
+                "line": 37,
+                "params": {},
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "scene.clear"
+              },
+              {
+                "blocking": true,
+                "line": 37,
+                "params": {
+                  "0": 0.5
+                },
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "pause"
+              }
+            ],
+            "line": 37,
+            "params": {},
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 37,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": true,
+          "isSugar": false,
+          "layoutInstructions": [
+            {
+              "blocking": false,
+              "line": 37,
+              "params": {},
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "scene.clear"
+            },
+            {
+              "blocking": true,
+              "line": 37,
+              "params": {
+                "0": 0.5
+              },
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "pause"
+            }
+          ],
+          "line": 37,
+          "params": {},
+          "range": {
+            "end": 3,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [
+          {
+            "chain": {
+              "commands": [
+                {
+                  "blocking": false,
+                  "family": "effect",
+                  "level": "block",
+                  "name": "halftone",
+                  "params": {
+                    "scale": 6
+                  },
+                  "prefix": "dot",
+                  "raw": ".halftone:block(scale=6)"
+                }
+              ],
+              "line": 40,
+              "prefix": "dot",
+              "range": {
+                "end": 25,
+                "start": 1
+              },
+              "raw": ".halftone:block(scale=6)",
+              "type": "command-chain"
+            },
+            "line": 40,
+            "range": {
+              "end": 25,
+              "start": 1
+            },
+            "type": "block-option-command"
+          }
+        ],
+        "lineOffset": 39,
+        "lines": [
+          {
+            "body": [
+              {
+                "line": 41,
+                "marks": [],
+                "range": {
+                  "end": 17,
+                  "start": 0
+                },
+                "text": "半调加波浪，整段网点同时逐字波动。",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 41,
+            "range": {
+              "end": 17,
+              "start": 0
+            },
+            "raw": "半调加波浪，整段网点同时逐字波动。",
+            "type": "line"
+          }
+        ],
+        "source": "// 与 behavior 组合：滤镜静态挂载，wave 逐字波动\n[.halftone:block(scale=6)]\n半调加波浪，整段网点同时逐字波动。",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [
+        {
+          "blocking": false,
+          "level": "block",
+          "name": "halftone",
+          "params": {
+            "scale": 6
+          }
+        }
+      ],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "半调加波浪，整段网点同时逐字波动。",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 41,
+            "params": {},
+            "range": {
+              "end": 17,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": [
+          {
+            "blocking": false,
+            "level": "block",
+            "name": "halftone",
+            "params": {
+              "scale": 6
+            }
+          }
+        ]
+      },
+      "lineOffset": 39,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "半调加波浪，整段网点同时逐字波动。",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 41,
+          "params": {},
+          "range": {
+            "end": 17,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    }
+  ],
+  "rawParagraphs": [
+    "// block 作用域：暖色字上网点（invert 默认=暗部大点，彩色字上有效）\n[.halftone:block(scale=6, angle=0, shape=dot)]\n亮部网点小、暗部网点大，整段文字呈现报纸印刷感。",
+    "---",
+    "// 白字黑底场景：invert=true 让亮部（白字）出大点\n[.halftone:block(scale=6, angle=0, shape=dot, invert=true)]\ninvert=true 时白字出大网点——白字黑底场景用此模式。",
+    "---",
+    "// 改参线条半调（shape=line）\n[.halftone:block(scale=8, angle=45, shape=line)]\n45 度旋转的线条半调，模拟雕版印刷质感。",
+    "---",
+    "// 改参大网格 + 旋转\n[.halftone:block(scale=12, angle=15, shape=dot)]\n更大网格出更粗犷的网点，15 度旋转避免水平摩尔纹。",
+    "---",
+    "// group 作用域：词组级网点\n{词组半调} @ f.halftone:group",
+    "---",
+    "// 与 behavior 组合：滤镜静态挂载，wave 逐字波动\n[.halftone:block(scale=6)]\n半调加波浪，整段网点同时逐字波动。"
+  ]
+}

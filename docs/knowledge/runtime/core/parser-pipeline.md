@@ -82,6 +82,22 @@ AST 节点描述的是源码结构，例如：
 
 这也是迁移相对平滑的原因：解析器内部已换成 AST/IR，外部接口仍兼容旧形状。
 
+## 已知风险
+
+### R-P1 · `AstParser.braceIdCounter` 单例累加，破坏连续 `parse()` 的确定性
+
+> 发现：2026-07-20，处方 5 测试网织网过程中（`docs/planning/test-net-pr-summary-2026-07.md`）
+> 性质：生产侧潜在确定性 bug，非测试侧问题
+> 状态：未修复（测试侧用 fresh `KMDParser` 实例规避，**未改被测代码**）
+
+`KMDParser` 是单例（`apps/editor/src/core/parser/Parser.ts:168` `export const parser = new KMDParser()`），其 `AstParser` 实例持 `private braceIdCounter = 0`（`AstParser.ts:26`），每次遇到 `{...}` 括号组时 `++this.braceIdCounter`（`AstParser.ts:304`）赋给 `groupId`，lowering 时映射到 `KMDToken.braceGroupId`。**该计数器跨 `parse()` 调用累加、从不重置**——同一输入第 N 次 parse 的 `braceGroupId` 会比第 N-1 次大一个递增量，`JSON.stringify` 输出非字节确定。
+
+测试网黄金序列化因此无法用单例，改 `new KMDParser()` 每用例 fresh 实例（`apps/editor/src/test/parser-golden.test.ts`）。这是测试侧规避，**未触碰被测代码语义**。
+
+生产侧风险：任何路径若连续调用 `parser.parse()` 多次并依赖 `braceGroupId` 的稳定值（例如缓存命中、diff 比对、跨会话序列化），会踩此坑。当前 `braceGroupId` 只在 `ScopeRouter.ts:55-57` 的组内映射消费（按 id 分组 effect 广播），不依赖具体数值，故生产未暴露——但这是"恰好没踩"而非"安全"。
+
+修复方向（独立于本测试网任务）：在 `KMDParser.parse()` 入口或 `KmdAstParser.parseParagraph()` 入口重置 `braceIdCounter = 0`。需确认无路径依赖"跨 parse 的 braceGroupId 单调连续"（grep 未发现，但 Phase B 递归下降重写 parser 时应一并处理）。
+
 ## 读码建议
 
 如果你要继续阅读解析器和后续模块，建议按这个顺序：

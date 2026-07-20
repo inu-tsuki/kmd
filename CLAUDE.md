@@ -27,7 +27,9 @@ pnpm install
 pnpm dev                  # editor dev server (vite)
 pnpm build                # editor: vue-tsc type-check + production build
 pnpm preview              # editor: preview production build
-pnpm test:parser          # parser integration: node --import tsx apps/editor/src/final-parser-test.ts
+pnpm test                 # editor vitest suite (parser golden + layout + effects + playback + invariants + shaders + frontmatter)
+pnpm test:parser          # parser integration + corpus golden (vitest)
+pnpm test:golden:write    # regenerate parser/layout golden files (REVIEW git diff, never blind-commit)
 pnpm language:check       # verify packages/language assets match extensions/vscode-kmd packaged copies
 
 pnpm reader:build         # build reader-runtime-web bundle to dist/reader-runtime/
@@ -38,7 +40,7 @@ pnpm community-api:build  # tsc
 pnpm community-api:test   # vitest run
 ```
 
-When working on parser, layout, effect routing, or shared runtime behavior, validate with `pnpm build` and `pnpm test:parser` before opening a PR. There is no full unit-test suite yet — add regression-oriented TS scripts alongside `apps/editor/src/final-parser-test.ts` when fixing engine bugs, and add sample KMD inputs under `apps/editor/public/` or `apps/editor/public/tests/`.
+When working on parser, layout, effect routing, or shared runtime behavior, validate with `pnpm build` and `pnpm test` (vitest) before opening a PR. The editor test net (`apps/editor/src/test/`, vitest ^2.1.8) covers parser golden fixtures (full corpus + B0.1 syntax), layout coordinate stability, effects four-track classification, playback state-machine regression, INV-7/INV-8 invariant guards, GLSL shader compile gate, and frontmatter writeback — see `docs/planning/test-net-design-2026-07.md`. Add new regression cases as vitest tests under `src/test/`; golden files live under `src/test/__golden__/` and must be regenerated via `pnpm test:golden:write` then human-reviewed (never blind `--update`). Add sample KMD inputs under `apps/editor/public/` or `apps/editor/public/tests/`.
 
 ## High-Level Architecture
 

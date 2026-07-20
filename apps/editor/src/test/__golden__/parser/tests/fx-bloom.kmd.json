@@ -1,0 +1,1131 @@
+{
+  "diagnostics": [],
+  "metadata": {
+    "bgColor": "#0a0a1a",
+    "designHeight": 1080,
+    "designWidth": 1920,
+    "fontColor": "#ffcc66",
+    "mode": "stage",
+    "speed": 50,
+    "title": "fx - bloom 辉光滤镜",
+    "variables": {}
+  },
+  "paragraphs": [
+    {
+      "ast": {
+        "blockOptions": [
+          {
+            "chain": {
+              "commands": [
+                {
+                  "blocking": false,
+                  "family": "effect",
+                  "level": "block",
+                  "name": "bloom",
+                  "params": {
+                    "radius": 4,
+                    "strength": 1.5,
+                    "threshold": 0.5
+                  },
+                  "prefix": "dot",
+                  "raw": ".bloom:block(threshold=0.5, strength=1.5, radius=4)"
+                }
+              ],
+              "line": 12,
+              "prefix": "dot",
+              "range": {
+                "end": 52,
+                "start": 1
+              },
+              "raw": ".bloom:block(threshold=0.5, strength=1.5, radius=4)",
+              "type": "command-chain"
+            },
+            "line": 12,
+            "range": {
+              "end": 52,
+              "start": 1
+            },
+            "type": "block-option-command"
+          }
+        ],
+        "lineOffset": 10,
+        "lines": [
+          {
+            "body": [
+              {
+                "line": 13,
+                "marks": [],
+                "range": {
+                  "end": 19,
+                  "start": 0
+                },
+                "text": "亮部扩散出柔和辉光，整段文字才有意义。",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 13,
+            "range": {
+              "end": 19,
+              "start": 0
+            },
+            "raw": "亮部扩散出柔和辉光，整段文字才有意义。",
+            "type": "line"
+          }
+        ],
+        "source": "// block 作用域：整段辉光（推荐用法，邻域扩散需连续区域）\n// 暖色字 + 深蓝底，辉光扩散到字外区域可见\n[.bloom:block(threshold=0.5, strength=1.5, radius=4)]\n亮部扩散出柔和辉光，整段文字才有意义。",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [
+        {
+          "blocking": false,
+          "level": "block",
+          "name": "bloom",
+          "params": {
+            "radius": 4,
+            "strength": 1.5,
+            "threshold": 0.5
+          }
+        }
+      ],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "亮部扩散出柔和辉光，整段文字才有意义。",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 13,
+            "params": {},
+            "range": {
+              "end": 19,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": [
+          {
+            "blocking": false,
+            "level": "block",
+            "name": "bloom",
+            "params": {
+              "radius": 4,
+              "strength": 1.5,
+              "threshold": 0.5
+            }
+          }
+        ]
+      },
+      "lineOffset": 10,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "亮部扩散出柔和辉光，整段文字才有意义。",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 13,
+          "params": {},
+          "range": {
+            "end": 19,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 15,
+        "lines": [
+          {
+            "body": [],
+            "commandChains": [],
+            "heading": false,
+            "kind": "scene-clear",
+            "line": 15,
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "raw": "---",
+            "type": "line"
+          }
+        ],
+        "source": "---",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": true,
+            "isSugar": false,
+            "kind": "scene-clear",
+            "layoutInstructions": [
+              {
+                "blocking": false,
+                "line": 15,
+                "params": {},
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "scene.clear"
+              },
+              {
+                "blocking": true,
+                "line": 15,
+                "params": {
+                  "0": 0.5
+                },
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "pause"
+              }
+            ],
+            "line": 15,
+            "params": {},
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 15,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": true,
+          "isSugar": false,
+          "layoutInstructions": [
+            {
+              "blocking": false,
+              "line": 15,
+              "params": {},
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "scene.clear"
+            },
+            {
+              "blocking": true,
+              "line": 15,
+              "params": {
+                "0": 0.5
+              },
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "pause"
+            }
+          ],
+          "line": 15,
+          "params": {},
+          "range": {
+            "end": 3,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [
+          {
+            "chain": {
+              "commands": [
+                {
+                  "blocking": false,
+                  "family": "effect",
+                  "level": "block",
+                  "name": "bloom",
+                  "params": {
+                    "radius": 8,
+                    "strength": 2.5,
+                    "threshold": 0.3
+                  },
+                  "prefix": "dot",
+                  "raw": ".bloom:block(threshold=0.3, strength=2.5, radius=8)"
+                }
+              ],
+              "line": 18,
+              "prefix": "dot",
+              "range": {
+                "end": 52,
+                "start": 1
+              },
+              "raw": ".bloom:block(threshold=0.3, strength=2.5, radius=8)",
+              "type": "command-chain"
+            },
+            "line": 18,
+            "range": {
+              "end": 52,
+              "start": 1
+            },
+            "type": "block-option-command"
+          }
+        ],
+        "lineOffset": 17,
+        "lines": [
+          {
+            "body": [
+              {
+                "line": 19,
+                "marks": [],
+                "range": {
+                  "end": 23,
+                  "start": 0
+                },
+                "text": "更低的阈值让更多区域发光，大半径让辉光更扩散。",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 19,
+            "range": {
+              "end": 23,
+              "start": 0
+            },
+            "raw": "更低的阈值让更多区域发光，大半径让辉光更扩散。",
+            "type": "line"
+          }
+        ],
+        "source": "// 改参强辉光 + 大半径\n[.bloom:block(threshold=0.3, strength=2.5, radius=8)]\n更低的阈值让更多区域发光，大半径让辉光更扩散。",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [
+        {
+          "blocking": false,
+          "level": "block",
+          "name": "bloom",
+          "params": {
+            "radius": 8,
+            "strength": 2.5,
+            "threshold": 0.3
+          }
+        }
+      ],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "更低的阈值让更多区域发光，大半径让辉光更扩散。",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 19,
+            "params": {},
+            "range": {
+              "end": 23,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": [
+          {
+            "blocking": false,
+            "level": "block",
+            "name": "bloom",
+            "params": {
+              "radius": 8,
+              "strength": 2.5,
+              "threshold": 0.3
+            }
+          }
+        ]
+      },
+      "lineOffset": 17,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "更低的阈值让更多区域发光，大半径让辉光更扩散。",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 19,
+          "params": {},
+          "range": {
+            "end": 23,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 21,
+        "lines": [
+          {
+            "body": [],
+            "commandChains": [],
+            "heading": false,
+            "kind": "scene-clear",
+            "line": 21,
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "raw": "---",
+            "type": "line"
+          }
+        ],
+        "source": "---",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": true,
+            "isSugar": false,
+            "kind": "scene-clear",
+            "layoutInstructions": [
+              {
+                "blocking": false,
+                "line": 21,
+                "params": {},
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "scene.clear"
+              },
+              {
+                "blocking": true,
+                "line": 21,
+                "params": {
+                  "0": 0.5
+                },
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "pause"
+              }
+            ],
+            "line": 21,
+            "params": {},
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 21,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": true,
+          "isSugar": false,
+          "layoutInstructions": [
+            {
+              "blocking": false,
+              "line": 21,
+              "params": {},
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "scene.clear"
+            },
+            {
+              "blocking": true,
+              "line": 21,
+              "params": {
+                "0": 0.5
+              },
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "pause"
+            }
+          ],
+          "line": 21,
+          "params": {},
+          "range": {
+            "end": 3,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [
+          {
+            "chain": {
+              "commands": [
+                {
+                  "blocking": false,
+                  "family": "effect",
+                  "level": "block",
+                  "name": "bloom",
+                  "params": {
+                    "radius": 4,
+                    "strength": 1,
+                    "threshold": 0.7
+                  },
+                  "prefix": "dot",
+                  "raw": ".bloom:block(threshold=0.7, strength=1, radius=4)"
+                }
+              ],
+              "line": 24,
+              "prefix": "dot",
+              "range": {
+                "end": 50,
+                "start": 1
+              },
+              "raw": ".bloom:block(threshold=0.7, strength=1, radius=4)",
+              "type": "command-chain"
+            },
+            "line": 24,
+            "range": {
+              "end": 50,
+              "start": 1
+            },
+            "type": "block-option-command"
+          }
+        ],
+        "lineOffset": 23,
+        "lines": [
+          {
+            "body": [
+              {
+                "line": 25,
+                "marks": [],
+                "range": {
+                  "end": 21,
+                  "start": 0
+                },
+                "text": "白色字体上的辉光，注意辉光向外扩散的范围。",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 25,
+            "range": {
+              "end": 21,
+              "start": 0
+            },
+            "raw": "白色字体上的辉光，注意辉光向外扩散的范围。",
+            "type": "line"
+          }
+        ],
+        "source": "// 白字黑底（默认场景）：对比看辉光在纯白字上的表现\n[.bloom:block(threshold=0.7, strength=1, radius=4)]\n白色字体上的辉光，注意辉光向外扩散的范围。",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [
+        {
+          "blocking": false,
+          "level": "block",
+          "name": "bloom",
+          "params": {
+            "radius": 4,
+            "strength": 1,
+            "threshold": 0.7
+          }
+        }
+      ],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "白色字体上的辉光，注意辉光向外扩散的范围。",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 25,
+            "params": {},
+            "range": {
+              "end": 21,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": [
+          {
+            "blocking": false,
+            "level": "block",
+            "name": "bloom",
+            "params": {
+              "radius": 4,
+              "strength": 1,
+              "threshold": 0.7
+            }
+          }
+        ]
+      },
+      "lineOffset": 23,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "白色字体上的辉光，注意辉光向外扩散的范围。",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 25,
+          "params": {},
+          "range": {
+            "end": 21,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 27,
+        "lines": [
+          {
+            "body": [],
+            "commandChains": [],
+            "heading": false,
+            "kind": "scene-clear",
+            "line": 27,
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "raw": "---",
+            "type": "line"
+          }
+        ],
+        "source": "---",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": true,
+            "isSugar": false,
+            "kind": "scene-clear",
+            "layoutInstructions": [
+              {
+                "blocking": false,
+                "line": 27,
+                "params": {},
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "scene.clear"
+              },
+              {
+                "blocking": true,
+                "line": 27,
+                "params": {
+                  "0": 0.5
+                },
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "pause"
+              }
+            ],
+            "line": 27,
+            "params": {},
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 27,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": true,
+          "isSugar": false,
+          "layoutInstructions": [
+            {
+              "blocking": false,
+              "line": 27,
+              "params": {},
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "scene.clear"
+            },
+            {
+              "blocking": true,
+              "line": 27,
+              "params": {
+                "0": 0.5
+              },
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "pause"
+            }
+          ],
+          "line": 27,
+          "params": {},
+          "range": {
+            "end": 3,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 29,
+        "lines": [
+          {
+            "body": [
+              {
+                "children": [
+                  {
+                    "groupId": 1,
+                    "line": 30,
+                    "marks": [],
+                    "range": {
+                      "end": 5,
+                      "start": 1
+                    },
+                    "text": "逐字辉光",
+                    "type": "text"
+                  }
+                ],
+                "groupId": 1,
+                "line": 30,
+                "range": {
+                  "end": 6,
+                  "start": 0
+                },
+                "type": "group"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "name": "bloom",
+                    "params": {},
+                    "prefix": "f",
+                    "raw": "f.bloom"
+                  }
+                ],
+                "line": 30,
+                "prefix": "f",
+                "range": {
+                  "end": 16,
+                  "start": 9
+                },
+                "raw": "f.bloom",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 30,
+            "range": {
+              "end": 16,
+              "start": 0
+            },
+            "raw": "{逐字辉光} @ f.bloom",
+            "type": "line"
+          }
+        ],
+        "source": "// char 作用域对比：逐字辉光，小纹理几乎无效（验证 §4 spec 卡注意）\n{逐字辉光} @ f.bloom",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "braceGroupId": 1,
+            "commands": [],
+            "content": "逐字辉光",
+            "effects": [
+              {
+                "blocking": false,
+                "name": "bloom",
+                "params": {}
+              }
+            ],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 30,
+            "params": {},
+            "range": {
+              "end": 5,
+              "start": 1
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 29,
+      "tokens": [
+        {
+          "braceGroupId": 1,
+          "commands": [],
+          "content": "逐字辉光",
+          "effects": [
+            {
+              "blocking": false,
+              "name": "bloom",
+              "params": {}
+            }
+          ],
+          "isBraced": true,
+          "layoutInstructions": [],
+          "line": 30,
+          "params": {},
+          "range": {
+            "end": 5,
+            "start": 1
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 32,
+        "lines": [
+          {
+            "body": [],
+            "commandChains": [],
+            "heading": false,
+            "kind": "scene-clear",
+            "line": 32,
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "raw": "---",
+            "type": "line"
+          }
+        ],
+        "source": "---",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": true,
+            "isSugar": false,
+            "kind": "scene-clear",
+            "layoutInstructions": [
+              {
+                "blocking": false,
+                "line": 32,
+                "params": {},
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "scene.clear"
+              },
+              {
+                "blocking": true,
+                "line": 32,
+                "params": {
+                  "0": 0.5
+                },
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "pause"
+              }
+            ],
+            "line": 32,
+            "params": {},
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 32,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": true,
+          "isSugar": false,
+          "layoutInstructions": [
+            {
+              "blocking": false,
+              "line": 32,
+              "params": {},
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "scene.clear"
+            },
+            {
+              "blocking": true,
+              "line": 32,
+              "params": {
+                "0": 0.5
+              },
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "pause"
+            }
+          ],
+          "line": 32,
+          "params": {},
+          "range": {
+            "end": 3,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 34,
+        "lines": [
+          {
+            "body": [
+              {
+                "children": [
+                  {
+                    "groupId": 2,
+                    "line": 35,
+                    "marks": [],
+                    "range": {
+                      "end": 5,
+                      "start": 1
+                    },
+                    "text": "词组辉光",
+                    "type": "text"
+                  }
+                ],
+                "groupId": 2,
+                "line": 35,
+                "range": {
+                  "end": 6,
+                  "start": 0
+                },
+                "type": "group"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "level": "group",
+                    "name": "bloom",
+                    "params": {},
+                    "prefix": "f",
+                    "raw": "f.bloom:group"
+                  }
+                ],
+                "line": 35,
+                "prefix": "f",
+                "range": {
+                  "end": 22,
+                  "start": 9
+                },
+                "raw": "f.bloom:group",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 35,
+            "range": {
+              "end": 22,
+              "start": 0
+            },
+            "raw": "{词组辉光} @ f.bloom:group",
+            "type": "line"
+          }
+        ],
+        "source": "// group 作用域：词组级辉光\n{词组辉光} @ f.bloom:group",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "braceGroupId": 2,
+            "commands": [],
+            "content": "词组辉光",
+            "effects": [
+              {
+                "blocking": false,
+                "level": "group",
+                "name": "bloom",
+                "params": {}
+              }
+            ],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 35,
+            "params": {},
+            "range": {
+              "end": 5,
+              "start": 1
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 34,
+      "tokens": [
+        {
+          "braceGroupId": 2,
+          "commands": [],
+          "content": "词组辉光",
+          "effects": [
+            {
+              "blocking": false,
+              "level": "group",
+              "name": "bloom",
+              "params": {}
+            }
+          ],
+          "isBraced": true,
+          "layoutInstructions": [],
+          "line": 35,
+          "params": {},
+          "range": {
+            "end": 5,
+            "start": 1
+          },
+          "sugar": []
+        }
+      ]
+    }
+  ],
+  "rawParagraphs": [
+    "// block 作用域：整段辉光（推荐用法，邻域扩散需连续区域）\n// 暖色字 + 深蓝底，辉光扩散到字外区域可见\n[.bloom:block(threshold=0.5, strength=1.5, radius=4)]\n亮部扩散出柔和辉光，整段文字才有意义。",
+    "---",
+    "// 改参强辉光 + 大半径\n[.bloom:block(threshold=0.3, strength=2.5, radius=8)]\n更低的阈值让更多区域发光，大半径让辉光更扩散。",
+    "---",
+    "// 白字黑底（默认场景）：对比看辉光在纯白字上的表现\n[.bloom:block(threshold=0.7, strength=1, radius=4)]\n白色字体上的辉光，注意辉光向外扩散的范围。",
+    "---",
+    "// char 作用域对比：逐字辉光，小纹理几乎无效（验证 §4 spec 卡注意）\n{逐字辉光} @ f.bloom",
+    "---",
+    "// group 作用域：词组级辉光\n{词组辉光} @ f.bloom:group"
+  ]
+}

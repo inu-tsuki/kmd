@@ -1,0 +1,682 @@
+{
+  "diagnostics": [],
+  "metadata": {
+    "designHeight": 1080,
+    "designWidth": 1920,
+    "mode": "stage",
+    "speed": 50,
+    "title": "09 - 舞台指令",
+    "variables": {}
+  },
+  "paragraphs": [
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 8,
+        "lines": [
+          {
+            "body": [],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": true,
+                    "family": "stage",
+                    "name": "cam.move",
+                    "params": {
+                      "0": 200,
+                      "1": 0,
+                      "2": 1
+                    },
+                    "prefix": "bare",
+                    "raw": "cam.move(200, 0, 1s)!"
+                  }
+                ],
+                "line": 9,
+                "prefix": "bare",
+                "range": {
+                  "end": 23,
+                  "start": 2
+                },
+                "raw": "cam.move(200, 0, 1s)!",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "command-only",
+            "line": 9,
+            "range": {
+              "end": 23,
+              "start": 0
+            },
+            "raw": "@ cam.move(200, 0, 1s)!",
+            "type": "line"
+          },
+          {
+            "body": [
+              {
+                "line": 10,
+                "marks": [],
+                "range": {
+                  "end": 11,
+                  "start": 0
+                },
+                "text": "镜头向右移动了200。",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 10,
+            "range": {
+              "end": 11,
+              "start": 0
+            },
+            "raw": "镜头向右移动了200。",
+            "type": "line"
+          }
+        ],
+        "source": "// 镜头平移\n@ cam.move(200, 0, 1s)!\n镜头向右移动了200。",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [
+        {
+          "blocking": true,
+          "level": "block",
+          "name": "cam.move",
+          "params": {
+            "0": 200,
+            "1": 0,
+            "2": 1
+          }
+        }
+      ],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "镜头向右移动了200。",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 10,
+            "params": {},
+            "range": {
+              "end": 11,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": [
+          {
+            "blocking": true,
+            "level": "block",
+            "name": "cam.move",
+            "params": {
+              "0": 200,
+              "1": 0,
+              "2": 1
+            }
+          }
+        ]
+      },
+      "lineOffset": 8,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "镜头向右移动了200。",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 10,
+          "params": {},
+          "range": {
+            "end": 11,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 12,
+        "lines": [
+          {
+            "body": [],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": true,
+                    "family": "stage",
+                    "name": "cam.zoom",
+                    "params": {
+                      "0": 0.8,
+                      "1": 1
+                    },
+                    "prefix": "bare",
+                    "raw": "cam.zoom(0.8, 1s)!"
+                  }
+                ],
+                "line": 13,
+                "prefix": "bare",
+                "range": {
+                  "end": 20,
+                  "start": 2
+                },
+                "raw": "cam.zoom(0.8, 1s)!",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "command-only",
+            "line": 13,
+            "range": {
+              "end": 20,
+              "start": 0
+            },
+            "raw": "@ cam.zoom(0.8, 1s)!",
+            "type": "line"
+          },
+          {
+            "body": [
+              {
+                "line": 14,
+                "marks": [],
+                "range": {
+                  "end": 9,
+                  "start": 0
+                },
+                "text": "镜头缩小到80%。",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 14,
+            "range": {
+              "end": 9,
+              "start": 0
+            },
+            "raw": "镜头缩小到80%。",
+            "type": "line"
+          }
+        ],
+        "source": "// 镜头缩放\n@ cam.zoom(0.8, 1s)!\n镜头缩小到80%。",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [
+        {
+          "blocking": true,
+          "level": "block",
+          "name": "cam.zoom",
+          "params": {
+            "0": 0.8,
+            "1": 1
+          }
+        }
+      ],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "镜头缩小到80%。",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 14,
+            "params": {},
+            "range": {
+              "end": 9,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": [
+          {
+            "blocking": true,
+            "level": "block",
+            "name": "cam.zoom",
+            "params": {
+              "0": 0.8,
+              "1": 1
+            }
+          }
+        ]
+      },
+      "lineOffset": 12,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "镜头缩小到80%。",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 14,
+          "params": {},
+          "range": {
+            "end": 9,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 16,
+        "lines": [
+          {
+            "body": [],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": true,
+                    "family": "stage",
+                    "name": "cam.rotate",
+                    "params": {
+                      "0": 15,
+                      "1": 1
+                    },
+                    "prefix": "bare",
+                    "raw": "cam.rotate(15, 1s)!"
+                  }
+                ],
+                "line": 17,
+                "prefix": "bare",
+                "range": {
+                  "end": 21,
+                  "start": 2
+                },
+                "raw": "cam.rotate(15, 1s)!",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "command-only",
+            "line": 17,
+            "range": {
+              "end": 21,
+              "start": 0
+            },
+            "raw": "@ cam.rotate(15, 1s)!",
+            "type": "line"
+          },
+          {
+            "body": [
+              {
+                "line": 18,
+                "marks": [],
+                "range": {
+                  "end": 9,
+                  "start": 0
+                },
+                "text": "镜头旋转了15度。",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 18,
+            "range": {
+              "end": 9,
+              "start": 0
+            },
+            "raw": "镜头旋转了15度。",
+            "type": "line"
+          }
+        ],
+        "source": "// 镜头旋转\n@ cam.rotate(15, 1s)!\n镜头旋转了15度。",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [
+        {
+          "blocking": true,
+          "level": "block",
+          "name": "cam.rotate",
+          "params": {
+            "0": 15,
+            "1": 1
+          }
+        }
+      ],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "镜头旋转了15度。",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 18,
+            "params": {},
+            "range": {
+              "end": 9,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": [
+          {
+            "blocking": true,
+            "level": "block",
+            "name": "cam.rotate",
+            "params": {
+              "0": 15,
+              "1": 1
+            }
+          }
+        ]
+      },
+      "lineOffset": 16,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "镜头旋转了15度。",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 18,
+          "params": {},
+          "range": {
+            "end": 9,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 20,
+        "lines": [
+          {
+            "body": [],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "stage",
+                    "name": "cam.shake",
+                    "params": {
+                      "0": 10
+                    },
+                    "prefix": "bare",
+                    "raw": "cam.shake(10)"
+                  }
+                ],
+                "line": 21,
+                "prefix": "bare",
+                "range": {
+                  "end": 15,
+                  "start": 2
+                },
+                "raw": "cam.shake(10)",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "command-only",
+            "line": 21,
+            "range": {
+              "end": 15,
+              "start": 0
+            },
+            "raw": "@ cam.shake(10)",
+            "type": "line"
+          },
+          {
+            "body": [
+              {
+                "line": 22,
+                "marks": [],
+                "range": {
+                  "end": 6,
+                  "start": 0
+                },
+                "text": "镜头在震动。",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 22,
+            "range": {
+              "end": 6,
+              "start": 0
+            },
+            "raw": "镜头在震动。",
+            "type": "line"
+          }
+        ],
+        "source": "// 镜头震动\n@ cam.shake(10)\n镜头在震动。",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [
+        {
+          "blocking": false,
+          "level": "block",
+          "name": "cam.shake",
+          "params": {
+            "0": 10
+          }
+        }
+      ],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "镜头在震动。",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 22,
+            "params": {},
+            "range": {
+              "end": 6,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": [
+          {
+            "blocking": false,
+            "level": "block",
+            "name": "cam.shake",
+            "params": {
+              "0": 10
+            }
+          }
+        ]
+      },
+      "lineOffset": 20,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "镜头在震动。",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 22,
+          "params": {},
+          "range": {
+            "end": 6,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 24,
+        "lines": [
+          {
+            "body": [],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": true,
+                    "family": "stage",
+                    "name": "cam.reset",
+                    "params": {
+                      "0": 1.5
+                    },
+                    "prefix": "bare",
+                    "raw": "cam.reset(1.5s)!"
+                  }
+                ],
+                "line": 25,
+                "prefix": "bare",
+                "range": {
+                  "end": 18,
+                  "start": 2
+                },
+                "raw": "cam.reset(1.5s)!",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "command-only",
+            "line": 25,
+            "range": {
+              "end": 18,
+              "start": 0
+            },
+            "raw": "@ cam.reset(1.5s)!",
+            "type": "line"
+          },
+          {
+            "body": [
+              {
+                "line": 26,
+                "marks": [],
+                "range": {
+                  "end": 7,
+                  "start": 0
+                },
+                "text": "一切恢复初始。",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 26,
+            "range": {
+              "end": 7,
+              "start": 0
+            },
+            "raw": "一切恢复初始。",
+            "type": "line"
+          }
+        ],
+        "source": "// 重置\n@ cam.reset(1.5s)!\n一切恢复初始。",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [
+        {
+          "blocking": true,
+          "level": "block",
+          "name": "cam.reset",
+          "params": {
+            "0": 1.5
+          }
+        }
+      ],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "一切恢复初始。",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 26,
+            "params": {},
+            "range": {
+              "end": 7,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": [
+          {
+            "blocking": true,
+            "level": "block",
+            "name": "cam.reset",
+            "params": {
+              "0": 1.5
+            }
+          }
+        ]
+      },
+      "lineOffset": 24,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "一切恢复初始。",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 26,
+          "params": {},
+          "range": {
+            "end": 7,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    }
+  ],
+  "rawParagraphs": [
+    "// 镜头平移\n@ cam.move(200, 0, 1s)!\n镜头向右移动了200。",
+    "// 镜头缩放\n@ cam.zoom(0.8, 1s)!\n镜头缩小到80%。",
+    "// 镜头旋转\n@ cam.rotate(15, 1s)!\n镜头旋转了15度。",
+    "// 镜头震动\n@ cam.shake(10)\n镜头在震动。",
+    "// 重置\n@ cam.reset(1.5s)!\n一切恢复初始。"
+  ]
+}

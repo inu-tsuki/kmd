@@ -1,0 +1,1135 @@
+{
+  "diagnostics": [],
+  "metadata": {
+    "designHeight": 1080,
+    "designWidth": 1920,
+    "mode": "stage",
+    "speed": 50,
+    "title": "fx - sharpen 锐化滤镜",
+    "variables": {}
+  },
+  "paragraphs": [
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 8,
+        "lines": [
+          {
+            "body": [
+              {
+                "children": [
+                  {
+                    "groupId": 1,
+                    "line": 9,
+                    "marks": [],
+                    "range": {
+                      "end": 5,
+                      "start": 1
+                    },
+                    "text": "锐利边缘",
+                    "type": "text"
+                  }
+                ],
+                "groupId": 1,
+                "line": 9,
+                "range": {
+                  "end": 6,
+                  "start": 0
+                },
+                "type": "group"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "name": "sharpen",
+                    "params": {},
+                    "prefix": "f",
+                    "raw": "f.sharpen"
+                  }
+                ],
+                "line": 9,
+                "prefix": "f",
+                "range": {
+                  "end": 18,
+                  "start": 9
+                },
+                "raw": "f.sharpen",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 9,
+            "range": {
+              "end": 18,
+              "start": 0
+            },
+            "raw": "{锐利边缘} @ f.sharpen",
+            "type": "line"
+          }
+        ],
+        "source": "// 逐字（笔画级风格化）：笔画边缘对比增强\n{锐利边缘} @ f.sharpen",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "braceGroupId": 1,
+            "commands": [],
+            "content": "锐利边缘",
+            "effects": [
+              {
+                "blocking": false,
+                "name": "sharpen",
+                "params": {}
+              }
+            ],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 9,
+            "params": {},
+            "range": {
+              "end": 5,
+              "start": 1
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 8,
+      "tokens": [
+        {
+          "braceGroupId": 1,
+          "commands": [],
+          "content": "锐利边缘",
+          "effects": [
+            {
+              "blocking": false,
+              "name": "sharpen",
+              "params": {}
+            }
+          ],
+          "isBraced": true,
+          "layoutInstructions": [],
+          "line": 9,
+          "params": {},
+          "range": {
+            "end": 5,
+            "start": 1
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 11,
+        "lines": [
+          {
+            "body": [],
+            "commandChains": [],
+            "heading": false,
+            "kind": "scene-clear",
+            "line": 11,
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "raw": "---",
+            "type": "line"
+          }
+        ],
+        "source": "---",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": true,
+            "isSugar": false,
+            "kind": "scene-clear",
+            "layoutInstructions": [
+              {
+                "blocking": false,
+                "line": 11,
+                "params": {},
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "scene.clear"
+              },
+              {
+                "blocking": true,
+                "line": 11,
+                "params": {
+                  "0": 0.5
+                },
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "pause"
+              }
+            ],
+            "line": 11,
+            "params": {},
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 11,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": true,
+          "isSugar": false,
+          "layoutInstructions": [
+            {
+              "blocking": false,
+              "line": 11,
+              "params": {},
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "scene.clear"
+            },
+            {
+              "blocking": true,
+              "line": 11,
+              "params": {
+                "0": 0.5
+              },
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "pause"
+            }
+          ],
+          "line": 11,
+          "params": {},
+          "range": {
+            "end": 3,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 13,
+        "lines": [
+          {
+            "body": [
+              {
+                "children": [
+                  {
+                    "groupId": 2,
+                    "line": 14,
+                    "marks": [],
+                    "range": {
+                      "end": 4,
+                      "start": 1
+                    },
+                    "text": "强锐化",
+                    "type": "text"
+                  }
+                ],
+                "groupId": 2,
+                "line": 14,
+                "range": {
+                  "end": 5,
+                  "start": 0
+                },
+                "type": "group"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "name": "sharpen",
+                    "params": {
+                      "amount": 2,
+                      "radius": 2
+                    },
+                    "prefix": "f",
+                    "raw": "f.sharpen(amount=2, radius=2)"
+                  }
+                ],
+                "line": 14,
+                "prefix": "f",
+                "range": {
+                  "end": 37,
+                  "start": 8
+                },
+                "raw": "f.sharpen(amount=2, radius=2)",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 14,
+            "range": {
+              "end": 37,
+              "start": 0
+            },
+            "raw": "{强锐化} @ f.sharpen(amount=2, radius=2)",
+            "type": "line"
+          }
+        ],
+        "source": "// 逐字改参：强锐化 radius=2\n{强锐化} @ f.sharpen(amount=2, radius=2)",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "braceGroupId": 2,
+            "commands": [],
+            "content": "强锐化",
+            "effects": [
+              {
+                "blocking": false,
+                "name": "sharpen",
+                "params": {
+                  "amount": 2,
+                  "radius": 2
+                }
+              }
+            ],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 14,
+            "params": {},
+            "range": {
+              "end": 4,
+              "start": 1
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 13,
+      "tokens": [
+        {
+          "braceGroupId": 2,
+          "commands": [],
+          "content": "强锐化",
+          "effects": [
+            {
+              "blocking": false,
+              "name": "sharpen",
+              "params": {
+                "amount": 2,
+                "radius": 2
+              }
+            }
+          ],
+          "isBraced": true,
+          "layoutInstructions": [],
+          "line": 14,
+          "params": {},
+          "range": {
+            "end": 4,
+            "start": 1
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 16,
+        "lines": [
+          {
+            "body": [],
+            "commandChains": [],
+            "heading": false,
+            "kind": "scene-clear",
+            "line": 16,
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "raw": "---",
+            "type": "line"
+          }
+        ],
+        "source": "---",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": true,
+            "isSugar": false,
+            "kind": "scene-clear",
+            "layoutInstructions": [
+              {
+                "blocking": false,
+                "line": 16,
+                "params": {},
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "scene.clear"
+              },
+              {
+                "blocking": true,
+                "line": 16,
+                "params": {
+                  "0": 0.5
+                },
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "pause"
+              }
+            ],
+            "line": 16,
+            "params": {},
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 16,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": true,
+          "isSugar": false,
+          "layoutInstructions": [
+            {
+              "blocking": false,
+              "line": 16,
+              "params": {},
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "scene.clear"
+            },
+            {
+              "blocking": true,
+              "line": 16,
+              "params": {
+                "0": 0.5
+              },
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "pause"
+            }
+          ],
+          "line": 16,
+          "params": {},
+          "range": {
+            "end": 3,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 18,
+        "lines": [
+          {
+            "body": [
+              {
+                "children": [
+                  {
+                    "groupId": 3,
+                    "line": 19,
+                    "marks": [],
+                    "range": {
+                      "end": 5,
+                      "start": 1
+                    },
+                    "text": "词组锐化",
+                    "type": "text"
+                  }
+                ],
+                "groupId": 3,
+                "line": 19,
+                "range": {
+                  "end": 6,
+                  "start": 0
+                },
+                "type": "group"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "level": "group",
+                    "name": "sharpen",
+                    "params": {},
+                    "prefix": "f",
+                    "raw": "f.sharpen:group"
+                  }
+                ],
+                "line": 19,
+                "prefix": "f",
+                "range": {
+                  "end": 24,
+                  "start": 9
+                },
+                "raw": "f.sharpen:group",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 19,
+            "range": {
+              "end": 24,
+              "start": 0
+            },
+            "raw": "{词组锐化} @ f.sharpen:group",
+            "type": "line"
+          }
+        ],
+        "source": "// group 作用域：整词组共用容器纹理一起锐化\n{词组锐化} @ f.sharpen:group",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "braceGroupId": 3,
+            "commands": [],
+            "content": "词组锐化",
+            "effects": [
+              {
+                "blocking": false,
+                "level": "group",
+                "name": "sharpen",
+                "params": {}
+              }
+            ],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 19,
+            "params": {},
+            "range": {
+              "end": 5,
+              "start": 1
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 18,
+      "tokens": [
+        {
+          "braceGroupId": 3,
+          "commands": [],
+          "content": "词组锐化",
+          "effects": [
+            {
+              "blocking": false,
+              "level": "group",
+              "name": "sharpen",
+              "params": {}
+            }
+          ],
+          "isBraced": true,
+          "layoutInstructions": [],
+          "line": 19,
+          "params": {},
+          "range": {
+            "end": 5,
+            "start": 1
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 21,
+        "lines": [
+          {
+            "body": [],
+            "commandChains": [],
+            "heading": false,
+            "kind": "scene-clear",
+            "line": 21,
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "raw": "---",
+            "type": "line"
+          }
+        ],
+        "source": "---",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": true,
+            "isSugar": false,
+            "kind": "scene-clear",
+            "layoutInstructions": [
+              {
+                "blocking": false,
+                "line": 21,
+                "params": {},
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "scene.clear"
+              },
+              {
+                "blocking": true,
+                "line": 21,
+                "params": {
+                  "0": 0.5
+                },
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "pause"
+              }
+            ],
+            "line": 21,
+            "params": {},
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 21,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": true,
+          "isSugar": false,
+          "layoutInstructions": [
+            {
+              "blocking": false,
+              "line": 21,
+              "params": {},
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "scene.clear"
+            },
+            {
+              "blocking": true,
+              "line": 21,
+              "params": {
+                "0": 0.5
+              },
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "pause"
+            }
+          ],
+          "line": 21,
+          "params": {},
+          "range": {
+            "end": 3,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [
+          {
+            "chain": {
+              "commands": [
+                {
+                  "blocking": false,
+                  "family": "effect",
+                  "level": "block",
+                  "name": "sharpen",
+                  "params": {
+                    "amount": 2,
+                    "radius": 2
+                  },
+                  "prefix": "dot",
+                  "raw": ".sharpen:block(amount=2, radius=2)"
+                }
+              ],
+              "line": 25,
+              "prefix": "dot",
+              "range": {
+                "end": 35,
+                "start": 1
+              },
+              "raw": ".sharpen:block(amount=2, radius=2)",
+              "type": "command-chain"
+            },
+            "line": 25,
+            "range": {
+              "end": 35,
+              "start": 1
+            },
+            "type": "block-option-command"
+          }
+        ],
+        "lineOffset": 23,
+        "lines": [
+          {
+            "body": [
+              {
+                "line": 26,
+                "marks": [],
+                "range": {
+                  "end": 40,
+                  "start": 0
+                },
+                "text": "整段文字一起锐化，连续色调表面下边缘提升更均匀，缩放画布后边缘不应出现透明截断。",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 26,
+            "range": {
+              "end": 40,
+              "start": 0
+            },
+            "raw": "整段文字一起锐化，连续色调表面下边缘提升更均匀，缩放画布后边缘不应出现透明截断。",
+            "type": "line"
+          }
+        ],
+        "source": "// block 作用域（连续色调表面，教科书用法）：整段一起锐化\n// 验证 padding 边缘无透明截断（§5.5）\n[.sharpen:block(amount=2, radius=2)]\n整段文字一起锐化，连续色调表面下边缘提升更均匀，缩放画布后边缘不应出现透明截断。",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [
+        {
+          "blocking": false,
+          "level": "block",
+          "name": "sharpen",
+          "params": {
+            "amount": 2,
+            "radius": 2
+          }
+        }
+      ],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "整段文字一起锐化，连续色调表面下边缘提升更均匀，缩放画布后边缘不应出现透明截断。",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 26,
+            "params": {},
+            "range": {
+              "end": 40,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": [
+          {
+            "blocking": false,
+            "level": "block",
+            "name": "sharpen",
+            "params": {
+              "amount": 2,
+              "radius": 2
+            }
+          }
+        ]
+      },
+      "lineOffset": 23,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "整段文字一起锐化，连续色调表面下边缘提升更均匀，缩放画布后边缘不应出现透明截断。",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 26,
+          "params": {},
+          "range": {
+            "end": 40,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 28,
+        "lines": [
+          {
+            "body": [],
+            "commandChains": [],
+            "heading": false,
+            "kind": "scene-clear",
+            "line": 28,
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "raw": "---",
+            "type": "line"
+          }
+        ],
+        "source": "---",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": true,
+            "isSugar": false,
+            "kind": "scene-clear",
+            "layoutInstructions": [
+              {
+                "blocking": false,
+                "line": 28,
+                "params": {},
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "scene.clear"
+              },
+              {
+                "blocking": true,
+                "line": 28,
+                "params": {
+                  "0": 0.5
+                },
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "pause"
+              }
+            ],
+            "line": 28,
+            "params": {},
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 28,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": true,
+          "isSugar": false,
+          "layoutInstructions": [
+            {
+              "blocking": false,
+              "line": 28,
+              "params": {},
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "scene.clear"
+            },
+            {
+              "blocking": true,
+              "line": 28,
+              "params": {
+                "0": 0.5
+              },
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "pause"
+            }
+          ],
+          "line": 28,
+          "params": {},
+          "range": {
+            "end": 3,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 30,
+        "lines": [
+          {
+            "body": [
+              {
+                "children": [
+                  {
+                    "groupId": 4,
+                    "line": 31,
+                    "marks": [],
+                    "range": {
+                      "end": 6,
+                      "start": 1
+                    },
+                    "text": "锐化加波浪",
+                    "type": "text"
+                  }
+                ],
+                "groupId": 4,
+                "line": 31,
+                "range": {
+                  "end": 7,
+                  "start": 0
+                },
+                "type": "group"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "name": "sharpen",
+                    "params": {},
+                    "prefix": "f",
+                    "raw": "f.sharpen.wave"
+                  },
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "name": "wave",
+                    "params": {},
+                    "prefix": "f",
+                    "raw": "f.sharpen.wave"
+                  }
+                ],
+                "line": 31,
+                "prefix": "f",
+                "range": {
+                  "end": 24,
+                  "start": 10
+                },
+                "raw": "f.sharpen.wave",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 31,
+            "range": {
+              "end": 24,
+              "start": 0
+            },
+            "raw": "{锐化加波浪} @ f.sharpen.wave",
+            "type": "line"
+          }
+        ],
+        "source": "// 与 behavior 组合：滤镜静态挂载，wave 逐字波动\n{锐化加波浪} @ f.sharpen.wave",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "braceGroupId": 4,
+            "commands": [],
+            "content": "锐化加波浪",
+            "effects": [
+              {
+                "blocking": false,
+                "name": "sharpen",
+                "params": {}
+              },
+              {
+                "blocking": false,
+                "name": "wave",
+                "params": {}
+              }
+            ],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 31,
+            "params": {},
+            "range": {
+              "end": 6,
+              "start": 1
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 30,
+      "tokens": [
+        {
+          "braceGroupId": 4,
+          "commands": [],
+          "content": "锐化加波浪",
+          "effects": [
+            {
+              "blocking": false,
+              "name": "sharpen",
+              "params": {}
+            },
+            {
+              "blocking": false,
+              "name": "wave",
+              "params": {}
+            }
+          ],
+          "isBraced": true,
+          "layoutInstructions": [],
+          "line": 31,
+          "params": {},
+          "range": {
+            "end": 6,
+            "start": 1
+          },
+          "sugar": []
+        }
+      ]
+    }
+  ],
+  "rawParagraphs": [
+    "// 逐字（笔画级风格化）：笔画边缘对比增强\n{锐利边缘} @ f.sharpen",
+    "---",
+    "// 逐字改参：强锐化 radius=2\n{强锐化} @ f.sharpen(amount=2, radius=2)",
+    "---",
+    "// group 作用域：整词组共用容器纹理一起锐化\n{词组锐化} @ f.sharpen:group",
+    "---",
+    "// block 作用域（连续色调表面，教科书用法）：整段一起锐化\n// 验证 padding 边缘无透明截断（§5.5）\n[.sharpen:block(amount=2, radius=2)]\n整段文字一起锐化，连续色调表面下边缘提升更均匀，缩放画布后边缘不应出现透明截断。",
+    "---",
+    "// 与 behavior 组合：滤镜静态挂载，wave 逐字波动\n{锐化加波浪} @ f.sharpen.wave"
+  ]
+}

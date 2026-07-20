@@ -1,0 +1,1466 @@
+{
+  "diagnostics": [],
+  "metadata": {
+    "bgColor": "#2a2a3e",
+    "designHeight": 1080,
+    "designWidth": 1920,
+    "fontColor": "#ffcc66",
+    "fontFamily": "Sasara Regular",
+    "mode": "stage",
+    "variables": {}
+  },
+  "paragraphs": [
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 9,
+        "lines": [
+          {
+            "body": [
+              {
+                "children": [
+                  {
+                    "groupId": 1,
+                    "line": 10,
+                    "marks": [],
+                    "range": {
+                      "end": 5,
+                      "start": 1
+                    },
+                    "text": "立体浮雕",
+                    "type": "text"
+                  }
+                ],
+                "groupId": 1,
+                "line": 10,
+                "range": {
+                  "end": 6,
+                  "start": 0
+                },
+                "type": "group"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "name": "emboss",
+                    "params": {},
+                    "prefix": "f",
+                    "raw": "f.emboss.bloom(threshold=0.5, strength=1.5, radius=4).big.big"
+                  },
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "name": "bloom",
+                    "params": {
+                      "radius": 4,
+                      "strength": 1.5,
+                      "threshold": 0.5
+                    },
+                    "prefix": "f",
+                    "raw": "f.emboss.bloom(threshold=0.5, strength=1.5, radius=4).big.big"
+                  },
+                  {
+                    "blocking": false,
+                    "family": "style",
+                    "name": "big",
+                    "params": {},
+                    "prefix": "f",
+                    "raw": "f.emboss.bloom(threshold=0.5, strength=1.5, radius=4).big.big"
+                  },
+                  {
+                    "blocking": false,
+                    "family": "style",
+                    "name": "big",
+                    "params": {},
+                    "prefix": "f",
+                    "raw": "f.emboss.bloom(threshold=0.5, strength=1.5, radius=4).big.big"
+                  }
+                ],
+                "line": 10,
+                "prefix": "f",
+                "range": {
+                  "end": 70,
+                  "start": 9
+                },
+                "raw": "f.emboss.bloom(threshold=0.5, strength=1.5, radius=4).big.big",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 10,
+            "range": {
+              "end": 70,
+              "start": 0
+            },
+            "raw": "{立体浮雕} @ f.emboss.bloom(threshold=0.5, strength=1.5, radius=4).big.big",
+            "type": "line"
+          }
+        ],
+        "source": "// 逐字（笔画级风格化）：alpha 梯度浮雕，width=3 斜坡延伸到笔画内部\n{立体浮雕} @ f.emboss.bloom(threshold=0.5, strength=1.5, radius=4).big.big",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "braceGroupId": 1,
+            "commands": [],
+            "content": "立体浮雕",
+            "effects": [
+              {
+                "blocking": false,
+                "name": "emboss",
+                "params": {}
+              },
+              {
+                "blocking": false,
+                "name": "bloom",
+                "params": {
+                  "radius": 4,
+                  "strength": 1.5,
+                  "threshold": 0.5
+                }
+              },
+              {
+                "blocking": false,
+                "name": "big",
+                "params": {}
+              },
+              {
+                "blocking": false,
+                "name": "big",
+                "params": {}
+              }
+            ],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 10,
+            "params": {},
+            "range": {
+              "end": 5,
+              "start": 1
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 9,
+      "tokens": [
+        {
+          "braceGroupId": 1,
+          "commands": [],
+          "content": "立体浮雕",
+          "effects": [
+            {
+              "blocking": false,
+              "name": "emboss",
+              "params": {}
+            },
+            {
+              "blocking": false,
+              "name": "bloom",
+              "params": {
+                "radius": 4,
+                "strength": 1.5,
+                "threshold": 0.5
+              }
+            },
+            {
+              "blocking": false,
+              "name": "big",
+              "params": {}
+            },
+            {
+              "blocking": false,
+              "name": "big",
+              "params": {}
+            }
+          ],
+          "isBraced": true,
+          "layoutInstructions": [],
+          "line": 10,
+          "params": {},
+          "range": {
+            "end": 5,
+            "start": 1
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 12,
+        "lines": [
+          {
+            "body": [],
+            "commandChains": [],
+            "heading": false,
+            "kind": "scene-clear",
+            "line": 12,
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "raw": "---",
+            "type": "line"
+          }
+        ],
+        "source": "---",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": true,
+            "isSugar": false,
+            "kind": "scene-clear",
+            "layoutInstructions": [
+              {
+                "blocking": false,
+                "line": 12,
+                "params": {},
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "scene.clear"
+              },
+              {
+                "blocking": true,
+                "line": 12,
+                "params": {
+                  "0": 0.5
+                },
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "pause"
+              }
+            ],
+            "line": 12,
+            "params": {},
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 12,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": true,
+          "isSugar": false,
+          "layoutInstructions": [
+            {
+              "blocking": false,
+              "line": 12,
+              "params": {},
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "scene.clear"
+            },
+            {
+              "blocking": true,
+              "line": 12,
+              "params": {
+                "0": 0.5
+              },
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "pause"
+            }
+          ],
+          "line": 12,
+          "params": {},
+          "range": {
+            "end": 3,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 14,
+        "lines": [
+          {
+            "body": [
+              {
+                "children": [
+                  {
+                    "groupId": 2,
+                    "line": 15,
+                    "marks": [],
+                    "range": {
+                      "end": 5,
+                      "start": 1
+                    },
+                    "text": "圆润浮雕",
+                    "type": "text"
+                  }
+                ],
+                "groupId": 2,
+                "line": 15,
+                "range": {
+                  "end": 6,
+                  "start": 0
+                },
+                "type": "group"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "name": "emboss",
+                    "params": {
+                      "mix": 0.3,
+                      "strength": 1.5,
+                      "width": 6
+                    },
+                    "prefix": "f",
+                    "raw": "f.emboss(width=6, strength=1.5, mix=0.3)"
+                  }
+                ],
+                "line": 15,
+                "prefix": "f",
+                "range": {
+                  "end": 49,
+                  "start": 9
+                },
+                "raw": "f.emboss(width=6, strength=1.5, mix=0.3)",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 15,
+            "range": {
+              "end": 49,
+              "start": 0
+            },
+            "raw": "{圆润浮雕} @ f.emboss(width=6, strength=1.5, mix=0.3)",
+            "type": "line"
+          }
+        ],
+        "source": "// 逐字改参：宽斜坡（width=6）让浮雕更圆润，mix=0.3 更柔和\n{圆润浮雕} @ f.emboss(width=6, strength=1.5, mix=0.3)",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "braceGroupId": 2,
+            "commands": [],
+            "content": "圆润浮雕",
+            "effects": [
+              {
+                "blocking": false,
+                "name": "emboss",
+                "params": {
+                  "mix": 0.3,
+                  "strength": 1.5,
+                  "width": 6
+                }
+              }
+            ],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 15,
+            "params": {},
+            "range": {
+              "end": 5,
+              "start": 1
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 14,
+      "tokens": [
+        {
+          "braceGroupId": 2,
+          "commands": [],
+          "content": "圆润浮雕",
+          "effects": [
+            {
+              "blocking": false,
+              "name": "emboss",
+              "params": {
+                "mix": 0.3,
+                "strength": 1.5,
+                "width": 6
+              }
+            }
+          ],
+          "isBraced": true,
+          "layoutInstructions": [],
+          "line": 15,
+          "params": {},
+          "range": {
+            "end": 5,
+            "start": 1
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 17,
+        "lines": [
+          {
+            "body": [],
+            "commandChains": [],
+            "heading": false,
+            "kind": "scene-clear",
+            "line": 17,
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "raw": "---",
+            "type": "line"
+          }
+        ],
+        "source": "---",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": true,
+            "isSugar": false,
+            "kind": "scene-clear",
+            "layoutInstructions": [
+              {
+                "blocking": false,
+                "line": 17,
+                "params": {},
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "scene.clear"
+              },
+              {
+                "blocking": true,
+                "line": 17,
+                "params": {
+                  "0": 0.5
+                },
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "pause"
+              }
+            ],
+            "line": 17,
+            "params": {},
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 17,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": true,
+          "isSugar": false,
+          "layoutInstructions": [
+            {
+              "blocking": false,
+              "line": 17,
+              "params": {},
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "scene.clear"
+            },
+            {
+              "blocking": true,
+              "line": 17,
+              "params": {
+                "0": 0.5
+              },
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "pause"
+            }
+          ],
+          "line": 17,
+          "params": {},
+          "range": {
+            "end": 3,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 19,
+        "lines": [
+          {
+            "body": [
+              {
+                "children": [
+                  {
+                    "groupId": 3,
+                    "line": 21,
+                    "marks": [],
+                    "range": {
+                      "end": 6,
+                      "start": 1
+                    },
+                    "text": "模糊浮雕链",
+                    "type": "text"
+                  }
+                ],
+                "groupId": 3,
+                "line": 21,
+                "range": {
+                  "end": 7,
+                  "start": 0
+                },
+                "type": "group"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "name": "blur",
+                    "params": {},
+                    "prefix": "f",
+                    "raw": "f.blur.emboss"
+                  },
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "name": "emboss",
+                    "params": {},
+                    "prefix": "f",
+                    "raw": "f.blur.emboss"
+                  }
+                ],
+                "line": 21,
+                "prefix": "f",
+                "range": {
+                  "end": 23,
+                  "start": 10
+                },
+                "raw": "f.blur.emboss",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 21,
+            "range": {
+              "end": 23,
+              "start": 0
+            },
+            "raw": "{模糊浮雕链} @ f.blur.emboss",
+            "type": "line"
+          }
+        ],
+        "source": "// 链式组合：blur 先软化 alpha 边缘 → emboss 在更宽斜坡上计算梯度\n// 产生更饱满的 3D 受光面（方法 A：滤镜链生成 heightmap）\n{模糊浮雕链} @ f.blur.emboss",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "braceGroupId": 3,
+            "commands": [],
+            "content": "模糊浮雕链",
+            "effects": [
+              {
+                "blocking": false,
+                "name": "blur",
+                "params": {}
+              },
+              {
+                "blocking": false,
+                "name": "emboss",
+                "params": {}
+              }
+            ],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 21,
+            "params": {},
+            "range": {
+              "end": 6,
+              "start": 1
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 19,
+      "tokens": [
+        {
+          "braceGroupId": 3,
+          "commands": [],
+          "content": "模糊浮雕链",
+          "effects": [
+            {
+              "blocking": false,
+              "name": "blur",
+              "params": {}
+            },
+            {
+              "blocking": false,
+              "name": "emboss",
+              "params": {}
+            }
+          ],
+          "isBraced": true,
+          "layoutInstructions": [],
+          "line": 21,
+          "params": {},
+          "range": {
+            "end": 6,
+            "start": 1
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 23,
+        "lines": [
+          {
+            "body": [],
+            "commandChains": [],
+            "heading": false,
+            "kind": "scene-clear",
+            "line": 23,
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "raw": "---",
+            "type": "line"
+          }
+        ],
+        "source": "---",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": true,
+            "isSugar": false,
+            "kind": "scene-clear",
+            "layoutInstructions": [
+              {
+                "blocking": false,
+                "line": 23,
+                "params": {},
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "scene.clear"
+              },
+              {
+                "blocking": true,
+                "line": 23,
+                "params": {
+                  "0": 0.5
+                },
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "pause"
+              }
+            ],
+            "line": 23,
+            "params": {},
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 23,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": true,
+          "isSugar": false,
+          "layoutInstructions": [
+            {
+              "blocking": false,
+              "line": 23,
+              "params": {},
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "scene.clear"
+            },
+            {
+              "blocking": true,
+              "line": 23,
+              "params": {
+                "0": 0.5
+              },
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "pause"
+            }
+          ],
+          "line": 23,
+          "params": {},
+          "range": {
+            "end": 3,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [
+          {
+            "chain": {
+              "commands": [
+                {
+                  "blocking": false,
+                  "family": "effect",
+                  "level": "block",
+                  "name": "emboss",
+                  "params": {
+                    "strength": 1.5,
+                    "width": 4
+                  },
+                  "prefix": "dot",
+                  "raw": ".emboss:block(width=4, strength=1.5)"
+                }
+              ],
+              "line": 26,
+              "prefix": "dot",
+              "range": {
+                "end": 37,
+                "start": 1
+              },
+              "raw": ".emboss:block(width=4, strength=1.5)",
+              "type": "command-chain"
+            },
+            "line": 26,
+            "range": {
+              "end": 37,
+              "start": 1
+            },
+            "type": "block-option-command"
+          }
+        ],
+        "lineOffset": 25,
+        "lines": [
+          {
+            "body": [
+              {
+                "line": 27,
+                "marks": [],
+                "range": {
+                  "end": 25,
+                  "start": 0
+                },
+                "text": "整段文字呈现浮雕效果，连续色调表面下浮雕感更连贯。",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 27,
+            "range": {
+              "end": 25,
+              "start": 0
+            },
+            "raw": "整段文字呈现浮雕效果，连续色调表面下浮雕感更连贯。",
+            "type": "line"
+          }
+        ],
+        "source": "// block 作用域（连续色调表面，教科书用法）：整段一起浮雕\n[.emboss:block(width=4, strength=1.5)]\n整段文字呈现浮雕效果，连续色调表面下浮雕感更连贯。",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [
+        {
+          "blocking": false,
+          "level": "block",
+          "name": "emboss",
+          "params": {
+            "strength": 1.5,
+            "width": 4
+          }
+        }
+      ],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "整段文字呈现浮雕效果，连续色调表面下浮雕感更连贯。",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 27,
+            "params": {},
+            "range": {
+              "end": 25,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": [
+          {
+            "blocking": false,
+            "level": "block",
+            "name": "emboss",
+            "params": {
+              "strength": 1.5,
+              "width": 4
+            }
+          }
+        ]
+      },
+      "lineOffset": 25,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "整段文字呈现浮雕效果，连续色调表面下浮雕感更连贯。",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 27,
+          "params": {},
+          "range": {
+            "end": 25,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 29,
+        "lines": [
+          {
+            "body": [],
+            "commandChains": [],
+            "heading": false,
+            "kind": "scene-clear",
+            "line": 29,
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "raw": "---",
+            "type": "line"
+          }
+        ],
+        "source": "---",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": true,
+            "isSugar": false,
+            "kind": "scene-clear",
+            "layoutInstructions": [
+              {
+                "blocking": false,
+                "line": 29,
+                "params": {},
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "scene.clear"
+              },
+              {
+                "blocking": true,
+                "line": 29,
+                "params": {
+                  "0": 0.5
+                },
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "pause"
+              }
+            ],
+            "line": 29,
+            "params": {},
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 29,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": true,
+          "isSugar": false,
+          "layoutInstructions": [
+            {
+              "blocking": false,
+              "line": 29,
+              "params": {},
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "scene.clear"
+            },
+            {
+              "blocking": true,
+              "line": 29,
+              "params": {
+                "0": 0.5
+              },
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "pause"
+            }
+          ],
+          "line": 29,
+          "params": {},
+          "range": {
+            "end": 3,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [
+          {
+            "chain": {
+              "commands": [
+                {
+                  "blocking": false,
+                  "family": "effect",
+                  "level": "block",
+                  "name": "emboss",
+                  "params": {
+                    "mix": 1,
+                    "width": 3
+                  },
+                  "prefix": "dot",
+                  "raw": ".emboss:block(width=3, mix=1)"
+                }
+              ],
+              "line": 32,
+              "prefix": "dot",
+              "range": {
+                "end": 30,
+                "start": 1
+              },
+              "raw": ".emboss:block(width=3, mix=1)",
+              "type": "command-chain"
+            },
+            "line": 32,
+            "range": {
+              "end": 30,
+              "start": 1
+            },
+            "type": "block-option-command"
+          }
+        ],
+        "lineOffset": 31,
+        "lines": [
+          {
+            "body": [
+              {
+                "line": 33,
+                "marks": [],
+                "range": {
+                  "end": 34,
+                  "start": 0
+                },
+                "text": "mix=1 时原色完全丢弃，只剩浮雕灰阶——对比看叠加与替换的区别。",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 33,
+            "range": {
+              "end": 34,
+              "start": 0
+            },
+            "raw": "mix=1 时原色完全丢弃，只剩浮雕灰阶——对比看叠加与替换的区别。",
+            "type": "line"
+          }
+        ],
+        "source": "// block 纯浮雕（mix=1）：整体替换为灰阶浮雕，验证\"替换 vs 叠加\"差异\n[.emboss:block(width=3, mix=1)]\nmix=1 时原色完全丢弃，只剩浮雕灰阶——对比看叠加与替换的区别。",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [
+        {
+          "blocking": false,
+          "level": "block",
+          "name": "emboss",
+          "params": {
+            "mix": 1,
+            "width": 3
+          }
+        }
+      ],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "mix=1 时原色完全丢弃，只剩浮雕灰阶——对比看叠加与替换的区别。",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 33,
+            "params": {},
+            "range": {
+              "end": 34,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": [
+          {
+            "blocking": false,
+            "level": "block",
+            "name": "emboss",
+            "params": {
+              "mix": 1,
+              "width": 3
+            }
+          }
+        ]
+      },
+      "lineOffset": 31,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "mix=1 时原色完全丢弃，只剩浮雕灰阶——对比看叠加与替换的区别。",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 33,
+          "params": {},
+          "range": {
+            "end": 34,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 35,
+        "lines": [
+          {
+            "body": [],
+            "commandChains": [],
+            "heading": false,
+            "kind": "scene-clear",
+            "line": 35,
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "raw": "---",
+            "type": "line"
+          }
+        ],
+        "source": "---",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": true,
+            "isSugar": false,
+            "kind": "scene-clear",
+            "layoutInstructions": [
+              {
+                "blocking": false,
+                "line": 35,
+                "params": {},
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "scene.clear"
+              },
+              {
+                "blocking": true,
+                "line": 35,
+                "params": {
+                  "0": 0.5
+                },
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "pause"
+              }
+            ],
+            "line": 35,
+            "params": {},
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 35,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": true,
+          "isSugar": false,
+          "layoutInstructions": [
+            {
+              "blocking": false,
+              "line": 35,
+              "params": {},
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "scene.clear"
+            },
+            {
+              "blocking": true,
+              "line": 35,
+              "params": {
+                "0": 0.5
+              },
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "pause"
+            }
+          ],
+          "line": 35,
+          "params": {},
+          "range": {
+            "end": 3,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 37,
+        "lines": [
+          {
+            "body": [
+              {
+                "children": [
+                  {
+                    "groupId": 4,
+                    "line": 38,
+                    "marks": [],
+                    "range": {
+                      "end": 6,
+                      "start": 1
+                    },
+                    "text": "浮雕加波浪",
+                    "type": "text"
+                  }
+                ],
+                "groupId": 4,
+                "line": 38,
+                "range": {
+                  "end": 7,
+                  "start": 0
+                },
+                "type": "group"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "name": "emboss",
+                    "params": {},
+                    "prefix": "f",
+                    "raw": "f.emboss.wave"
+                  },
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "name": "wave",
+                    "params": {},
+                    "prefix": "f",
+                    "raw": "f.emboss.wave"
+                  }
+                ],
+                "line": 38,
+                "prefix": "f",
+                "range": {
+                  "end": 23,
+                  "start": 10
+                },
+                "raw": "f.emboss.wave",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 38,
+            "range": {
+              "end": 23,
+              "start": 0
+            },
+            "raw": "{浮雕加波浪} @ f.emboss.wave",
+            "type": "line"
+          }
+        ],
+        "source": "// 与 behavior 组合：滤镜静态挂载，wave 逐字波动\n{浮雕加波浪} @ f.emboss.wave",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "braceGroupId": 4,
+            "commands": [],
+            "content": "浮雕加波浪",
+            "effects": [
+              {
+                "blocking": false,
+                "name": "emboss",
+                "params": {}
+              },
+              {
+                "blocking": false,
+                "name": "wave",
+                "params": {}
+              }
+            ],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 38,
+            "params": {},
+            "range": {
+              "end": 6,
+              "start": 1
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 37,
+      "tokens": [
+        {
+          "braceGroupId": 4,
+          "commands": [],
+          "content": "浮雕加波浪",
+          "effects": [
+            {
+              "blocking": false,
+              "name": "emboss",
+              "params": {}
+            },
+            {
+              "blocking": false,
+              "name": "wave",
+              "params": {}
+            }
+          ],
+          "isBraced": true,
+          "layoutInstructions": [],
+          "line": 38,
+          "params": {},
+          "range": {
+            "end": 6,
+            "start": 1
+          },
+          "sugar": []
+        }
+      ]
+    }
+  ],
+  "rawParagraphs": [
+    "// 逐字（笔画级风格化）：alpha 梯度浮雕，width=3 斜坡延伸到笔画内部\n{立体浮雕} @ f.emboss.bloom(threshold=0.5, strength=1.5, radius=4).big.big",
+    "---",
+    "// 逐字改参：宽斜坡（width=6）让浮雕更圆润，mix=0.3 更柔和\n{圆润浮雕} @ f.emboss(width=6, strength=1.5, mix=0.3)",
+    "---",
+    "// 链式组合：blur 先软化 alpha 边缘 → emboss 在更宽斜坡上计算梯度\n// 产生更饱满的 3D 受光面（方法 A：滤镜链生成 heightmap）\n{模糊浮雕链} @ f.blur.emboss",
+    "---",
+    "// block 作用域（连续色调表面，教科书用法）：整段一起浮雕\n[.emboss:block(width=4, strength=1.5)]\n整段文字呈现浮雕效果，连续色调表面下浮雕感更连贯。",
+    "---",
+    "// block 纯浮雕（mix=1）：整体替换为灰阶浮雕，验证\"替换 vs 叠加\"差异\n[.emboss:block(width=3, mix=1)]\nmix=1 时原色完全丢弃，只剩浮雕灰阶——对比看叠加与替换的区别。",
+    "---",
+    "// 与 behavior 组合：滤镜静态挂载，wave 逐字波动\n{浮雕加波浪} @ f.emboss.wave"
+  ]
+}

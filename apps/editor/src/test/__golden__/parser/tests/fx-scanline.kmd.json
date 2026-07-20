@@ -1,0 +1,1128 @@
+{
+  "diagnostics": [],
+  "metadata": {
+    "bgColor": "#000000",
+    "designHeight": 1080,
+    "designWidth": 1920,
+    "fontColor": "#00ff41",
+    "mode": "stage",
+    "speed": 50,
+    "title": "fx - scanline 扫描线滤镜",
+    "variables": {}
+  },
+  "paragraphs": [
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 10,
+        "lines": [
+          {
+            "body": [
+              {
+                "children": [
+                  {
+                    "groupId": 1,
+                    "line": 11,
+                    "marks": [],
+                    "range": {
+                      "end": 4,
+                      "start": 1
+                    },
+                    "text": "扫描线",
+                    "type": "text"
+                  }
+                ],
+                "groupId": 1,
+                "line": 11,
+                "range": {
+                  "end": 5,
+                  "start": 0
+                },
+                "type": "group"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "name": "scanline",
+                    "params": {},
+                    "prefix": "f",
+                    "raw": "f.scanline"
+                  }
+                ],
+                "line": 11,
+                "prefix": "f",
+                "range": {
+                  "end": 18,
+                  "start": 8
+                },
+                "raw": "f.scanline",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 11,
+            "range": {
+              "end": 18,
+              "start": 0
+            },
+            "raw": "{扫描线} @ f.scanline",
+            "type": "line"
+          }
+        ],
+        "source": "// 逐字 CRT 扫描线\n{扫描线} @ f.scanline",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "braceGroupId": 1,
+            "commands": [],
+            "content": "扫描线",
+            "effects": [
+              {
+                "blocking": false,
+                "name": "scanline",
+                "params": {}
+              }
+            ],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 11,
+            "params": {},
+            "range": {
+              "end": 4,
+              "start": 1
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 10,
+      "tokens": [
+        {
+          "braceGroupId": 1,
+          "commands": [],
+          "content": "扫描线",
+          "effects": [
+            {
+              "blocking": false,
+              "name": "scanline",
+              "params": {}
+            }
+          ],
+          "isBraced": true,
+          "layoutInstructions": [],
+          "line": 11,
+          "params": {},
+          "range": {
+            "end": 4,
+            "start": 1
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 13,
+        "lines": [
+          {
+            "body": [],
+            "commandChains": [],
+            "heading": false,
+            "kind": "scene-clear",
+            "line": 13,
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "raw": "---",
+            "type": "line"
+          }
+        ],
+        "source": "---",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": true,
+            "isSugar": false,
+            "kind": "scene-clear",
+            "layoutInstructions": [
+              {
+                "blocking": false,
+                "line": 13,
+                "params": {},
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "scene.clear"
+              },
+              {
+                "blocking": true,
+                "line": 13,
+                "params": {
+                  "0": 0.5
+                },
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "pause"
+              }
+            ],
+            "line": 13,
+            "params": {},
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 13,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": true,
+          "isSugar": false,
+          "layoutInstructions": [
+            {
+              "blocking": false,
+              "line": 13,
+              "params": {},
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "scene.clear"
+            },
+            {
+              "blocking": true,
+              "line": 13,
+              "params": {
+                "0": 0.5
+              },
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "pause"
+            }
+          ],
+          "line": 13,
+          "params": {},
+          "range": {
+            "end": 3,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [
+          {
+            "chain": {
+              "commands": [
+                {
+                  "blocking": false,
+                  "family": "effect",
+                  "level": "block",
+                  "name": "scanline",
+                  "params": {},
+                  "prefix": "dot",
+                  "raw": ".scanline:block"
+                }
+              ],
+              "line": 16,
+              "prefix": "dot",
+              "range": {
+                "end": 16,
+                "start": 1
+              },
+              "raw": ".scanline:block",
+              "type": "command-chain"
+            },
+            "line": 16,
+            "range": {
+              "end": 16,
+              "start": 1
+            },
+            "type": "block-option-command"
+          }
+        ],
+        "lineOffset": 15,
+        "lines": [
+          {
+            "body": [
+              {
+                "line": 17,
+                "marks": [],
+                "range": {
+                  "end": 27,
+                  "start": 0
+                },
+                "text": "整段扫描线效果，模拟老式 CRT 显示器的水平扫描线。",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 17,
+            "range": {
+              "end": 27,
+              "start": 0
+            },
+            "raw": "整段扫描线效果，模拟老式 CRT 显示器的水平扫描线。",
+            "type": "line"
+          }
+        ],
+        "source": "// :block 整段扫描线——推荐用法（CRT 屏幕效果）\n[.scanline:block]\n整段扫描线效果，模拟老式 CRT 显示器的水平扫描线。",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [
+        {
+          "blocking": false,
+          "level": "block",
+          "name": "scanline",
+          "params": {}
+        }
+      ],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "整段扫描线效果，模拟老式 CRT 显示器的水平扫描线。",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 17,
+            "params": {},
+            "range": {
+              "end": 27,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": [
+          {
+            "blocking": false,
+            "level": "block",
+            "name": "scanline",
+            "params": {}
+          }
+        ]
+      },
+      "lineOffset": 15,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "整段扫描线效果，模拟老式 CRT 显示器的水平扫描线。",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 17,
+          "params": {},
+          "range": {
+            "end": 27,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 19,
+        "lines": [
+          {
+            "body": [],
+            "commandChains": [],
+            "heading": false,
+            "kind": "scene-clear",
+            "line": 19,
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "raw": "---",
+            "type": "line"
+          }
+        ],
+        "source": "---",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": true,
+            "isSugar": false,
+            "kind": "scene-clear",
+            "layoutInstructions": [
+              {
+                "blocking": false,
+                "line": 19,
+                "params": {},
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "scene.clear"
+              },
+              {
+                "blocking": true,
+                "line": 19,
+                "params": {
+                  "0": 0.5
+                },
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "pause"
+              }
+            ],
+            "line": 19,
+            "params": {},
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 19,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": true,
+          "isSugar": false,
+          "layoutInstructions": [
+            {
+              "blocking": false,
+              "line": 19,
+              "params": {},
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "scene.clear"
+            },
+            {
+              "blocking": true,
+              "line": 19,
+              "params": {
+                "0": 0.5
+              },
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "pause"
+            }
+          ],
+          "line": 19,
+          "params": {},
+          "range": {
+            "end": 3,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [
+          {
+            "chain": {
+              "commands": [
+                {
+                  "blocking": false,
+                  "family": "effect",
+                  "level": "block",
+                  "name": "scanline",
+                  "params": {
+                    "density": 5
+                  },
+                  "prefix": "dot",
+                  "raw": ".scanline:block(density=5)"
+                }
+              ],
+              "line": 22,
+              "prefix": "dot",
+              "range": {
+                "end": 27,
+                "start": 1
+              },
+              "raw": ".scanline:block(density=5)",
+              "type": "command-chain"
+            },
+            "line": 22,
+            "range": {
+              "end": 27,
+              "start": 1
+            },
+            "type": "block-option-command"
+          }
+        ],
+        "lineOffset": 21,
+        "lines": [
+          {
+            "body": [
+              {
+                "line": 23,
+                "marks": [],
+                "range": {
+                  "end": 13,
+                  "start": 0
+                },
+                "text": "高密度扫描线，线条更密集。",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 23,
+            "range": {
+              "end": 13,
+              "start": 0
+            },
+            "raw": "高密度扫描线，线条更密集。",
+            "type": "line"
+          }
+        ],
+        "source": "// 改参：高密度扫描线\n[.scanline:block(density=5)]\n高密度扫描线，线条更密集。",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [
+        {
+          "blocking": false,
+          "level": "block",
+          "name": "scanline",
+          "params": {
+            "density": 5
+          }
+        }
+      ],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "高密度扫描线，线条更密集。",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 23,
+            "params": {},
+            "range": {
+              "end": 13,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": [
+          {
+            "blocking": false,
+            "level": "block",
+            "name": "scanline",
+            "params": {
+              "density": 5
+            }
+          }
+        ]
+      },
+      "lineOffset": 21,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "高密度扫描线，线条更密集。",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 23,
+          "params": {},
+          "range": {
+            "end": 13,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 25,
+        "lines": [
+          {
+            "body": [],
+            "commandChains": [],
+            "heading": false,
+            "kind": "scene-clear",
+            "line": 25,
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "raw": "---",
+            "type": "line"
+          }
+        ],
+        "source": "---",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": true,
+            "isSugar": false,
+            "kind": "scene-clear",
+            "layoutInstructions": [
+              {
+                "blocking": false,
+                "line": 25,
+                "params": {},
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "scene.clear"
+              },
+              {
+                "blocking": true,
+                "line": 25,
+                "params": {
+                  "0": 0.5
+                },
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "pause"
+              }
+            ],
+            "line": 25,
+            "params": {},
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 25,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": true,
+          "isSugar": false,
+          "layoutInstructions": [
+            {
+              "blocking": false,
+              "line": 25,
+              "params": {},
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "scene.clear"
+            },
+            {
+              "blocking": true,
+              "line": 25,
+              "params": {
+                "0": 0.5
+              },
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "pause"
+            }
+          ],
+          "line": 25,
+          "params": {},
+          "range": {
+            "end": 3,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [
+          {
+            "chain": {
+              "commands": [
+                {
+                  "blocking": false,
+                  "family": "effect",
+                  "level": "block",
+                  "name": "scanline",
+                  "params": {
+                    "curvature": 0.15,
+                    "density": 3,
+                    "flicker": 0.1
+                  },
+                  "prefix": "dot",
+                  "raw": ".scanline:block(density=3, curvature=0.15, flicker=0.1)"
+                }
+              ],
+              "line": 28,
+              "prefix": "dot",
+              "range": {
+                "end": 56,
+                "start": 1
+              },
+              "raw": ".scanline:block(density=3, curvature=0.15, flicker=0.1)",
+              "type": "command-chain"
+            },
+            "line": 28,
+            "range": {
+              "end": 56,
+              "start": 1
+            },
+            "type": "block-option-command"
+          }
+        ],
+        "lineOffset": 27,
+        "lines": [
+          {
+            "body": [
+              {
+                "line": 29,
+                "marks": [],
+                "range": {
+                  "end": 18,
+                  "start": 0
+                },
+                "text": "桶形畸变 + 闪烁的 CRT 效果。",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 29,
+            "range": {
+              "end": 18,
+              "start": 0
+            },
+            "raw": "桶形畸变 + 闪烁的 CRT 效果。",
+            "type": "line"
+          }
+        ],
+        "source": "// 改参：桶形畸变 + 闪烁（复古 CRT）\n[.scanline:block(density=3, curvature=0.15, flicker=0.1)]\n桶形畸变 + 闪烁的 CRT 效果。",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [
+        {
+          "blocking": false,
+          "level": "block",
+          "name": "scanline",
+          "params": {
+            "curvature": 0.15,
+            "density": 3,
+            "flicker": 0.1
+          }
+        }
+      ],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "桶形畸变 + 闪烁的 CRT 效果。",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 29,
+            "params": {},
+            "range": {
+              "end": 18,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": [
+          {
+            "blocking": false,
+            "level": "block",
+            "name": "scanline",
+            "params": {
+              "curvature": 0.15,
+              "density": 3,
+              "flicker": 0.1
+            }
+          }
+        ]
+      },
+      "lineOffset": 27,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "桶形畸变 + 闪烁的 CRT 效果。",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 29,
+          "params": {},
+          "range": {
+            "end": 18,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 31,
+        "lines": [
+          {
+            "body": [],
+            "commandChains": [],
+            "heading": false,
+            "kind": "scene-clear",
+            "line": 31,
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "raw": "---",
+            "type": "line"
+          }
+        ],
+        "source": "---",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": true,
+            "isSugar": false,
+            "kind": "scene-clear",
+            "layoutInstructions": [
+              {
+                "blocking": false,
+                "line": 31,
+                "params": {},
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "scene.clear"
+              },
+              {
+                "blocking": true,
+                "line": 31,
+                "params": {
+                  "0": 0.5
+                },
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "pause"
+              }
+            ],
+            "line": 31,
+            "params": {},
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 31,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": true,
+          "isSugar": false,
+          "layoutInstructions": [
+            {
+              "blocking": false,
+              "line": 31,
+              "params": {},
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "scene.clear"
+            },
+            {
+              "blocking": true,
+              "line": 31,
+              "params": {
+                "0": 0.5
+              },
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "pause"
+            }
+          ],
+          "line": 31,
+          "params": {},
+          "range": {
+            "end": 3,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 33,
+        "lines": [
+          {
+            "body": [
+              {
+                "children": [
+                  {
+                    "groupId": 2,
+                    "line": 34,
+                    "marks": [],
+                    "range": {
+                      "end": 7,
+                      "start": 1
+                    },
+                    "text": "扫描线加波浪",
+                    "type": "text"
+                  }
+                ],
+                "groupId": 2,
+                "line": 34,
+                "range": {
+                  "end": 8,
+                  "start": 0
+                },
+                "type": "group"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "name": "scanline",
+                    "params": {},
+                    "prefix": "f",
+                    "raw": "f.scanline.wave"
+                  },
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "name": "wave",
+                    "params": {},
+                    "prefix": "f",
+                    "raw": "f.scanline.wave"
+                  }
+                ],
+                "line": 34,
+                "prefix": "f",
+                "range": {
+                  "end": 26,
+                  "start": 11
+                },
+                "raw": "f.scanline.wave",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 34,
+            "range": {
+              "end": 26,
+              "start": 0
+            },
+            "raw": "{扫描线加波浪} @ f.scanline.wave",
+            "type": "line"
+          }
+        ],
+        "source": "// 与 behavior 组合：扫描线 + 波浪\n{扫描线加波浪} @ f.scanline.wave",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "braceGroupId": 2,
+            "commands": [],
+            "content": "扫描线加波浪",
+            "effects": [
+              {
+                "blocking": false,
+                "name": "scanline",
+                "params": {}
+              },
+              {
+                "blocking": false,
+                "name": "wave",
+                "params": {}
+              }
+            ],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 34,
+            "params": {},
+            "range": {
+              "end": 7,
+              "start": 1
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 33,
+      "tokens": [
+        {
+          "braceGroupId": 2,
+          "commands": [],
+          "content": "扫描线加波浪",
+          "effects": [
+            {
+              "blocking": false,
+              "name": "scanline",
+              "params": {}
+            },
+            {
+              "blocking": false,
+              "name": "wave",
+              "params": {}
+            }
+          ],
+          "isBraced": true,
+          "layoutInstructions": [],
+          "line": 34,
+          "params": {},
+          "range": {
+            "end": 7,
+            "start": 1
+          },
+          "sugar": []
+        }
+      ]
+    }
+  ],
+  "rawParagraphs": [
+    "// 逐字 CRT 扫描线\n{扫描线} @ f.scanline",
+    "---",
+    "// :block 整段扫描线——推荐用法（CRT 屏幕效果）\n[.scanline:block]\n整段扫描线效果，模拟老式 CRT 显示器的水平扫描线。",
+    "---",
+    "// 改参：高密度扫描线\n[.scanline:block(density=5)]\n高密度扫描线，线条更密集。",
+    "---",
+    "// 改参：桶形畸变 + 闪烁（复古 CRT）\n[.scanline:block(density=3, curvature=0.15, flicker=0.1)]\n桶形畸变 + 闪烁的 CRT 效果。",
+    "---",
+    "// 与 behavior 组合：扫描线 + 波浪\n{扫描线加波浪} @ f.scanline.wave"
+  ]
+}

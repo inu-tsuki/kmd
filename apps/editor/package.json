@@ -8,10 +8,13 @@
     "dev": "vite",
     "build": "vue-tsc -b && vite build",
     "preview": "vite preview",
-    "test:parser": "node --import tsx src/final-parser-test.ts",
-    "test:shaders": "node --import tsx src/final-shader-test.ts",
-    "test:invariants": "node --import tsx src/test-invariants.ts",
-    "test:playback": "node --import tsx src/final-playback-test.ts"
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:golden:write": "node --import tsx scripts/generate-parser-goldens.ts",
+    "test:parser": "vitest run src/test/parser-integration.test.ts src/test/parser-golden.test.ts",
+    "test:shaders": "vitest run src/test/shader-gate.test.ts",
+    "test:invariants": "vitest run src/test/invariants-guard.test.ts",
+    "test:playback": "vitest run src/test/playback-regression.test.ts"
   },
   "dependencies": {
     "@kmd/language": "workspace:*",
@@ -33,6 +36,7 @@
     "tsx": "^4.21.0",
     "typescript": "~5.9.3",
     "vite": "^7.2.4",
+    "vitest": "^2.1.8",
     "vue-tsc": "^3.1.4"
   }
 }

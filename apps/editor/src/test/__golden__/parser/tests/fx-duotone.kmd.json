@@ -1,0 +1,1140 @@
+{
+  "diagnostics": [],
+  "metadata": {
+    "bgColor": "#1a1a2e",
+    "designHeight": 1080,
+    "designWidth": 1920,
+    "fontColor": "#e94560",
+    "mode": "stage",
+    "speed": 50,
+    "title": "fx - duotone 双色滤镜",
+    "variables": {}
+  },
+  "paragraphs": [
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 10,
+        "lines": [
+          {
+            "body": [
+              {
+                "children": [
+                  {
+                    "groupId": 1,
+                    "line": 11,
+                    "marks": [],
+                    "range": {
+                      "end": 5,
+                      "start": 1
+                    },
+                    "text": "夜色霓虹",
+                    "type": "text"
+                  }
+                ],
+                "groupId": 1,
+                "line": 11,
+                "range": {
+                  "end": 6,
+                  "start": 0
+                },
+                "type": "group"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "name": "duotone",
+                    "params": {},
+                    "prefix": "f",
+                    "raw": "f.duotone"
+                  }
+                ],
+                "line": 11,
+                "prefix": "f",
+                "range": {
+                  "end": 18,
+                  "start": 9
+                },
+                "raw": "f.duotone",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 11,
+            "range": {
+              "end": 18,
+              "start": 0
+            },
+            "raw": "{夜色霓虹} @ f.duotone",
+            "type": "line"
+          }
+        ],
+        "source": "// 逐字（笔画级风格化）：珊瑚红字 → duotone 映射 shadow→highlight\n{夜色霓虹} @ f.duotone",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "braceGroupId": 1,
+            "commands": [],
+            "content": "夜色霓虹",
+            "effects": [
+              {
+                "blocking": false,
+                "name": "duotone",
+                "params": {}
+              }
+            ],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 11,
+            "params": {},
+            "range": {
+              "end": 5,
+              "start": 1
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 10,
+      "tokens": [
+        {
+          "braceGroupId": 1,
+          "commands": [],
+          "content": "夜色霓虹",
+          "effects": [
+            {
+              "blocking": false,
+              "name": "duotone",
+              "params": {}
+            }
+          ],
+          "isBraced": true,
+          "layoutInstructions": [],
+          "line": 11,
+          "params": {},
+          "range": {
+            "end": 5,
+            "start": 1
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 13,
+        "lines": [
+          {
+            "body": [],
+            "commandChains": [],
+            "heading": false,
+            "kind": "scene-clear",
+            "line": 13,
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "raw": "---",
+            "type": "line"
+          }
+        ],
+        "source": "---",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": true,
+            "isSugar": false,
+            "kind": "scene-clear",
+            "layoutInstructions": [
+              {
+                "blocking": false,
+                "line": 13,
+                "params": {},
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "scene.clear"
+              },
+              {
+                "blocking": true,
+                "line": 13,
+                "params": {
+                  "0": 0.5
+                },
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "pause"
+              }
+            ],
+            "line": 13,
+            "params": {},
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 13,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": true,
+          "isSugar": false,
+          "layoutInstructions": [
+            {
+              "blocking": false,
+              "line": 13,
+              "params": {},
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "scene.clear"
+            },
+            {
+              "blocking": true,
+              "line": 13,
+              "params": {
+                "0": 0.5
+              },
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "pause"
+            }
+          ],
+          "line": 13,
+          "params": {},
+          "range": {
+            "end": 3,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 15,
+        "lines": [
+          {
+            "body": [
+              {
+                "children": [
+                  {
+                    "groupId": 2,
+                    "line": 16,
+                    "marks": [],
+                    "range": {
+                      "end": 5,
+                      "start": 1
+                    },
+                    "text": "青金渐变",
+                    "type": "text"
+                  }
+                ],
+                "groupId": 2,
+                "line": 16,
+                "range": {
+                  "end": 6,
+                  "start": 0
+                },
+                "type": "group"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "name": "duotone",
+                    "params": {
+                      "highlight": "#f4a261",
+                      "shadow": "#0d1b2a"
+                    },
+                    "prefix": "f",
+                    "raw": "f.duotone(shadow=\"#0d1b2a\", highlight=\"#f4a261\")"
+                  }
+                ],
+                "line": 16,
+                "prefix": "f",
+                "range": {
+                  "end": 57,
+                  "start": 9
+                },
+                "raw": "f.duotone(shadow=\"#0d1b2a\", highlight=\"#f4a261\")",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 16,
+            "range": {
+              "end": 57,
+              "start": 0
+            },
+            "raw": "{青金渐变} @ f.duotone(shadow=\"#0d1b2a\", highlight=\"#f4a261\")",
+            "type": "line"
+          }
+        ],
+        "source": "// 逐字改参：青→金 双色（原色被映射到新双色）\n{青金渐变} @ f.duotone(shadow=\"#0d1b2a\", highlight=\"#f4a261\")",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "braceGroupId": 2,
+            "commands": [],
+            "content": "青金渐变",
+            "effects": [
+              {
+                "blocking": false,
+                "name": "duotone",
+                "params": {
+                  "highlight": "#f4a261",
+                  "shadow": "#0d1b2a"
+                }
+              }
+            ],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 16,
+            "params": {},
+            "range": {
+              "end": 5,
+              "start": 1
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 15,
+      "tokens": [
+        {
+          "braceGroupId": 2,
+          "commands": [],
+          "content": "青金渐变",
+          "effects": [
+            {
+              "blocking": false,
+              "name": "duotone",
+              "params": {
+                "highlight": "#f4a261",
+                "shadow": "#0d1b2a"
+              }
+            }
+          ],
+          "isBraced": true,
+          "layoutInstructions": [],
+          "line": 16,
+          "params": {},
+          "range": {
+            "end": 5,
+            "start": 1
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 18,
+        "lines": [
+          {
+            "body": [],
+            "commandChains": [],
+            "heading": false,
+            "kind": "scene-clear",
+            "line": 18,
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "raw": "---",
+            "type": "line"
+          }
+        ],
+        "source": "---",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": true,
+            "isSugar": false,
+            "kind": "scene-clear",
+            "layoutInstructions": [
+              {
+                "blocking": false,
+                "line": 18,
+                "params": {},
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "scene.clear"
+              },
+              {
+                "blocking": true,
+                "line": 18,
+                "params": {
+                  "0": 0.5
+                },
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "pause"
+              }
+            ],
+            "line": 18,
+            "params": {},
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 18,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": true,
+          "isSugar": false,
+          "layoutInstructions": [
+            {
+              "blocking": false,
+              "line": 18,
+              "params": {},
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "scene.clear"
+            },
+            {
+              "blocking": true,
+              "line": 18,
+              "params": {
+                "0": 0.5
+              },
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "pause"
+            }
+          ],
+          "line": 18,
+          "params": {},
+          "range": {
+            "end": 3,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [
+          {
+            "chain": {
+              "commands": [
+                {
+                  "blocking": false,
+                  "family": "effect",
+                  "level": "block",
+                  "name": "duotone",
+                  "params": {
+                    "highlight": "#e94560",
+                    "shadow": "#1a1a2e"
+                  },
+                  "prefix": "dot",
+                  "raw": ".duotone:block(shadow=\"#1a1a2e\", highlight=\"#e94560\")"
+                }
+              ],
+              "line": 21,
+              "prefix": "dot",
+              "range": {
+                "end": 54,
+                "start": 1
+              },
+              "raw": ".duotone:block(shadow=\"#1a1a2e\", highlight=\"#e94560\")",
+              "type": "command-chain"
+            },
+            "line": 21,
+            "range": {
+              "end": 54,
+              "start": 1
+            },
+            "type": "block-option-command"
+          }
+        ],
+        "lineOffset": 20,
+        "lines": [
+          {
+            "body": [
+              {
+                "line": 22,
+                "marks": [],
+                "range": {
+                  "end": 29,
+                  "start": 0
+                },
+                "text": "整段文字呈现双色调，连续色调表面下暗部到亮部的渐变更连贯。",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 22,
+            "range": {
+              "end": 29,
+              "start": 0
+            },
+            "raw": "整段文字呈现双色调，连续色调表面下暗部到亮部的渐变更连贯。",
+            "type": "line"
+          }
+        ],
+        "source": "// 白字场景：白色映射到 shadow→highlight 渐变\n[.duotone:block(shadow=\"#1a1a2e\", highlight=\"#e94560\")]\n整段文字呈现双色调，连续色调表面下暗部到亮部的渐变更连贯。",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [
+        {
+          "blocking": false,
+          "level": "block",
+          "name": "duotone",
+          "params": {
+            "highlight": "#e94560",
+            "shadow": "#1a1a2e"
+          }
+        }
+      ],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "整段文字呈现双色调，连续色调表面下暗部到亮部的渐变更连贯。",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 22,
+            "params": {},
+            "range": {
+              "end": 29,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": [
+          {
+            "blocking": false,
+            "level": "block",
+            "name": "duotone",
+            "params": {
+              "highlight": "#e94560",
+              "shadow": "#1a1a2e"
+            }
+          }
+        ]
+      },
+      "lineOffset": 20,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "整段文字呈现双色调，连续色调表面下暗部到亮部的渐变更连贯。",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 22,
+          "params": {},
+          "range": {
+            "end": 29,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 24,
+        "lines": [
+          {
+            "body": [],
+            "commandChains": [],
+            "heading": false,
+            "kind": "scene-clear",
+            "line": 24,
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "raw": "---",
+            "type": "line"
+          }
+        ],
+        "source": "---",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": true,
+            "isSugar": false,
+            "kind": "scene-clear",
+            "layoutInstructions": [
+              {
+                "blocking": false,
+                "line": 24,
+                "params": {},
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "scene.clear"
+              },
+              {
+                "blocking": true,
+                "line": 24,
+                "params": {
+                  "0": 0.5
+                },
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "pause"
+              }
+            ],
+            "line": 24,
+            "params": {},
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 24,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": true,
+          "isSugar": false,
+          "layoutInstructions": [
+            {
+              "blocking": false,
+              "line": 24,
+              "params": {},
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "scene.clear"
+            },
+            {
+              "blocking": true,
+              "line": 24,
+              "params": {
+                "0": 0.5
+              },
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "pause"
+            }
+          ],
+          "line": 24,
+          "params": {},
+          "range": {
+            "end": 3,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [
+          {
+            "chain": {
+              "commands": [
+                {
+                  "blocking": false,
+                  "family": "effect",
+                  "level": "block",
+                  "name": "duotone",
+                  "params": {
+                    "highlight": "#ffd700",
+                    "shadow": "#0d1b2a"
+                  },
+                  "prefix": "dot",
+                  "raw": ".duotone:block(shadow=\"#0d1b2a\", highlight=\"#ffd700\")"
+                }
+              ],
+              "line": 27,
+              "prefix": "dot",
+              "range": {
+                "end": 54,
+                "start": 1
+              },
+              "raw": ".duotone:block(shadow=\"#0d1b2a\", highlight=\"#ffd700\")",
+              "type": "command-chain"
+            },
+            "line": 27,
+            "range": {
+              "end": 54,
+              "start": 1
+            },
+            "type": "block-option-command"
+          }
+        ],
+        "lineOffset": 26,
+        "lines": [
+          {
+            "body": [
+              {
+                "line": 28,
+                "marks": [],
+                "range": {
+                  "end": 16,
+                  "start": 0
+                },
+                "text": "金色高调双色，暗部深蓝亮部金黄。",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 28,
+            "range": {
+              "end": 16,
+              "start": 0
+            },
+            "raw": "金色高调双色，暗部深蓝亮部金黄。",
+            "type": "line"
+          }
+        ],
+        "source": "// 浅底深字场景：对比看双色在反差背景上的表现\n[.duotone:block(shadow=\"#0d1b2a\", highlight=\"#ffd700\")]\n金色高调双色，暗部深蓝亮部金黄。",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [
+        {
+          "blocking": false,
+          "level": "block",
+          "name": "duotone",
+          "params": {
+            "highlight": "#ffd700",
+            "shadow": "#0d1b2a"
+          }
+        }
+      ],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "金色高调双色，暗部深蓝亮部金黄。",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 28,
+            "params": {},
+            "range": {
+              "end": 16,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": [
+          {
+            "blocking": false,
+            "level": "block",
+            "name": "duotone",
+            "params": {
+              "highlight": "#ffd700",
+              "shadow": "#0d1b2a"
+            }
+          }
+        ]
+      },
+      "lineOffset": 26,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "金色高调双色，暗部深蓝亮部金黄。",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 28,
+          "params": {},
+          "range": {
+            "end": 16,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 30,
+        "lines": [
+          {
+            "body": [],
+            "commandChains": [],
+            "heading": false,
+            "kind": "scene-clear",
+            "line": 30,
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "raw": "---",
+            "type": "line"
+          }
+        ],
+        "source": "---",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": true,
+            "isSugar": false,
+            "kind": "scene-clear",
+            "layoutInstructions": [
+              {
+                "blocking": false,
+                "line": 30,
+                "params": {},
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "scene.clear"
+              },
+              {
+                "blocking": true,
+                "line": 30,
+                "params": {
+                  "0": 0.5
+                },
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "pause"
+              }
+            ],
+            "line": 30,
+            "params": {},
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 30,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": true,
+          "isSugar": false,
+          "layoutInstructions": [
+            {
+              "blocking": false,
+              "line": 30,
+              "params": {},
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "scene.clear"
+            },
+            {
+              "blocking": true,
+              "line": 30,
+              "params": {
+                "0": 0.5
+              },
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "pause"
+            }
+          ],
+          "line": 30,
+          "params": {},
+          "range": {
+            "end": 3,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 32,
+        "lines": [
+          {
+            "body": [
+              {
+                "children": [
+                  {
+                    "groupId": 3,
+                    "line": 33,
+                    "marks": [],
+                    "range": {
+                      "end": 6,
+                      "start": 1
+                    },
+                    "text": "双色加波浪",
+                    "type": "text"
+                  }
+                ],
+                "groupId": 3,
+                "line": 33,
+                "range": {
+                  "end": 7,
+                  "start": 0
+                },
+                "type": "group"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "name": "duotone",
+                    "params": {},
+                    "prefix": "f",
+                    "raw": "f.duotone.wave"
+                  },
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "name": "wave",
+                    "params": {},
+                    "prefix": "f",
+                    "raw": "f.duotone.wave"
+                  }
+                ],
+                "line": 33,
+                "prefix": "f",
+                "range": {
+                  "end": 24,
+                  "start": 10
+                },
+                "raw": "f.duotone.wave",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 33,
+            "range": {
+              "end": 24,
+              "start": 0
+            },
+            "raw": "{双色加波浪} @ f.duotone.wave",
+            "type": "line"
+          }
+        ],
+        "source": "// 与 behavior 组合：滤镜静态挂载，wave 逐字波动\n{双色加波浪} @ f.duotone.wave",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "braceGroupId": 3,
+            "commands": [],
+            "content": "双色加波浪",
+            "effects": [
+              {
+                "blocking": false,
+                "name": "duotone",
+                "params": {}
+              },
+              {
+                "blocking": false,
+                "name": "wave",
+                "params": {}
+              }
+            ],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 33,
+            "params": {},
+            "range": {
+              "end": 6,
+              "start": 1
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 32,
+      "tokens": [
+        {
+          "braceGroupId": 3,
+          "commands": [],
+          "content": "双色加波浪",
+          "effects": [
+            {
+              "blocking": false,
+              "name": "duotone",
+              "params": {}
+            },
+            {
+              "blocking": false,
+              "name": "wave",
+              "params": {}
+            }
+          ],
+          "isBraced": true,
+          "layoutInstructions": [],
+          "line": 33,
+          "params": {},
+          "range": {
+            "end": 6,
+            "start": 1
+          },
+          "sugar": []
+        }
+      ]
+    }
+  ],
+  "rawParagraphs": [
+    "// 逐字（笔画级风格化）：珊瑚红字 → duotone 映射 shadow→highlight\n{夜色霓虹} @ f.duotone",
+    "---",
+    "// 逐字改参：青→金 双色（原色被映射到新双色）\n{青金渐变} @ f.duotone(shadow=\"#0d1b2a\", highlight=\"#f4a261\")",
+    "---",
+    "// 白字场景：白色映射到 shadow→highlight 渐变\n[.duotone:block(shadow=\"#1a1a2e\", highlight=\"#e94560\")]\n整段文字呈现双色调，连续色调表面下暗部到亮部的渐变更连贯。",
+    "---",
+    "// 浅底深字场景：对比看双色在反差背景上的表现\n[.duotone:block(shadow=\"#0d1b2a\", highlight=\"#ffd700\")]\n金色高调双色，暗部深蓝亮部金黄。",
+    "---",
+    "// 与 behavior 组合：滤镜静态挂载，wave 逐字波动\n{双色加波浪} @ f.duotone.wave"
+  ]
+}

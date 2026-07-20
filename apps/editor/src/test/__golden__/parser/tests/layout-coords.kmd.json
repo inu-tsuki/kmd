@@ -1,0 +1,1270 @@
+{
+  "diagnostics": [],
+  "metadata": {
+    "mode": "normal",
+    "speed": 40,
+    "title": "布局坐标稳定性 fixture",
+    "variables": {}
+  },
+  "paragraphs": [
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 9,
+        "lines": [
+          {
+            "body": [
+              {
+                "line": 10,
+                "marks": [],
+                "range": {
+                  "end": 6,
+                  "start": 0
+                },
+                "text": "第一段第一行",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 10,
+            "range": {
+              "end": 6,
+              "start": 0
+            },
+            "raw": "第一段第一行",
+            "type": "line"
+          }
+        ],
+        "source": "// 1. 垂直堆叠：两段独立 paragraph，y 应递增。\n第一段第一行",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "第一段第一行",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 10,
+            "params": {},
+            "range": {
+              "end": 6,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 9,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "第一段第一行",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 10,
+          "params": {},
+          "range": {
+            "end": 6,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 12,
+        "lines": [
+          {
+            "body": [
+              {
+                "line": 12,
+                "marks": [],
+                "range": {
+                  "end": 6,
+                  "start": 0
+                },
+                "text": "第二段第一行",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 12,
+            "range": {
+              "end": 6,
+              "start": 0
+            },
+            "raw": "第二段第一行",
+            "type": "line"
+          }
+        ],
+        "source": "第二段第一行",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "第二段第一行",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 12,
+            "params": {},
+            "range": {
+              "end": 6,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 12,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "第二段第一行",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 12,
+          "params": {},
+          "range": {
+            "end": 6,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [
+          {
+            "key": "align",
+            "line": 15,
+            "range": {
+              "end": 13,
+              "start": 1
+            },
+            "type": "block-option-value",
+            "value": "center"
+          }
+        ],
+        "lineOffset": 14,
+        "lines": [
+          {
+            "body": [
+              {
+                "line": 15,
+                "marks": [],
+                "range": {
+                  "end": 4,
+                  "start": 0
+                },
+                "text": "居中文本",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 15,
+            "range": {
+              "end": 4,
+              "start": 0
+            },
+            "raw": "居中文本",
+            "type": "line"
+          }
+        ],
+        "source": "// 2. align=center：block option 居中。\n[align=center] 居中文本",
+        "type": "paragraph"
+      },
+      "blockOptions": {
+        "align": "center"
+      },
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {
+          "align": "center"
+        },
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "居中文本",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 15,
+            "params": {},
+            "range": {
+              "end": 4,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 14,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "居中文本",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 15,
+          "params": {},
+          "range": {
+            "end": 4,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [
+          {
+            "key": "align",
+            "line": 18,
+            "range": {
+              "end": 12,
+              "start": 1
+            },
+            "type": "block-option-value",
+            "value": "right"
+          }
+        ],
+        "lineOffset": 17,
+        "lines": [
+          {
+            "body": [
+              {
+                "line": 18,
+                "marks": [],
+                "range": {
+                  "end": 5,
+                  "start": 0
+                },
+                "text": "右对齐文本",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 18,
+            "range": {
+              "end": 5,
+              "start": 0
+            },
+            "raw": "右对齐文本",
+            "type": "line"
+          }
+        ],
+        "source": "// 3. align=right。\n[align=right] 右对齐文本",
+        "type": "paragraph"
+      },
+      "blockOptions": {
+        "align": "right"
+      },
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {
+          "align": "right"
+        },
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "右对齐文本",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 18,
+            "params": {},
+            "range": {
+              "end": 5,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 17,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "右对齐文本",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 18,
+          "params": {},
+          "range": {
+            "end": 5,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 20,
+        "lines": [
+          {
+            "body": [
+              {
+                "line": 21,
+                "marks": [],
+                "range": {
+                  "end": 34,
+                  "start": 0
+                },
+                "text": "长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 21,
+            "range": {
+              "end": 34,
+              "start": 0
+            },
+            "raw": "长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长",
+            "type": "line"
+          }
+        ],
+        "source": "// 4. 断行：长行超过 maxWidth 应换行。\n长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 21,
+            "params": {},
+            "range": {
+              "end": 34,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 20,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 21,
+          "params": {},
+          "range": {
+            "end": 34,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 23,
+        "lines": [
+          {
+            "body": [
+              {
+                "line": 24,
+                "marks": [],
+                "range": {
+                  "end": 2,
+                  "start": 0
+                },
+                "text": "上方",
+                "type": "text"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "layout",
+                    "name": "up",
+                    "params": {
+                      "0": 20
+                    },
+                    "prefix": "f",
+                    "raw": "f.up(20)"
+                  }
+                ],
+                "line": 24,
+                "prefix": "f",
+                "range": {
+                  "end": 13,
+                  "start": 5
+                },
+                "raw": "f.up(20)",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 24,
+            "range": {
+              "end": 13,
+              "start": 0
+            },
+            "raw": "上方 @ f.up(20)",
+            "type": "line"
+          },
+          {
+            "body": [
+              {
+                "line": 25,
+                "marks": [],
+                "range": {
+                  "end": 2,
+                  "start": 0
+                },
+                "text": "下方",
+                "type": "text"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "layout",
+                    "name": "down",
+                    "params": {
+                      "0": 15
+                    },
+                    "prefix": "f",
+                    "raw": "f.down(15)"
+                  }
+                ],
+                "line": 25,
+                "prefix": "f",
+                "range": {
+                  "end": 15,
+                  "start": 5
+                },
+                "raw": "f.down(15)",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 25,
+            "range": {
+              "end": 15,
+              "start": 0
+            },
+            "raw": "下方 @ f.down(15)",
+            "type": "line"
+          }
+        ],
+        "source": "// 5. up / down 偏移：layout instruction 应产生 displayOffsetY。\n上方 @ f.up(20)\n下方 @ f.down(15)",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "上方",
+            "effects": [
+              {
+                "blocking": false,
+                "name": "up",
+                "params": {
+                  "0": 20
+                }
+              }
+            ],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 24,
+            "params": {},
+            "range": {
+              "end": 2,
+              "start": 0
+            },
+            "sugar": []
+          },
+          {
+            "commands": [],
+            "content": "\n",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": false,
+            "isSugar": false,
+            "kind": "newline",
+            "layoutInstructions": [],
+            "line": 24,
+            "params": {},
+            "range": {
+              "end": 13,
+              "start": 13
+            },
+            "sugar": []
+          },
+          {
+            "commands": [],
+            "content": "下方",
+            "effects": [
+              {
+                "blocking": false,
+                "name": "down",
+                "params": {
+                  "0": 15
+                }
+              }
+            ],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 25,
+            "params": {},
+            "range": {
+              "end": 2,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 23,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "上方",
+          "effects": [
+            {
+              "blocking": false,
+              "name": "up",
+              "params": {
+                "0": 20
+              }
+            }
+          ],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 24,
+          "params": {},
+          "range": {
+            "end": 2,
+            "start": 0
+          },
+          "sugar": []
+        },
+        {
+          "commands": [],
+          "content": "\n",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": false,
+          "isSugar": false,
+          "layoutInstructions": [],
+          "line": 24,
+          "params": {},
+          "range": {
+            "end": 13,
+            "start": 13
+          },
+          "sugar": []
+        },
+        {
+          "commands": [],
+          "content": "下方",
+          "effects": [
+            {
+              "blocking": false,
+              "name": "down",
+              "params": {
+                "0": 15
+              }
+            }
+          ],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 25,
+          "params": {},
+          "range": {
+            "end": 2,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 27,
+        "lines": [
+          {
+            "body": [
+              {
+                "line": 28,
+                "marks": [],
+                "range": {
+                  "end": 2,
+                  "start": 0
+                },
+                "text": "左移",
+                "type": "text"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "layout",
+                    "name": "left",
+                    "params": {
+                      "0": 10
+                    },
+                    "prefix": "f",
+                    "raw": "f.left(10)"
+                  }
+                ],
+                "line": 28,
+                "prefix": "f",
+                "range": {
+                  "end": 15,
+                  "start": 5
+                },
+                "raw": "f.left(10)",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 28,
+            "range": {
+              "end": 15,
+              "start": 0
+            },
+            "raw": "左移 @ f.left(10)",
+            "type": "line"
+          },
+          {
+            "body": [
+              {
+                "line": 29,
+                "marks": [],
+                "range": {
+                  "end": 2,
+                  "start": 0
+                },
+                "text": "右移",
+                "type": "text"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "layout",
+                    "name": "right",
+                    "params": {
+                      "0": 10
+                    },
+                    "prefix": "f",
+                    "raw": "f.right(10)"
+                  }
+                ],
+                "line": 29,
+                "prefix": "f",
+                "range": {
+                  "end": 16,
+                  "start": 5
+                },
+                "raw": "f.right(10)",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 29,
+            "range": {
+              "end": 16,
+              "start": 0
+            },
+            "raw": "右移 @ f.right(10)",
+            "type": "line"
+          }
+        ],
+        "source": "// 6. left / right 偏移：displayOffsetX。\n左移 @ f.left(10)\n右移 @ f.right(10)",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "左移",
+            "effects": [
+              {
+                "blocking": false,
+                "name": "left",
+                "params": {
+                  "0": 10
+                }
+              }
+            ],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 28,
+            "params": {},
+            "range": {
+              "end": 2,
+              "start": 0
+            },
+            "sugar": []
+          },
+          {
+            "commands": [],
+            "content": "\n",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": false,
+            "isSugar": false,
+            "kind": "newline",
+            "layoutInstructions": [],
+            "line": 28,
+            "params": {},
+            "range": {
+              "end": 15,
+              "start": 15
+            },
+            "sugar": []
+          },
+          {
+            "commands": [],
+            "content": "右移",
+            "effects": [
+              {
+                "blocking": false,
+                "name": "right",
+                "params": {
+                  "0": 10
+                }
+              }
+            ],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 29,
+            "params": {},
+            "range": {
+              "end": 2,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 27,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "左移",
+          "effects": [
+            {
+              "blocking": false,
+              "name": "left",
+              "params": {
+                "0": 10
+              }
+            }
+          ],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 28,
+          "params": {},
+          "range": {
+            "end": 2,
+            "start": 0
+          },
+          "sugar": []
+        },
+        {
+          "commands": [],
+          "content": "\n",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": false,
+          "isSugar": false,
+          "layoutInstructions": [],
+          "line": 28,
+          "params": {},
+          "range": {
+            "end": 15,
+            "start": 15
+          },
+          "sugar": []
+        },
+        {
+          "commands": [],
+          "content": "右移",
+          "effects": [
+            {
+              "blocking": false,
+              "name": "right",
+              "params": {
+                "0": 10
+              }
+            }
+          ],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 29,
+          "params": {},
+          "range": {
+            "end": 2,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 31,
+        "lines": [
+          {
+            "body": [
+              {
+                "line": 32,
+                "marks": [],
+                "range": {
+                  "end": 2,
+                  "start": 0
+                },
+                "text": "跳跃",
+                "type": "text"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "layout",
+                    "name": "goto",
+                    "params": {
+                      "0": 100,
+                      "1": 200
+                    },
+                    "prefix": "f",
+                    "raw": "f.goto(100, 200)"
+                  }
+                ],
+                "line": 32,
+                "prefix": "f",
+                "range": {
+                  "end": 21,
+                  "start": 5
+                },
+                "raw": "f.goto(100, 200)",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 32,
+            "range": {
+              "end": 21,
+              "start": 0
+            },
+            "raw": "跳跃 @ f.goto(100, 200)",
+            "type": "line"
+          }
+        ],
+        "source": "// 7. goto 跳转到坐标。\n跳跃 @ f.goto(100, 200)",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "跳跃",
+            "effects": [
+              {
+                "blocking": false,
+                "name": "goto",
+                "params": {
+                  "0": 100,
+                  "1": 200
+                }
+              }
+            ],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 32,
+            "params": {},
+            "range": {
+              "end": 2,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 31,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "跳跃",
+          "effects": [
+            {
+              "blocking": false,
+              "name": "goto",
+              "params": {
+                "0": 100,
+                "1": 200
+              }
+            }
+          ],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 32,
+          "params": {},
+          "range": {
+            "end": 2,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 34,
+        "lines": [
+          {
+            "body": [
+              {
+                "line": 35,
+                "marks": [],
+                "range": {
+                  "end": 2,
+                  "start": 0
+                },
+                "text": "锚点",
+                "type": "text"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "layout",
+                    "name": "mark",
+                    "params": {
+                      "0": "point_a"
+                    },
+                    "prefix": "f",
+                    "raw": "f.mark(point_a)"
+                  }
+                ],
+                "line": 35,
+                "prefix": "f",
+                "range": {
+                  "end": 20,
+                  "start": 5
+                },
+                "raw": "f.mark(point_a)",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 35,
+            "range": {
+              "end": 20,
+              "start": 0
+            },
+            "raw": "锚点 @ f.mark(point_a)",
+            "type": "line"
+          },
+          {
+            "body": [
+              {
+                "line": 36,
+                "marks": [],
+                "range": {
+                  "end": 4,
+                  "start": 0
+                },
+                "text": "跳到锚点",
+                "type": "text"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "layout",
+                    "name": "goto",
+                    "params": {
+                      "0": "point_a"
+                    },
+                    "prefix": "f",
+                    "raw": "f.goto(point_a)"
+                  }
+                ],
+                "line": 36,
+                "prefix": "f",
+                "range": {
+                  "end": 22,
+                  "start": 7
+                },
+                "raw": "f.goto(point_a)",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 36,
+            "range": {
+              "end": 22,
+              "start": 0
+            },
+            "raw": "跳到锚点 @ f.goto(point_a)",
+            "type": "line"
+          }
+        ],
+        "source": "// 8. marker 同步：mark + goto mark。\n锚点 @ f.mark(point_a)\n跳到锚点 @ f.goto(point_a)",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "锚点",
+            "effects": [
+              {
+                "blocking": false,
+                "name": "mark",
+                "params": {
+                  "0": "point_a"
+                }
+              }
+            ],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 35,
+            "params": {},
+            "range": {
+              "end": 2,
+              "start": 0
+            },
+            "sugar": []
+          },
+          {
+            "commands": [],
+            "content": "\n",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": false,
+            "isSugar": false,
+            "kind": "newline",
+            "layoutInstructions": [],
+            "line": 35,
+            "params": {},
+            "range": {
+              "end": 20,
+              "start": 20
+            },
+            "sugar": []
+          },
+          {
+            "commands": [],
+            "content": "跳到锚点",
+            "effects": [
+              {
+                "blocking": false,
+                "name": "goto",
+                "params": {
+                  "0": "point_a"
+                }
+              }
+            ],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 36,
+            "params": {},
+            "range": {
+              "end": 4,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 34,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "锚点",
+          "effects": [
+            {
+              "blocking": false,
+              "name": "mark",
+              "params": {
+                "0": "point_a"
+              }
+            }
+          ],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 35,
+          "params": {},
+          "range": {
+            "end": 2,
+            "start": 0
+          },
+          "sugar": []
+        },
+        {
+          "commands": [],
+          "content": "\n",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": false,
+          "isSugar": false,
+          "layoutInstructions": [],
+          "line": 35,
+          "params": {},
+          "range": {
+            "end": 20,
+            "start": 20
+          },
+          "sugar": []
+        },
+        {
+          "commands": [],
+          "content": "跳到锚点",
+          "effects": [
+            {
+              "blocking": false,
+              "name": "goto",
+              "params": {
+                "0": "point_a"
+              }
+            }
+          ],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 36,
+          "params": {},
+          "range": {
+            "end": 4,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    }
+  ],
+  "rawParagraphs": [
+    "// 1. 垂直堆叠：两段独立 paragraph，y 应递增。\n第一段第一行",
+    "第二段第一行",
+    "// 2. align=center：block option 居中。\n[align=center] 居中文本",
+    "// 3. align=right。\n[align=right] 右对齐文本",
+    "// 4. 断行：长行超过 maxWidth 应换行。\n长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长",
+    "// 5. up / down 偏移：layout instruction 应产生 displayOffsetY。\n上方 @ f.up(20)\n下方 @ f.down(15)",
+    "// 6. left / right 偏移：displayOffsetX。\n左移 @ f.left(10)\n右移 @ f.right(10)",
+    "// 7. goto 跳转到坐标。\n跳跃 @ f.goto(100, 200)",
+    "// 8. marker 同步：mark + goto mark。\n锚点 @ f.mark(point_a)\n跳到锚点 @ f.goto(point_a)"
+  ]
+}

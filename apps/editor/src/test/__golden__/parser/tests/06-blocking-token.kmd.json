@@ -1,0 +1,843 @@
+{
+  "diagnostics": [],
+  "metadata": {
+    "designHeight": 1080,
+    "designWidth": 1920,
+    "mode": "stage",
+    "speed": 50,
+    "title": "06 - 阻塞指令 (!) 在 per-token 路径",
+    "variables": {}
+  },
+  "paragraphs": [
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 8,
+        "lines": [
+          {
+            "body": [
+              {
+                "children": [
+                  {
+                    "groupId": 1,
+                    "line": 9,
+                    "marks": [],
+                    "range": {
+                      "end": 4,
+                      "start": 1
+                    },
+                    "text": "先缩放",
+                    "type": "text"
+                  }
+                ],
+                "groupId": 1,
+                "line": 9,
+                "range": {
+                  "end": 5,
+                  "start": 0
+                },
+                "type": "group"
+              },
+              {
+                "line": 9,
+                "marks": [],
+                "range": {
+                  "end": 11,
+                  "start": 5
+                },
+                "text": " 然后继续。",
+                "type": "text"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "stage",
+                    "name": "cam.zoom",
+                    "params": {
+                      "0": 0.8,
+                      "1": 1
+                    },
+                    "prefix": "bare",
+                    "raw": "cam.zoom(0.8, 1s)"
+                  }
+                ],
+                "line": 9,
+                "prefix": "bare",
+                "range": {
+                  "end": 31,
+                  "start": 14
+                },
+                "raw": "cam.zoom(0.8, 1s)",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 9,
+            "range": {
+              "end": 31,
+              "start": 0
+            },
+            "raw": "{先缩放} 然后继续。 @ cam.zoom(0.8, 1s)",
+            "type": "line"
+          }
+        ],
+        "source": "// 预期：cam.zoom 非阻塞，\"然后继续\" 与缩放同时展开（不等待）\n{先缩放} 然后继续。 @ cam.zoom(0.8, 1s)",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "braceGroupId": 1,
+            "commands": [],
+            "content": "先缩放",
+            "effects": [],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [
+              {
+                "blocking": false,
+                "params": {
+                  "0": 0.8,
+                  "1": 1
+                },
+                "type": "cam.zoom"
+              }
+            ],
+            "line": 9,
+            "params": {},
+            "range": {
+              "end": 4,
+              "start": 1
+            },
+            "sugar": []
+          },
+          {
+            "commands": [],
+            "content": " 然后继续。",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 9,
+            "params": {},
+            "range": {
+              "end": 11,
+              "start": 5
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 8,
+      "tokens": [
+        {
+          "braceGroupId": 1,
+          "commands": [],
+          "content": "先缩放",
+          "effects": [],
+          "isBraced": true,
+          "layoutInstructions": [
+            {
+              "blocking": false,
+              "params": {
+                "0": 0.8,
+                "1": 1
+              },
+              "type": "cam.zoom"
+            }
+          ],
+          "line": 9,
+          "params": {},
+          "range": {
+            "end": 4,
+            "start": 1
+          },
+          "sugar": []
+        },
+        {
+          "commands": [],
+          "content": " 然后继续。",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 9,
+          "params": {},
+          "range": {
+            "end": 11,
+            "start": 5
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 11,
+        "lines": [
+          {
+            "body": [],
+            "commandChains": [],
+            "heading": false,
+            "kind": "scene-clear",
+            "line": 11,
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "raw": "---",
+            "type": "line"
+          }
+        ],
+        "source": "---",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": true,
+            "isSugar": false,
+            "kind": "scene-clear",
+            "layoutInstructions": [
+              {
+                "blocking": false,
+                "line": 11,
+                "params": {},
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "scene.clear"
+              },
+              {
+                "blocking": true,
+                "line": 11,
+                "params": {
+                  "0": 0.5
+                },
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "pause"
+              }
+            ],
+            "line": 11,
+            "params": {},
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 11,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": true,
+          "isSugar": false,
+          "layoutInstructions": [
+            {
+              "blocking": false,
+              "line": 11,
+              "params": {},
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "scene.clear"
+            },
+            {
+              "blocking": true,
+              "line": 11,
+              "params": {
+                "0": 0.5
+              },
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "pause"
+            }
+          ],
+          "line": 11,
+          "params": {},
+          "range": {
+            "end": 3,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 13,
+        "lines": [
+          {
+            "body": [
+              {
+                "children": [
+                  {
+                    "groupId": 2,
+                    "line": 14,
+                    "marks": [],
+                    "range": {
+                      "end": 4,
+                      "start": 1
+                    },
+                    "text": "先缩放",
+                    "type": "text"
+                  }
+                ],
+                "groupId": 2,
+                "line": 14,
+                "range": {
+                  "end": 5,
+                  "start": 0
+                },
+                "type": "group"
+              },
+              {
+                "line": 14,
+                "marks": [],
+                "range": {
+                  "end": 10,
+                  "start": 5
+                },
+                "text": " 再继续。",
+                "type": "text"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": true,
+                    "family": "stage",
+                    "name": "cam.zoom",
+                    "params": {
+                      "0": 0.8,
+                      "1": 1
+                    },
+                    "prefix": "bare",
+                    "raw": "cam.zoom(0.8, 1s)!"
+                  }
+                ],
+                "line": 14,
+                "prefix": "bare",
+                "range": {
+                  "end": 31,
+                  "start": 13
+                },
+                "raw": "cam.zoom(0.8, 1s)!",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 14,
+            "range": {
+              "end": 31,
+              "start": 0
+            },
+            "raw": "{先缩放} 再继续。 @ cam.zoom(0.8, 1s)!",
+            "type": "line"
+          }
+        ],
+        "source": "// 预期：cam.zoom! 阻塞，\"再继续\" 需等缩放完成后才出现\n{先缩放} 再继续。 @ cam.zoom(0.8, 1s)!",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "braceGroupId": 2,
+            "commands": [],
+            "content": "先缩放",
+            "effects": [],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [
+              {
+                "blocking": true,
+                "params": {
+                  "0": 0.8,
+                  "1": 1
+                },
+                "type": "cam.zoom"
+              }
+            ],
+            "line": 14,
+            "params": {},
+            "range": {
+              "end": 4,
+              "start": 1
+            },
+            "sugar": []
+          },
+          {
+            "commands": [],
+            "content": " 再继续。",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 14,
+            "params": {},
+            "range": {
+              "end": 10,
+              "start": 5
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 13,
+      "tokens": [
+        {
+          "braceGroupId": 2,
+          "commands": [],
+          "content": "先缩放",
+          "effects": [],
+          "isBraced": true,
+          "layoutInstructions": [
+            {
+              "blocking": true,
+              "params": {
+                "0": 0.8,
+                "1": 1
+              },
+              "type": "cam.zoom"
+            }
+          ],
+          "line": 14,
+          "params": {},
+          "range": {
+            "end": 4,
+            "start": 1
+          },
+          "sugar": []
+        },
+        {
+          "commands": [],
+          "content": " 再继续。",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 14,
+          "params": {},
+          "range": {
+            "end": 10,
+            "start": 5
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 16,
+        "lines": [
+          {
+            "body": [],
+            "commandChains": [],
+            "heading": false,
+            "kind": "scene-clear",
+            "line": 16,
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "raw": "---",
+            "type": "line"
+          }
+        ],
+        "source": "---",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": true,
+            "isSugar": false,
+            "kind": "scene-clear",
+            "layoutInstructions": [
+              {
+                "blocking": false,
+                "line": 16,
+                "params": {},
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "scene.clear"
+              },
+              {
+                "blocking": true,
+                "line": 16,
+                "params": {
+                  "0": 0.5
+                },
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "pause"
+              }
+            ],
+            "line": 16,
+            "params": {},
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 16,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": true,
+          "isSugar": false,
+          "layoutInstructions": [
+            {
+              "blocking": false,
+              "line": 16,
+              "params": {},
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "scene.clear"
+            },
+            {
+              "blocking": true,
+              "line": 16,
+              "params": {
+                "0": 0.5
+              },
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "pause"
+            }
+          ],
+          "line": 16,
+          "params": {},
+          "range": {
+            "end": 3,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 18,
+        "lines": [
+          {
+            "body": [
+              {
+                "children": [
+                  {
+                    "groupId": 3,
+                    "line": 19,
+                    "marks": [],
+                    "range": {
+                      "end": 5,
+                      "start": 1
+                    },
+                    "text": "镜头移动",
+                    "type": "text"
+                  }
+                ],
+                "groupId": 3,
+                "line": 19,
+                "range": {
+                  "end": 6,
+                  "start": 0
+                },
+                "type": "group"
+              },
+              {
+                "line": 19,
+                "marks": [],
+                "range": {
+                  "end": 12,
+                  "start": 6
+                },
+                "text": " 后的文字。",
+                "type": "text"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": true,
+                    "family": "stage",
+                    "name": "cam.move",
+                    "params": {
+                      "0": 200,
+                      "1": 0,
+                      "2": 1
+                    },
+                    "prefix": "bare",
+                    "raw": "cam.move(200, 0, 1s)!"
+                  }
+                ],
+                "line": 19,
+                "prefix": "bare",
+                "range": {
+                  "end": 36,
+                  "start": 15
+                },
+                "raw": "cam.move(200, 0, 1s)!",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 19,
+            "range": {
+              "end": 36,
+              "start": 0
+            },
+            "raw": "{镜头移动} 后的文字。 @ cam.move(200, 0, 1s)!",
+            "type": "line"
+          }
+        ],
+        "source": "// 预期：cam.move! 阻塞，文字揭示与移动同时开始，后续段落等待移动完成\n{镜头移动} 后的文字。 @ cam.move(200, 0, 1s)!",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "braceGroupId": 3,
+            "commands": [],
+            "content": "镜头移动",
+            "effects": [],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [
+              {
+                "blocking": true,
+                "params": {
+                  "0": 200,
+                  "1": 0,
+                  "2": 1
+                },
+                "type": "cam.move"
+              }
+            ],
+            "line": 19,
+            "params": {},
+            "range": {
+              "end": 5,
+              "start": 1
+            },
+            "sugar": []
+          },
+          {
+            "commands": [],
+            "content": " 后的文字。",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 19,
+            "params": {},
+            "range": {
+              "end": 12,
+              "start": 6
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 18,
+      "tokens": [
+        {
+          "braceGroupId": 3,
+          "commands": [],
+          "content": "镜头移动",
+          "effects": [],
+          "isBraced": true,
+          "layoutInstructions": [
+            {
+              "blocking": true,
+              "params": {
+                "0": 200,
+                "1": 0,
+                "2": 1
+              },
+              "type": "cam.move"
+            }
+          ],
+          "line": 19,
+          "params": {},
+          "range": {
+            "end": 5,
+            "start": 1
+          },
+          "sugar": []
+        },
+        {
+          "commands": [],
+          "content": " 后的文字。",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 19,
+          "params": {},
+          "range": {
+            "end": 12,
+            "start": 6
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 21,
+        "lines": [
+          {
+            "body": [
+              {
+                "line": 21,
+                "marks": [],
+                "range": {
+                  "end": 5,
+                  "start": 0
+                },
+                "text": "演出结束。",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 21,
+            "range": {
+              "end": 5,
+              "start": 0
+            },
+            "raw": "演出结束。",
+            "type": "line"
+          }
+        ],
+        "source": "演出结束。",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "演出结束。",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 21,
+            "params": {},
+            "range": {
+              "end": 5,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 21,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "演出结束。",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 21,
+          "params": {},
+          "range": {
+            "end": 5,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    }
+  ],
+  "rawParagraphs": [
+    "// 预期：cam.zoom 非阻塞，\"然后继续\" 与缩放同时展开（不等待）\n{先缩放} 然后继续。 @ cam.zoom(0.8, 1s)",
+    "---",
+    "// 预期：cam.zoom! 阻塞，\"再继续\" 需等缩放完成后才出现\n{先缩放} 再继续。 @ cam.zoom(0.8, 1s)!",
+    "---",
+    "// 预期：cam.move! 阻塞，文字揭示与移动同时开始，后续段落等待移动完成\n{镜头移动} 后的文字。 @ cam.move(200, 0, 1s)!",
+    "演出结束。"
+  ]
+}

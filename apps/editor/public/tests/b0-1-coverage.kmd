@@ -1,0 +1,57 @@
+---
+title: B0.1 语法覆盖审计 fixture
+mode: normal
+speed: 40
+var:
+  delay_val: 1s
+  shake_val: 10
+  zoom_val: 0.8
+---
+// 本 fixture 专门覆盖 B0.1 将重写的语法表面，确保黄金网罩住重写面。
+// 依据 docs/planning/test-net-design-2026-07.md §3 支柱 2a + docs/knowledge/language/chain-model.md。
+// 这是"现状特征"不是"正确性裁判"：下列语法在当前 parser 下的（多为退化）行为会被黄金冻结，
+// B0.1 重写后黄金 diff 即暴露语义变化。现状 bug 单独记录，不在本 fixture 顺手改行为。
+
+// 1. 成员解析：3+ 元素链（f.a.b.c），当前 parser 接受，B0.1 递归下降应保持。
+f.red.bold.blur
+{deep chain} @ f.red.bold.blur
+
+// 2. 量词类型化（D24 债务）：
+//    2a. line 单位——当前 parser 退化为字符串 "0.5line"，B0.1 应类型化为空间量词。
+hold(0.5line)
+{line unit} @ f.hold(0.5line)
+
+//    2b. ms 单位——当前 parser 静默转秒（500ms → 0.5），单位信息丢失，B0.1 应保留单位。
+hold(500ms)
+{ms unit} @ f.hold(500ms)
+
+//    2c. self 单位——当前 parser 退化为字符串 "1self"，B0.1 应类型化。
+left(1self)
+{self unit} @ f.left(1self)
+
+//    2d. deg 单位——当前 parser 退化为字符串 "15deg"，B0.1 应类型化。
+rotate(15deg)
+{deg unit} @ f.rotate(15deg)
+
+// 3. ease 词形：spec 已废弃单词形态（migration.md:15），改用连接符 ~d~>。
+//    3a. ease=out 作为命名参数——当前 parser 当普通 key=val 处理（params.ease="out"），非 ease 语法。
+hold(1s, ease=out)
+{ease named} @ f.hold(1s, ease=out)
+
+//    3b. ease 词形从未实现——spec 规划 ease 为 ~time~> 语法糖（chain-model.md:52），
+//        Phase B 将引入。当前 parser 对 ease 发 unknown-command 诊断。
+ease(1s)
+{ease word} @ f.ease(1s)
+
+// 4. :bg 作用域（处方 11/12 过渡期兼容写法）。
+@ bg(src=tests/assets/sample-bg.jpg)
+[.gray:bg] 背景 bg 上的灰度滤镜
+inline @ f.gray:bg
+
+// 5. 括号组嵌套与多组映射（braceGroupId）。
+{A}{B}{C} @ f.red
+{group mapping} @ f.wave.hold(1s).red
+
+// 6. hold/ease 词形的 level 后缀（:char / :group / :block）。
+f.hold:char(1s).red
+f.wave.hold:group(2s)

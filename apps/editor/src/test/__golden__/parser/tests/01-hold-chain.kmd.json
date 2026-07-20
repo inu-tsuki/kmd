@@ -1,0 +1,851 @@
+{
+  "diagnostics": [],
+  "metadata": {
+    "designHeight": 1080,
+    "designWidth": 1920,
+    "mode": "stage",
+    "speed": 50,
+    "title": "01 - hold 链内基本行为",
+    "variables": {}
+  },
+  "paragraphs": [
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 8,
+        "lines": [
+          {
+            "body": [
+              {
+                "children": [
+                  {
+                    "groupId": 1,
+                    "line": 9,
+                    "marks": [],
+                    "range": {
+                      "end": 3,
+                      "start": 1
+                    },
+                    "text": "准备",
+                    "type": "text"
+                  }
+                ],
+                "groupId": 1,
+                "line": 9,
+                "range": {
+                  "end": 4,
+                  "start": 0
+                },
+                "type": "group"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "style",
+                    "name": "red",
+                    "params": {},
+                    "prefix": "f",
+                    "raw": "f.red.hold(1s).blue"
+                  },
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "name": "hold",
+                    "params": {
+                      "0": 1
+                    },
+                    "prefix": "f",
+                    "raw": "f.red.hold(1s).blue"
+                  },
+                  {
+                    "blocking": false,
+                    "family": "style",
+                    "name": "blue",
+                    "params": {},
+                    "prefix": "f",
+                    "raw": "f.red.hold(1s).blue"
+                  }
+                ],
+                "line": 9,
+                "prefix": "f",
+                "range": {
+                  "end": 26,
+                  "start": 7
+                },
+                "raw": "f.red.hold(1s).blue",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 9,
+            "range": {
+              "end": 26,
+              "start": 0
+            },
+            "raw": "{准备} @ f.red.hold(1s).blue",
+            "type": "line"
+          }
+        ],
+        "source": "// 预期：{准备} 先变红，1秒后变蓝\n{准备} @ f.red.hold(1s).blue",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "braceGroupId": 1,
+            "commands": [],
+            "content": "准备",
+            "effects": [
+              {
+                "blocking": false,
+                "name": "red",
+                "params": {}
+              },
+              {
+                "blocking": false,
+                "name": "hold",
+                "params": {
+                  "0": 1
+                }
+              },
+              {
+                "blocking": false,
+                "name": "blue",
+                "params": {}
+              }
+            ],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 9,
+            "params": {},
+            "range": {
+              "end": 3,
+              "start": 1
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 8,
+      "tokens": [
+        {
+          "braceGroupId": 1,
+          "commands": [],
+          "content": "准备",
+          "effects": [
+            {
+              "blocking": false,
+              "name": "red",
+              "params": {}
+            },
+            {
+              "blocking": false,
+              "name": "hold",
+              "params": {
+                "0": 1
+              }
+            },
+            {
+              "blocking": false,
+              "name": "blue",
+              "params": {}
+            }
+          ],
+          "isBraced": true,
+          "layoutInstructions": [],
+          "line": 9,
+          "params": {},
+          "range": {
+            "end": 3,
+            "start": 1
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 11,
+        "lines": [
+          {
+            "body": [
+              {
+                "children": [
+                  {
+                    "groupId": 2,
+                    "line": 12,
+                    "marks": [],
+                    "range": {
+                      "end": 4,
+                      "start": 1
+                    },
+                    "text": "一二三",
+                    "type": "text"
+                  }
+                ],
+                "groupId": 2,
+                "line": 12,
+                "range": {
+                  "end": 5,
+                  "start": 0
+                },
+                "type": "group"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "style",
+                    "name": "yellow",
+                    "params": {},
+                    "prefix": "f",
+                    "raw": "f.yellow.hold(1s).green.hold(1s).red"
+                  },
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "name": "hold",
+                    "params": {
+                      "0": 1
+                    },
+                    "prefix": "f",
+                    "raw": "f.yellow.hold(1s).green.hold(1s).red"
+                  },
+                  {
+                    "blocking": false,
+                    "family": "style",
+                    "name": "green",
+                    "params": {},
+                    "prefix": "f",
+                    "raw": "f.yellow.hold(1s).green.hold(1s).red"
+                  },
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "name": "hold",
+                    "params": {
+                      "0": 1
+                    },
+                    "prefix": "f",
+                    "raw": "f.yellow.hold(1s).green.hold(1s).red"
+                  },
+                  {
+                    "blocking": false,
+                    "family": "style",
+                    "name": "red",
+                    "params": {},
+                    "prefix": "f",
+                    "raw": "f.yellow.hold(1s).green.hold(1s).red"
+                  }
+                ],
+                "line": 12,
+                "prefix": "f",
+                "range": {
+                  "end": 44,
+                  "start": 8
+                },
+                "raw": "f.yellow.hold(1s).green.hold(1s).red",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 12,
+            "range": {
+              "end": 44,
+              "start": 0
+            },
+            "raw": "{一二三} @ f.yellow.hold(1s).green.hold(1s).red",
+            "type": "line"
+          }
+        ],
+        "source": "// 预期：{一二三} 先变黄，1秒后变绿，再1秒后变红\n{一二三} @ f.yellow.hold(1s).green.hold(1s).red",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "braceGroupId": 2,
+            "commands": [],
+            "content": "一二三",
+            "effects": [
+              {
+                "blocking": false,
+                "name": "yellow",
+                "params": {}
+              },
+              {
+                "blocking": false,
+                "name": "hold",
+                "params": {
+                  "0": 1
+                }
+              },
+              {
+                "blocking": false,
+                "name": "green",
+                "params": {}
+              },
+              {
+                "blocking": false,
+                "name": "hold",
+                "params": {
+                  "0": 1
+                }
+              },
+              {
+                "blocking": false,
+                "name": "red",
+                "params": {}
+              }
+            ],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 12,
+            "params": {},
+            "range": {
+              "end": 4,
+              "start": 1
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 11,
+      "tokens": [
+        {
+          "braceGroupId": 2,
+          "commands": [],
+          "content": "一二三",
+          "effects": [
+            {
+              "blocking": false,
+              "name": "yellow",
+              "params": {}
+            },
+            {
+              "blocking": false,
+              "name": "hold",
+              "params": {
+                "0": 1
+              }
+            },
+            {
+              "blocking": false,
+              "name": "green",
+              "params": {}
+            },
+            {
+              "blocking": false,
+              "name": "hold",
+              "params": {
+                "0": 1
+              }
+            },
+            {
+              "blocking": false,
+              "name": "red",
+              "params": {}
+            }
+          ],
+          "isBraced": true,
+          "layoutInstructions": [],
+          "line": 12,
+          "params": {},
+          "range": {
+            "end": 4,
+            "start": 1
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 14,
+        "lines": [
+          {
+            "body": [
+              {
+                "children": [
+                  {
+                    "groupId": 3,
+                    "line": 15,
+                    "marks": [],
+                    "range": {
+                      "end": 7,
+                      "start": 1
+                    },
+                    "text": "震动然后波浪",
+                    "type": "text"
+                  }
+                ],
+                "groupId": 3,
+                "line": 15,
+                "range": {
+                  "end": 8,
+                  "start": 0
+                },
+                "type": "group"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "name": "shake",
+                    "params": {
+                      "0": 10
+                    },
+                    "prefix": "f",
+                    "raw": "f.shake(10).hold(2s).wave"
+                  },
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "name": "hold",
+                    "params": {
+                      "0": 2
+                    },
+                    "prefix": "f",
+                    "raw": "f.shake(10).hold(2s).wave"
+                  },
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "name": "wave",
+                    "params": {},
+                    "prefix": "f",
+                    "raw": "f.shake(10).hold(2s).wave"
+                  }
+                ],
+                "line": 15,
+                "prefix": "f",
+                "range": {
+                  "end": 36,
+                  "start": 11
+                },
+                "raw": "f.shake(10).hold(2s).wave",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 15,
+            "range": {
+              "end": 36,
+              "start": 0
+            },
+            "raw": "{震动然后波浪} @ f.shake(10).hold(2s).wave",
+            "type": "line"
+          }
+        ],
+        "source": "// 预期：文字震动2秒后停止震动变波浪\n{震动然后波浪} @ f.shake(10).hold(2s).wave",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "braceGroupId": 3,
+            "commands": [],
+            "content": "震动然后波浪",
+            "effects": [
+              {
+                "blocking": false,
+                "name": "shake",
+                "params": {
+                  "0": 10
+                }
+              },
+              {
+                "blocking": false,
+                "name": "hold",
+                "params": {
+                  "0": 2
+                }
+              },
+              {
+                "blocking": false,
+                "name": "wave",
+                "params": {}
+              }
+            ],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 15,
+            "params": {},
+            "range": {
+              "end": 7,
+              "start": 1
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 14,
+      "tokens": [
+        {
+          "braceGroupId": 3,
+          "commands": [],
+          "content": "震动然后波浪",
+          "effects": [
+            {
+              "blocking": false,
+              "name": "shake",
+              "params": {
+                "0": 10
+              }
+            },
+            {
+              "blocking": false,
+              "name": "hold",
+              "params": {
+                "0": 2
+              }
+            },
+            {
+              "blocking": false,
+              "name": "wave",
+              "params": {}
+            }
+          ],
+          "isBraced": true,
+          "layoutInstructions": [],
+          "line": 15,
+          "params": {},
+          "range": {
+            "end": 7,
+            "start": 1
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 17,
+        "lines": [
+          {
+            "body": [
+              {
+                "children": [
+                  {
+                    "groupId": 4,
+                    "line": 18,
+                    "marks": [],
+                    "range": {
+                      "end": 3,
+                      "start": 1
+                    },
+                    "text": "先来",
+                    "type": "text"
+                  }
+                ],
+                "groupId": 4,
+                "line": 18,
+                "range": {
+                  "end": 4,
+                  "start": 0
+                },
+                "type": "group"
+              },
+              {
+                "line": 18,
+                "marks": [],
+                "range": {
+                  "end": 5,
+                  "start": 4
+                },
+                "text": " ",
+                "type": "text"
+              },
+              {
+                "children": [
+                  {
+                    "groupId": 5,
+                    "line": 18,
+                    "marks": [],
+                    "range": {
+                      "end": 8,
+                      "start": 6
+                    },
+                    "text": "后来",
+                    "type": "text"
+                  }
+                ],
+                "groupId": 5,
+                "line": 18,
+                "range": {
+                  "end": 9,
+                  "start": 5
+                },
+                "type": "group"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "style",
+                    "name": "red",
+                    "params": {},
+                    "prefix": "f",
+                    "raw": "f.red.hold(1.5s).blue"
+                  },
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "name": "hold",
+                    "params": {
+                      "0": 1.5
+                    },
+                    "prefix": "f",
+                    "raw": "f.red.hold(1.5s).blue"
+                  },
+                  {
+                    "blocking": false,
+                    "family": "style",
+                    "name": "blue",
+                    "params": {},
+                    "prefix": "f",
+                    "raw": "f.red.hold(1.5s).blue"
+                  }
+                ],
+                "line": 18,
+                "prefix": "f",
+                "range": {
+                  "end": 33,
+                  "start": 12
+                },
+                "raw": "f.red.hold(1.5s).blue",
+                "type": "command-chain"
+              },
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "style",
+                    "name": "green",
+                    "params": {},
+                    "prefix": "f",
+                    "raw": "f.green"
+                  }
+                ],
+                "line": 18,
+                "prefix": "f",
+                "range": {
+                  "end": 41,
+                  "start": 34
+                },
+                "raw": "f.green",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 18,
+            "range": {
+              "end": 41,
+              "start": 0
+            },
+            "raw": "{先来} {后来} @ f.red.hold(1.5s).blue f.green",
+            "type": "line"
+          }
+        ],
+        "source": "// 预期：组级 hold 阻塞后续组\n{先来} {后来} @ f.red.hold(1.5s).blue f.green",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "braceGroupId": 4,
+            "commands": [],
+            "content": "先来",
+            "effects": [
+              {
+                "blocking": false,
+                "name": "red",
+                "params": {}
+              },
+              {
+                "blocking": false,
+                "name": "hold",
+                "params": {
+                  "0": 1.5
+                }
+              },
+              {
+                "blocking": false,
+                "name": "blue",
+                "params": {}
+              }
+            ],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 18,
+            "params": {},
+            "range": {
+              "end": 3,
+              "start": 1
+            },
+            "sugar": []
+          },
+          {
+            "commands": [],
+            "content": " ",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 18,
+            "params": {},
+            "range": {
+              "end": 5,
+              "start": 4
+            },
+            "sugar": []
+          },
+          {
+            "braceGroupId": 5,
+            "commands": [],
+            "content": "后来",
+            "effects": [
+              {
+                "blocking": false,
+                "name": "green",
+                "params": {}
+              }
+            ],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 18,
+            "params": {},
+            "range": {
+              "end": 8,
+              "start": 6
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 17,
+      "tokens": [
+        {
+          "braceGroupId": 4,
+          "commands": [],
+          "content": "先来",
+          "effects": [
+            {
+              "blocking": false,
+              "name": "red",
+              "params": {}
+            },
+            {
+              "blocking": false,
+              "name": "hold",
+              "params": {
+                "0": 1.5
+              }
+            },
+            {
+              "blocking": false,
+              "name": "blue",
+              "params": {}
+            }
+          ],
+          "isBraced": true,
+          "layoutInstructions": [],
+          "line": 18,
+          "params": {},
+          "range": {
+            "end": 3,
+            "start": 1
+          },
+          "sugar": []
+        },
+        {
+          "commands": [],
+          "content": " ",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 18,
+          "params": {},
+          "range": {
+            "end": 5,
+            "start": 4
+          },
+          "sugar": []
+        },
+        {
+          "braceGroupId": 5,
+          "commands": [],
+          "content": "后来",
+          "effects": [
+            {
+              "blocking": false,
+              "name": "green",
+              "params": {}
+            }
+          ],
+          "isBraced": true,
+          "layoutInstructions": [],
+          "line": 18,
+          "params": {},
+          "range": {
+            "end": 8,
+            "start": 6
+          },
+          "sugar": []
+        }
+      ]
+    }
+  ],
+  "rawParagraphs": [
+    "// 预期：{准备} 先变红，1秒后变蓝\n{准备} @ f.red.hold(1s).blue",
+    "// 预期：{一二三} 先变黄，1秒后变绿，再1秒后变红\n{一二三} @ f.yellow.hold(1s).green.hold(1s).red",
+    "// 预期：文字震动2秒后停止震动变波浪\n{震动然后波浪} @ f.shake(10).hold(2s).wave",
+    "// 预期：组级 hold 阻塞后续组\n{先来} {后来} @ f.red.hold(1.5s).blue f.green"
+  ]
+}

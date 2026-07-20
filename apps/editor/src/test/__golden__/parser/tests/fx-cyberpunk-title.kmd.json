@@ -1,0 +1,1972 @@
+{
+  "diagnostics": [],
+  "metadata": {
+    "bgColor": "#0a0a0f",
+    "designHeight": 1080,
+    "designWidth": 1920,
+    "fontColor": "#00fff0",
+    "fontFamily": "monospace",
+    "mode": "stage",
+    "speed": 50,
+    "title": "fx - 赛博朋克标题序列 (DIP-FX M2 demo)",
+    "variables": {}
+  },
+  "paragraphs": [
+    {
+      "ast": {
+        "blockOptions": [
+          {
+            "chain": {
+              "commands": [
+                {
+                  "blocking": false,
+                  "family": "effect",
+                  "level": "bg",
+                  "name": "duotone",
+                  "params": {
+                    "highlight": "#ff006e",
+                    "shadow": "#0d0221"
+                  },
+                  "prefix": "dot",
+                  "raw": ".duotone:bg(shadow=\"#0d0221\", highlight=\"#ff006e\")"
+                }
+              ],
+              "line": 14,
+              "prefix": "dot",
+              "range": {
+                "end": 51,
+                "start": 1
+              },
+              "raw": ".duotone:bg(shadow=\"#0d0221\", highlight=\"#ff006e\")",
+              "type": "command-chain"
+            },
+            "line": 14,
+            "range": {
+              "end": 51,
+              "start": 1
+            },
+            "type": "block-option-command"
+          }
+        ],
+        "lineOffset": 11,
+        "lines": [
+          {
+            "body": [],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "stage",
+                    "name": "bg",
+                    "params": {
+                      "src": "tests/assets/sample-bg.jpg"
+                    },
+                    "prefix": "bare",
+                    "raw": "bg(src=\"tests/assets/sample-bg.jpg\")"
+                  }
+                ],
+                "line": 13,
+                "prefix": "bare",
+                "range": {
+                  "end": 38,
+                  "start": 2
+                },
+                "raw": "bg(src=\"tests/assets/sample-bg.jpg\")",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "command-only",
+            "line": 13,
+            "range": {
+              "end": 38,
+              "start": 0
+            },
+            "raw": "@ bg(src=\"tests/assets/sample-bg.jpg\")",
+            "type": "line"
+          },
+          {
+            "body": [
+              {
+                "line": 15,
+                "marks": [],
+                "range": {
+                  "end": 9,
+                  "start": 0
+                },
+                "text": "NEON CITY",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 15,
+            "range": {
+              "end": 9,
+              "start": 0
+            },
+            "raw": "NEON CITY",
+            "type": "line"
+          }
+        ],
+        "source": "// ━━ 镜头 1：背景图 + 连续色调底 ━━\n// bg(src) 落背景图，duotone:bg 压暗上色保证文字对比度（Task B 落地后 :bg 路由）\n@ bg(src=\"tests/assets/sample-bg.jpg\")\n[.duotone:bg(shadow=\"#0d0221\", highlight=\"#ff006e\")]\nNEON CITY",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [
+        {
+          "blocking": false,
+          "level": "bg",
+          "name": "duotone",
+          "params": {
+            "highlight": "#ff006e",
+            "shadow": "#0d0221"
+          }
+        },
+        {
+          "blocking": false,
+          "level": "block",
+          "name": "bg",
+          "params": {
+            "src": "tests/assets/sample-bg.jpg"
+          }
+        }
+      ],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "NEON CITY",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 15,
+            "params": {},
+            "range": {
+              "end": 9,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": [
+          {
+            "blocking": false,
+            "level": "bg",
+            "name": "duotone",
+            "params": {
+              "highlight": "#ff006e",
+              "shadow": "#0d0221"
+            }
+          },
+          {
+            "blocking": false,
+            "level": "block",
+            "name": "bg",
+            "params": {
+              "src": "tests/assets/sample-bg.jpg"
+            }
+          }
+        ]
+      },
+      "lineOffset": 11,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "NEON CITY",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 15,
+          "params": {},
+          "range": {
+            "end": 9,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 17,
+        "lines": [
+          {
+            "body": [],
+            "commandChains": [],
+            "heading": false,
+            "kind": "scene-clear",
+            "line": 17,
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "raw": "---",
+            "type": "line"
+          }
+        ],
+        "source": "---",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": true,
+            "isSugar": false,
+            "kind": "scene-clear",
+            "layoutInstructions": [
+              {
+                "blocking": false,
+                "line": 17,
+                "params": {},
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "scene.clear"
+              },
+              {
+                "blocking": true,
+                "line": 17,
+                "params": {
+                  "0": 0.5
+                },
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "pause"
+              }
+            ],
+            "line": 17,
+            "params": {},
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 17,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": true,
+          "isSugar": false,
+          "layoutInstructions": [
+            {
+              "blocking": false,
+              "line": 17,
+              "params": {},
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "scene.clear"
+            },
+            {
+              "blocking": true,
+              "line": 17,
+              "params": {
+                "0": 0.5
+              },
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "pause"
+            }
+          ],
+          "line": 17,
+          "params": {},
+          "range": {
+            "end": 3,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [
+          {
+            "chain": {
+              "commands": [
+                {
+                  "blocking": false,
+                  "family": "effect",
+                  "level": "block",
+                  "name": "scanline",
+                  "params": {
+                    "curvature": 0.1,
+                    "density": 4,
+                    "flicker": 0.05
+                  },
+                  "prefix": "dot",
+                  "raw": ".scanline:block(density=4, curvature=0.1, flicker=0.05)"
+                }
+              ],
+              "line": 22,
+              "prefix": "dot",
+              "range": {
+                "end": 56,
+                "start": 1
+              },
+              "raw": ".scanline:block(density=4, curvature=0.1, flicker=0.05)",
+              "type": "command-chain"
+            },
+            "line": 22,
+            "range": {
+              "end": 56,
+              "start": 1
+            },
+            "type": "block-option-command"
+          },
+          {
+            "chain": {
+              "commands": [
+                {
+                  "blocking": false,
+                  "family": "effect",
+                  "level": "block",
+                  "name": "noise",
+                  "params": {
+                    "amount": 0.15,
+                    "mono": 1,
+                    "scale": 6
+                  },
+                  "prefix": "dot",
+                  "raw": ".noise:block(amount=0.15, mono=1, scale=6)"
+                }
+              ],
+              "line": 22,
+              "prefix": "dot",
+              "range": {
+                "end": 99,
+                "start": 57
+              },
+              "raw": ".noise:block(amount=0.15, mono=1, scale=6)",
+              "type": "command-chain"
+            },
+            "line": 22,
+            "range": {
+              "end": 99,
+              "start": 57
+            },
+            "type": "block-option-command"
+          },
+          {
+            "chain": {
+              "commands": [
+                {
+                  "blocking": false,
+                  "family": "effect",
+                  "level": "block",
+                  "name": "rgbShift",
+                  "params": {
+                    "anim": true,
+                    "dist": 8
+                  },
+                  "prefix": "dot",
+                  "raw": ".rgbShift:block(dist=8, anim=true)"
+                }
+              ],
+              "line": 22,
+              "prefix": "dot",
+              "range": {
+                "end": 134,
+                "start": 100
+              },
+              "raw": ".rgbShift:block(dist=8, anim=true)",
+              "type": "command-chain"
+            },
+            "line": 22,
+            "range": {
+              "end": 134,
+              "start": 100
+            },
+            "type": "block-option-command"
+          }
+        ],
+        "lineOffset": 19,
+        "lines": [
+          {
+            "body": [],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "stage",
+                    "name": "bg",
+                    "params": {
+                      "color": "#0a0a0f"
+                    },
+                    "prefix": "bare",
+                    "raw": "bg(color=\"#0a0a0f\")"
+                  }
+                ],
+                "line": 21,
+                "prefix": "bare",
+                "range": {
+                  "end": 21,
+                  "start": 2
+                },
+                "raw": "bg(color=\"#0a0a0f\")",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "command-only",
+            "line": 21,
+            "range": {
+              "end": 21,
+              "start": 0
+            },
+            "raw": "@ bg(color=\"#0a0a0f\")",
+            "type": "line"
+          },
+          {
+            "body": [
+              {
+                "line": 23,
+                "marks": [],
+                "range": {
+                  "end": 11,
+                  "start": 0
+                },
+                "text": "SIGNAL LOST",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 23,
+            "range": {
+              "end": 11,
+              "start": 0
+            },
+            "raw": "SIGNAL LOST",
+            "type": "line"
+          }
+        ],
+        "source": "// ━━ 镜头 2：扫描线 + 噪声 + RGB 分裂组合 ━━\n// CRT 降解：scanline 周期亮度调制 + noise 数字噪声 + rgbShift 色彩撕裂\n@ bg(color=\"#0a0a0f\")\n[.scanline:block(density=4, curvature=0.1, flicker=0.05) .noise:block(amount=0.15, mono=1, scale=6) .rgbShift:block(dist=8, anim=true)]\nSIGNAL LOST",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [
+        {
+          "blocking": false,
+          "level": "block",
+          "name": "scanline",
+          "params": {
+            "curvature": 0.1,
+            "density": 4,
+            "flicker": 0.05
+          }
+        },
+        {
+          "blocking": false,
+          "level": "block",
+          "name": "noise",
+          "params": {
+            "amount": 0.15,
+            "mono": 1,
+            "scale": 6
+          }
+        },
+        {
+          "blocking": false,
+          "level": "block",
+          "name": "rgbShift",
+          "params": {
+            "anim": true,
+            "dist": 8
+          }
+        },
+        {
+          "blocking": false,
+          "level": "block",
+          "name": "bg",
+          "params": {
+            "color": "#0a0a0f"
+          }
+        }
+      ],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "SIGNAL LOST",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 23,
+            "params": {},
+            "range": {
+              "end": 11,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": [
+          {
+            "blocking": false,
+            "level": "block",
+            "name": "scanline",
+            "params": {
+              "curvature": 0.1,
+              "density": 4,
+              "flicker": 0.05
+            }
+          },
+          {
+            "blocking": false,
+            "level": "block",
+            "name": "noise",
+            "params": {
+              "amount": 0.15,
+              "mono": 1,
+              "scale": 6
+            }
+          },
+          {
+            "blocking": false,
+            "level": "block",
+            "name": "rgbShift",
+            "params": {
+              "anim": true,
+              "dist": 8
+            }
+          },
+          {
+            "blocking": false,
+            "level": "block",
+            "name": "bg",
+            "params": {
+              "color": "#0a0a0f"
+            }
+          }
+        ]
+      },
+      "lineOffset": 19,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "SIGNAL LOST",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 23,
+          "params": {},
+          "range": {
+            "end": 11,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 25,
+        "lines": [
+          {
+            "body": [],
+            "commandChains": [],
+            "heading": false,
+            "kind": "scene-clear",
+            "line": 25,
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "raw": "---",
+            "type": "line"
+          }
+        ],
+        "source": "---",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": true,
+            "isSugar": false,
+            "kind": "scene-clear",
+            "layoutInstructions": [
+              {
+                "blocking": false,
+                "line": 25,
+                "params": {},
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "scene.clear"
+              },
+              {
+                "blocking": true,
+                "line": 25,
+                "params": {
+                  "0": 0.5
+                },
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "pause"
+              }
+            ],
+            "line": 25,
+            "params": {},
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 25,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": true,
+          "isSugar": false,
+          "layoutInstructions": [
+            {
+              "blocking": false,
+              "line": 25,
+              "params": {},
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "scene.clear"
+            },
+            {
+              "blocking": true,
+              "line": 25,
+              "params": {
+                "0": 0.5
+              },
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "pause"
+            }
+          ],
+          "line": 25,
+          "params": {},
+          "range": {
+            "end": 3,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 27,
+        "lines": [
+          {
+            "body": [
+              {
+                "children": [
+                  {
+                    "groupId": 1,
+                    "line": 29,
+                    "marks": [],
+                    "range": {
+                      "end": 7,
+                      "start": 1
+                    },
+                    "text": "GLITCH",
+                    "type": "text"
+                  }
+                ],
+                "groupId": 1,
+                "line": 29,
+                "range": {
+                  "end": 8,
+                  "start": 0
+                },
+                "type": "group"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "name": "warp",
+                    "params": {
+                      "amp": 0.08,
+                      "freq": 15,
+                      "speed": 0.03
+                    },
+                    "prefix": "f",
+                    "raw": "f.warp(freq=15, amp=0.08, speed=0.03).dissolve(duration=2, edge=\"#00fff0\")"
+                  },
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "name": "dissolve",
+                    "params": {
+                      "duration": 2,
+                      "edge": "#00fff0"
+                    },
+                    "prefix": "f",
+                    "raw": "f.warp(freq=15, amp=0.08, speed=0.03).dissolve(duration=2, edge=\"#00fff0\")"
+                  }
+                ],
+                "line": 29,
+                "prefix": "f",
+                "range": {
+                  "end": 85,
+                  "start": 11
+                },
+                "raw": "f.warp(freq=15, amp=0.08, speed=0.03).dissolve(duration=2, edge=\"#00fff0\")",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 29,
+            "range": {
+              "end": 85,
+              "start": 0
+            },
+            "raw": "{GLITCH} @ f.warp(freq=15, amp=0.08, speed=0.03).dissolve(duration=2, edge=\"#00fff0\")",
+            "type": "line"
+          }
+        ],
+        "source": "// ━━ 镜头 3：逐字扭曲 + glitch 消散 ━━\n// warp 逐字波纹扭曲（char 级）+ dissolve 消散转场\n{GLITCH} @ f.warp(freq=15, amp=0.08, speed=0.03).dissolve(duration=2, edge=\"#00fff0\")",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "braceGroupId": 1,
+            "commands": [],
+            "content": "GLITCH",
+            "effects": [
+              {
+                "blocking": false,
+                "name": "warp",
+                "params": {
+                  "amp": 0.08,
+                  "freq": 15,
+                  "speed": 0.03
+                }
+              },
+              {
+                "blocking": false,
+                "name": "dissolve",
+                "params": {
+                  "duration": 2,
+                  "edge": "#00fff0"
+                }
+              }
+            ],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 29,
+            "params": {},
+            "range": {
+              "end": 7,
+              "start": 1
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 27,
+      "tokens": [
+        {
+          "braceGroupId": 1,
+          "commands": [],
+          "content": "GLITCH",
+          "effects": [
+            {
+              "blocking": false,
+              "name": "warp",
+              "params": {
+                "amp": 0.08,
+                "freq": 15,
+                "speed": 0.03
+              }
+            },
+            {
+              "blocking": false,
+              "name": "dissolve",
+              "params": {
+                "duration": 2,
+                "edge": "#00fff0"
+              }
+            }
+          ],
+          "isBraced": true,
+          "layoutInstructions": [],
+          "line": 29,
+          "params": {},
+          "range": {
+            "end": 7,
+            "start": 1
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 31,
+        "lines": [
+          {
+            "body": [],
+            "commandChains": [],
+            "heading": false,
+            "kind": "scene-clear",
+            "line": 31,
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "raw": "---",
+            "type": "line"
+          }
+        ],
+        "source": "---",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": true,
+            "isSugar": false,
+            "kind": "scene-clear",
+            "layoutInstructions": [
+              {
+                "blocking": false,
+                "line": 31,
+                "params": {},
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "scene.clear"
+              },
+              {
+                "blocking": true,
+                "line": 31,
+                "params": {
+                  "0": 0.5
+                },
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "pause"
+              }
+            ],
+            "line": 31,
+            "params": {},
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 31,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": true,
+          "isSugar": false,
+          "layoutInstructions": [
+            {
+              "blocking": false,
+              "line": 31,
+              "params": {},
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "scene.clear"
+            },
+            {
+              "blocking": true,
+              "line": 31,
+              "params": {
+                "0": 0.5
+              },
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "pause"
+            }
+          ],
+          "line": 31,
+          "params": {},
+          "range": {
+            "end": 3,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [
+          {
+            "chain": {
+              "commands": [
+                {
+                  "blocking": false,
+                  "family": "effect",
+                  "level": "block",
+                  "name": "underwater",
+                  "params": {
+                    "amount": 15,
+                    "blur": 1,
+                    "highlight": "#3aa0c0",
+                    "scale": 5,
+                    "tint": "#061230"
+                  },
+                  "prefix": "dot",
+                  "raw": ".underwater:block(amount=15, scale=5, tint=\"#061230\", highlight=\"#3aa0c0\", blur=1)"
+                }
+              ],
+              "line": 35,
+              "prefix": "dot",
+              "range": {
+                "end": 83,
+                "start": 1
+              },
+              "raw": ".underwater:block(amount=15, scale=5, tint=\"#061230\", highlight=\"#3aa0c0\", blur=1)",
+              "type": "command-chain"
+            },
+            "line": 35,
+            "range": {
+              "end": 83,
+              "start": 1
+            },
+            "type": "block-option-command"
+          }
+        ],
+        "lineOffset": 33,
+        "lines": [
+          {
+            "body": [
+              {
+                "line": 36,
+                "marks": [],
+                "range": {
+                  "end": 10,
+                  "start": 0
+                },
+                "text": "DEEP BELOW",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 36,
+            "range": {
+              "end": 10,
+              "start": 0
+            },
+            "raw": "DEEP BELOW",
+            "type": "line"
+          }
+        ],
+        "source": "// ━━ 镜头 4：水下（M2 旗舰组合） ━━\n// underwater = displace 波纹 + duotone 蓝移 + blur，整段水下沉浸感\n[.underwater:block(amount=15, scale=5, tint=\"#061230\", highlight=\"#3aa0c0\", blur=1)]\nDEEP BELOW",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [
+        {
+          "blocking": false,
+          "level": "block",
+          "name": "underwater",
+          "params": {
+            "amount": 15,
+            "blur": 1,
+            "highlight": "#3aa0c0",
+            "scale": 5,
+            "tint": "#061230"
+          }
+        }
+      ],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "DEEP BELOW",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 36,
+            "params": {},
+            "range": {
+              "end": 10,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": [
+          {
+            "blocking": false,
+            "level": "block",
+            "name": "underwater",
+            "params": {
+              "amount": 15,
+              "blur": 1,
+              "highlight": "#3aa0c0",
+              "scale": 5,
+              "tint": "#061230"
+            }
+          }
+        ]
+      },
+      "lineOffset": 33,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "DEEP BELOW",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 36,
+          "params": {},
+          "range": {
+            "end": 10,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 38,
+        "lines": [
+          {
+            "body": [],
+            "commandChains": [],
+            "heading": false,
+            "kind": "scene-clear",
+            "line": 38,
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "raw": "---",
+            "type": "line"
+          }
+        ],
+        "source": "---",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": true,
+            "isSugar": false,
+            "kind": "scene-clear",
+            "layoutInstructions": [
+              {
+                "blocking": false,
+                "line": 38,
+                "params": {},
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "scene.clear"
+              },
+              {
+                "blocking": true,
+                "line": 38,
+                "params": {
+                  "0": 0.5
+                },
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "pause"
+              }
+            ],
+            "line": 38,
+            "params": {},
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 38,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": true,
+          "isSugar": false,
+          "layoutInstructions": [
+            {
+              "blocking": false,
+              "line": 38,
+              "params": {},
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "scene.clear"
+            },
+            {
+              "blocking": true,
+              "line": 38,
+              "params": {
+                "0": 0.5
+              },
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "pause"
+            }
+          ],
+          "line": 38,
+          "params": {},
+          "range": {
+            "end": 3,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [
+          {
+            "chain": {
+              "commands": [
+                {
+                  "blocking": false,
+                  "family": "effect",
+                  "level": "block",
+                  "name": "vignette",
+                  "params": {},
+                  "prefix": "dot",
+                  "raw": ".vignette:block"
+                }
+              ],
+              "line": 42,
+              "prefix": "dot",
+              "range": {
+                "end": 16,
+                "start": 1
+              },
+              "raw": ".vignette:block",
+              "type": "command-chain"
+            },
+            "line": 42,
+            "range": {
+              "end": 16,
+              "start": 1
+            },
+            "type": "block-option-command"
+          },
+          {
+            "chain": {
+              "commands": [
+                {
+                  "blocking": false,
+                  "family": "effect",
+                  "level": "block",
+                  "name": "dissolve",
+                  "params": {
+                    "duration": 1.5,
+                    "edge": "#ff006e",
+                    "scale": 10
+                  },
+                  "prefix": "dot",
+                  "raw": ".dissolve:block(duration=1.5, edge=\"#ff006e\", scale=10)"
+                }
+              ],
+              "line": 42,
+              "prefix": "dot",
+              "range": {
+                "end": 72,
+                "start": 17
+              },
+              "raw": ".dissolve:block(duration=1.5, edge=\"#ff006e\", scale=10)",
+              "type": "command-chain"
+            },
+            "line": 42,
+            "range": {
+              "end": 72,
+              "start": 17
+            },
+            "type": "block-option-command"
+          }
+        ],
+        "lineOffset": 40,
+        "lines": [
+          {
+            "body": [
+              {
+                "line": 43,
+                "marks": [],
+                "range": {
+                  "end": 10,
+                  "start": 0
+                },
+                "text": "SYSTEM OFF",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 43,
+            "range": {
+              "end": 10,
+              "start": 0
+            },
+            "raw": "SYSTEM OFF",
+            "type": "line"
+          }
+        ],
+        "source": "// ━━ 镜头 5：暗角 + 溶解转场收尾 ━━\n// vignette 径向暗角 + dissolve 消散，赛博朋克收束\n[.vignette:block .dissolve:block(duration=1.5, edge=\"#ff006e\", scale=10)]\nSYSTEM OFF",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [
+        {
+          "blocking": false,
+          "level": "block",
+          "name": "vignette",
+          "params": {}
+        },
+        {
+          "blocking": false,
+          "level": "block",
+          "name": "dissolve",
+          "params": {
+            "duration": 1.5,
+            "edge": "#ff006e",
+            "scale": 10
+          }
+        }
+      ],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "SYSTEM OFF",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 43,
+            "params": {},
+            "range": {
+              "end": 10,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": [
+          {
+            "blocking": false,
+            "level": "block",
+            "name": "vignette",
+            "params": {}
+          },
+          {
+            "blocking": false,
+            "level": "block",
+            "name": "dissolve",
+            "params": {
+              "duration": 1.5,
+              "edge": "#ff006e",
+              "scale": 10
+            }
+          }
+        ]
+      },
+      "lineOffset": 40,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "SYSTEM OFF",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 43,
+          "params": {},
+          "range": {
+            "end": 10,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 45,
+        "lines": [
+          {
+            "body": [],
+            "commandChains": [],
+            "heading": false,
+            "kind": "scene-clear",
+            "line": 45,
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "raw": "---",
+            "type": "line"
+          }
+        ],
+        "source": "---",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": true,
+            "isSugar": false,
+            "kind": "scene-clear",
+            "layoutInstructions": [
+              {
+                "blocking": false,
+                "line": 45,
+                "params": {},
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "scene.clear"
+              },
+              {
+                "blocking": true,
+                "line": 45,
+                "params": {
+                  "0": 0.5
+                },
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "pause"
+              }
+            ],
+            "line": 45,
+            "params": {},
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 45,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": true,
+          "isSugar": false,
+          "layoutInstructions": [
+            {
+              "blocking": false,
+              "line": 45,
+              "params": {},
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "scene.clear"
+            },
+            {
+              "blocking": true,
+              "line": 45,
+              "params": {
+                "0": 0.5
+              },
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "pause"
+            }
+          ],
+          "line": 45,
+          "params": {},
+          "range": {
+            "end": 3,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [
+          {
+            "chain": {
+              "commands": [
+                {
+                  "blocking": false,
+                  "family": "effect",
+                  "level": "bg",
+                  "name": "emboss",
+                  "params": {
+                    "strength": 1.5
+                  },
+                  "prefix": "dot",
+                  "raw": ".emboss:bg(strength=1.5)"
+                }
+              ],
+              "line": 50,
+              "prefix": "dot",
+              "range": {
+                "end": 25,
+                "start": 1
+              },
+              "raw": ".emboss:bg(strength=1.5)",
+              "type": "command-chain"
+            },
+            "line": 50,
+            "range": {
+              "end": 25,
+              "start": 1
+            },
+            "type": "block-option-command"
+          }
+        ],
+        "lineOffset": 47,
+        "lines": [
+          {
+            "body": [],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "stage",
+                    "name": "bg",
+                    "params": {
+                      "src": "tests/assets/sample-bg.jpg"
+                    },
+                    "prefix": "bare",
+                    "raw": "bg(src=\"tests/assets/sample-bg.jpg\")"
+                  }
+                ],
+                "line": 49,
+                "prefix": "bare",
+                "range": {
+                  "end": 38,
+                  "start": 2
+                },
+                "raw": "bg(src=\"tests/assets/sample-bg.jpg\")",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "command-only",
+            "line": 49,
+            "range": {
+              "end": 38,
+              "start": 0
+            },
+            "raw": "@ bg(src=\"tests/assets/sample-bg.jpg\")",
+            "type": "line"
+          },
+          {
+            "body": [
+              {
+                "line": 51,
+                "marks": [],
+                "range": {
+                  "end": 7,
+                  "start": 0
+                },
+                "text": "ARCHIVE",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 51,
+            "range": {
+              "end": 7,
+              "start": 0
+            },
+            "raw": "ARCHIVE",
+            "type": "line"
+          }
+        ],
+        "source": "// ━━ 镜头 6：背景图浮雕连续色调验证 ━━\n// emboss:bg 在真实照片上的浮雕效果（连续色调教科书级验证）\n@ bg(src=\"tests/assets/sample-bg.jpg\")\n[.emboss:bg(strength=1.5)]\nARCHIVE",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [
+        {
+          "blocking": false,
+          "level": "bg",
+          "name": "emboss",
+          "params": {
+            "strength": 1.5
+          }
+        },
+        {
+          "blocking": false,
+          "level": "block",
+          "name": "bg",
+          "params": {
+            "src": "tests/assets/sample-bg.jpg"
+          }
+        }
+      ],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "ARCHIVE",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 51,
+            "params": {},
+            "range": {
+              "end": 7,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": [
+          {
+            "blocking": false,
+            "level": "bg",
+            "name": "emboss",
+            "params": {
+              "strength": 1.5
+            }
+          },
+          {
+            "blocking": false,
+            "level": "block",
+            "name": "bg",
+            "params": {
+              "src": "tests/assets/sample-bg.jpg"
+            }
+          }
+        ]
+      },
+      "lineOffset": 47,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "ARCHIVE",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 51,
+          "params": {},
+          "range": {
+            "end": 7,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 53,
+        "lines": [
+          {
+            "body": [],
+            "commandChains": [],
+            "heading": false,
+            "kind": "scene-clear",
+            "line": 53,
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "raw": "---",
+            "type": "line"
+          }
+        ],
+        "source": "---",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": true,
+            "isSugar": false,
+            "kind": "scene-clear",
+            "layoutInstructions": [
+              {
+                "blocking": false,
+                "line": 53,
+                "params": {},
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "scene.clear"
+              },
+              {
+                "blocking": true,
+                "line": 53,
+                "params": {
+                  "0": 0.5
+                },
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "pause"
+              }
+            ],
+            "line": 53,
+            "params": {},
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 53,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": true,
+          "isSugar": false,
+          "layoutInstructions": [
+            {
+              "blocking": false,
+              "line": 53,
+              "params": {},
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "scene.clear"
+            },
+            {
+              "blocking": true,
+              "line": 53,
+              "params": {
+                "0": 0.5
+              },
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "pause"
+            }
+          ],
+          "line": 53,
+          "params": {},
+          "range": {
+            "end": 3,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [
+          {
+            "chain": {
+              "commands": [
+                {
+                  "blocking": false,
+                  "family": "effect",
+                  "level": "block",
+                  "name": "warp",
+                  "params": {
+                    "amp": 0.06,
+                    "freq": 12,
+                    "speed": 0.02
+                  },
+                  "prefix": "dot",
+                  "raw": ".warp:block(freq=12, amp=0.06, speed=0.02)"
+                }
+              ],
+              "line": 57,
+              "prefix": "dot",
+              "range": {
+                "end": 43,
+                "start": 1
+              },
+              "raw": ".warp:block(freq=12, amp=0.06, speed=0.02)",
+              "type": "command-chain"
+            },
+            "line": 57,
+            "range": {
+              "end": 43,
+              "start": 1
+            },
+            "type": "block-option-command"
+          }
+        ],
+        "lineOffset": 55,
+        "lines": [
+          {
+            "body": [
+              {
+                "line": 58,
+                "marks": [],
+                "range": {
+                  "end": 17,
+                  "start": 0
+                },
+                "text": "整段扭曲，容器级 warp 验证。",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 58,
+            "range": {
+              "end": 17,
+              "start": 0
+            },
+            "raw": "整段扭曲，容器级 warp 验证。",
+            "type": "line"
+          }
+        ],
+        "source": "// ━━ 镜头 7：warp 容器级（扩展后 :block 路径） ━━\n// warp 扩展到容器级后可在 :block 用（此前 char-only 会 warn no-op）\n[.warp:block(freq=12, amp=0.06, speed=0.02)]\n整段扭曲，容器级 warp 验证。",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [
+        {
+          "blocking": false,
+          "level": "block",
+          "name": "warp",
+          "params": {
+            "amp": 0.06,
+            "freq": 12,
+            "speed": 0.02
+          }
+        }
+      ],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "整段扭曲，容器级 warp 验证。",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 58,
+            "params": {},
+            "range": {
+              "end": 17,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": [
+          {
+            "blocking": false,
+            "level": "block",
+            "name": "warp",
+            "params": {
+              "amp": 0.06,
+              "freq": 12,
+              "speed": 0.02
+            }
+          }
+        ]
+      },
+      "lineOffset": 55,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "整段扭曲，容器级 warp 验证。",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 58,
+          "params": {},
+          "range": {
+            "end": 17,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    }
+  ],
+  "rawParagraphs": [
+    "// ━━ 镜头 1：背景图 + 连续色调底 ━━\n// bg(src) 落背景图，duotone:bg 压暗上色保证文字对比度（Task B 落地后 :bg 路由）\n@ bg(src=\"tests/assets/sample-bg.jpg\")\n[.duotone:bg(shadow=\"#0d0221\", highlight=\"#ff006e\")]\nNEON CITY",
+    "---",
+    "// ━━ 镜头 2：扫描线 + 噪声 + RGB 分裂组合 ━━\n// CRT 降解：scanline 周期亮度调制 + noise 数字噪声 + rgbShift 色彩撕裂\n@ bg(color=\"#0a0a0f\")\n[.scanline:block(density=4, curvature=0.1, flicker=0.05) .noise:block(amount=0.15, mono=1, scale=6) .rgbShift:block(dist=8, anim=true)]\nSIGNAL LOST",
+    "---",
+    "// ━━ 镜头 3：逐字扭曲 + glitch 消散 ━━\n// warp 逐字波纹扭曲（char 级）+ dissolve 消散转场\n{GLITCH} @ f.warp(freq=15, amp=0.08, speed=0.03).dissolve(duration=2, edge=\"#00fff0\")",
+    "---",
+    "// ━━ 镜头 4：水下（M2 旗舰组合） ━━\n// underwater = displace 波纹 + duotone 蓝移 + blur，整段水下沉浸感\n[.underwater:block(amount=15, scale=5, tint=\"#061230\", highlight=\"#3aa0c0\", blur=1)]\nDEEP BELOW",
+    "---",
+    "// ━━ 镜头 5：暗角 + 溶解转场收尾 ━━\n// vignette 径向暗角 + dissolve 消散，赛博朋克收束\n[.vignette:block .dissolve:block(duration=1.5, edge=\"#ff006e\", scale=10)]\nSYSTEM OFF",
+    "---",
+    "// ━━ 镜头 6：背景图浮雕连续色调验证 ━━\n// emboss:bg 在真实照片上的浮雕效果（连续色调教科书级验证）\n@ bg(src=\"tests/assets/sample-bg.jpg\")\n[.emboss:bg(strength=1.5)]\nARCHIVE",
+    "---",
+    "// ━━ 镜头 7：warp 容器级（扩展后 :block 路径） ━━\n// warp 扩展到容器级后可在 :block 用（此前 char-only 会 warn no-op）\n[.warp:block(freq=12, amp=0.06, speed=0.02)]\n整段扭曲，容器级 warp 验证。"
+  ]
+}

@@ -1,0 +1,1430 @@
+{
+  "diagnostics": [],
+  "metadata": {
+    "bgColor": "#0a0a1a",
+    "designHeight": 1080,
+    "designWidth": 1920,
+    "fontColor": "#ffcc66",
+    "fontFamily": "Sasara Regular",
+    "mode": "stage",
+    "variables": {}
+  },
+  "paragraphs": [
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 9,
+        "lines": [
+          {
+            "body": [
+              {
+                "children": [
+                  {
+                    "groupId": 1,
+                    "line": 10,
+                    "marks": [],
+                    "range": {
+                      "end": 5,
+                      "start": 1
+                    },
+                    "text": "白色描边",
+                    "type": "text"
+                  }
+                ],
+                "groupId": 1,
+                "line": 10,
+                "range": {
+                  "end": 6,
+                  "start": 0
+                },
+                "type": "group"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "name": "outline",
+                    "params": {
+                      "color": "#ffffff"
+                    },
+                    "prefix": "f",
+                    "raw": "f.outline(color=\"#ffffff\").big.big"
+                  },
+                  {
+                    "blocking": false,
+                    "family": "style",
+                    "name": "big",
+                    "params": {},
+                    "prefix": "f",
+                    "raw": "f.outline(color=\"#ffffff\").big.big"
+                  },
+                  {
+                    "blocking": false,
+                    "family": "style",
+                    "name": "big",
+                    "params": {},
+                    "prefix": "f",
+                    "raw": "f.outline(color=\"#ffffff\").big.big"
+                  }
+                ],
+                "line": 10,
+                "prefix": "f",
+                "range": {
+                  "end": 43,
+                  "start": 9
+                },
+                "raw": "f.outline(color=\"#ffffff\").big.big",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 10,
+            "range": {
+              "end": 43,
+              "start": 0
+            },
+            "raw": "{白色描边} @ f.outline(color=\"#ffffff\").big.big",
+            "type": "line"
+          }
+        ],
+        "source": "// 逐字（笔画级风格化）：暖色字 + 白色描边\n{白色描边} @ f.outline(color=\"#ffffff\").big.big",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "braceGroupId": 1,
+            "commands": [],
+            "content": "白色描边",
+            "effects": [
+              {
+                "blocking": false,
+                "name": "outline",
+                "params": {
+                  "color": "#ffffff"
+                }
+              },
+              {
+                "blocking": false,
+                "name": "big",
+                "params": {}
+              },
+              {
+                "blocking": false,
+                "name": "big",
+                "params": {}
+              }
+            ],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 10,
+            "params": {},
+            "range": {
+              "end": 5,
+              "start": 1
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 9,
+      "tokens": [
+        {
+          "braceGroupId": 1,
+          "commands": [],
+          "content": "白色描边",
+          "effects": [
+            {
+              "blocking": false,
+              "name": "outline",
+              "params": {
+                "color": "#ffffff"
+              }
+            },
+            {
+              "blocking": false,
+              "name": "big",
+              "params": {}
+            },
+            {
+              "blocking": false,
+              "name": "big",
+              "params": {}
+            }
+          ],
+          "isBraced": true,
+          "layoutInstructions": [],
+          "line": 10,
+          "params": {},
+          "range": {
+            "end": 5,
+            "start": 1
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 12,
+        "lines": [
+          {
+            "body": [],
+            "commandChains": [],
+            "heading": false,
+            "kind": "scene-clear",
+            "line": 12,
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "raw": "---",
+            "type": "line"
+          }
+        ],
+        "source": "---",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": true,
+            "isSugar": false,
+            "kind": "scene-clear",
+            "layoutInstructions": [
+              {
+                "blocking": false,
+                "line": 12,
+                "params": {},
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "scene.clear"
+              },
+              {
+                "blocking": true,
+                "line": 12,
+                "params": {
+                  "0": 0.5
+                },
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "pause"
+              }
+            ],
+            "line": 12,
+            "params": {},
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 12,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": true,
+          "isSugar": false,
+          "layoutInstructions": [
+            {
+              "blocking": false,
+              "line": 12,
+              "params": {},
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "scene.clear"
+            },
+            {
+              "blocking": true,
+              "line": 12,
+              "params": {
+                "0": 0.5
+              },
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "pause"
+            }
+          ],
+          "line": 12,
+          "params": {},
+          "range": {
+            "end": 3,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 14,
+        "lines": [
+          {
+            "body": [
+              {
+                "children": [
+                  {
+                    "groupId": 2,
+                    "line": 15,
+                    "marks": [],
+                    "range": {
+                      "end": 7,
+                      "start": 1
+                    },
+                    "text": "青色发光描边",
+                    "type": "text"
+                  }
+                ],
+                "groupId": 2,
+                "line": 15,
+                "range": {
+                  "end": 8,
+                  "start": 0
+                },
+                "type": "group"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "name": "outline",
+                    "params": {
+                      "color": "#00ccff",
+                      "glow": 1,
+                      "width": 3
+                    },
+                    "prefix": "f",
+                    "raw": "f.outline(width=3, color=\"#00ccff\", glow=1)"
+                  }
+                ],
+                "line": 15,
+                "prefix": "f",
+                "range": {
+                  "end": 54,
+                  "start": 11
+                },
+                "raw": "f.outline(width=3, color=\"#00ccff\", glow=1)",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 15,
+            "range": {
+              "end": 54,
+              "start": 0
+            },
+            "raw": "{青色发光描边} @ f.outline(width=3, color=\"#00ccff\", glow=1)",
+            "type": "line"
+          }
+        ],
+        "source": "// 改参宽描边 + 发光（width=3, color=#00ccff, glow=1）\n{青色发光描边} @ f.outline(width=3, color=\"#00ccff\", glow=1)",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "braceGroupId": 2,
+            "commands": [],
+            "content": "青色发光描边",
+            "effects": [
+              {
+                "blocking": false,
+                "name": "outline",
+                "params": {
+                  "color": "#00ccff",
+                  "glow": 1,
+                  "width": 3
+                }
+              }
+            ],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 15,
+            "params": {},
+            "range": {
+              "end": 7,
+              "start": 1
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 14,
+      "tokens": [
+        {
+          "braceGroupId": 2,
+          "commands": [],
+          "content": "青色发光描边",
+          "effects": [
+            {
+              "blocking": false,
+              "name": "outline",
+              "params": {
+                "color": "#00ccff",
+                "glow": 1,
+                "width": 3
+              }
+            }
+          ],
+          "isBraced": true,
+          "layoutInstructions": [],
+          "line": 15,
+          "params": {},
+          "range": {
+            "end": 7,
+            "start": 1
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 17,
+        "lines": [
+          {
+            "body": [],
+            "commandChains": [],
+            "heading": false,
+            "kind": "scene-clear",
+            "line": 17,
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "raw": "---",
+            "type": "line"
+          }
+        ],
+        "source": "---",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": true,
+            "isSugar": false,
+            "kind": "scene-clear",
+            "layoutInstructions": [
+              {
+                "blocking": false,
+                "line": 17,
+                "params": {},
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "scene.clear"
+              },
+              {
+                "blocking": true,
+                "line": 17,
+                "params": {
+                  "0": 0.5
+                },
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "pause"
+              }
+            ],
+            "line": 17,
+            "params": {},
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 17,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": true,
+          "isSugar": false,
+          "layoutInstructions": [
+            {
+              "blocking": false,
+              "line": 17,
+              "params": {},
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "scene.clear"
+            },
+            {
+              "blocking": true,
+              "line": 17,
+              "params": {
+                "0": 0.5
+              },
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "pause"
+            }
+          ],
+          "line": 17,
+          "params": {},
+          "range": {
+            "end": 3,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 19,
+        "lines": [
+          {
+            "body": [
+              {
+                "children": [
+                  {
+                    "groupId": 3,
+                    "line": 20,
+                    "marks": [],
+                    "range": {
+                      "end": 5,
+                      "start": 1
+                    },
+                    "text": "粉色描边",
+                    "type": "text"
+                  }
+                ],
+                "groupId": 3,
+                "line": 20,
+                "range": {
+                  "end": 6,
+                  "start": 0
+                },
+                "type": "group"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "name": "outline",
+                    "params": {
+                      "color": "#ff2bd6",
+                      "width": 2
+                    },
+                    "prefix": "f",
+                    "raw": "f.outline(width=2, color=\"#ff2bd6\")"
+                  }
+                ],
+                "line": 20,
+                "prefix": "f",
+                "range": {
+                  "end": 44,
+                  "start": 9
+                },
+                "raw": "f.outline(width=2, color=\"#ff2bd6\")",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 20,
+            "range": {
+              "end": 44,
+              "start": 0
+            },
+            "raw": "{粉色描边} @ f.outline(width=2, color=\"#ff2bd6\")",
+            "type": "line"
+          }
+        ],
+        "source": "// 逐字改参：粉色描边\n{粉色描边} @ f.outline(width=2, color=\"#ff2bd6\")",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "braceGroupId": 3,
+            "commands": [],
+            "content": "粉色描边",
+            "effects": [
+              {
+                "blocking": false,
+                "name": "outline",
+                "params": {
+                  "color": "#ff2bd6",
+                  "width": 2
+                }
+              }
+            ],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 20,
+            "params": {},
+            "range": {
+              "end": 5,
+              "start": 1
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 19,
+      "tokens": [
+        {
+          "braceGroupId": 3,
+          "commands": [],
+          "content": "粉色描边",
+          "effects": [
+            {
+              "blocking": false,
+              "name": "outline",
+              "params": {
+                "color": "#ff2bd6",
+                "width": 2
+              }
+            }
+          ],
+          "isBraced": true,
+          "layoutInstructions": [],
+          "line": 20,
+          "params": {},
+          "range": {
+            "end": 5,
+            "start": 1
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 22,
+        "lines": [
+          {
+            "body": [],
+            "commandChains": [],
+            "heading": false,
+            "kind": "scene-clear",
+            "line": 22,
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "raw": "---",
+            "type": "line"
+          }
+        ],
+        "source": "---",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": true,
+            "isSugar": false,
+            "kind": "scene-clear",
+            "layoutInstructions": [
+              {
+                "blocking": false,
+                "line": 22,
+                "params": {},
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "scene.clear"
+              },
+              {
+                "blocking": true,
+                "line": 22,
+                "params": {
+                  "0": 0.5
+                },
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "pause"
+              }
+            ],
+            "line": 22,
+            "params": {},
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 22,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": true,
+          "isSugar": false,
+          "layoutInstructions": [
+            {
+              "blocking": false,
+              "line": 22,
+              "params": {},
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "scene.clear"
+            },
+            {
+              "blocking": true,
+              "line": 22,
+              "params": {
+                "0": 0.5
+              },
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "pause"
+            }
+          ],
+          "line": 22,
+          "params": {},
+          "range": {
+            "end": 3,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [
+          {
+            "chain": {
+              "commands": [
+                {
+                  "blocking": false,
+                  "family": "effect",
+                  "level": "block",
+                  "name": "outline",
+                  "params": {
+                    "color": "#00ffcc",
+                    "width": 3
+                  },
+                  "prefix": "dot",
+                  "raw": ".outline:block(width=3, color=\"#00ffcc\")"
+                }
+              ],
+              "line": 25,
+              "prefix": "dot",
+              "range": {
+                "end": 41,
+                "start": 1
+              },
+              "raw": ".outline:block(width=3, color=\"#00ffcc\")",
+              "type": "command-chain"
+            },
+            "line": 25,
+            "range": {
+              "end": 41,
+              "start": 1
+            },
+            "type": "block-option-command"
+          }
+        ],
+        "lineOffset": 24,
+        "lines": [
+          {
+            "body": [
+              {
+                "line": 26,
+                "marks": [],
+                "range": {
+                  "end": 21,
+                  "start": 0
+                },
+                "text": "整段文字带青色描边，边缘不应出现透明截断。",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 26,
+            "range": {
+              "end": 21,
+              "start": 0
+            },
+            "raw": "整段文字带青色描边，边缘不应出现透明截断。",
+            "type": "line"
+          }
+        ],
+        "source": "// block 作用域：整段一起描边（验证 padding 边缘无透明截断）\n[.outline:block(width=3, color=\"#00ffcc\")]\n整段文字带青色描边，边缘不应出现透明截断。",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [
+        {
+          "blocking": false,
+          "level": "block",
+          "name": "outline",
+          "params": {
+            "color": "#00ffcc",
+            "width": 3
+          }
+        }
+      ],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "整段文字带青色描边，边缘不应出现透明截断。",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 26,
+            "params": {},
+            "range": {
+              "end": 21,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": [
+          {
+            "blocking": false,
+            "level": "block",
+            "name": "outline",
+            "params": {
+              "color": "#00ffcc",
+              "width": 3
+            }
+          }
+        ]
+      },
+      "lineOffset": 24,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "整段文字带青色描边，边缘不应出现透明截断。",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 26,
+          "params": {},
+          "range": {
+            "end": 21,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 28,
+        "lines": [
+          {
+            "body": [],
+            "commandChains": [],
+            "heading": false,
+            "kind": "scene-clear",
+            "line": 28,
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "raw": "---",
+            "type": "line"
+          }
+        ],
+        "source": "---",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": true,
+            "isSugar": false,
+            "kind": "scene-clear",
+            "layoutInstructions": [
+              {
+                "blocking": false,
+                "line": 28,
+                "params": {},
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "scene.clear"
+              },
+              {
+                "blocking": true,
+                "line": 28,
+                "params": {
+                  "0": 0.5
+                },
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "pause"
+              }
+            ],
+            "line": 28,
+            "params": {},
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 28,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": true,
+          "isSugar": false,
+          "layoutInstructions": [
+            {
+              "blocking": false,
+              "line": 28,
+              "params": {},
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "scene.clear"
+            },
+            {
+              "blocking": true,
+              "line": 28,
+              "params": {
+                "0": 0.5
+              },
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "pause"
+            }
+          ],
+          "line": 28,
+          "params": {},
+          "range": {
+            "end": 3,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 30,
+        "lines": [
+          {
+            "body": [
+              {
+                "children": [
+                  {
+                    "groupId": 4,
+                    "line": 31,
+                    "marks": [],
+                    "range": {
+                      "end": 5,
+                      "start": 1
+                    },
+                    "text": "词组描边",
+                    "type": "text"
+                  }
+                ],
+                "groupId": 4,
+                "line": 31,
+                "range": {
+                  "end": 6,
+                  "start": 0
+                },
+                "type": "group"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "level": "group",
+                    "name": "outline",
+                    "params": {},
+                    "prefix": "f",
+                    "raw": "f.outline:group"
+                  }
+                ],
+                "line": 31,
+                "prefix": "f",
+                "range": {
+                  "end": 24,
+                  "start": 9
+                },
+                "raw": "f.outline:group",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 31,
+            "range": {
+              "end": 24,
+              "start": 0
+            },
+            "raw": "{词组描边} @ f.outline:group",
+            "type": "line"
+          }
+        ],
+        "source": "// group 作用域：整词组共用容器纹理一起描边\n{词组描边} @ f.outline:group",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "braceGroupId": 4,
+            "commands": [],
+            "content": "词组描边",
+            "effects": [
+              {
+                "blocking": false,
+                "level": "group",
+                "name": "outline",
+                "params": {}
+              }
+            ],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 31,
+            "params": {},
+            "range": {
+              "end": 5,
+              "start": 1
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 30,
+      "tokens": [
+        {
+          "braceGroupId": 4,
+          "commands": [],
+          "content": "词组描边",
+          "effects": [
+            {
+              "blocking": false,
+              "level": "group",
+              "name": "outline",
+              "params": {}
+            }
+          ],
+          "isBraced": true,
+          "layoutInstructions": [],
+          "line": 31,
+          "params": {},
+          "range": {
+            "end": 5,
+            "start": 1
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 33,
+        "lines": [
+          {
+            "body": [],
+            "commandChains": [],
+            "heading": false,
+            "kind": "scene-clear",
+            "line": 33,
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "raw": "---",
+            "type": "line"
+          }
+        ],
+        "source": "---",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": true,
+            "isSugar": false,
+            "kind": "scene-clear",
+            "layoutInstructions": [
+              {
+                "blocking": false,
+                "line": 33,
+                "params": {},
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "scene.clear"
+              },
+              {
+                "blocking": true,
+                "line": 33,
+                "params": {
+                  "0": 0.5
+                },
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "pause"
+              }
+            ],
+            "line": 33,
+            "params": {},
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 33,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": true,
+          "isSugar": false,
+          "layoutInstructions": [
+            {
+              "blocking": false,
+              "line": 33,
+              "params": {},
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "scene.clear"
+            },
+            {
+              "blocking": true,
+              "line": 33,
+              "params": {
+                "0": 0.5
+              },
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "pause"
+            }
+          ],
+          "line": 33,
+          "params": {},
+          "range": {
+            "end": 3,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 35,
+        "lines": [
+          {
+            "body": [
+              {
+                "children": [
+                  {
+                    "groupId": 5,
+                    "line": 36,
+                    "marks": [],
+                    "range": {
+                      "end": 6,
+                      "start": 1
+                    },
+                    "text": "描边加波浪",
+                    "type": "text"
+                  }
+                ],
+                "groupId": 5,
+                "line": 36,
+                "range": {
+                  "end": 7,
+                  "start": 0
+                },
+                "type": "group"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "name": "outline",
+                    "params": {},
+                    "prefix": "f",
+                    "raw": "f.outline.wave"
+                  },
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "name": "wave",
+                    "params": {},
+                    "prefix": "f",
+                    "raw": "f.outline.wave"
+                  }
+                ],
+                "line": 36,
+                "prefix": "f",
+                "range": {
+                  "end": 24,
+                  "start": 10
+                },
+                "raw": "f.outline.wave",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 36,
+            "range": {
+              "end": 24,
+              "start": 0
+            },
+            "raw": "{描边加波浪} @ f.outline.wave",
+            "type": "line"
+          }
+        ],
+        "source": "// 与 behavior 组合：滤镜静态挂载，wave 逐字波动\n{描边加波浪} @ f.outline.wave",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "braceGroupId": 5,
+            "commands": [],
+            "content": "描边加波浪",
+            "effects": [
+              {
+                "blocking": false,
+                "name": "outline",
+                "params": {}
+              },
+              {
+                "blocking": false,
+                "name": "wave",
+                "params": {}
+              }
+            ],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 36,
+            "params": {},
+            "range": {
+              "end": 6,
+              "start": 1
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 35,
+      "tokens": [
+        {
+          "braceGroupId": 5,
+          "commands": [],
+          "content": "描边加波浪",
+          "effects": [
+            {
+              "blocking": false,
+              "name": "outline",
+              "params": {}
+            },
+            {
+              "blocking": false,
+              "name": "wave",
+              "params": {}
+            }
+          ],
+          "isBraced": true,
+          "layoutInstructions": [],
+          "line": 36,
+          "params": {},
+          "range": {
+            "end": 6,
+            "start": 1
+          },
+          "sugar": []
+        }
+      ]
+    }
+  ],
+  "rawParagraphs": [
+    "// 逐字（笔画级风格化）：暖色字 + 白色描边\n{白色描边} @ f.outline(color=\"#ffffff\").big.big",
+    "---",
+    "// 改参宽描边 + 发光（width=3, color=#00ccff, glow=1）\n{青色发光描边} @ f.outline(width=3, color=\"#00ccff\", glow=1)",
+    "---",
+    "// 逐字改参：粉色描边\n{粉色描边} @ f.outline(width=2, color=\"#ff2bd6\")",
+    "---",
+    "// block 作用域：整段一起描边（验证 padding 边缘无透明截断）\n[.outline:block(width=3, color=\"#00ffcc\")]\n整段文字带青色描边，边缘不应出现透明截断。",
+    "---",
+    "// group 作用域：整词组共用容器纹理一起描边\n{词组描边} @ f.outline:group",
+    "---",
+    "// 与 behavior 组合：滤镜静态挂载，wave 逐字波动\n{描边加波浪} @ f.outline.wave"
+  ]
+}

@@ -23,11 +23,17 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Install glslang (shader compile gate)
+        run: sudo apt-get update && sudo apt-get install -y glslang-tools
+
       - name: Language assets sync check
         run: pnpm language:check
 
       - name: Editor type-check + build
         run: pnpm build
+
+      - name: Editor vitest suite (parser golden + layout + effects + playback + invariants + shaders + frontmatter)
+        run: pnpm test
 
       - name: Parser regression
         run: pnpm test:parser
@@ -37,6 +43,9 @@ jobs:
 
       - name: Runtime invariant guards
         run: pnpm --filter @kmd/editor test:invariants
+
+      - name: Shader compile gate (glslangValidator)
+        run: pnpm --filter @kmd/editor test:shaders
 
       - name: Reader runtime type-check
         run: pnpm reader:typecheck
@@ -55,6 +64,3 @@ jobs:
 
       - name: Community API tests
         run: pnpm community-api:test
-
-      # test:shaders 需要 glslangValidator，暂未纳入；见
-      # docs/planning/architecture-health-check-2026-07.md 处方 5。

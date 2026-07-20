@@ -8,15 +8,17 @@ This repository is the KMD main incubation repo, not only the Web editor. `apps/
 
 ## Build, Test, and Development Commands
 
-Use `pnpm` throughout. `dev`, `build`, `preview`, `test:parser`, `test:shaders`, `test:e2e`, and `language:check` run from the repo root (the root `package.json` proxies them). `test:playback` and `test:invariants` live in the editor package only — run them from `apps/editor/`, or from the root as `pnpm --filter @kmd/editor test:playback` / `test:invariants`.
+Use `pnpm` throughout. `dev`, `build`, `preview`, `test`, `test:parser`, `test:shaders`, `test:e2e`, and `language:check` run from the repo root (the root `package.json` proxies them). `test:playback` and `test:invariants` live in the editor package only — run them from `apps/editor/`, or from the root as `pnpm --filter @kmd/editor test:playback` / `test:invariants`.
 
 - `pnpm dev` - start the Vite dev server for the editor.
 - `pnpm build` - run `vue-tsc` type-checking, then produce a production build in `dist/`.
 - `pnpm preview` - serve the built app locally for verification.
-- `pnpm test:parser` - run the parser integration regression in `apps/editor/src/final-parser-test.ts`.
-- `pnpm test:playback` - run the playback state-machine regression in `apps/editor/src/final-playback-test.ts` (seek/phase/resume semantics, effect lifecycle, baseline/record ownership). **Required gate for any playback, effect, timeline, or seek change.**
-- `pnpm test:invariants` - run the INV-7/INV-8 structural guard in `apps/editor/src/test-invariants.ts` (no inline effect-track special-casing; no unverified boundary-behavior claims). **Required gate for any effect-routing or playback change.**
-- `pnpm test:shaders` - compile every `*Filter.ts` fragment shader with `glslangValidator` (catches GLSL syntax/scope errors that `vue-tsc` cannot see). Requires `glslangValidator` on PATH.
+- `pnpm test` - run the full editor vitest suite (parser golden + layout coordinate stability + effects four-track classification + playback regression + invariant guards + shader compile gate + frontmatter writeback). Design: `docs/planning/test-net-design-2026-07.md`.
+- `pnpm test:parser` - run the parser integration + corpus golden suites (vitest).
+- `pnpm test:golden:write` - regenerate parser/layout golden files under `apps/editor/src/test/__golden__/`. **Human-review the `git diff` before committing; never blind-commit a regen** (vitest `--update` does not touch these — they are plain JSON, not vitest snapshots).
+- `pnpm test:playback` - run the playback state-machine regression (331 cases, seek/phase/resume semantics, effect lifecycle, baseline/record ownership). **Required gate for any playback, effect, timeline, or seek change.**
+- `pnpm test:invariants` - run the INV-7/INV-8 structural guard (no inline effect-track special-casing; no unverified boundary-behavior claims). **Required gate for any effect-routing or playback change.**
+- `pnpm test:shaders` - compile every `*Filter.ts` fragment shader with `glslangValidator` (catches GLSL syntax/scope errors that `vue-tsc` cannot see). Hard CI gate (no `SKIP_SHADER_GATE` opt-out); requires `glslangValidator` on PATH (`brew install glslang` / `pacman -S glslang` / `apt install glslang-tools`).
 - `pnpm test:e2e` - build the reader runtime and run Playwright Chromium against the production bundle. **Required for browser-only rendering, Pixi resource lifecycle, ticker, or WebGL integration changes.** Install the browser once with `pnpm exec playwright install chromium`.
 - `pnpm language:check` - verify `@kmd/language` assets match the VS Code extension packaged copies.
 
@@ -24,13 +26,13 @@ Use `pnpm` throughout. `dev`, `build`, `preview`, `test:parser`, `test:shaders`,
 
 | Change touches | Required gates (all must pass) |
 |---|---|
-| parser, layout, or shared runtime | `pnpm build` + `pnpm test:parser` |
-| playback, seek, effect pipeline, timeline/easing, stage modifiers | `pnpm build` + `pnpm test:parser` + `pnpm test:playback` + `pnpm test:invariants` |
+| parser, layout, or shared runtime | `pnpm build` + `pnpm test` + `pnpm test:parser` |
+| playback, seek, effect pipeline, timeline/easing, stage modifiers | `pnpm build` + `pnpm test` + `pnpm test:parser` + `pnpm test:playback` + `pnpm test:invariants` |
 | browser rendering, Pixi resource lifecycle, ticker, or WebGL integration | also run `pnpm test:e2e` |
 | any `*Filter.ts` | also run `pnpm test:shaders` (see below) |
 | `@kmd/language` or VS Code extension assets | `pnpm language:check` |
 
-`pnpm build` does not compile GLSL template strings, so it passes even when a shader fails to compile — always run the shader gate when touching any `*Filter.ts`.
+`pnpm test` runs the full vitest suite (parser golden + layout + effects + playback + invariants + shaders + frontmatter); `pnpm test:parser` / `test:playback` / `test:invariants` / `test:shaders` run the individual suites for narrower iteration. `pnpm build` does not compile GLSL template strings, so it passes even when a shader fails to compile — the shader-gate suite (glslangValidator, now a hard CI gate with no `SKIP_SHADER_GATE` opt-out) catches this. Golden files under `src/test/__golden__/` are characterization snapshots — regenerate via `pnpm test:golden:write` and human-review the diff before committing.
 
 ## Coding Style & Naming Conventions
 
@@ -62,7 +64,7 @@ When a resource has two apply paths, such as natural play and seek replay, both 
 
 ## Testing Guidelines
 
-There is no full unit-test suite or coverage gate yet. Add regression-oriented TypeScript scripts alongside the current parser tests when fixing engine bugs, and keep sample KMD inputs in `apps/editor/public/` or `apps/editor/public/tests/` when they help reproduce issues. Name ad hoc test files clearly, for example `test-variable-parser.ts` or `final-parser-test.ts`. GLSL fragment shaders in `*Filter.ts` are validated by `pnpm test:shaders` (glslangValidator); `vue-tsc` does not compile GLSL template strings, so shader syntax/scope errors (e.g. nested function definitions, which GLSL ES 3.00 forbids) are invisible to `pnpm build` — always run the shader gate when touching filters.
+The editor test net (`apps/editor/src/test/`, vitest ^2.1.8) is the primary regression layer — run it via `pnpm test` (root) or `pnpm --filter @kmd/editor test`. It covers: parser golden fixtures (full corpus + B0.1 syntax, `__golden__/parser/`), layout coordinate stability snapshots (`__golden__/layout/`), effects four-track classification table, playback state-machine regression (331 cases, wrapped from `final-playback-test.ts`), INV-7/INV-8 invariant guards, GLSL shader compile gate (glslangValidator), and frontmatter writeback. Design rationale: `docs/planning/test-net-design-2026-07.md`. Golden files (`src/test/__golden__/`) are characterization snapshots of current behavior — regenerate via `pnpm test:golden:write` then **human-review the git diff**; never blind-commit a regen, and `vitest --update` does not touch them (they are plain JSON, not vitest snapshots). Add new regression cases as vitest tests under `src/test/`, and keep sample KMD inputs in `apps/editor/public/` or `apps/editor/public/tests/` when they help reproduce issues. GLSL fragment shaders in `*Filter.ts` are validated by the shader-gate suite (glslangValidator); `vue-tsc` does not compile GLSL template strings, so shader syntax/scope errors (e.g. nested function definitions, which GLSL ES 3.00 forbids) are invisible to `pnpm build` — always run the shader gate when touching filters.
 
 ## Documentation & Architecture Notes
 

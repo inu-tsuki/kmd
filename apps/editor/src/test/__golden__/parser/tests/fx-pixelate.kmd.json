@@ -1,0 +1,901 @@
+{
+  "diagnostics": [],
+  "metadata": {
+    "designHeight": 1080,
+    "designWidth": 1920,
+    "mode": "stage",
+    "speed": 50,
+    "title": "fx - pixelate 滤镜三作用域",
+    "variables": {}
+  },
+  "paragraphs": [
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 8,
+        "lines": [
+          {
+            "body": [
+              {
+                "children": [
+                  {
+                    "groupId": 1,
+                    "line": 9,
+                    "marks": [],
+                    "range": {
+                      "end": 5,
+                      "start": 1
+                    },
+                    "text": "逐字像素",
+                    "type": "text"
+                  }
+                ],
+                "groupId": 1,
+                "line": 9,
+                "range": {
+                  "end": 6,
+                  "start": 0
+                },
+                "type": "group"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "name": "pixelate",
+                    "params": {
+                      "size": 4
+                    },
+                    "prefix": "f",
+                    "raw": "f.pixelate(size=4)"
+                  }
+                ],
+                "line": 9,
+                "prefix": "f",
+                "range": {
+                  "end": 27,
+                  "start": 9
+                },
+                "raw": "f.pixelate(size=4)",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 9,
+            "range": {
+              "end": 27,
+              "start": 0
+            },
+            "raw": "{逐字像素} @ f.pixelate(size=4)",
+            "type": "line"
+          }
+        ],
+        "source": "// char 作用域（默认逐字）：每字独立像素化，小 size 出小马赛克\n{逐字像素} @ f.pixelate(size=4)",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "braceGroupId": 1,
+            "commands": [],
+            "content": "逐字像素",
+            "effects": [
+              {
+                "blocking": false,
+                "name": "pixelate",
+                "params": {
+                  "size": 4
+                }
+              }
+            ],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 9,
+            "params": {},
+            "range": {
+              "end": 5,
+              "start": 1
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 8,
+      "tokens": [
+        {
+          "braceGroupId": 1,
+          "commands": [],
+          "content": "逐字像素",
+          "effects": [
+            {
+              "blocking": false,
+              "name": "pixelate",
+              "params": {
+                "size": 4
+              }
+            }
+          ],
+          "isBraced": true,
+          "layoutInstructions": [],
+          "line": 9,
+          "params": {},
+          "range": {
+            "end": 5,
+            "start": 1
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 11,
+        "lines": [
+          {
+            "body": [],
+            "commandChains": [],
+            "heading": false,
+            "kind": "scene-clear",
+            "line": 11,
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "raw": "---",
+            "type": "line"
+          }
+        ],
+        "source": "---",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": true,
+            "isSugar": false,
+            "kind": "scene-clear",
+            "layoutInstructions": [
+              {
+                "blocking": false,
+                "line": 11,
+                "params": {},
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "scene.clear"
+              },
+              {
+                "blocking": true,
+                "line": 11,
+                "params": {
+                  "0": 0.5
+                },
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "pause"
+              }
+            ],
+            "line": 11,
+            "params": {},
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 11,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": true,
+          "isSugar": false,
+          "layoutInstructions": [
+            {
+              "blocking": false,
+              "line": 11,
+              "params": {},
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "scene.clear"
+            },
+            {
+              "blocking": true,
+              "line": 11,
+              "params": {
+                "0": 0.5
+              },
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "pause"
+            }
+          ],
+          "line": 11,
+          "params": {},
+          "range": {
+            "end": 3,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 13,
+        "lines": [
+          {
+            "body": [
+              {
+                "children": [
+                  {
+                    "groupId": 2,
+                    "line": 14,
+                    "marks": [],
+                    "range": {
+                      "end": 6,
+                      "start": 1
+                    },
+                    "text": "词组像素化",
+                    "type": "text"
+                  }
+                ],
+                "groupId": 2,
+                "line": 14,
+                "range": {
+                  "end": 7,
+                  "start": 0
+                },
+                "type": "group"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "level": "group",
+                    "name": "pixelate",
+                    "params": {
+                      "size": 10
+                    },
+                    "prefix": "f",
+                    "raw": "f.pixelate:group(size=10)"
+                  }
+                ],
+                "line": 14,
+                "prefix": "f",
+                "range": {
+                  "end": 35,
+                  "start": 10
+                },
+                "raw": "f.pixelate:group(size=10)",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 14,
+            "range": {
+              "end": 35,
+              "start": 0
+            },
+            "raw": "{词组像素化} @ f.pixelate:group(size=10)",
+            "type": "line"
+          }
+        ],
+        "source": "// group 作用域：显式 :group，整词组共用一张 TokenWrapper 容器纹理\n{词组像素化} @ f.pixelate:group(size=10)",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "braceGroupId": 2,
+            "commands": [],
+            "content": "词组像素化",
+            "effects": [
+              {
+                "blocking": false,
+                "level": "group",
+                "name": "pixelate",
+                "params": {
+                  "size": 10
+                }
+              }
+            ],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 14,
+            "params": {},
+            "range": {
+              "end": 6,
+              "start": 1
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 13,
+      "tokens": [
+        {
+          "braceGroupId": 2,
+          "commands": [],
+          "content": "词组像素化",
+          "effects": [
+            {
+              "blocking": false,
+              "level": "group",
+              "name": "pixelate",
+              "params": {
+                "size": 10
+              }
+            }
+          ],
+          "isBraced": true,
+          "layoutInstructions": [],
+          "line": 14,
+          "params": {},
+          "range": {
+            "end": 6,
+            "start": 1
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 16,
+        "lines": [
+          {
+            "body": [],
+            "commandChains": [],
+            "heading": false,
+            "kind": "scene-clear",
+            "line": 16,
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "raw": "---",
+            "type": "line"
+          }
+        ],
+        "source": "---",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": true,
+            "isSugar": false,
+            "kind": "scene-clear",
+            "layoutInstructions": [
+              {
+                "blocking": false,
+                "line": 16,
+                "params": {},
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "scene.clear"
+              },
+              {
+                "blocking": true,
+                "line": 16,
+                "params": {
+                  "0": 0.5
+                },
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "pause"
+              }
+            ],
+            "line": 16,
+            "params": {},
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 16,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": true,
+          "isSugar": false,
+          "layoutInstructions": [
+            {
+              "blocking": false,
+              "line": 16,
+              "params": {},
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "scene.clear"
+            },
+            {
+              "blocking": true,
+              "line": 16,
+              "params": {
+                "0": 0.5
+              },
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "pause"
+            }
+          ],
+          "line": 16,
+          "params": {},
+          "range": {
+            "end": 3,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [
+          {
+            "chain": {
+              "commands": [
+                {
+                  "blocking": false,
+                  "family": "effect",
+                  "level": "block",
+                  "name": "pixelate",
+                  "params": {
+                    "size": 16
+                  },
+                  "prefix": "dot",
+                  "raw": ".pixelate:block(size=16)"
+                }
+              ],
+              "line": 19,
+              "prefix": "dot",
+              "range": {
+                "end": 25,
+                "start": 1
+              },
+              "raw": ".pixelate:block(size=16)",
+              "type": "command-chain"
+            },
+            "line": 19,
+            "range": {
+              "end": 25,
+              "start": 1
+            },
+            "type": "block-option-command"
+          }
+        ],
+        "lineOffset": 18,
+        "lines": [
+          {
+            "body": [
+              {
+                "line": 20,
+                "marks": [],
+                "range": {
+                  "end": 10,
+                  "start": 0
+                },
+                "text": "整段文字一起像素化。",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 20,
+            "range": {
+              "end": 10,
+              "start": 0
+            },
+            "raw": "整段文字一起像素化。",
+            "type": "line"
+          }
+        ],
+        "source": "// block 作用域：整段 KineticText 共用一张纹理，验证 §7.2 纹理范围\n[.pixelate:block(size=16)]\n整段文字一起像素化。",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [
+        {
+          "blocking": false,
+          "level": "block",
+          "name": "pixelate",
+          "params": {
+            "size": 16
+          }
+        }
+      ],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "整段文字一起像素化。",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 20,
+            "params": {},
+            "range": {
+              "end": 10,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": [
+          {
+            "blocking": false,
+            "level": "block",
+            "name": "pixelate",
+            "params": {
+              "size": 16
+            }
+          }
+        ]
+      },
+      "lineOffset": 18,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "整段文字一起像素化。",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 20,
+          "params": {},
+          "range": {
+            "end": 10,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 22,
+        "lines": [
+          {
+            "body": [],
+            "commandChains": [],
+            "heading": false,
+            "kind": "scene-clear",
+            "line": 22,
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "raw": "---",
+            "type": "line"
+          }
+        ],
+        "source": "---",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": true,
+            "isSugar": false,
+            "kind": "scene-clear",
+            "layoutInstructions": [
+              {
+                "blocking": false,
+                "line": 22,
+                "params": {},
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "scene.clear"
+              },
+              {
+                "blocking": true,
+                "line": 22,
+                "params": {
+                  "0": 0.5
+                },
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "pause"
+              }
+            ],
+            "line": 22,
+            "params": {},
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 22,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": true,
+          "isSugar": false,
+          "layoutInstructions": [
+            {
+              "blocking": false,
+              "line": 22,
+              "params": {},
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "scene.clear"
+            },
+            {
+              "blocking": true,
+              "line": 22,
+              "params": {
+                "0": 0.5
+              },
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "pause"
+            }
+          ],
+          "line": 22,
+          "params": {},
+          "range": {
+            "end": 3,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 24,
+        "lines": [
+          {
+            "body": [
+              {
+                "children": [
+                  {
+                    "groupId": 3,
+                    "line": 25,
+                    "marks": [],
+                    "range": {
+                      "end": 6,
+                      "start": 1
+                    },
+                    "text": "像素加波浪",
+                    "type": "text"
+                  }
+                ],
+                "groupId": 3,
+                "line": 25,
+                "range": {
+                  "end": 7,
+                  "start": 0
+                },
+                "type": "group"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "name": "pixelate",
+                    "params": {
+                      "size": 6
+                    },
+                    "prefix": "f",
+                    "raw": "f.pixelate(size=6).wave"
+                  },
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "name": "wave",
+                    "params": {},
+                    "prefix": "f",
+                    "raw": "f.pixelate(size=6).wave"
+                  }
+                ],
+                "line": 25,
+                "prefix": "f",
+                "range": {
+                  "end": 33,
+                  "start": 10
+                },
+                "raw": "f.pixelate(size=6).wave",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 25,
+            "range": {
+              "end": 33,
+              "start": 0
+            },
+            "raw": "{像素加波浪} @ f.pixelate(size=6).wave",
+            "type": "line"
+          }
+        ],
+        "source": "// 改参 + 与 behavior 组合（spec §2.5）：滤镜静态挂载，wave 逐字波动\n{像素加波浪} @ f.pixelate(size=6).wave",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "braceGroupId": 3,
+            "commands": [],
+            "content": "像素加波浪",
+            "effects": [
+              {
+                "blocking": false,
+                "name": "pixelate",
+                "params": {
+                  "size": 6
+                }
+              },
+              {
+                "blocking": false,
+                "name": "wave",
+                "params": {}
+              }
+            ],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 25,
+            "params": {},
+            "range": {
+              "end": 6,
+              "start": 1
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 24,
+      "tokens": [
+        {
+          "braceGroupId": 3,
+          "commands": [],
+          "content": "像素加波浪",
+          "effects": [
+            {
+              "blocking": false,
+              "name": "pixelate",
+              "params": {
+                "size": 6
+              }
+            },
+            {
+              "blocking": false,
+              "name": "wave",
+              "params": {}
+            }
+          ],
+          "isBraced": true,
+          "layoutInstructions": [],
+          "line": 25,
+          "params": {},
+          "range": {
+            "end": 6,
+            "start": 1
+          },
+          "sugar": []
+        }
+      ]
+    }
+  ],
+  "rawParagraphs": [
+    "// char 作用域（默认逐字）：每字独立像素化，小 size 出小马赛克\n{逐字像素} @ f.pixelate(size=4)",
+    "---",
+    "// group 作用域：显式 :group，整词组共用一张 TokenWrapper 容器纹理\n{词组像素化} @ f.pixelate:group(size=10)",
+    "---",
+    "// block 作用域：整段 KineticText 共用一张纹理，验证 §7.2 纹理范围\n[.pixelate:block(size=16)]\n整段文字一起像素化。",
+    "---",
+    "// 改参 + 与 behavior 组合（spec §2.5）：滤镜静态挂载，wave 逐字波动\n{像素加波浪} @ f.pixelate(size=6).wave"
+  ]
+}

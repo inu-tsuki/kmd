@@ -33,14 +33,37 @@
 
 ### Backlog（处方 5–10，按建议顺序）
 
-- [ ] **处方 5 · 测试收编**（Phase B 开工前完成，约 1–2 周）
+- [x] **处方 5 · 测试收编**（2026-07-20 完成，PR `feat/test-net`）
   把 `apps/editor/src/test-*.ts` / `final-*-test.ts` 散件收编为 Vitest 套件；
   重点补 layout 坐标稳定性与 effects 四轨分类测试 —— **Phase B 将大改这些区域，无测试网不动手**。
   同时：CI 安装 glslang（`glslang-tools`），将 `test:shaders` 纳入必跑门禁（当前 `SKIP_SHADER_GATE=1` 可绕过）。
+  **落地内容**：
+  - 支柱 1：vitest ^2.1.8（对齐 community-api）+ `vitest.config.ts` + `src/test/setup.ts`（把
+    `final-playback-test.ts` 的 gsap 互操作 / document stub / DOMAdapter 合成度量 shim 提取为
+    单一真相源）+ 根 `pnpm test`。
+  - 支柱 2：parser 黄金 fixture（全语料 39 文件 + B0.1 语法覆盖审计 fixture）、layout 坐标稳定性
+    快照、effects 四轨分类表（47 effects + 22 styles 双向匹配）。
+  - 支柱 3：收编 final-parser-test / final-playback-test（整体包成 1 test 断言 fail===0，渐拆留后续）/
+    test-invariants / final-shader-test / frontmatter-writeback 进 vitest 套件；退役 4 个 stale 孤儿
+    （test-markdown-parser / test-parser-script / test-parser-v2 / test-variable-parser）。
+  - 支柱 4：CI 装 glslang-tools，test:shaders 提为必跑（去 SKIP_SHADER_GATE 逃生门）+ vitest 步骤。
+  - 复核条件：CLAUDE.md / AGENTS.md "There is no full unit-test suite yet" 表述已更新。
   **部分落地（2026-07-10）**：Playwright Chromium 已接入 CI，首个 production reader bundle e2e 覆盖
-  `fx-bg.kmd` 的 Pixi texture 生命周期、背景/内容层级与 `:bg` filter 归属；Vitest 收编与 shader CI 仍待完成。
-- [ ] **处方 6 · 拆解 SegmentBuilder**（约 2–3 天）
-  按记录类型抽出 BehaviorRecordBuilder / StyleRecordBuilder / StageModifierBuilder 子构建器，目标 851→~400 行。
+  `fx-bg.kmd` 的 Pixi texture 生命周期、背景/内容层级与 `:bg` filter 归属。
+- [x] **处方 6 · 拆解 SegmentBuilder**（2026-07-19 完成，PR `refactor/segment-builder-split`）
+  按记录类型抽出 `BehaviorRecordBuilder` / `StyleRecordBuilder` / `StageModifierBuilder` 子构建器，
+  SegmentBuilder 973 → 426 行。共享可变状态收口：
+  - **Cleanup**：SegmentBuilder 内 8 处裸 push → 经 `CleanupRegistry` 窄 sink 登记的单一写入契约；
+    PlaybackController 的 3 处 push deferred 到 #10（随 PlaybackController 拆分迁入）。
+    执行侧单一所有权仍是 `playbackState.activeBehaviorCleanups`/`activeInstantCleanups`
+    由 `clearBehaviors`/`clearInstantEffects` 唯一 drain。
+  - **Style**：5 处写入方清单（P0 reset / P1 bake / P2 recapture / P2b block post-hold /
+    P3 unrollGroupChain / P4 unrollCharChain + 外部直写）建立显式有序相位契约 `StyleWritePort`。
+    SegmentBuilder 的 P2/P2b 已迁至 port；其余 4 处标注 follow-up（随各模块拆分迁入）。
+  门禁：build + parser + playback(331) + invariants + e2e(2) 全绿。4 个独立可审提交。
+  **Follow-up**：PlaybackController 3 处 cleanup push + P0/P4 style 写入 → #10；
+  TextPlayer P3/P4 → 随 TextPlayer 拆分；LayoutPlanner P1 → 随 LayoutPlanner 拆分；
+  `presets/behavior.ts:244` 外部直写 → 下个维护窗口改走 `styleManager.apply`。
 - [ ] **处方 7 · Phase B 客观准入清单**
   现行门条件"语言设计文档完成一次收敛审查"不可判定；建 `docs/planning/roadmap/` 下的收敛验收文档
   （例如：B0–B4 语法定稿、design.md 覆盖全部命令族、一次评审通过、无 open design issue）。

@@ -8,6 +8,7 @@
     "dev": "pnpm --filter @kmd/editor dev",
     "build": "pnpm --filter @kmd/editor build",
     "preview": "pnpm --filter @kmd/editor preview",
+    "test": "pnpm --filter @kmd/editor test",
     "test:parser": "pnpm --filter @kmd/editor test:parser",
     "test:shaders": "pnpm --filter @kmd/editor test:shaders",
     "test:e2e": "pnpm reader:build && playwright test",

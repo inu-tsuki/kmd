@@ -1,0 +1,390 @@
+{
+  "diagnostics": [],
+  "metadata": {
+    "designHeight": 1080,
+    "designWidth": 1920,
+    "mode": "stage",
+    "speed": 50,
+    "title": "04 - pause:char 逐字揭示延迟",
+    "variables": {}
+  },
+  "paragraphs": [
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 8,
+        "lines": [
+          {
+            "body": [
+              {
+                "children": [
+                  {
+                    "groupId": 1,
+                    "line": 9,
+                    "marks": [],
+                    "range": {
+                      "end": 5,
+                      "start": 1
+                    },
+                    "text": "慢慢出现",
+                    "type": "text"
+                  }
+                ],
+                "groupId": 1,
+                "line": 9,
+                "range": {
+                  "end": 6,
+                  "start": 0
+                },
+                "type": "group"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "stage",
+                    "level": "char",
+                    "name": "pause",
+                    "params": {
+                      "0": 1
+                    },
+                    "prefix": "bare",
+                    "raw": "pause:char(1s)"
+                  }
+                ],
+                "line": 9,
+                "prefix": "bare",
+                "range": {
+                  "end": 23,
+                  "start": 9
+                },
+                "raw": "pause:char(1s)",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 9,
+            "range": {
+              "end": 23,
+              "start": 0
+            },
+            "raw": "{慢慢出现} @ pause:char(1s)",
+            "type": "line"
+          }
+        ],
+        "source": "// 预期：每个字间隔1s出现（覆盖默认speed步进）\n{慢慢出现} @ pause:char(1s)",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "braceGroupId": 1,
+            "commands": [],
+            "content": "慢慢出现",
+            "effects": [],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [
+              {
+                "blocking": false,
+                "level": "char",
+                "params": {
+                  "0": 1
+                },
+                "type": "pause"
+              }
+            ],
+            "line": 9,
+            "params": {},
+            "range": {
+              "end": 5,
+              "start": 1
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 8,
+      "tokens": [
+        {
+          "braceGroupId": 1,
+          "commands": [],
+          "content": "慢慢出现",
+          "effects": [],
+          "isBraced": true,
+          "layoutInstructions": [
+            {
+              "blocking": false,
+              "level": "char",
+              "params": {
+                "0": 1
+              },
+              "type": "pause"
+            }
+          ],
+          "line": 9,
+          "params": {},
+          "range": {
+            "end": 5,
+            "start": 1
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 11,
+        "lines": [
+          {
+            "body": [
+              {
+                "children": [
+                  {
+                    "groupId": 2,
+                    "line": 12,
+                    "marks": [],
+                    "range": {
+                      "end": 5,
+                      "start": 1
+                    },
+                    "text": "慢速红字",
+                    "type": "text"
+                  }
+                ],
+                "groupId": 2,
+                "line": 12,
+                "range": {
+                  "end": 6,
+                  "start": 0
+                },
+                "type": "group"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "style",
+                    "name": "red",
+                    "params": {},
+                    "prefix": "f",
+                    "raw": "f.red"
+                  }
+                ],
+                "line": 12,
+                "prefix": "f",
+                "range": {
+                  "end": 14,
+                  "start": 9
+                },
+                "raw": "f.red",
+                "type": "command-chain"
+              },
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "stage",
+                    "level": "char",
+                    "name": "pause",
+                    "params": {
+                      "0": 0.5
+                    },
+                    "prefix": "bare",
+                    "raw": "pause:char(0.5s)"
+                  }
+                ],
+                "line": 12,
+                "prefix": "bare",
+                "range": {
+                  "end": 31,
+                  "start": 15
+                },
+                "raw": "pause:char(0.5s)",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 12,
+            "range": {
+              "end": 31,
+              "start": 0
+            },
+            "raw": "{慢速红字} @ f.red pause:char(0.5s)",
+            "type": "line"
+          }
+        ],
+        "source": "// 预期：pause:char 0.5s + 红色\n{慢速红字} @ f.red pause:char(0.5s)",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "braceGroupId": 2,
+            "commands": [],
+            "content": "慢速红字",
+            "effects": [
+              {
+                "blocking": false,
+                "name": "red",
+                "params": {}
+              }
+            ],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [
+              {
+                "blocking": false,
+                "level": "char",
+                "params": {
+                  "0": 0.5
+                },
+                "type": "pause"
+              }
+            ],
+            "line": 12,
+            "params": {},
+            "range": {
+              "end": 5,
+              "start": 1
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 11,
+      "tokens": [
+        {
+          "braceGroupId": 2,
+          "commands": [],
+          "content": "慢速红字",
+          "effects": [
+            {
+              "blocking": false,
+              "name": "red",
+              "params": {}
+            }
+          ],
+          "isBraced": true,
+          "layoutInstructions": [
+            {
+              "blocking": false,
+              "level": "char",
+              "params": {
+                "0": 0.5
+              },
+              "type": "pause"
+            }
+          ],
+          "line": 12,
+          "params": {},
+          "range": {
+            "end": 5,
+            "start": 1
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 14,
+        "lines": [
+          {
+            "body": [
+              {
+                "line": 15,
+                "marks": [],
+                "range": {
+                  "end": 14,
+                  "start": 0
+                },
+                "text": "对比：这一行以普通速度出现。",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 15,
+            "range": {
+              "end": 14,
+              "start": 0
+            },
+            "raw": "对比：这一行以普通速度出现。",
+            "type": "line"
+          }
+        ],
+        "source": "// 普通速度对比\n对比：这一行以普通速度出现。",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "对比：这一行以普通速度出现。",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 15,
+            "params": {},
+            "range": {
+              "end": 14,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 14,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "对比：这一行以普通速度出现。",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 15,
+          "params": {},
+          "range": {
+            "end": 14,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    }
+  ],
+  "rawParagraphs": [
+    "// 预期：每个字间隔1s出现（覆盖默认speed步进）\n{慢慢出现} @ pause:char(1s)",
+    "// 预期：pause:char 0.5s + 红色\n{慢速红字} @ f.red pause:char(0.5s)",
+    "// 普通速度对比\n对比：这一行以普通速度出现。"
+  ]
+}

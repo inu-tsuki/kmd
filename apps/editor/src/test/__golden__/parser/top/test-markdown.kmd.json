@@ -1,0 +1,610 @@
+{
+  "diagnostics": [],
+  "metadata": {
+    "variables": {}
+  },
+  "paragraphs": [
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 0,
+        "lines": [
+          {
+            "body": [
+              {
+                "line": 0,
+                "marks": [],
+                "range": {
+                  "end": 4,
+                  "start": 0
+                },
+                "text": "这是标题",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": true,
+            "kind": "content",
+            "line": 0,
+            "range": {
+              "end": 6,
+              "start": 0
+            },
+            "raw": "# 这是标题",
+            "type": "line"
+          }
+        ],
+        "source": "# 这是标题",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "这是标题",
+            "effects": [
+              {
+                "level": "char",
+                "line": 0,
+                "name": "special",
+                "params": {},
+                "range": {
+                  "end": 4,
+                  "start": 0
+                }
+              }
+            ],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 0,
+            "params": {},
+            "range": {
+              "end": 4,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 0,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "这是标题",
+          "effects": [
+            {
+              "level": "char",
+              "line": 0,
+              "name": "special",
+              "params": {},
+              "range": {
+                "end": 4,
+                "start": 0
+              }
+            }
+          ],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 0,
+          "params": {},
+          "range": {
+            "end": 4,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 2,
+        "lines": [
+          {
+            "body": [
+              {
+                "line": 2,
+                "marks": [],
+                "range": {
+                  "end": 11,
+                  "start": 0
+                },
+                "text": "这这这这this是is",
+                "type": "text"
+              },
+              {
+                "children": [
+                  {
+                    "groupId": 1,
+                    "line": 2,
+                    "marks": [
+                      "bold"
+                    ],
+                    "range": {
+                      "end": 22,
+                      "start": 14
+                    },
+                    "text": "big大大大重音",
+                    "type": "text"
+                  }
+                ],
+                "groupId": 1,
+                "line": 2,
+                "range": {
+                  "end": 25,
+                  "start": 11
+                },
+                "type": "group"
+              },
+              {
+                "line": 2,
+                "marks": [],
+                "range": {
+                  "end": 33,
+                  "start": 25
+                },
+                "text": "音文字字字字字。",
+                "type": "text"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "style",
+                    "name": "big",
+                    "params": {},
+                    "prefix": "f",
+                    "raw": "f.big"
+                  }
+                ],
+                "line": 2,
+                "prefix": "f",
+                "range": {
+                  "end": 41,
+                  "start": 36
+                },
+                "raw": "f.big",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 2,
+            "range": {
+              "end": 41,
+              "start": 0
+            },
+            "raw": "这这这这this是is{**big大大大重音**}音文字字字字字。 @ f.big",
+            "type": "line"
+          },
+          {
+            "body": [
+              {
+                "line": 3,
+                "marks": [],
+                "range": {
+                  "end": 11,
+                  "start": 0
+                },
+                "text": "这这这这this是is",
+                "type": "text"
+              },
+              {
+                "children": [
+                  {
+                    "groupId": 2,
+                    "line": 3,
+                    "marks": [
+                      "italic"
+                    ],
+                    "range": {
+                      "end": 23,
+                      "start": 13
+                    },
+                    "text": "small小小小轻声",
+                    "type": "text"
+                  }
+                ],
+                "groupId": 2,
+                "line": 3,
+                "range": {
+                  "end": 25,
+                  "start": 11
+                },
+                "type": "group"
+              },
+              {
+                "line": 3,
+                "marks": [],
+                "range": {
+                  "end": 32,
+                  "start": 25
+                },
+                "text": "文字字字字字。",
+                "type": "text"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "style",
+                    "name": "small",
+                    "params": {},
+                    "prefix": "f",
+                    "raw": "f.small"
+                  }
+                ],
+                "line": 3,
+                "prefix": "f",
+                "range": {
+                  "end": 42,
+                  "start": 35
+                },
+                "raw": "f.small",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 3,
+            "range": {
+              "end": 42,
+              "start": 0
+            },
+            "raw": "这这这这this是is{*small小小小轻声*}文字字字字字。 @ f.small",
+            "type": "line"
+          }
+        ],
+        "source": "这这这这this是is{**big大大大重音**}音文字字字字字。 @ f.big\n这这这这this是is{*small小小小轻声*}文字字字字字。 @ f.small",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "这这这这this是is",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 2,
+            "params": {},
+            "range": {
+              "end": 11,
+              "start": 0
+            },
+            "sugar": []
+          },
+          {
+            "braceGroupId": 1,
+            "commands": [],
+            "content": "big大大大重音",
+            "effects": [
+              {
+                "level": "char",
+                "line": 2,
+                "name": "bold",
+                "params": {},
+                "range": {
+                  "end": 22,
+                  "start": 14
+                }
+              },
+              {
+                "blocking": false,
+                "name": "big",
+                "params": {}
+              }
+            ],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 2,
+            "params": {},
+            "range": {
+              "end": 22,
+              "start": 14
+            },
+            "sugar": [
+              {
+                "level": "char",
+                "name": "slow",
+                "params": {}
+              }
+            ]
+          },
+          {
+            "commands": [],
+            "content": "音文字字字字字。",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 2,
+            "params": {},
+            "range": {
+              "end": 33,
+              "start": 25
+            },
+            "sugar": []
+          },
+          {
+            "commands": [],
+            "content": "\n",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": false,
+            "isSugar": false,
+            "kind": "newline",
+            "layoutInstructions": [],
+            "line": 2,
+            "params": {},
+            "range": {
+              "end": 41,
+              "start": 41
+            },
+            "sugar": []
+          },
+          {
+            "commands": [],
+            "content": "这这这这this是is",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 3,
+            "params": {},
+            "range": {
+              "end": 11,
+              "start": 0
+            },
+            "sugar": []
+          },
+          {
+            "braceGroupId": 2,
+            "commands": [],
+            "content": "small小小小轻声",
+            "effects": [
+              {
+                "level": "char",
+                "line": 3,
+                "name": "thin",
+                "params": {},
+                "range": {
+                  "end": 23,
+                  "start": 13
+                }
+              },
+              {
+                "level": "char",
+                "line": 3,
+                "name": "dim",
+                "params": {},
+                "range": {
+                  "end": 23,
+                  "start": 13
+                }
+              },
+              {
+                "blocking": false,
+                "name": "small",
+                "params": {}
+              }
+            ],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 3,
+            "params": {},
+            "range": {
+              "end": 23,
+              "start": 13
+            },
+            "sugar": [
+              {
+                "level": "char",
+                "name": "fast",
+                "params": {}
+              }
+            ]
+          },
+          {
+            "commands": [],
+            "content": "文字字字字字。",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 3,
+            "params": {},
+            "range": {
+              "end": 32,
+              "start": 25
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 2,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "这这这这this是is",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 2,
+          "params": {},
+          "range": {
+            "end": 11,
+            "start": 0
+          },
+          "sugar": []
+        },
+        {
+          "braceGroupId": 1,
+          "commands": [],
+          "content": "big大大大重音",
+          "effects": [
+            {
+              "level": "char",
+              "line": 2,
+              "name": "bold",
+              "params": {},
+              "range": {
+                "end": 22,
+                "start": 14
+              }
+            },
+            {
+              "blocking": false,
+              "name": "big",
+              "params": {}
+            }
+          ],
+          "isBraced": true,
+          "layoutInstructions": [],
+          "line": 2,
+          "params": {},
+          "range": {
+            "end": 22,
+            "start": 14
+          },
+          "sugar": [
+            {
+              "level": "char",
+              "name": "slow",
+              "params": {}
+            }
+          ]
+        },
+        {
+          "commands": [],
+          "content": "音文字字字字字。",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 2,
+          "params": {},
+          "range": {
+            "end": 33,
+            "start": 25
+          },
+          "sugar": []
+        },
+        {
+          "commands": [],
+          "content": "\n",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": false,
+          "isSugar": false,
+          "layoutInstructions": [],
+          "line": 2,
+          "params": {},
+          "range": {
+            "end": 41,
+            "start": 41
+          },
+          "sugar": []
+        },
+        {
+          "commands": [],
+          "content": "这这这这this是is",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 3,
+          "params": {},
+          "range": {
+            "end": 11,
+            "start": 0
+          },
+          "sugar": []
+        },
+        {
+          "braceGroupId": 2,
+          "commands": [],
+          "content": "small小小小轻声",
+          "effects": [
+            {
+              "level": "char",
+              "line": 3,
+              "name": "thin",
+              "params": {},
+              "range": {
+                "end": 23,
+                "start": 13
+              }
+            },
+            {
+              "level": "char",
+              "line": 3,
+              "name": "dim",
+              "params": {},
+              "range": {
+                "end": 23,
+                "start": 13
+              }
+            },
+            {
+              "blocking": false,
+              "name": "small",
+              "params": {}
+            }
+          ],
+          "isBraced": true,
+          "layoutInstructions": [],
+          "line": 3,
+          "params": {},
+          "range": {
+            "end": 23,
+            "start": 13
+          },
+          "sugar": [
+            {
+              "level": "char",
+              "name": "fast",
+              "params": {}
+            }
+          ]
+        },
+        {
+          "commands": [],
+          "content": "文字字字字字。",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 3,
+          "params": {},
+          "range": {
+            "end": 32,
+            "start": 25
+          },
+          "sugar": []
+        }
+      ]
+    }
+  ],
+  "rawParagraphs": [
+    "# 这是标题",
+    "这这这这this是is{**big大大大重音**}音文字字字字字。 @ f.big\n这这这这this是is{*small小小小轻声*}文字字字字字。 @ f.small"
+  ]
+}
