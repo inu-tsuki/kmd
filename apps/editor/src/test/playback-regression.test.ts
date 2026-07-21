@@ -18,6 +18,10 @@ import { join } from 'node:path';
 const SCRIPT = join(import.meta.dirname, '..', 'final-playback-test.ts');
 const TSX = join(import.meta.dirname, '..', '..', 'node_modules', '.bin', 'tsx');
 
+// 覆盖蒸发保险丝：当前 final-playback-test.ts 的用例总数。增删 playback 用例时必须有意识地
+// 更新此值，防止渐拆时某个用例被静默移除、覆盖悄悄蒸发而门禁仍绿。
+const EXPECTED_PLAYBACK_CASES = 331;
+
 describe('playback state-machine regression (331 cases via final-playback-test.ts)', () => {
   it('runs the full suite with fail === 0', () => {
     // 子进程跑 tsx，继承环境；超时 120s（331 用例 + gsap/pixi 互操作预热）。
@@ -50,5 +54,7 @@ describe('playback state-machine regression (331 cases via final-playback-test.t
     const summaryLine = stdout.split('\n').find((l) => l.includes('passed') && l.includes('failed'));
     expect(summaryLine, '应含 "N passed, M failed" 汇总行').toBeDefined();
     expect(summaryLine).toContain('0 failed');
+    // 覆盖蒸发保险丝：汇总行必须报告当前用例总数，防止渐拆时用例静默丢失而门禁仍绿。
+    expect(summaryLine).toContain(`${EXPECTED_PLAYBACK_CASES} passed`);
   }, 150_000);
 });
