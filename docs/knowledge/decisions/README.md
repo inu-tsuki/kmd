@@ -18,3 +18,7 @@ YYYY-MM-DD-short-decision-title.md
 ## 当前决策
 
 - `2026-07-10-dip-fx-surface-profiles.md`：DIP-FX 的文字、背景、frame surface profile 模型；作为 M3 gate。
+- `2026-07-20-segment-timeline-not-graph-first.md`：段内确定性时间线 + 段间图边，而非图优先（Phase B 运行时形态）。
+- `2026-07-20-phase-r-before-phase-b.md`：reader-runtime 抽包（Phase R）先于语言工作（Phase B）。
+- `2026-07-20-record-replay-seek-idempotency.md`：record/replay 保证 seek 幂等（状态 = 脚本位置的纯函数）。
+- `2026-07-20-reader-runtime-reexport-not-core-package.md`：reader-runtime 相对路径 re-export core，而非立即抽 `packages/core`。

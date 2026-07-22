@@ -64,13 +64,13 @@
   **Follow-up**：PlaybackController 3 处 cleanup push + P0/P4 style 写入 → #10；
   TextPlayer P3/P4 → 随 TextPlayer 拆分；LayoutPlanner P1 → 随 LayoutPlanner 拆分；
   `presets/behavior.ts:244` 外部直写 → 下个维护窗口改走 `styleManager.apply`。
-- [ ] **处方 7 · Phase B 客观准入清单**
+- [x] **处方 7 · Phase B 客观准入清单**（2026-07-20 落地，见 `docs/planning/roadmap/phase-b-entry-checklist-2026-07.md`）
   现行门条件"语言设计文档完成一次收敛审查"不可判定；建 `docs/planning/roadmap/` 下的收敛验收文档
   （例如：B0–B4 语法定稿、design.md 覆盖全部命令族、一次评审通过、无 open design issue）。
 - [ ] **处方 8 · Compat 层清退**
   CompatBinder / CompatProjector / KineticChar・KineticText legacy 镜像共约 40 处引用；
   定死线（建议 Phase B 完成后的第一个维护窗口），先建引用清单再逐一迁移。
-- [ ] **处方 9 · 补写 3–5 篇 ADR**（用 `docs/knowledge/decisions/TEMPLATE.md`）
+- [x] **处方 9 · 补写 3–5 篇 ADR**（2026-07-20 归档，见 `docs/knowledge/decisions/2026-07-20-*.md`）
   候选：Segment-timeline 而非 graph-first；Phase R 先于 Phase B；record/replay 保证 seek 幂等；
   reader-runtime 以相对路径 re-export 而非立即抽 `packages/core`。
 - [ ] **处方 10 · 外部依赖防波堤**
