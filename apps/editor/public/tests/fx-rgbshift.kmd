@@ -1,0 +1,29 @@
+---
+title: fx - rgbShift 色彩撕裂滤镜
+mode: stage
+speed: 50
+designWidth: 1920
+designHeight: 1080
+bgColor: "#0a0a0f"
+fontColor: "#e0e0e0"
+---
+
+// block 作用域：静态色彩撕裂（默认 dist=5）
+[.rgbShift:block(dist=5)]
+字符边缘渗出红蓝色差。
+
+---
+
+// 动画撕裂：anim=true 时差随时间抖动，信号劣化感
+[.rgbShift:block(dist=8, anim=true)]
+色差持续抖动，像失锁的视频信号。
+
+---
+
+// char 作用域：逐字撕裂
+{逐字撕裂} @ f.rgbShift(dist=4)
+
+---
+
+// group 作用域：词组级动画撕裂
+{词组撕裂} @ f.rgbShift:group(dist=6, anim=true)

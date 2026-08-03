@@ -1,0 +1,19 @@
+---
+title: cam - drift 镜头漂移
+mode: stage
+speed: 50
+designWidth: 1920
+designHeight: 1080
+---
+
+// 默认参数漂移（强度 5、速度 0.001；持续型 modifier，无时长，不加 !）
+@ cam.drift(5, 0.001)
+镜头开始缓慢漂移。
+
+// 加强漂移：更大幅度与更快速度
+@ cam.drift(12, 0.003)
+漂移变得明显而急促。
+
+// 强度 0 移除漂移 modifier（运行时约定：strength === 0 即卸载）
+@ cam.drift(0)
+镜头重新稳定下来。

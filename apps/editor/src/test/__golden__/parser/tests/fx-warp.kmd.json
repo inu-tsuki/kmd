@@ -1,0 +1,894 @@
+{
+  "diagnostics": [],
+  "metadata": {
+    "bgColor": "#0a0a1a",
+    "designHeight": 1080,
+    "designWidth": 1920,
+    "fontColor": "#00fff0",
+    "mode": "stage",
+    "speed": 50,
+    "title": "fx - warp 波纹扭曲滤镜",
+    "variables": {}
+  },
+  "paragraphs": [
+    {
+      "ast": {
+        "blockOptions": [
+          {
+            "chain": {
+              "commands": [
+                {
+                  "blocking": false,
+                  "family": "effect",
+                  "level": "block",
+                  "name": "warp",
+                  "params": {
+                    "amp": 0.05,
+                    "freq": 10,
+                    "speed": 0.01
+                  },
+                  "prefix": "dot",
+                  "raw": ".warp:block(freq=10, amp=0.05, speed=0.01)"
+                }
+              ],
+              "line": 11,
+              "prefix": "dot",
+              "range": {
+                "end": 43,
+                "start": 1
+              },
+              "raw": ".warp:block(freq=10, amp=0.05, speed=0.01)",
+              "type": "command-chain"
+            },
+            "line": 11,
+            "range": {
+              "end": 43,
+              "start": 1
+            },
+            "type": "block-option-command"
+          }
+        ],
+        "lineOffset": 10,
+        "lines": [
+          {
+            "body": [
+              {
+                "line": 12,
+                "marks": [],
+                "range": {
+                  "end": 14,
+                  "start": 0
+                },
+                "text": "整段文字像水中倒影一样波动。",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 12,
+            "range": {
+              "end": 14,
+              "start": 0
+            },
+            "raw": "整段文字像水中倒影一样波动。",
+            "type": "line"
+          }
+        ],
+        "source": "// block 作用域：容器级波纹（整段一起扭，behavior 轨 ticker 驱动）\n[.warp:block(freq=10, amp=0.05, speed=0.01)]\n整段文字像水中倒影一样波动。",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [
+        {
+          "blocking": false,
+          "level": "block",
+          "name": "warp",
+          "params": {
+            "amp": 0.05,
+            "freq": 10,
+            "speed": 0.01
+          }
+        }
+      ],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "整段文字像水中倒影一样波动。",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 12,
+            "params": {},
+            "range": {
+              "end": 14,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": [
+          {
+            "blocking": false,
+            "level": "block",
+            "name": "warp",
+            "params": {
+              "amp": 0.05,
+              "freq": 10,
+              "speed": 0.01
+            }
+          }
+        ]
+      },
+      "lineOffset": 10,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "整段文字像水中倒影一样波动。",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 12,
+          "params": {},
+          "range": {
+            "end": 14,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 14,
+        "lines": [
+          {
+            "body": [],
+            "commandChains": [],
+            "heading": false,
+            "kind": "scene-clear",
+            "line": 14,
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "raw": "---",
+            "type": "line"
+          }
+        ],
+        "source": "---",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": true,
+            "isSugar": false,
+            "kind": "scene-clear",
+            "layoutInstructions": [
+              {
+                "blocking": false,
+                "line": 14,
+                "params": {},
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "scene.clear"
+              },
+              {
+                "blocking": true,
+                "line": 14,
+                "params": {
+                  "0": 0.5
+                },
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "pause"
+              }
+            ],
+            "line": 14,
+            "params": {},
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 14,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": true,
+          "isSugar": false,
+          "layoutInstructions": [
+            {
+              "blocking": false,
+              "line": 14,
+              "params": {},
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "scene.clear"
+            },
+            {
+              "blocking": true,
+              "line": 14,
+              "params": {
+                "0": 0.5
+              },
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "pause"
+            }
+          ],
+          "line": 14,
+          "params": {},
+          "range": {
+            "end": 3,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [
+          {
+            "chain": {
+              "commands": [
+                {
+                  "blocking": false,
+                  "family": "effect",
+                  "level": "block",
+                  "name": "warp",
+                  "params": {
+                    "amp": 0.1,
+                    "freq": 20,
+                    "speed": 0.04
+                  },
+                  "prefix": "dot",
+                  "raw": ".warp:block(freq=20, amp=0.1, speed=0.04)"
+                }
+              ],
+              "line": 17,
+              "prefix": "dot",
+              "range": {
+                "end": 42,
+                "start": 1
+              },
+              "raw": ".warp:block(freq=20, amp=0.1, speed=0.04)",
+              "type": "command-chain"
+            },
+            "line": 17,
+            "range": {
+              "end": 42,
+              "start": 1
+            },
+            "type": "block-option-command"
+          }
+        ],
+        "lineOffset": 16,
+        "lines": [
+          {
+            "body": [
+              {
+                "line": 18,
+                "marks": [],
+                "range": {
+                  "end": 17,
+                  "start": 0
+                },
+                "text": "更高频、更大幅的扭曲，接近故障感。",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 18,
+            "range": {
+              "end": 17,
+              "start": 0
+            },
+            "raw": "更高频、更大幅的扭曲，接近故障感。",
+            "type": "line"
+          }
+        ],
+        "source": "// 高频大幅参数对比\n[.warp:block(freq=20, amp=0.1, speed=0.04)]\n更高频、更大幅的扭曲，接近故障感。",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [
+        {
+          "blocking": false,
+          "level": "block",
+          "name": "warp",
+          "params": {
+            "amp": 0.1,
+            "freq": 20,
+            "speed": 0.04
+          }
+        }
+      ],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "更高频、更大幅的扭曲，接近故障感。",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 18,
+            "params": {},
+            "range": {
+              "end": 17,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": [
+          {
+            "blocking": false,
+            "level": "block",
+            "name": "warp",
+            "params": {
+              "amp": 0.1,
+              "freq": 20,
+              "speed": 0.04
+            }
+          }
+        ]
+      },
+      "lineOffset": 16,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "更高频、更大幅的扭曲，接近故障感。",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 18,
+          "params": {},
+          "range": {
+            "end": 17,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 20,
+        "lines": [
+          {
+            "body": [],
+            "commandChains": [],
+            "heading": false,
+            "kind": "scene-clear",
+            "line": 20,
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "raw": "---",
+            "type": "line"
+          }
+        ],
+        "source": "---",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": true,
+            "isSugar": false,
+            "kind": "scene-clear",
+            "layoutInstructions": [
+              {
+                "blocking": false,
+                "line": 20,
+                "params": {},
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "scene.clear"
+              },
+              {
+                "blocking": true,
+                "line": 20,
+                "params": {
+                  "0": 0.5
+                },
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "pause"
+              }
+            ],
+            "line": 20,
+            "params": {},
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 20,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": true,
+          "isSugar": false,
+          "layoutInstructions": [
+            {
+              "blocking": false,
+              "line": 20,
+              "params": {},
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "scene.clear"
+            },
+            {
+              "blocking": true,
+              "line": 20,
+              "params": {
+                "0": 0.5
+              },
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "pause"
+            }
+          ],
+          "line": 20,
+          "params": {},
+          "range": {
+            "end": 3,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 22,
+        "lines": [
+          {
+            "body": [
+              {
+                "children": [
+                  {
+                    "groupId": 1,
+                    "line": 23,
+                    "marks": [],
+                    "range": {
+                      "end": 5,
+                      "start": 1
+                    },
+                    "text": "逐字扭曲",
+                    "type": "text"
+                  }
+                ],
+                "groupId": 1,
+                "line": 23,
+                "range": {
+                  "end": 6,
+                  "start": 0
+                },
+                "type": "group"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "name": "warp",
+                    "params": {},
+                    "prefix": "f",
+                    "raw": "f.warp"
+                  }
+                ],
+                "line": 23,
+                "prefix": "f",
+                "range": {
+                  "end": 15,
+                  "start": 9
+                },
+                "raw": "f.warp",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 23,
+            "range": {
+              "end": 15,
+              "start": 0
+            },
+            "raw": "{逐字扭曲} @ f.warp",
+            "type": "line"
+          }
+        ],
+        "source": "// char 作用域：逐字独立波纹（char 级走 stage modifier 路径）\n{逐字扭曲} @ f.warp",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "braceGroupId": 1,
+            "commands": [],
+            "content": "逐字扭曲",
+            "effects": [
+              {
+                "blocking": false,
+                "name": "warp",
+                "params": {}
+              }
+            ],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 23,
+            "params": {},
+            "range": {
+              "end": 5,
+              "start": 1
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 22,
+      "tokens": [
+        {
+          "braceGroupId": 1,
+          "commands": [],
+          "content": "逐字扭曲",
+          "effects": [
+            {
+              "blocking": false,
+              "name": "warp",
+              "params": {}
+            }
+          ],
+          "isBraced": true,
+          "layoutInstructions": [],
+          "line": 23,
+          "params": {},
+          "range": {
+            "end": 5,
+            "start": 1
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 25,
+        "lines": [
+          {
+            "body": [],
+            "commandChains": [],
+            "heading": false,
+            "kind": "scene-clear",
+            "line": 25,
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "raw": "---",
+            "type": "line"
+          }
+        ],
+        "source": "---",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": true,
+            "isSugar": false,
+            "kind": "scene-clear",
+            "layoutInstructions": [
+              {
+                "blocking": false,
+                "line": 25,
+                "params": {},
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "scene.clear"
+              },
+              {
+                "blocking": true,
+                "line": 25,
+                "params": {
+                  "0": 0.5
+                },
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "pause"
+              }
+            ],
+            "line": 25,
+            "params": {},
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 25,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": true,
+          "isSugar": false,
+          "layoutInstructions": [
+            {
+              "blocking": false,
+              "line": 25,
+              "params": {},
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "scene.clear"
+            },
+            {
+              "blocking": true,
+              "line": 25,
+              "params": {
+                "0": 0.5
+              },
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "pause"
+            }
+          ],
+          "line": 25,
+          "params": {},
+          "range": {
+            "end": 3,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 27,
+        "lines": [
+          {
+            "body": [
+              {
+                "children": [
+                  {
+                    "groupId": 2,
+                    "line": 28,
+                    "marks": [],
+                    "range": {
+                      "end": 5,
+                      "start": 1
+                    },
+                    "text": "词组扭曲",
+                    "type": "text"
+                  }
+                ],
+                "groupId": 2,
+                "line": 28,
+                "range": {
+                  "end": 6,
+                  "start": 0
+                },
+                "type": "group"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "level": "group",
+                    "name": "warp",
+                    "params": {
+                      "amp": 0.06,
+                      "freq": 12,
+                      "speed": 0.02
+                    },
+                    "prefix": "f",
+                    "raw": "f.warp:group(freq=12, amp=0.06, speed=0.02)"
+                  }
+                ],
+                "line": 28,
+                "prefix": "f",
+                "range": {
+                  "end": 52,
+                  "start": 9
+                },
+                "raw": "f.warp:group(freq=12, amp=0.06, speed=0.02)",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 28,
+            "range": {
+              "end": 52,
+              "start": 0
+            },
+            "raw": "{词组扭曲} @ f.warp:group(freq=12, amp=0.06, speed=0.02)",
+            "type": "line"
+          }
+        ],
+        "source": "// group 作用域：词组级波纹\n{词组扭曲} @ f.warp:group(freq=12, amp=0.06, speed=0.02)",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "braceGroupId": 2,
+            "commands": [],
+            "content": "词组扭曲",
+            "effects": [
+              {
+                "blocking": false,
+                "level": "group",
+                "name": "warp",
+                "params": {
+                  "amp": 0.06,
+                  "freq": 12,
+                  "speed": 0.02
+                }
+              }
+            ],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 28,
+            "params": {},
+            "range": {
+              "end": 5,
+              "start": 1
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 27,
+      "tokens": [
+        {
+          "braceGroupId": 2,
+          "commands": [],
+          "content": "词组扭曲",
+          "effects": [
+            {
+              "blocking": false,
+              "level": "group",
+              "name": "warp",
+              "params": {
+                "amp": 0.06,
+                "freq": 12,
+                "speed": 0.02
+              }
+            }
+          ],
+          "isBraced": true,
+          "layoutInstructions": [],
+          "line": 28,
+          "params": {},
+          "range": {
+            "end": 5,
+            "start": 1
+          },
+          "sugar": []
+        }
+      ]
+    }
+  ],
+  "rawParagraphs": [
+    "// block 作用域：容器级波纹（整段一起扭，behavior 轨 ticker 驱动）\n[.warp:block(freq=10, amp=0.05, speed=0.01)]\n整段文字像水中倒影一样波动。",
+    "---",
+    "// 高频大幅参数对比\n[.warp:block(freq=20, amp=0.1, speed=0.04)]\n更高频、更大幅的扭曲，接近故障感。",
+    "---",
+    "// char 作用域：逐字独立波纹（char 级走 stage modifier 路径）\n{逐字扭曲} @ f.warp",
+    "---",
+    "// group 作用域：词组级波纹\n{词组扭曲} @ f.warp:group(freq=12, amp=0.06, speed=0.02)"
+  ]
+}

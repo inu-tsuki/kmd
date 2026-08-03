@@ -255,11 +255,11 @@ PlaybackController.seekToTime(segment, 1.5, playbackState);
 - **pixi 升级风险**：shim 依赖 pixi v8 `DOMAdapter.set` + `CanvasTextMetrics._canvas` 路径契约。pixi 升级若改这些路径，shim 可能失效——§13 失败时**先查 shim 是否过期**（对照 pixi 新版 measureFont/adapter），再查逻辑错。
 - **只测 PlaybackController 的测试**（§1-§12）不需 shim 2/3（只构造 KineticChar 不进 layout 路径）；shim 1 的 ticker stub + gsap hoist 仍需（KineticChar 构造调 `gsap.ticker.add`）。**端到端真实 SegmentBuilder.build 必须 shim 1+2+3 全套**。
 
-**待验证（INV-8 遗留 TODO）**：
+**已验证（INV-8 遗留 TODO 清零）**：
 
-| 依赖 | 版本 | 行为 | 状态 | 影响 |
+| 依赖 | 版本 | 行为 | 状态 | 验证与影响 |
 |---|---|---|---|---|
-| Pixi | v8.15 | filter 输入纹理是否预乘 alpha | ⚠️ **未验证**（node 无 WebGL，需浏览器渲染测试） | 高：约 15 个 filter 的"解预乘→运算→重新预乘"步骤（GrayFilter/BloomFilter 等）依赖此假设。注释写"**可能**是预乘"（GrayFilter.ts:22），未确证。Pixi v8 源码 grep 无 premultiplied 处理 → 怀疑该步骤可能多余/错误。需浏览器渲染半透明像素 + passthrough filter 验证。 |
+| Pixi | v8.15 | filter 输入纹理是否预乘 alpha | ✅ **已验证：预乘（CONFIRMED）**（2026-08，主题一织网 S6） | 约 15 个 filter 的"解预乘→运算→重新预乘"步骤（GrayFilter/BloomFilter 等）承重且正确。两证链：(1) 源码引用——FilterSystem.js filter 链输出面显式 `alphaMode = "premultiplied-alpha"`（CI 门禁 `src/test/premultiply-source-gate.test.ts` 钉死该行，pixi 升级移除即红）；(2) 经验像素裁决——`tests/e2e/premultiply-invariant.spec.ts` 浏览器内构造探针 gray 滤镜滤半透明红矩形，读回灰度落 CONFIRMED 预测带（α 参数化：255×(1−0.701α)），FALSIFIED 带（255×(1−α+0.299)）有意失败设计防沉默通过。历史怀疑（"源码 grep 无 premultiplied 处理 → 可能多余/错误"）源于未检索 FilterSystem 的 alphaMode 声明；实测裁决后 GrayFilter.ts:22 模板注释已转引用。 |
 
 ---
 
