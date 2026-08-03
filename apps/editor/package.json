@@ -14,7 +14,7 @@
     "test:parser": "vitest run src/test/parser-integration.test.ts src/test/parser-golden.test.ts",
     "test:shaders": "vitest run src/test/shader-gate.test.ts",
     "test:invariants": "vitest run src/test/invariants-guard.test.ts",
-    "test:playback": "vitest run src/test/playback-regression.test.ts"
+    "test:playback": "vitest run src/test/playback"
   },
   "dependencies": {
     "@kmd/language": "workspace:*",
