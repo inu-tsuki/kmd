@@ -568,12 +568,57 @@
 
 ## Known Gaps (Phase A 遗留)
 
+> 2026-08 主题二复核（用户决定：**记录不修**）。三个 bug 全部保留现状，
+> 各附证据锚点；A 作为 B5 验收输入，C 由 B3 明文保留机制（post-B 仍是活问题）。
+> 不在 Phase B 开工前夜扰动执行层。
+
+### A · 链式 `f.slow`/`f.fast` 丢 speedMultiplier —— **仍存在**
+
+- **现象**：特效链内的 `f.slow`/`f.fast` 返回值（`{type:"speedMultiplier", value}`）
+  在 chain 路由中丢失；糖衣 `~`/`^` 正常工作。
+- **证据链**：
+  - chain 路由把 timing-track 命令当普通效果推入 instantEffects 桶：
+    `TextPlayer.ts:643-652`（group 链）/ `:792-800`（char 链）；
+  - instant 桶消费端把 `{type:"speedMultiplier"}` 返回值当伪 filter 丢弃：
+    `BehaviorRecordBuilder.ts:328-348`（apply 只看 filterInstance/graphicsLayer，
+    timing 返回值无消费路径）；
+  - block 路同样丢：`StyleRecordBuilder.ts:125` 处 applyGroupEffects 返回值未消费；
+  - 唯一达 cursor 的是 sugar：`TextPlayer.ts:182-183` 经
+    `EffectProcessor.resolveTiming(item.timingSugars)` → `timelineCursor.applyTiming`；
+  - `KineticChar.timingResults`（`KineticChar.ts:46`）为死字段（写入即弃）。
+- **处置**：作为 B5（Execution Debt Closure）验收输入——
+  见 `docs/planning/roadmap/phase-b/1.6-phase-b-plan.md` B5 节指引行。
+
+### B · Modifier-based stage cmds seek 插值 —— **大部分缓解，定型为已知设计语义**
+
+- **已修**：replay 层 `PlaybackController.ts:680+`（replayStageModifiers）seek 时
+  按 ease 插值 cam.shake 强度、重放 cam.drift；R22-followup 已让自然播放与 seek
+  重放共享同一份构建期预解析 params（`stagePresets.ts:221-225`）。
+- **残留（定型为设计语义，不再视为待修 bug）**：
+  - `StageHostSession.ts:142` 用 wall-clock `performance.now()` 求值 modifier——
+    与 playhead 脱钩是 modifier 的固有语义（持续物理叠加，非时间线插值对象）；
+  - 暂停态 seek 时活 modifier 按 static 快照重放（`replayStageModifiers` mode 分派），
+    暂停中的抖动不推进——与 "seek = 快照" 契约一致；
+  - cam.drift 相位与 playhead 脱钩（persistent modifier 无 timeline 锚点）。
+
+### C · `cam.reset` 中断冲突 —— **部分修复，机制残留**
+
+- **已修**：三构建路径 clear-boundary 记录（SA-12）+ global path reset→move trim 已修。
+- **残留**：
+  - cam.reset 非 `ActiveStageTweenEntry`：`StageModifierBuilder.ts:38-49` 的
+    propertyKey 白名单（camera.xy/camera.zoom/camera.rotation/offset.xy）对
+    `camera.reset` 返回 null → `:207` 门跳过 → 不进 activeStageTweens；
+  - mid-reset cam.move 仍可能冲突（无 trim 基建可作用于 reset）；
+  - inline/chain 路无 trim 基建（reset 的 inline 落 captureTween-only 分支，
+    见 `stagePresets.ts:127-131` 注释）。
+- **处置**：B3 明文保留该机制（`cam.reset` 语义在 graph 化中重新设计）→
+  **post-B 仍是活问题**，勿在 Phase B 前扰动。
+
+### D · Cross-segment animation recreation —— Phase C 范畴（原样保留）
+
 | 问题                               | 影响                                                                | 备注                  |
 | ---------------------------------- | ------------------------------------------------------------------- | --------------------- |
-| `f.slow`/`f.fast` in effect chains | speedMultiplier 返回值在 Timeline 回调中丢失                        | 糖衣 `~`/`^` 正常工作 |
-| Modifier-based stage cmds          | `cam.shake`/`cam.drift` 用 `tl.call()` 非可 seek Tween              | seek 时不插值         |
 | Cross-segment animation recreation | `InFlightAnimation` 数据已记录但未被 Phase B 消费                   | Phase C 实现          |
-| `cam.reset` 中断冲突               | `cam.reset` 未被记录为 active entry，中途被 `cam.move` 打断可能冲突 | 边缘场景              |
 
 ---
 
