@@ -31,11 +31,6 @@ const LIFECYCLE_CASES = [
     filters: ['TextDuotoneFilter', 'OutlineFilter', 'BloomFilter'],
   },
   {
-    name: 'digitalFlicker',
-    source: '{FLICKER} @ f.digitalFlicker(rate=18, intensity=0.7)',
-    filters: ['NoiseFilter', 'ScanlineFilter'],
-  },
-  {
     name: 'hologram',
     source: '[.hologram:block(tint="#66f7ff", scan=5)]\nREMOTE AVATAR',
     filters: ['TextDuotoneFilter', 'ScanlineFilter', 'RGBSplitFilter', 'BloomFilter'],
@@ -98,6 +93,75 @@ describe('cyberpunk effect preset library', () => {
       segment.timeline.kill();
     },
   );
+
+  it('显式 :group 的多通道 behavior 只登记一个容器目标，默认作用域仍逐字', async () => {
+    const scoped = await build('{NEON} @ f.neonGlow:group(color="#00f5ff")');
+    const scopedRecords = scoped.segment.behaviors.filter((item) => item.effectName === 'neonGlow');
+    expect(scopedRecords).toHaveLength(1);
+    expect(scopedRecords[0]?.char).not.toBe(scoped.char);
+
+    PlaybackController.seekToTime(scoped.segment, 2, scoped.playbackState);
+    expect((scopedRecords[0]?.char.filters ?? []).map((filter: any) => filter.constructor.name)).toEqual([
+      'TextDuotoneFilter',
+      'OutlineFilter',
+      'BloomFilter',
+    ]);
+    expect(scoped.char.filters ?? []).toHaveLength(0);
+    PlaybackController.clearBehaviors(scoped.playbackState);
+    scoped.segment.timeline.kill();
+
+    const perChar = await build('{NEON} @ f.neonGlow(color="#00f5ff")');
+    const perCharRecords = perChar.segment.behaviors.filter((item) => item.effectName === 'neonGlow');
+    expect(perCharRecords).toHaveLength(4);
+    expect(perCharRecords.every((item) => item.char !== scopedRecords[0]?.char)).toBe(true);
+    perChar.segment.timeline.kill();
+  });
+
+  it('显式 :group 对 instant 和 entrance 也只挂载到容器', async () => {
+    const instant = await build('{PIXEL} @ f.pixelate:group(size=8)');
+    expect(instant.segment.instantEffects).toHaveLength(1);
+    const instantTarget = instant.segment.instantEffects[0]?.target;
+    expect(instantTarget).not.toBe(instant.char);
+
+    PlaybackController.seekToTime(instant.segment, 2, instant.playbackState);
+    expect((instantTarget?.filters ?? []).map((filter: any) => filter.constructor.name)).toEqual([
+      'PixelateFilter',
+    ]);
+    expect(instant.char.filters ?? []).toHaveLength(0);
+    PlaybackController.clearInstantEffects(instant.playbackState);
+    expect(instantTarget?.filters ?? []).toHaveLength(0);
+    instant.segment.timeline.kill();
+
+    const entrance = await build('{BLUR} @ f.blurIn:group(0.5s)');
+    expect(entrance.segment.entranceFilters).toHaveLength(1);
+    const entranceRecord = entrance.segment.entranceFilters[0];
+    expect(entranceRecord?.target).not.toBe(entrance.char);
+    expect((entranceRecord?.target.filters ?? []).map((filter: any) => filter.constructor.name)).toEqual([
+      'BlurFilter',
+    ]);
+    expect(entrance.char.filters ?? []).toHaveLength(0);
+    PlaybackController.clearEntranceFilters(entrance.segment);
+    entrance.segment.timeline.kill();
+  });
+
+  it('digitalFlicker 仅登记逐字 alpha modifier，不创建逐字 GPU filter', async () => {
+    const { segment, char, playbackState } = await build(
+      '{FLICKER} @ f.digitalFlicker(rate=18, duty=0.3, intensity=0.7)',
+    );
+    const records = segment.behaviors.filter((item) => item.effectName === 'digitalFlicker');
+    expect(records).toHaveLength(7);
+
+    PlaybackController.seekToTime(segment, 2, playbackState);
+    expect(char.filters ?? []).toHaveLength(0);
+    expect((char as any).modifiers.size).toBe(1);
+    expect(playbackState.activeBehaviorCleanups.some((cleanup: any) => (
+      cleanup.modName === 'digitalFlicker' && cleanup.filterInstance === undefined
+    ))).toBe(true);
+
+    PlaybackController.clearBehaviors(playbackState);
+    expect((char as any).modifiers.size).toBe(0);
+    segment.timeline.kill();
+  });
 
   it('自然播放 boundary 的 apply/unpack 合同能挂载并登记组合资源', async () => {
     const { segment, playbackState } = await build('[.crtDisplay:block]\nLIVE SIGNAL');

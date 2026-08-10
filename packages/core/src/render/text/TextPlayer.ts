@@ -313,11 +313,14 @@ export class TextPlayer {
     // 收集 behavior 特效（F4: resolveParams 解析变量引用）
     // - hold:char 链：全部跳过（unrollCharChain 以错开时序逐字处理）
     // - 组级 hold 链：全部跳过（unrollGroupChain 在链时间点统一分流到 char 或 container）
-    // - 无 hold 链：全部注册（与字符出现时间错开，stagger with appearance）
+    // - 无 hold 链：仅注册 char-level；显式 :group/:block/:bg 与 targetType="group"
+    //   留给 token-end 的 unrollGroupChain 统一挂到容器。此前这里无条件收集，导致
+    //   f.neonGlow:group 仍按每字创建多通道 Bloom，作用域语义失效且首帧滤镜爆炸。
     const hasHoldChar = visualEffects.some(e => e.name === "hold" && e.level === "char");
     const hasGroupHold = visualEffects.some(e => e.name === "hold" && e.level !== "char");
     if (!hasHoldChar && !hasGroupHold) {
       for (const cfg of classified.behavior) {
+        if (!EffectProcessor.isCharLevelEffect(cfg)) continue;
         behaviors.push({
           char,
           target: char,
@@ -337,6 +340,7 @@ export class TextPlayer {
       // R17/SA-32：isStyle 经 classifyStyleWrite 单一真相源（统一所有 style 判定入口）。
       for (const cfg of classified.instant) {
         if (EffectProcessor.classifyStyleWrite(cfg).isStyle) continue;
+        if (!EffectProcessor.isCharLevelEffect(cfg)) continue;
         instantEffects.push({
           target: char,
           effectName: cfg.name,
@@ -351,6 +355,7 @@ export class TextPlayer {
     let enterConfig: EffectConfig | null = null;
     const otherEntrance: EffectConfig[] = [];
     for (const cfg of classified.entrance) {
+      if (!EffectProcessor.isCharLevelEffect(cfg)) continue;
       const meta = effectManager.getMetadata(cfg.name);
       if (meta?.mutexGroup === "enter" && !enterConfig) {
         enterConfig = cfg;
@@ -524,8 +529,12 @@ export class TextPlayer {
       // f.pause:char → pauseCharOverride 已处理
       if (isBlocking && config.level === "char") continue;
 
-      // hold → 推进链游标（链末尾无后续效果时为 no-op，外层暂停请用 pause 或 |）
-      if (isBlocking) {
+      // hold / 纯 blocking 边界 → 推进链游标或切换 post-hold 窗口。
+      // 显式容器作用域本身也被 classifyStyleWrite 标成 isBlocking（用于 P1 初始样式烘焙
+      // 的边界），但它仍是一个必须执行的视觉效果，不能在这里当 hold 吞掉。
+      const isContainerScopedEffect = !isStyle && config.name !== "hold" &&
+        (config.level === "group" || config.level === "block" || config.level === "bg");
+      if (isBlocking && !isContainerScopedEffect) {
         if (config.name === "hold") {
           const dur = EffectProcessor.resolvePauseDuration(config.params, 1);
           chainCursor += dur;

@@ -365,7 +365,7 @@ export const xxx = defineEffect(_xxx, { type: "filter", track: "instant"|"behavi
 | `cyberGlitch` | behavior | both | filter_cyber_glitch | — | AE Glitch 思路：RGB split + 彩噪 + burst pixelate；char 级附带确定性水平跳帧 |
 | `crtDisplay` | behavior | both | filter_crt_display | — | CRT 组合：scanline + mono noise + vignette，统一 ticker 驱动 |
 | `neonGlow` | behavior | both | filter_neon_glow | outline/Bloom padding | 霓虹组合：duotone + 文字 outline + pulsing Bloom；背景 profile 不套文字 outline |
-| `digitalFlicker` | behavior | char | filter_digital_flicker | — | 数字闪断：分帧 alpha gate + noise + scanline；只支持逐字 modifier 语义 |
+| `digitalFlicker` | behavior | char | alpha | — | 数字闪断：零滤镜的分帧 alpha gate；只支持逐字 modifier 语义 |
 | `hologram` | behavior | both | filter_hologram | Bloom padding | 全息投影：surface-aware duotone + scanline + RGB jitter + Bloom；char 级附带漂浮/透明度闪烁 |
 | `chromaticAberration` | behavior | both | filter_rgb | — | 可独立控制 x/y 与 pulse 的色差预设；与 rgbShift 共用 filter_rgb 互斥族 |
 
@@ -377,10 +377,12 @@ export const xxx = defineEffect(_xxx, { type: "filter", track: "instant"|"behavi
 |---|---|---|
 | `cyberGlitch` | `rgb=10 [0,64]`, `frequency=4 [0.1,30]`, `burst=0.22 [0.02,1]`, `blockSize=10 [1,64]`, `noise=0.16 [0,1]`, `jitter=3 [0,32]` | 标题/告警的间歇信号撕裂，char 或 `:block` |
 | `crtDisplay` | `density=3 [0.25,12]`, `curvature=0.12 [0,1]`, `flicker=0.08 [0,0.8]`, `noise=0.06 [0,1]`, `speed=1.2 [0,12]` | 终端、监视器、录像回放，推荐 `:block` |
-| `neonGlow` | `strength=1.8 [0,6]`, `radius=7 [1,32]`, `threshold=0.3 [0,1]`, `width=2 [0.5,16]`, `pulse=0.25 [0,1]`, `speed=1.1 [0,10]` | 霓虹招牌/主标题；`color`、`shadow` 接受 hex |
-| `digitalFlicker` | `rate=12 [0.5,60]`, `duty=0.22 [0.02,1]`, `intensity=0.65 [0,1]`, `minAlpha=0.25 [0,1]`, `noise=0.08 [0,1]` | 逐字电子不稳、损坏 UI；`targetType:"char"` |
-| `hologram` | `scan=4 [0.25,12]`, `jitter=2.5 [0,24]`, `glow=1.2 [0,6]`, `flicker=0.16 [0,0.8]`, `speed=1.6 [0,12]`, `float=2 [0,24]` | 全息人物/远程通信；`tint`、`shadow` 接受 hex |
-| `chromaticAberration` | `x=6 [-64,64]`, `y=0 [-64,64]`, `pulse=0.3 [0,1]`, `speed=1.2 [0,12]` | 镜头边缘色差、音乐节拍呼吸，char 或 `:block` |
+| `neonGlow` | `strength=1.8 [0,6]`, `radius=7 [1,32]`, `threshold=0.3 [0,1]`, `width=2 [0.5,16]`, `pulse=0.25 [0,1]`, `speed=1.1 [0,10]` | 霓虹招牌/主标题；多字标题推荐 `:group`，`color`、`shadow` 接受 hex |
+| `digitalFlicker` | `rate=12 [0.5,60]`, `duty=0.22 [0.02,1]`, `intensity=0.65 [0,1]`, `minAlpha=0.25 [0,1]` | 逐字电子不稳、损坏 UI；零 GPU filter，噪声/扫描线请组合容器级 `noise` / `scanline` / `crtDisplay` |
+| `hologram` | `scan=4 [0.25,12]`, `jitter=2.5 [0,24]`, `glow=1.2 [0,6]`, `flicker=0.16 [0,0.8]`, `speed=1.6 [0,12]`, `float=2 [0,24]` | 全息人物/远程通信；长文本推荐 `:group`/`:block`，`tint`、`shadow` 接受 hex |
+| `chromaticAberration` | `x=6 [-64,64]`, `y=0 [-64,64]`, `pulse=0.3 [0,1]`, `speed=1.2 [0,12]` | 镜头边缘色差、音乐节拍呼吸，多字目标推荐 `:group`/`:block` |
+
+`targetType: "both"` 在未写作用域时保持逐字语义。对 Bloom、多通道全息或 RGB 组合这类 GPU 特效，长标题应显式使用 `:group`，避免每个 glyph 复制一套 filter/pass；需要逐字跳动时可另行叠加零滤镜的 `digitalFlicker`、`float` 或 `jitter`。
 
 语法示例：
 

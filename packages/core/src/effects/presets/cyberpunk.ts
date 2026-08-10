@@ -240,8 +240,6 @@ const digitalFlickerParameters = {
   duty: { type: "number", default: 0.22, min: 0.02, max: 1, step: 0.01, description: "出现暗帧的概率" },
   intensity: { type: "number", default: 0.65, min: 0, max: 1, step: 0.01, description: "暗帧最大衰减量" },
   minAlpha: { type: "number", default: 0.25, min: 0, max: 1, step: 0.01, description: "暗帧透明度下限" },
-  noise: { type: "number", default: 0.08, min: 0, max: 1, step: 0.01, description: "暗帧伴随的数字噪声量" },
-  density: { type: "number", default: 3, min: 0.25, max: 12, step: 0.25, description: "伴随扫描线密度" },
 } as const satisfies ParameterSchema;
 
 const _digitalFlicker: EffectFunction = (target, params = {}) => {
@@ -251,14 +249,6 @@ const _digitalFlicker: EffectFunction = (target, params = {}) => {
   const duty = readNumber(params, digitalFlickerParameters, "duty");
   const intensity = readNumber(params, digitalFlickerParameters, "intensity");
   const minAlpha = readNumber(params, digitalFlickerParameters, "minAlpha");
-  const noiseAmount = readNumber(params, digitalFlickerParameters, "noise");
-
-  const noise = new NoiseFilter();
-  noise.mono = 1;
-  noise.scale = 10;
-  const scanline = new ScanlineFilter();
-  scanline.density = readNumber(params, digitalFlickerParameters, "density");
-  scanline.flicker = intensity * 0.2;
 
   const frame = (timeMs: number) => {
     const step = Math.floor(timeMs * 0.001 * rate);
@@ -270,19 +260,20 @@ const _digitalFlicker: EffectFunction = (target, params = {}) => {
     };
   };
 
-  return mountBehaviorFilters(target, "digitalFlicker", [noise, scanline], (timeMs) => {
-    const current = frame(timeMs);
-    noise.time = timeMs * 0.001 * rate;
-    noise.amount = current.active ? noiseAmount : noiseAmount * 0.15;
-    scanline.time = timeMs * 0.001 * rate * 0.2;
-  }, (timeMs) => ({ alpha: frame(timeMs).alpha }));
+  // 逐字闪断只需 alpha modifier。旧实现为每个 glyph 额外挂 NoiseFilter +
+  // ScanlineFilter；20 字标题会瞬间创建 40 个 GPU filter，并与外层 CRT/Neon
+  // 重复降解。噪声和扫描线已有可组合的 :group/:block preset，不应在 char
+  // 粒度暗中复制。返回 void 仍会由 BehaviorCleanup 记录 modName 并精确移除。
+  target.addModifier("digitalFlicker", "behavior", (timeMs) => ({
+    alpha: frame(timeMs).alpha,
+  }));
 };
 
 export const digitalFlicker = defineEffect(_digitalFlicker, {
-  type: "filter",
+  type: "behavior",
   track: "behavior",
   targetType: "char",
-  mutexGroup: "filter_digital_flicker",
+  mutexGroup: "alpha",
   category: "cyberpunk",
   parameters: digitalFlickerParameters,
 });

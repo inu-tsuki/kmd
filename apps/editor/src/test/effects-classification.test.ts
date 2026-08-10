@@ -64,7 +64,7 @@ const EFFECT_TABLE: Record<string, PresetClass> = {
   cyberGlitch:{ track: 'behavior', type: 'filter', targetType: 'both', mutexGroup: 'filter_cyber_glitch', stackable: false },
   crtDisplay:{ track: 'behavior', type: 'filter', targetType: 'both', mutexGroup: 'filter_crt_display', stackable: false },
   neonGlow:  { track: 'behavior', type: 'filter', targetType: 'both', mutexGroup: 'filter_neon_glow', stackable: false },
-  digitalFlicker:{ track: 'behavior', type: 'filter', targetType: 'char', mutexGroup: 'filter_digital_flicker', stackable: false },
+  digitalFlicker:{ track: 'behavior', type: 'behavior', targetType: 'char', mutexGroup: 'alpha', stackable: false },
   hologram:  { track: 'behavior', type: 'filter', targetType: 'both', mutexGroup: 'filter_hologram', stackable: false },
   chromaticAberration:{ track: 'behavior', type: 'filter', targetType: 'both', mutexGroup: 'filter_rgb', stackable: false },
   pixelate:  { track: 'instant',  type: 'filter', targetType: 'both', mutexGroup: 'filter_pixelate',  stackable: true },

@@ -121,6 +121,7 @@
                   {
                     "blocking": false,
                     "family": "effect",
+                    "level": "group",
                     "name": "neonGlow",
                     "params": {
                       "color": "#00f5ff",
@@ -132,11 +133,12 @@
                       "width": 2.5
                     },
                     "prefix": "f",
-                    "raw": "f.neonGlow(color=\"#00f5ff\", shadow=\"#020714\", strength=2.6, radius=11, width=2.5, pulse=0.28, speed=0.8).chromaticAberration(x=4, y=0.5, pulse=0.24, speed=1.2).big.big"
+                    "raw": "f.neonGlow:group(color=\"#00f5ff\", shadow=\"#020714\", strength=2.6, radius=11, width=2.5, pulse=0.28, speed=0.8).chromaticAberration:group(x=4, y=0.5, pulse=0.24, speed=1.2).big.big"
                   },
                   {
                     "blocking": false,
                     "family": "effect",
+                    "level": "group",
                     "name": "chromaticAberration",
                     "params": {
                       "pulse": 0.24,
@@ -145,7 +147,7 @@
                       "y": 0.5
                     },
                     "prefix": "f",
-                    "raw": "f.neonGlow(color=\"#00f5ff\", shadow=\"#020714\", strength=2.6, radius=11, width=2.5, pulse=0.28, speed=0.8).chromaticAberration(x=4, y=0.5, pulse=0.24, speed=1.2).big.big"
+                    "raw": "f.neonGlow:group(color=\"#00f5ff\", shadow=\"#020714\", strength=2.6, radius=11, width=2.5, pulse=0.28, speed=0.8).chromaticAberration:group(x=4, y=0.5, pulse=0.24, speed=1.2).big.big"
                   },
                   {
                     "blocking": false,
@@ -153,7 +155,7 @@
                     "name": "big",
                     "params": {},
                     "prefix": "f",
-                    "raw": "f.neonGlow(color=\"#00f5ff\", shadow=\"#020714\", strength=2.6, radius=11, width=2.5, pulse=0.28, speed=0.8).chromaticAberration(x=4, y=0.5, pulse=0.24, speed=1.2).big.big"
+                    "raw": "f.neonGlow:group(color=\"#00f5ff\", shadow=\"#020714\", strength=2.6, radius=11, width=2.5, pulse=0.28, speed=0.8).chromaticAberration:group(x=4, y=0.5, pulse=0.24, speed=1.2).big.big"
                   },
                   {
                     "blocking": false,
@@ -161,16 +163,16 @@
                     "name": "big",
                     "params": {},
                     "prefix": "f",
-                    "raw": "f.neonGlow(color=\"#00f5ff\", shadow=\"#020714\", strength=2.6, radius=11, width=2.5, pulse=0.28, speed=0.8).chromaticAberration(x=4, y=0.5, pulse=0.24, speed=1.2).big.big"
+                    "raw": "f.neonGlow:group(color=\"#00f5ff\", shadow=\"#020714\", strength=2.6, radius=11, width=2.5, pulse=0.28, speed=0.8).chromaticAberration:group(x=4, y=0.5, pulse=0.24, speed=1.2).big.big"
                   }
                 ],
                 "line": 14,
                 "prefix": "f",
                 "range": {
-                  "end": 182,
+                  "end": 194,
                   "start": 15
                 },
-                "raw": "f.neonGlow(color=\"#00f5ff\", shadow=\"#020714\", strength=2.6, radius=11, width=2.5, pulse=0.28, speed=0.8).chromaticAberration(x=4, y=0.5, pulse=0.24, speed=1.2).big.big",
+                "raw": "f.neonGlow:group(color=\"#00f5ff\", shadow=\"#020714\", strength=2.6, radius=11, width=2.5, pulse=0.28, speed=0.8).chromaticAberration:group(x=4, y=0.5, pulse=0.24, speed=1.2).big.big",
                 "type": "command-chain"
               }
             ],
@@ -178,14 +180,14 @@
             "kind": "content",
             "line": 14,
             "range": {
-              "end": 182,
+              "end": 194,
               "start": 0
             },
-            "raw": "{NIGHT CITY} @ f.neonGlow(color=\"#00f5ff\", shadow=\"#020714\", strength=2.6, radius=11, width=2.5, pulse=0.28, speed=0.8).chromaticAberration(x=4, y=0.5, pulse=0.24, speed=1.2).big.big",
+            "raw": "{NIGHT CITY} @ f.neonGlow:group(color=\"#00f5ff\", shadow=\"#020714\", strength=2.6, radius=11, width=2.5, pulse=0.28, speed=0.8).chromaticAberration:group(x=4, y=0.5, pulse=0.24, speed=1.2).big.big",
             "type": "line"
           }
         ],
-        "source": "// 镜头 1：用呼吸霓虹和轻微色差建立城市招牌质感。\n@ bg(color=\"#03040a\")\n@ cam.zoom(0.78, 1.2s)!\n{NIGHT CITY} @ f.neonGlow(color=\"#00f5ff\", shadow=\"#020714\", strength=2.6, radius=11, width=2.5, pulse=0.28, speed=0.8).chromaticAberration(x=4, y=0.5, pulse=0.24, speed=1.2).big.big",
+        "source": "// 镜头 1：用呼吸霓虹和轻微色差建立城市招牌质感。\n@ bg(color=\"#03040a\")\n@ cam.zoom(0.78, 1.2s)!\n{NIGHT CITY} @ f.neonGlow:group(color=\"#00f5ff\", shadow=\"#020714\", strength=2.6, radius=11, width=2.5, pulse=0.28, speed=0.8).chromaticAberration:group(x=4, y=0.5, pulse=0.24, speed=1.2).big.big",
         "type": "paragraph"
       },
       "blockOptions": {},
@@ -220,6 +222,7 @@
             "effects": [
               {
                 "blocking": false,
+                "level": "group",
                 "name": "neonGlow",
                 "params": {
                   "color": "#00f5ff",
@@ -233,6 +236,7 @@
               },
               {
                 "blocking": false,
+                "level": "group",
                 "name": "chromaticAberration",
                 "params": {
                   "pulse": 0.24,
@@ -293,6 +297,7 @@
           "effects": [
             {
               "blocking": false,
+              "level": "group",
               "name": "neonGlow",
               "params": {
                 "color": "#00f5ff",
@@ -306,6 +311,7 @@
             },
             {
               "blocking": false,
+              "level": "group",
               "name": "chromaticAberration",
               "params": {
                 "pulse": 0.24,
@@ -373,6 +379,7 @@
                   {
                     "blocking": false,
                     "family": "effect",
+                    "level": "group",
                     "name": "neonGlow",
                     "params": {
                       "color": "#ff2bd6",
@@ -383,7 +390,7 @@
                       "strength": 2.1
                     },
                     "prefix": "f",
-                    "raw": "f.neonGlow(color=\"#ff2bd6\", shadow=\"#12031a\", strength=2.1, radius=8, pulse=0.42, speed=1.6).digitalFlicker(rate=14, duty=0.14, intensity=0.45, minAlpha=0.5)"
+                    "raw": "f.neonGlow:group(color=\"#ff2bd6\", shadow=\"#12031a\", strength=2.1, radius=8, pulse=0.42, speed=1.6).digitalFlicker(rate=14, duty=0.14, intensity=0.45, minAlpha=0.5)"
                   },
                   {
                     "blocking": false,
@@ -396,16 +403,16 @@
                       "rate": 14
                     },
                     "prefix": "f",
-                    "raw": "f.neonGlow(color=\"#ff2bd6\", shadow=\"#12031a\", strength=2.1, radius=8, pulse=0.42, speed=1.6).digitalFlicker(rate=14, duty=0.14, intensity=0.45, minAlpha=0.5)"
+                    "raw": "f.neonGlow:group(color=\"#ff2bd6\", shadow=\"#12031a\", strength=2.1, radius=8, pulse=0.42, speed=1.6).digitalFlicker(rate=14, duty=0.14, intensity=0.45, minAlpha=0.5)"
                   }
                 ],
                 "line": 16,
                 "prefix": "f",
                 "range": {
-                  "end": 176,
+                  "end": 182,
                   "start": 19
                 },
-                "raw": "f.neonGlow(color=\"#ff2bd6\", shadow=\"#12031a\", strength=2.1, radius=8, pulse=0.42, speed=1.6).digitalFlicker(rate=14, duty=0.14, intensity=0.45, minAlpha=0.5)",
+                "raw": "f.neonGlow:group(color=\"#ff2bd6\", shadow=\"#12031a\", strength=2.1, radius=8, pulse=0.42, speed=1.6).digitalFlicker(rate=14, duty=0.14, intensity=0.45, minAlpha=0.5)",
                 "type": "command-chain"
               }
             ],
@@ -413,14 +420,14 @@
             "kind": "content",
             "line": 16,
             "range": {
-              "end": 176,
+              "end": 182,
               "start": 0
             },
-            "raw": "{DISTRICT :: 09} @ f.neonGlow(color=\"#ff2bd6\", shadow=\"#12031a\", strength=2.1, radius=8, pulse=0.42, speed=1.6).digitalFlicker(rate=14, duty=0.14, intensity=0.45, minAlpha=0.5)",
+            "raw": "{DISTRICT :: 09} @ f.neonGlow:group(color=\"#ff2bd6\", shadow=\"#12031a\", strength=2.1, radius=8, pulse=0.42, speed=1.6).digitalFlicker(rate=14, duty=0.14, intensity=0.45, minAlpha=0.5)",
             "type": "line"
           }
         ],
-        "source": "{DISTRICT :: 09} @ f.neonGlow(color=\"#ff2bd6\", shadow=\"#12031a\", strength=2.1, radius=8, pulse=0.42, speed=1.6).digitalFlicker(rate=14, duty=0.14, intensity=0.45, minAlpha=0.5)",
+        "source": "{DISTRICT :: 09} @ f.neonGlow:group(color=\"#ff2bd6\", shadow=\"#12031a\", strength=2.1, radius=8, pulse=0.42, speed=1.6).digitalFlicker(rate=14, duty=0.14, intensity=0.45, minAlpha=0.5)",
         "type": "paragraph"
       },
       "blockOptions": {},
@@ -437,6 +444,7 @@
             "effects": [
               {
                 "blocking": false,
+                "level": "group",
                 "name": "neonGlow",
                 "params": {
                   "color": "#ff2bd6",
@@ -481,6 +489,7 @@
           "effects": [
             {
               "blocking": false,
+              "level": "group",
               "name": "neonGlow",
               "params": {
                 "color": "#ff2bd6",
@@ -775,6 +784,7 @@
                   {
                     "blocking": false,
                     "family": "effect",
+                    "level": "group",
                     "name": "neonGlow",
                     "params": {
                       "color": "#ff375f",
@@ -785,7 +795,7 @@
                       "strength": 2.4
                     },
                     "prefix": "f",
-                    "raw": "f.neonGlow(color=\"#ff375f\", shadow=\"#160207\", strength=2.4, radius=9, pulse=0.5, speed=2.4).digitalFlicker(rate=24, duty=0.28, intensity=0.72, minAlpha=0.25).big"
+                    "raw": "f.neonGlow:group(color=\"#ff375f\", shadow=\"#160207\", strength=2.4, radius=9, pulse=0.5, speed=2.4).digitalFlicker(rate=24, duty=0.28, intensity=0.72, minAlpha=0.25).big"
                   },
                   {
                     "blocking": false,
@@ -798,7 +808,7 @@
                       "rate": 24
                     },
                     "prefix": "f",
-                    "raw": "f.neonGlow(color=\"#ff375f\", shadow=\"#160207\", strength=2.4, radius=9, pulse=0.5, speed=2.4).digitalFlicker(rate=24, duty=0.28, intensity=0.72, minAlpha=0.25).big"
+                    "raw": "f.neonGlow:group(color=\"#ff375f\", shadow=\"#160207\", strength=2.4, radius=9, pulse=0.5, speed=2.4).digitalFlicker(rate=24, duty=0.28, intensity=0.72, minAlpha=0.25).big"
                   },
                   {
                     "blocking": false,
@@ -806,16 +816,16 @@
                     "name": "big",
                     "params": {},
                     "prefix": "f",
-                    "raw": "f.neonGlow(color=\"#ff375f\", shadow=\"#160207\", strength=2.4, radius=9, pulse=0.5, speed=2.4).digitalFlicker(rate=24, duty=0.28, intensity=0.72, minAlpha=0.25).big"
+                    "raw": "f.neonGlow:group(color=\"#ff375f\", shadow=\"#160207\", strength=2.4, radius=9, pulse=0.5, speed=2.4).digitalFlicker(rate=24, duty=0.28, intensity=0.72, minAlpha=0.25).big"
                   }
                 ],
                 "line": 24,
                 "prefix": "f",
                 "range": {
-                  "end": 184,
+                  "end": 190,
                   "start": 23
                 },
-                "raw": "f.neonGlow(color=\"#ff375f\", shadow=\"#160207\", strength=2.4, radius=9, pulse=0.5, speed=2.4).digitalFlicker(rate=24, duty=0.28, intensity=0.72, minAlpha=0.25).big",
+                "raw": "f.neonGlow:group(color=\"#ff375f\", shadow=\"#160207\", strength=2.4, radius=9, pulse=0.5, speed=2.4).digitalFlicker(rate=24, duty=0.28, intensity=0.72, minAlpha=0.25).big",
                 "type": "command-chain"
               }
             ],
@@ -823,14 +833,14 @@
             "kind": "content",
             "line": 24,
             "range": {
-              "end": 184,
+              "end": 190,
               "start": 0
             },
-            "raw": "{SECURITY PERIMETER} @ f.neonGlow(color=\"#ff375f\", shadow=\"#160207\", strength=2.4, radius=9, pulse=0.5, speed=2.4).digitalFlicker(rate=24, duty=0.28, intensity=0.72, minAlpha=0.25).big",
+            "raw": "{SECURITY PERIMETER} @ f.neonGlow:group(color=\"#ff375f\", shadow=\"#160207\", strength=2.4, radius=9, pulse=0.5, speed=2.4).digitalFlicker(rate=24, duty=0.28, intensity=0.72, minAlpha=0.25).big",
             "type": "line"
           }
         ],
-        "source": "// 镜头 2：安全边界开始失稳，短促震动配合逐字跳帧。\n@ bg(color=\"#080311\")\n@ cam.reset(0.4s)!\n@ cam.move(-180, 0, 0.7s)!\n{SECURITY PERIMETER} @ f.neonGlow(color=\"#ff375f\", shadow=\"#160207\", strength=2.4, radius=9, pulse=0.5, speed=2.4).digitalFlicker(rate=24, duty=0.28, intensity=0.72, minAlpha=0.25).big",
+        "source": "// 镜头 2：安全边界开始失稳，短促震动配合逐字跳帧。\n@ bg(color=\"#080311\")\n@ cam.reset(0.4s)!\n@ cam.move(-180, 0, 0.7s)!\n{SECURITY PERIMETER} @ f.neonGlow:group(color=\"#ff375f\", shadow=\"#160207\", strength=2.4, radius=9, pulse=0.5, speed=2.4).digitalFlicker(rate=24, duty=0.28, intensity=0.72, minAlpha=0.25).big",
         "type": "paragraph"
       },
       "blockOptions": {},
@@ -874,6 +884,7 @@
             "effects": [
               {
                 "blocking": false,
+                "level": "group",
                 "name": "neonGlow",
                 "params": {
                   "color": "#ff375f",
@@ -950,6 +961,7 @@
           "effects": [
             {
               "blocking": false,
+              "level": "group",
               "name": "neonGlow",
               "params": {
                 "color": "#ff375f",
@@ -1060,6 +1072,7 @@
                   {
                     "blocking": false,
                     "family": "effect",
+                    "level": "group",
                     "name": "cyberGlitch",
                     "params": {
                       "blockSize": 12,
@@ -1070,11 +1083,12 @@
                       "rgb": 18
                     },
                     "prefix": "f",
-                    "raw": "f.cyberGlitch(rgb=18, frequency=8, burst=0.45, blockSize=12, noise=0.24, jitter=5).chromaticAberration(x=8, y=1, pulse=0.5, speed=2.8)"
+                    "raw": "f.cyberGlitch:group(rgb=18, frequency=8, burst=0.45, blockSize=12, noise=0.24, jitter=5).chromaticAberration:group(x=8, y=1, pulse=0.5, speed=2.8)"
                   },
                   {
                     "blocking": false,
                     "family": "effect",
+                    "level": "group",
                     "name": "chromaticAberration",
                     "params": {
                       "pulse": 0.5,
@@ -1083,16 +1097,16 @@
                       "y": 1
                     },
                     "prefix": "f",
-                    "raw": "f.cyberGlitch(rgb=18, frequency=8, burst=0.45, blockSize=12, noise=0.24, jitter=5).chromaticAberration(x=8, y=1, pulse=0.5, speed=2.8)"
+                    "raw": "f.cyberGlitch:group(rgb=18, frequency=8, burst=0.45, blockSize=12, noise=0.24, jitter=5).chromaticAberration:group(x=8, y=1, pulse=0.5, speed=2.8)"
                   }
                 ],
                 "line": 27,
                 "prefix": "f",
                 "range": {
-                  "end": 147,
+                  "end": 159,
                   "start": 13
                 },
-                "raw": "f.cyberGlitch(rgb=18, frequency=8, burst=0.45, blockSize=12, noise=0.24, jitter=5).chromaticAberration(x=8, y=1, pulse=0.5, speed=2.8)",
+                "raw": "f.cyberGlitch:group(rgb=18, frequency=8, burst=0.45, blockSize=12, noise=0.24, jitter=5).chromaticAberration:group(x=8, y=1, pulse=0.5, speed=2.8)",
                 "type": "command-chain"
               }
             ],
@@ -1100,14 +1114,14 @@
             "kind": "content",
             "line": 27,
             "range": {
-              "end": 147,
+              "end": 159,
               "start": 0
             },
-            "raw": "{UNSTABLE} @ f.cyberGlitch(rgb=18, frequency=8, burst=0.45, blockSize=12, noise=0.24, jitter=5).chromaticAberration(x=8, y=1, pulse=0.5, speed=2.8)",
+            "raw": "{UNSTABLE} @ f.cyberGlitch:group(rgb=18, frequency=8, burst=0.45, blockSize=12, noise=0.24, jitter=5).chromaticAberration:group(x=8, y=1, pulse=0.5, speed=2.8)",
             "type": "line"
           }
         ],
-        "source": "@ cam.shake(7)\n{UNSTABLE} @ f.cyberGlitch(rgb=18, frequency=8, burst=0.45, blockSize=12, noise=0.24, jitter=5).chromaticAberration(x=8, y=1, pulse=0.5, speed=2.8)",
+        "source": "@ cam.shake(7)\n{UNSTABLE} @ f.cyberGlitch:group(rgb=18, frequency=8, burst=0.45, blockSize=12, noise=0.24, jitter=5).chromaticAberration:group(x=8, y=1, pulse=0.5, speed=2.8)",
         "type": "paragraph"
       },
       "blockOptions": {},
@@ -1133,6 +1147,7 @@
             "effects": [
               {
                 "blocking": false,
+                "level": "group",
                 "name": "cyberGlitch",
                 "params": {
                   "blockSize": 12,
@@ -1145,6 +1160,7 @@
               },
               {
                 "blocking": false,
+                "level": "group",
                 "name": "chromaticAberration",
                 "params": {
                   "pulse": 0.5,
@@ -1186,6 +1202,7 @@
           "effects": [
             {
               "blocking": false,
+              "level": "group",
               "name": "cyberGlitch",
               "params": {
                 "blockSize": 12,
@@ -1198,6 +1215,7 @@
             },
             {
               "blocking": false,
+              "level": "group",
               "name": "chromaticAberration",
               "params": {
                 "pulse": 0.5,
@@ -2031,6 +2049,7 @@
                   {
                     "blocking": false,
                     "family": "effect",
+                    "level": "group",
                     "name": "neonGlow",
                     "params": {
                       "color": "#45ff9a",
@@ -2042,11 +2061,12 @@
                       "width": 2
                     },
                     "prefix": "f",
-                    "raw": "f.neonGlow(color=\"#45ff9a\", shadow=\"#02150b\", strength=2.8, radius=10, width=2, pulse=0.18, speed=0.7).chromaticAberration(x=2, y=0, pulse=0.1, speed=0.6).big.big"
+                    "raw": "f.neonGlow:group(color=\"#45ff9a\", shadow=\"#02150b\", strength=2.8, radius=10, width=2, pulse=0.18, speed=0.7).chromaticAberration:group(x=2, y=0, pulse=0.1, speed=0.6).big.big"
                   },
                   {
                     "blocking": false,
                     "family": "effect",
+                    "level": "group",
                     "name": "chromaticAberration",
                     "params": {
                       "pulse": 0.1,
@@ -2055,7 +2075,7 @@
                       "y": 0
                     },
                     "prefix": "f",
-                    "raw": "f.neonGlow(color=\"#45ff9a\", shadow=\"#02150b\", strength=2.8, radius=10, width=2, pulse=0.18, speed=0.7).chromaticAberration(x=2, y=0, pulse=0.1, speed=0.6).big.big"
+                    "raw": "f.neonGlow:group(color=\"#45ff9a\", shadow=\"#02150b\", strength=2.8, radius=10, width=2, pulse=0.18, speed=0.7).chromaticAberration:group(x=2, y=0, pulse=0.1, speed=0.6).big.big"
                   },
                   {
                     "blocking": false,
@@ -2063,7 +2083,7 @@
                     "name": "big",
                     "params": {},
                     "prefix": "f",
-                    "raw": "f.neonGlow(color=\"#45ff9a\", shadow=\"#02150b\", strength=2.8, radius=10, width=2, pulse=0.18, speed=0.7).chromaticAberration(x=2, y=0, pulse=0.1, speed=0.6).big.big"
+                    "raw": "f.neonGlow:group(color=\"#45ff9a\", shadow=\"#02150b\", strength=2.8, radius=10, width=2, pulse=0.18, speed=0.7).chromaticAberration:group(x=2, y=0, pulse=0.1, speed=0.6).big.big"
                   },
                   {
                     "blocking": false,
@@ -2071,16 +2091,16 @@
                     "name": "big",
                     "params": {},
                     "prefix": "f",
-                    "raw": "f.neonGlow(color=\"#45ff9a\", shadow=\"#02150b\", strength=2.8, radius=10, width=2, pulse=0.18, speed=0.7).chromaticAberration(x=2, y=0, pulse=0.1, speed=0.6).big.big"
+                    "raw": "f.neonGlow:group(color=\"#45ff9a\", shadow=\"#02150b\", strength=2.8, radius=10, width=2, pulse=0.18, speed=0.7).chromaticAberration:group(x=2, y=0, pulse=0.1, speed=0.6).big.big"
                   }
                 ],
                 "line": 43,
                 "prefix": "f",
                 "range": {
-                  "end": 185,
+                  "end": 197,
                   "start": 23
                 },
-                "raw": "f.neonGlow(color=\"#45ff9a\", shadow=\"#02150b\", strength=2.8, radius=10, width=2, pulse=0.18, speed=0.7).chromaticAberration(x=2, y=0, pulse=0.1, speed=0.6).big.big",
+                "raw": "f.neonGlow:group(color=\"#45ff9a\", shadow=\"#02150b\", strength=2.8, radius=10, width=2, pulse=0.18, speed=0.7).chromaticAberration:group(x=2, y=0, pulse=0.1, speed=0.6).big.big",
                 "type": "command-chain"
               }
             ],
@@ -2088,14 +2108,14 @@
             "kind": "content",
             "line": 43,
             "range": {
-              "end": 185,
+              "end": 197,
               "start": 0
             },
-            "raw": "{ACCESS} > {GRANTED} @ f.neonGlow(color=\"#45ff9a\", shadow=\"#02150b\", strength=2.8, radius=10, width=2, pulse=0.18, speed=0.7).chromaticAberration(x=2, y=0, pulse=0.1, speed=0.6).big.big",
+            "raw": "{ACCESS} > {GRANTED} @ f.neonGlow:group(color=\"#45ff9a\", shadow=\"#02150b\", strength=2.8, radius=10, width=2, pulse=0.18, speed=0.7).chromaticAberration:group(x=2, y=0, pulse=0.1, speed=0.6).big.big",
             "type": "line"
           }
         ],
-        "source": "// 镜头 4：故障骤停，绿色许可信息作为干净收束。\n@ bg(color=\"#020806\")\n@ cam.reset(0.8s)!\n{ACCESS} > {GRANTED} @ f.neonGlow(color=\"#45ff9a\", shadow=\"#02150b\", strength=2.8, radius=10, width=2, pulse=0.18, speed=0.7).chromaticAberration(x=2, y=0, pulse=0.1, speed=0.6).big.big",
+        "source": "// 镜头 4：故障骤停，绿色许可信息作为干净收束。\n@ bg(color=\"#020806\")\n@ cam.reset(0.8s)!\n{ACCESS} > {GRANTED} @ f.neonGlow:group(color=\"#45ff9a\", shadow=\"#02150b\", strength=2.8, radius=10, width=2, pulse=0.18, speed=0.7).chromaticAberration:group(x=2, y=0, pulse=0.1, speed=0.6).big.big",
         "type": "paragraph"
       },
       "blockOptions": {},
@@ -2129,6 +2149,7 @@
             "effects": [
               {
                 "blocking": false,
+                "level": "group",
                 "name": "neonGlow",
                 "params": {
                   "color": "#45ff9a",
@@ -2142,6 +2163,7 @@
               },
               {
                 "blocking": false,
+                "level": "group",
                 "name": "chromaticAberration",
                 "params": {
                   "pulse": 0.1,
@@ -2270,6 +2292,7 @@
           "effects": [
             {
               "blocking": false,
+              "level": "group",
               "name": "neonGlow",
               "params": {
                 "color": "#45ff9a",
@@ -2283,6 +2306,7 @@
             },
             {
               "blocking": false,
+              "level": "group",
               "name": "chromaticAberration",
               "params": {
                 "pulse": 0.1,
@@ -2519,15 +2543,15 @@
     }
   ],
   "rawParagraphs": [
-    "// 镜头 1：用呼吸霓虹和轻微色差建立城市招牌质感。\n@ bg(color=\"#03040a\")\n@ cam.zoom(0.78, 1.2s)!\n{NIGHT CITY} @ f.neonGlow(color=\"#00f5ff\", shadow=\"#020714\", strength=2.6, radius=11, width=2.5, pulse=0.28, speed=0.8).chromaticAberration(x=4, y=0.5, pulse=0.24, speed=1.2).big.big",
-    "{DISTRICT :: 09} @ f.neonGlow(color=\"#ff2bd6\", shadow=\"#12031a\", strength=2.1, radius=8, pulse=0.42, speed=1.6).digitalFlicker(rate=14, duty=0.14, intensity=0.45, minAlpha=0.5)",
+    "// 镜头 1：用呼吸霓虹和轻微色差建立城市招牌质感。\n@ bg(color=\"#03040a\")\n@ cam.zoom(0.78, 1.2s)!\n{NIGHT CITY} @ f.neonGlow:group(color=\"#00f5ff\", shadow=\"#020714\", strength=2.6, radius=11, width=2.5, pulse=0.28, speed=0.8).chromaticAberration:group(x=4, y=0.5, pulse=0.24, speed=1.2).big.big",
+    "{DISTRICT :: 09} @ f.neonGlow:group(color=\"#ff2bd6\", shadow=\"#12031a\", strength=2.1, radius=8, pulse=0.42, speed=1.6).digitalFlicker(rate=14, duty=0.14, intensity=0.45, minAlpha=0.5)",
     "---",
-    "// 镜头 2：安全边界开始失稳，短促震动配合逐字跳帧。\n@ bg(color=\"#080311\")\n@ cam.reset(0.4s)!\n@ cam.move(-180, 0, 0.7s)!\n{SECURITY PERIMETER} @ f.neonGlow(color=\"#ff375f\", shadow=\"#160207\", strength=2.4, radius=9, pulse=0.5, speed=2.4).digitalFlicker(rate=24, duty=0.28, intensity=0.72, minAlpha=0.25).big",
-    "@ cam.shake(7)\n{UNSTABLE} @ f.cyberGlitch(rgb=18, frequency=8, burst=0.45, blockSize=12, noise=0.24, jitter=5).chromaticAberration(x=8, y=1, pulse=0.5, speed=2.8)",
+    "// 镜头 2：安全边界开始失稳，短促震动配合逐字跳帧。\n@ bg(color=\"#080311\")\n@ cam.reset(0.4s)!\n@ cam.move(-180, 0, 0.7s)!\n{SECURITY PERIMETER} @ f.neonGlow:group(color=\"#ff375f\", shadow=\"#160207\", strength=2.4, radius=9, pulse=0.5, speed=2.4).digitalFlicker(rate=24, duty=0.28, intensity=0.72, minAlpha=0.25).big",
+    "@ cam.shake(7)\n{UNSTABLE} @ f.cyberGlitch:group(rgb=18, frequency=8, burst=0.45, blockSize=12, noise=0.24, jitter=5).chromaticAberration:group(x=8, y=1, pulse=0.5, speed=2.8)",
     "---",
     "// 镜头 3：完整的 AE 式 glitch burst，镜头快速推近。\n@ bg(color=\"#020207\")\n@ cam.reset(0.25s)!\n@ cam.zoom(1.24, 0.55s)!\n[.neonGlow:block(color=\"#00f5ff\", shadow=\"#04020b\", strength=3.1, radius=13, width=3, pulse=0.32, speed=1.9) .cyberGlitch:block(rgb=24, frequency=10, burst=0.5, blockSize=18, noise=0.28, jitter=6) .chromaticAberration:block(x=12, y=1.5, pulse=0.55, speed=3.2)]\nSIGNAL BREACH",
     "---",
-    "// 镜头 4：故障骤停，绿色许可信息作为干净收束。\n@ bg(color=\"#020806\")\n@ cam.reset(0.8s)!\n{ACCESS} > {GRANTED} @ f.neonGlow(color=\"#45ff9a\", shadow=\"#02150b\", strength=2.8, radius=10, width=2, pulse=0.18, speed=0.7).chromaticAberration(x=2, y=0, pulse=0.1, speed=0.6).big.big",
+    "// 镜头 4：故障骤停，绿色许可信息作为干净收束。\n@ bg(color=\"#020806\")\n@ cam.reset(0.8s)!\n{ACCESS} > {GRANTED} @ f.neonGlow:group(color=\"#45ff9a\", shadow=\"#02150b\", strength=2.8, radius=10, width=2, pulse=0.18, speed=0.7).chromaticAberration:group(x=2, y=0, pulse=0.1, speed=0.6).big.big",
     "{WELCOME, GHOST.} @ f.digitalFlicker(rate=10, duty=0.08, intensity=0.35, minAlpha=0.65)"
   ]
 }
