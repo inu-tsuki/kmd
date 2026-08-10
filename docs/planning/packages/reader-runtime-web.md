@@ -25,6 +25,10 @@ R7 不移动整条 runtime closure。包入口允许引用 `apps/editor/src/core
 - `apps/editor/src/core/editor`
 - Vue、Pinia、Monaco、TextMate、Oniguruma
 
+例外（2026-08 主题二 S4a）：`zod` 现已进入 reader 闭包——
+`core/runtime/RuntimeConfigValidator.ts` 为 boot/updateSettings 配置防火墙，
+bundle 增量 +57,871 B（全在主 chunk，记账见 `../theme-2-yard-sweep-2026-08.md`）。
+
 ## Build
 
 ```bash
@@ -102,6 +106,10 @@ seek 双向回归、真实浏览器 smoke，以及切换前后播放位置/sessi
 3. 写 reduced-motion mode/effect matrix，审查 effect pipeline 后再实现统一策略。
 4. 暴露或固化 mode capability，让 Android/Web host 能正确呈现控件可用性。
 5. 在 reader artifact smoke 中验证设置热更新，而非只跑 editor Node 回归。
+
+> 2026-08 主题二复核：settings transaction **缓期不变**——S4a 的 zod 防火墙是
+> 输入边界防御（strip/sanitize/永不抛），不引入任何字段语义特判，也不实现
+> rebuild transaction；transaction 仍押在 Phase B 最终 ownership 上（上文第 1 条）。
 
 本工作包不要求抽取纯 `@kmd/core`，也不改变 Android 的 DataStore、Compose 主题或
 自动保存开关。长期资源不变量见

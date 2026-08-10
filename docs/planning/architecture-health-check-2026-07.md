@@ -18,6 +18,8 @@
    真正的耦合不在 import 而在共享可变状态：`PlaybackRuntimeState` 的 cleanup 数组有 3 个写入方，`KineticChar.style` 有 5 个写入方（R16/SA-31 曾在此踩坑）。
 3. **文档缺口**：GEMINI.md 过期（已修）；Phase B 准入条件主观；`docs/knowledge/decisions/` 空置；
    核心区 162 处 `as any`（Pixi 私有内部、`globalThis.KmdRuntimeConfig` 无 schema）。
+   ——2026-08 主题二复核：实测 core 区 `as any` 为 **72 处**（"162"已过时；S1 删文件 −1、
+   S4b pixi adapter 收口 −6。见 `docs/planning/theme-2-yard-sweep-2026-08.md`）。
 
 ## 处方追踪
 
@@ -64,6 +66,8 @@
   **Follow-up**：PlaybackController 3 处 cleanup push + P0/P4 style 写入 → #10；
   TextPlayer P3/P4 → 随 TextPlayer 拆分；LayoutPlanner P1 → 随 LayoutPlanner 拆分；
   `presets/behavior.ts:244` 外部直写 → 下个维护窗口改走 `styleManager.apply`。
+  ——✅ 2026-08 主题二 S3 已收口：改走 `styleManager.apply(style, "fillReset")`
+  （internal 样式，参与 color 互斥记账但对语言表面隐藏；净行为零变化）。
 - [x] **处方 7 · Phase B 客观准入清单**（2026-07-20 落地，见 `docs/planning/roadmap/phase-b-entry-checklist-2026-07.md`）
   现行门条件"语言设计文档完成一次收敛审查"不可判定；建 `docs/planning/roadmap/` 下的收敛验收文档
   （例如：B0–B4 语法定稿、design.md 覆盖全部命令族、一次评审通过、无 open design issue）。
@@ -73,9 +77,14 @@
 - [x] **处方 9 · 补写 3–5 篇 ADR**（2026-07-20 归档，见 `docs/knowledge/decisions/2026-07-20-*.md`）
   候选：Segment-timeline 而非 graph-first；Phase R 先于 Phase B；record/replay 保证 seek 幂等；
   reader-runtime 以相对路径 re-export 而非立即抽 `packages/core`。
-- [ ] **处方 10 · 外部依赖防波堤**
-  `globalThis.KmdRuntimeConfig` 加 schema 校验（zod 已在 community-api 使用，可复用）；
-  `App.ts` 中对 Pixi 私有内部（`renderer.batchPipe` 等 11 处强转）收拢进单一 adapter 并加启动期预检。
+- [x] **处方 10 · 外部依赖防波堤**（2026-08 主题二 S4a/S4b 完成）
+  ✅ `globalThis.KmdRuntimeConfig` + updateSettings payload 加 zod schema 校验
+  （`core/runtime/RuntimeConfigValidator.ts`；strip-unknown + 逐字段类型回退 + 永不抛；
+  构建期 z.infer ↔ 契约双向 StrictEqual 漂移守卫；boot 侧 + session 侧双接入）。
+  ✅ `App.ts` Pixi 私有内部收拢进 `core/render/pixiInternalsAdapter.ts`
+  （preflightRenderer / capBatchableTextures / primeBatchShader / syncBatcherTextureLimits /
+  bindEmptyTextureUnits / resizeApp / renderApp，逐个守卫、warn once、永不崩）。
+  记账：reader bundle +57,871 B（zod）；core `as any` 79 → 72。
 - [x] **处方 11 · DIP-FX M2 Task B（`bg` 命令 + `:bg` 作用域）回归修复**（2026-07-09 提交 `3a38445` 代码审查发现，7 条 bug 全部修复）
   1. ✅ **`bg(...)` 命令名撞车**——`visual.ts` 旧 `bg` 改名 `box`（`mutexGroup:"box"`），消除 `effectManager.has("bg")` 恒真导致的 stage bg 死代码。`final-playback-test.ts` R12 用例同步改名。
   2. ✅ **`:bg` 四条轨道 target 解析补齐**——entrance track 加 `:bg` target 解析；style track `:bg` 跳过并 warn（Sprite 无 `getGraphicsLayer`）；`TextPlayer.unrollGroupChain` 容器级分支加 `:bg` target 解析；内联 style `:bg` 跳过。

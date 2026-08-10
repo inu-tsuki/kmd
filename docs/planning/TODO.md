@@ -177,9 +177,11 @@
 - [x] **AV2. StageManager Round 2 Slimming**
   - [x] 抽出 host session / resize / world transform 绑定
   - [x] 收紧 `camAuditLog` / `dumpCamReport()` 等 compat 出口
+    ——2026-08 主题二：compat 出口已**彻底删除**（camAuditLog/dumpCamReport/stageConflictDiagnostics 无存留，见 theme-2-yard-sweep-2026-08.md）。
 - [x] **AV3. Layout Diagnostics and Pass Tightening**
   - [x] 让 preflight / final placement 共享 pass runner 骨架
   - [x] 将 `LayoutEngine.dumpReport()` 降级为 compat wrapper，导出改走统一 bus
+    ——2026-08 主题二：dumpReport() 已**彻底删除**（同上）。
 - [x] **AV4. Execution Monolith Split and Legacy Tightening**
   - [x] 从 `TextPlayer` 拆出 diagnostics sink / timing cursor / stage cue scheduler
   - [x] 从 `ScriptPlayer` 收口 source loader / build report / diagnostics 汇聚
