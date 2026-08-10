@@ -362,7 +362,7 @@
 - [ ] **Hot Replay**: Monaco "从此处播放" + segment seek。
 - [ ] **Monaco 视觉增强**: Segment 边界标记、Minimap 增强、控制流折叠。
 - [ ] **Inspector v2**: 指令元数据 + 实时调参 → 自动改写 KMD 源码。
-- [ ] **VS Code 颜色主题加载**:
+- [x] **VS Code 颜色主题加载**（2026-08-10：标准已展开 JSON + 项目路径加载完成；JSONC、`include`、扩展清单与热监听边界见 `docs/knowledge/integration/editor-vscode-theme-loading.md`）:
   - Monaco 与 VS Code `tokenColors` 格式完全兼容（已用 TM grammar），任何 `.json` 主题文件可直接传入 `defineTheme`
   - IDE Shell 变量映射：从主题 `colors` 对象提取 ~10 个键注入 CSS 变量
     ```
@@ -469,12 +469,12 @@
 > **核心前提**：Monaco 已使用 TM grammar，与 VS Code `tokenColors` 完全兼容。
 > 主题分两层：语法着色层（Monaco `tokenColors`）+ IDE 外壳层（CSS variables）。
 
-- [ ] **P5.1 提取默认主题为独立文件**:
+- [x] **P5.1 提取默认主题为独立文件**:
   - 将 `kmd-lang.ts` 中的 `defineTheme rules` 迁移为 VS Code 兼容格式
   - 输出为 `themes/kmd-dark.theme.json`（`tokenColors` 数组 + `colors` 对象）
   - 加载路径：`GrammarService` 或独立 `ThemeService` 负责 `monaco.editor.defineTheme()`
 
-- [ ] **P5.2 VS Code 颜色主题直接加载**:
+- [x] **P5.2 VS Code 颜色主题直接加载**:
   - `ThemeService.load(themeJson)` — 接受标准 VS Code `IVsCodeTheme` 格式
   - 自动提取 `colors` → CSS variables（映射表约 15 个键）
   - 自动传递 `tokenColors` → Monaco `defineTheme`

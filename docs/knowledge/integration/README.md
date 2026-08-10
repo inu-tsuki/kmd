@@ -1,6 +1,6 @@
 # Integration Knowledge
 
-> 最近更新：2026-06-16
+> 最近更新：2026-08-10
 
 这里收纳 KMD runtime 与宿主环境的集成知识，例如 Android WebView、Web editor shell、VS Code extension 和未来社区 Web。
 
@@ -13,4 +13,5 @@
 ## 入口文档
 
 - `android-webview-runtime-protocol.md`：Android Reader 与 `reader-runtime-web` 的 WebView bridge 协议。
+- `editor-vscode-theme-loading.md`：Web Editor 加载 VS Code 颜色主题、映射 Shell 变量及项目路径边界。
 - `reader-runtime-web-bundle.md`：reader-only Web bundle 的构建入口、产物布局和边界检查。

@@ -94,6 +94,39 @@ export async function readFile(handle: FileSystemFileHandle): Promise<string> {
   return file.text()
 }
 
+/**
+ * Read a UTF-8 text file below a project root. The path must remain relative to
+ * that root; absolute paths and parent traversal are deliberately rejected.
+ */
+export async function readProjectTextFile(
+  projectRoot: FileSystemDirectoryHandle,
+  relativePath: string
+): Promise<string | null> {
+  const normalized = relativePath.trim().replace(/\\/g, '/')
+  if (!normalized || normalized.startsWith('/') || /^[a-z]:/i.test(normalized)) {
+    throw new Error(`Project file path must be relative: ${relativePath}`)
+  }
+
+  const segments = normalized.split('/').filter(segment => segment !== '' && segment !== '.')
+  if (segments.length === 0 || segments.some(segment => segment === '..')) {
+    throw new Error(`Project file path escapes the project root: ${relativePath}`)
+  }
+
+  try {
+    let directory = projectRoot
+    for (const segment of segments.slice(0, -1)) {
+      directory = await directory.getDirectoryHandle(segment)
+    }
+    const fileName = segments[segments.length - 1]!
+    return await readFile(await directory.getFileHandle(fileName))
+  } catch (error) {
+    if (typeof DOMException !== 'undefined' &&
+        error instanceof DOMException && error.name === 'NotFoundError') return null
+    if (error instanceof Error && error.name === 'NotFoundError') return null
+    throw error
+  }
+}
+
 export async function writeFile(handle: FileSystemFileHandle, content: string): Promise<void> {
   const writable = await handle.createWritable()
   await writable.write(content)

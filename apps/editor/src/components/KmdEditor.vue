@@ -6,6 +6,7 @@
 import { ref, onMounted, onUnmounted, watch } from "vue";
 import * as monaco from "monaco-editor";
 import { registerKMDLanguage } from "../editor/kmd-lang";
+import { themeService } from "../editor/ThemeService";
 import { parser } from "@kmd/core/parser/Parser";
 import { useEditorStore } from "../store/editorStore";
 
@@ -107,7 +108,7 @@ onMounted(async () => {
   editor = monaco.editor.create(editorContainer.value, {
     value: props.modelValue,
     language: "kmd",
-    theme: "kmd-theme",
+    theme: themeService.activeThemeName,
     automaticLayout: true,
     fontSize: 14,
     fontFamily: "'Fira Code', 'Courier New', monospace",

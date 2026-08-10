@@ -13,6 +13,7 @@ import {
 } from '@kmd/core/parser/frontmatter';
 import * as fsService from '../services/fileSystem';
 import type { FileNode } from '../services/fileSystem';
+import { loadProjectTheme } from '../editor/projectThemeLoader';
 
 export const useEditorStore = defineStore('editor', () => {
   // --- 状态 (State) ---
@@ -209,11 +210,17 @@ export const useEditorStore = defineStore('editor', () => {
 
   // --- 文件系统操作 ---
 
+  const applyProjectTheme = async (handle: FileSystemDirectoryHandle) => {
+    const result = await loadProjectTheme(handle)
+    if (result.error) console.warn(`[Theme] ${result.error}`)
+  }
+
   const openFolder = async () => {
     try {
       const handle = await fsService.openFolder()
       projectHandle.value = handle
       fileTree.value = await fsService.readDirectory(handle)
+      await applyProjectTheme(handle)
     } catch (err) {
       if ((err as Error).name !== 'AbortError') console.error('[FS] openFolder error:', err)
     }
@@ -225,6 +232,7 @@ export const useEditorStore = defineStore('editor', () => {
       if (!handle) return
       projectHandle.value = handle
       fileTree.value = await fsService.readDirectory(handle)
+      await applyProjectTheme(handle)
     } catch {
       // 静默失败，用户手动打开即可
     }
