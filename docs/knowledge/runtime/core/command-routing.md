@@ -10,7 +10,7 @@ AstParser.parseParagraph()
   -> CommandChainAst / BlockOptionAst
   -> lowering.ts
   -> ParagraphIR + legacy projection
-  -> LayoutStreamBuilder / ScriptPlayer
+  -> LayoutPlanner → DisplayAssembler / ScriptPlayer
 ```
 
 这意味着：
@@ -82,7 +82,7 @@ lowering:
   首 target.layoutInstructions ← { type: "offset", lineScope: "pre" }
   末 target.layoutInstructions ← { type: "offset", lineScope: "post" }
 
-LayoutStreamBuilder:
+LayoutPlanner:
   expander 返回 { pre, post } 时：
     lineScope === undefined → 正常：pre + post 都发射
     lineScope === "pre"     → 只发射 pre 命令
@@ -95,7 +95,7 @@ LayoutStreamBuilder:
 
 ```
 token.layoutInstructions
-  → LayoutStreamBuilder: expander?
+  → LayoutPlanner: expander?
      ├─ 有 expander → pre/post LayoutCommand 包裹字符
      └─ 无 expander → layoutManager.generate() → 直接进入 stream
   → TextLayoutEngine: 执行 operator，修改 cursor/markers
@@ -115,7 +115,7 @@ token.effects
 
 ```
 token.layoutInstructions
-  → LayoutStreamBuilder: stageInstructions[]
+  → LayoutPlanner: stageInstructions[]
   → TextBuilder: charData.stageInstructions
   → TextPlayer.buildTimeline(): tl.call(() => stageManager.apply(...))
 ```

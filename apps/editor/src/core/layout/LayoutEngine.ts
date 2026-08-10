@@ -1,8 +1,8 @@
 import { Container } from "pixi.js";
-import { auditBus } from "../diagnostics/AuditBus";
+
 import { KineticText } from "../KineticText";
 import type { KineticTextOptions } from "../KineticText";
-import type { MarkerMap, LayoutAuditRecord } from "./types";
+import type { MarkerMap } from "./types";
 import { TextLayoutEngine } from "./TextLayoutEngine";
 import { stageManager } from "../stage/StageManager";
 import { readerLayoutHostView } from "./ReaderLayoutHostView";
@@ -261,21 +261,6 @@ class LayoutEngine {
     if (logicalHeight > 0) {
       this.currentY += logicalHeight + this.paragraphSpacing;
     }
-  }
-
-  public dumpReport(): LayoutAuditRecord[] {
-    const logs = TextLayoutEngine.lastAuditLog;
-    console.warn("[LayoutEngine] dumpReport() is deprecated; prefer unified audit snapshot.");
-    auditBus.emit({
-      phase: "layout",
-      subsystem: "layout",
-      severity: "warn",
-      payload: {
-        event: "layout.audit.dump",
-        recordCount: logs.length,
-      },
-    });
-    return logs;
   }
 
   private update() {

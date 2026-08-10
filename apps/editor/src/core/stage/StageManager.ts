@@ -1,5 +1,4 @@
 import { Container, Graphics, Sprite, Assets, Texture } from "pixi.js";
-import { auditBus } from "../diagnostics/AuditBus";
 import { layout } from "../layout/LayoutEngine";
 import { RuntimeValueResolver } from "../runtime/RuntimeValueResolver";
 import { UnifiedStageAuditPort, type StageAuditPort } from "./StageAudit";
@@ -194,19 +193,11 @@ class StageManager {
   public clearAuditSnapshot() {
     this.auditPort.clear();
   }
-
   /**
    * @deprecated 兼容期 getter。未来请改用 `getAuditSnapshot().entries`。
    */
   public get camAuditLog(): StageAuditEntry[] {
     return this.getAuditSnapshot().entries;
-  }
-
-  /**
-   * @deprecated 兼容期 getter。未来请改用 `getAuditSnapshot().conflicts`。
-   */
-  public get stageConflictDiagnostics(): StageConflictDiagnostic[] {
-    return this.getAuditSnapshot().conflicts;
   }
 
   public setAuditPort(port: StageAuditPort) {
@@ -409,25 +400,6 @@ class StageManager {
       designHeight: this.designHeight,
       isFixedRatio: this.isFixedRatio
     };
-  }
-
-  /**
-   * @deprecated 兼容期导出入口。未来应改走统一 AuditBus / DiagnosticsCollector。
-   */
-  public dumpCamReport() {
-    const snapshot = this.getAuditSnapshot();
-    console.warn("[StageManager] dumpCamReport() is deprecated; prefer unified audit export.");
-    auditBus.emit({
-      phase: "runtime",
-      subsystem: "stage",
-      severity: "warn",
-      payload: {
-        event: "stage.audit.dump",
-        entryCount: snapshot.entries.length,
-        conflictCount: snapshot.conflicts.length,
-      },
-    });
-    return snapshot.entries;
   }
 }
 

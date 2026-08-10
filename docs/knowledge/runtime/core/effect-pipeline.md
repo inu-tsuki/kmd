@@ -99,7 +99,7 @@ EffectConfig[]
 ```
 token.effects: EffectConfig[]
   │
-  ├─ LayoutStreamBuilder.build()
+  ├─ LayoutPlanner.build()
   │   └─ partition() → layoutCmds 进 stream, stageConfigs 进 charData
   │
   └─ TextPlayer.buildTimeline()
@@ -124,7 +124,7 @@ token.effects: EffectConfig[]
 ```
 pData.globalEffects: EffectConfig[]
   │
-  ├─ LayoutStreamBuilder.build()
+  ├─ LayoutPlanner.build()
   │   └─ partition() → layoutCmds 进 stream 头部
   │
   └─ ScriptPlayer.buildSegment()

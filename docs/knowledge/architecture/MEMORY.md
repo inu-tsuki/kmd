@@ -20,7 +20,7 @@ KMD 源码
   │
   ├─ KMDParagraphData[]             // 每段: tokens + globalEffects + blockOptions
   │
-  ├─ LayoutStreamBuilder.build()    // Token → LayoutStream (字符 + 排版指令)
+  ├─ LayoutPlanner.build()          // Token → LayoutStream (字符 + 排版指令)
   │   ├─ Expander 展开              // 高级指令 → pushDisplayOffset/popDisplayOffset 等
   │   └─ TextLayoutEngine.calculate()
   │       ├─ Phantom Pass           // 幻影预扫描：发现标记、建立行边界
@@ -58,7 +58,7 @@ KMD 源码
 | 模块                                            | 职责                                                                                          |
 | ----------------------------------------------- | --------------------------------------------------------------------------------------------- |
 | `LayoutEngine.ts` (singleton: `layout`)         | 全局段落垂直堆叠、`globalMarkers` 管理、响应式回流、状态序列化                                |
-| `LayoutStreamBuilder.ts`                        | Token → LayoutStream 转换。测量字宽、运行 Expander、收集舞台指令                              |
+| `LayoutPlanner.ts`                            | Token → LayoutStream 转换。测量字宽、运行 Expander、收集舞台指令                              |
 | `TextLayoutEngine.ts`                           | 两趟扫描坐标引擎。**Phantom Pass** 发现标记和行边界，**Main Pass** 输出最终 `LayoutResult[]`  |
 | `LayoutManager.ts` (singleton: `layoutManager`) | Operator + Expander 双注册表。自动加载 layoutPresets 和 layoutExpanders                       |
 | `layoutPresets.ts`                              | 运行时 Operator：`goto`, `flow`, `mark`, `offset`, `pushDisplayOffset`, `popDisplayOffset` 等 |
@@ -241,7 +241,7 @@ src/
 │   │   └── types.ts              # 解析器类型定义
 │   ├── layout/
 │   │   ├── LayoutEngine.ts       # 全局垂直流 + globalMarkers (单例: layout)
-│   │   ├── LayoutStreamBuilder.ts # Token → LayoutStream 转换
+│   │   ├── LayoutPlanner.ts      # Token → LayoutStream 转换
 │   │   ├── TextLayoutEngine.ts   # 两趟扫描坐标引擎 (phantom + main)
 │   │   ├── LayoutManager.ts      # Operator/Expander 注册表 (单例: layoutManager)
 │   │   ├── layoutPresets.ts      # 排版指令算子 (goto/flow/mark/offset...)

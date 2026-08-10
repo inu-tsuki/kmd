@@ -97,7 +97,7 @@ KMD source text
 
 Per paragraph render:
   KineticText.init(input)
-    → LayoutPlanner / LayoutStreamBuilder     # measure + expand layout cmds → LayoutStream
+    → LayoutPlanner                          # measure + expand layout cmds → LayoutStream
       → TextLayoutEngine                      # assigns absolute x/y to each char
     → DisplayAssembler                        # materializes KineticChar + TokenWrapper into Pixi scene
   ParagraphExecutionPlan + ChainExecutionPlan

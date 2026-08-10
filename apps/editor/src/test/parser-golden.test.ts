@@ -35,7 +35,6 @@ function collectCorpus(): { name: string; path: string }[] {
   // 顶层
   for (const name of readdirSync(PUBLIC_DIR).sort()) {
     if (!name.endsWith('.kmd')) continue;
-    if (name === 'final-test copy.kmd') continue; // 字节重复 final-test.kmd
     const st = existsSync(join(PUBLIC_DIR, name));
     if (st) out.push({ name: `top/${name}`, path: join(PUBLIC_DIR, name) });
   }
