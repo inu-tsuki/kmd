@@ -9,6 +9,7 @@ import {
   type ReaderRuntimeOptions,
   type ReaderRuntimeSession,
 } from "../../../apps/editor/src/core/runtime";
+import { sanitizeKmdRuntimeConfig } from "../../../apps/editor/src/core/runtime/RuntimeConfigValidator";
 import "./style.css";
 
 const DEFAULT_DEMO_SOURCE = `KMD Reader Runtime
@@ -50,13 +51,22 @@ void boot();
 async function boot() {
   setStatus("runtime:initializing");
 
-  const config = window.KmdRuntimeConfig ?? {};
+  // 防火墙（主题二 S4a / 处方 10）：宿主注入的 KmdRuntimeConfig 是不可信输入——
+  // spread 前经 zod sanitize（strip-unknown + 逐字段类型回退，永不抛）。
+  // autoDemo 是宿主私有 boot 字段，先拆出、sanitize 后再并回（不进契约 schema）。
+  const rawConfig = window.KmdRuntimeConfig ?? {};
+  const { autoDemo, ...contractFields } = rawConfig;
+  const { value: config, diagnostics } = sanitizeKmdRuntimeConfig(contractFields);
+  for (const diagnostic of diagnostics) {
+    console.warn(`[kmd-reader-runtime] boot config: ${diagnostic}`);
+  }
+  const browserConfig: ReaderRuntimeBrowserConfig = { ...config, autoDemo };
   const runtime = new ReaderRuntimeWebSession({
-    ...config,
-    assetBaseUrl: config.assetBaseUrl ?? import.meta.env.BASE_URL,
+    ...browserConfig,
+    assetBaseUrl: browserConfig.assetBaseUrl ?? import.meta.env.BASE_URL,
     settings: {
-      ...config.settings,
-      assetBaseUrl: config.settings?.assetBaseUrl ?? config.assetBaseUrl ?? import.meta.env.BASE_URL,
+      ...browserConfig.settings,
+      assetBaseUrl: browserConfig.settings?.assetBaseUrl ?? browserConfig.assetBaseUrl ?? import.meta.env.BASE_URL,
     },
     callbacks: createBridgeCallbacks(),
   });
@@ -66,7 +76,7 @@ async function boot() {
     await runtime.attach(root);
     await flushPendingMessages(runtime);
 
-    if (config.autoDemo ?? !hasAndroidBridge()) {
+    if (autoDemo ?? !hasAndroidBridge()) {
       await runtime.loadSource(DEFAULT_DEMO_SOURCE, {
         id: "reader-runtime-demo",
         title: "Reader Runtime Demo",

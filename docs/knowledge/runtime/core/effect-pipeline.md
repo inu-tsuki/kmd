@@ -99,7 +99,7 @@ EffectConfig[]
 ```
 token.effects: EffectConfig[]
   │
-  ├─ LayoutStreamBuilder.build()
+  ├─ LayoutPlanner.build()
   │   └─ partition() → layoutCmds 进 stream, stageConfigs 进 charData
   │
   └─ TextPlayer.buildTimeline()
@@ -124,7 +124,7 @@ token.effects: EffectConfig[]
 ```
 pData.globalEffects: EffectConfig[]
   │
-  ├─ LayoutStreamBuilder.build()
+  ├─ LayoutPlanner.build()
   │   └─ partition() → layoutCmds 进 stream 头部
   │
   └─ ScriptPlayer.buildSegment()
@@ -244,7 +244,7 @@ style 管线只涉及 `StyleRecord` 与 `baseStyleSnapshot`，其余三类各自
 | **P3 unrollGroupChain** | `TextPlayer` | tl.call 内 applyStyleRecursively 写 char.style + 登记 StyleRecord | 组级 hold 链 post-hold 动态样式 | follow-up（随 TextPlayer 拆分迁入） |
 | **P4 unrollCharChain** | `TextPlayer` | tl.call 内 styleManager.apply 写 char.style + 登记 StyleRecord | char 级 hold 链 post-hold 动态样式 | follow-up（随 TextPlayer 拆分迁入） |
 | **P4 replay** | `PlaybackController.replayStyles` | styleManager.apply 写 char.style | seek 重放 timePosition<=currentTime 的 StyleRecord | follow-up #10 |
-| **外部直写** | `presets/behavior.ts:244` | `target.style.fill = "#ffffff"` 直写 | 某 behavior preset 绕过 styleManager 的散写 | follow-up（最该清理的散写，建议下个维护窗口改走 styleManager.apply） |
+| ~~外部直写~~ | ~~`presets/behavior.ts:244`~~ | ~~`target.style.fill = "#ffffff"` 直写~~ | ~~某 behavior preset 绕过 styleManager 的散写~~ | **已收口**（主题二 S3：改走 `styleManager.apply(style, "fillReset")`——internal 样式，参与 color 互斥记账但对语言表面隐藏） |
 
 `EffectProcessor.applyGroupEffects` 内的 `isBlocking` 判定仍用 inline `config.name === "hold" || config.blocking`
 （与 `classifyStyleWrite` helper 分叉），已在代码注释中标注，建议后续统一为 `classifyStyleWrite`。

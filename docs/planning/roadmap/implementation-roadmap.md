@@ -1,7 +1,7 @@
 # KMD Implementation Roadmap
 
 > 文档状态：Active
-> 最近更新：2026-07-14
+> 最近更新：2026-08-10
 > 权威范围：KMD 当前主线判断与阶段顺序——已完成阶段、当前焦点、gated 下一阶段（Phase B 恢复条件）
 
 ## 当前判断
@@ -13,6 +13,19 @@ KMD 1.6 Phase A 与 Phase B Prep 已完成 parser、layout、execution、stage�
 当前路线调整为：
 
 > Phase R 已完成包边界建立；Phase B 语言设计收敛审查与 Android artifact/WebView 集成验证均已完成。Phase B 不再等待 Android，可在主仓库排期允许时按 `phase-b/1.6-phase-b-plan.md` 从 B0.1 新链解析器恢复实施。
+
+## 当前规划上下文（2026-08 快照）
+
+> 每次主题/阶段收口时更新本节；细节进台账，本节只留"在哪、什么没做、什么约束生效"。
+
+- **已完成**：主题一（织网，PR #27）护栏与测试网；主题二（扫院子，PR #28）compat 退场 +
+  处方 6(d)/10 收尾 + Known Gaps 记录。账目见 `docs/planning/theme-2-yard-sweep-2026-08.md`。
+- **刻意不做（含去向）**：Known Gaps A/B/C 记录不修（B5/B3 验收输入）；
+  `lastAuditLog` write-only → 后续；ReaderCanvas 剩余死暴露与 `@deprecated` mirrors → 处方 8；
+  settings transaction → post-B。完整清单见台账"刻意不做"节。
+- **生效约束**：parser/scanner/语言面属 Phase B 浪潮，维护期不碰；timeline/stage 行为变更须有意标注；
+  处方 1–11 追踪见 `docs/planning/architecture-health-check-2026-07.md`。
+- **下一步**：Phase B 按 `phase-b/1.6-phase-b-plan.md` 从 B0.1 恢复（gate #6/#8 完成后）。
 
 ## 阶段顺序
 

@@ -34,7 +34,6 @@ function collectCorpus(): { name: string; path: string }[] {
   }
   for (const name of readdirSync(PUBLIC_DIR).sort()) {
     if (!name.endsWith('.kmd')) continue;
-    if (name === 'final-test copy.kmd') continue;
     if (existsSync(join(PUBLIC_DIR, name))) out.push({ name: `top/${name}`, path: join(PUBLIC_DIR, name) });
   }
   return out;

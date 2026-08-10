@@ -158,3 +158,5 @@ rg -n "vue|pinia|monaco|textmate|oniguruma" dist/reader-runtime
 Vite reader config 使用 `base: './'`，因此 Android packaged assets 和普通静态服务器都能用相对路径加载 runtime chunk。字体由 `packages/reader-runtime-web/vite.config.ts` 从 `apps/editor/public/fonts/` 复制到 `dist/reader-runtime/fonts/`。
 
 宿主可以通过 `window.KmdRuntimeConfig` 或后续 `loadScript/updateSettings` payload 注入 `assetBaseUrl` / `assetManifest`。默认值是 `import.meta.env.BASE_URL`，在 reader build 中为 `./`。
+
+2026-08 主题二（S4a）起，宿主 config / updateSettings payload 在 session 边界经 zod schema sanitize（strip-unknown + 逐字段类型回退 + 永不抛）；非法 payload 返回 `SETTINGS_PAYLOAD_INVALID`。见协议文档 `android-webview-runtime-protocol.md` updateSettings 节与 `apps/editor/src/core/runtime/RuntimeConfigValidator.ts`。

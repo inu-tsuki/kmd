@@ -265,3 +265,37 @@ describe('updateSettings 门与 inspect', () => {
     expect(recorder.inspections.length, 'enabled=false 不触发 inspect').toBe(2);
   });
 });
+
+describe('updateSettings 防火墙（主题二 S4a / 处方 10）', () => {
+  it('非 record payload → SETTINGS_PAYLOAD_INVALID + commandId 回显（复刻 LOAD_SCRIPT_PAYLOAD_INVALID 惯例）', async () => {
+    const { recorder, callbacks } = makeRecorder();
+    const session = new ReaderRuntimeWebSession({ callbacks });
+
+    await session.receive({ version: 1, id: 'c-settings-bad', type: 'updateSettings', payload: 'garbage' });
+    await session.receive({ version: 1, id: 'c-settings-arr', type: 'updateSettings', payload: [1, 2, 3] });
+
+    expect(recorder.errors.map((error) => error.code)).toEqual([
+      'SETTINGS_PAYLOAD_INVALID',
+      'SETTINGS_PAYLOAD_INVALID',
+    ]);
+    expect(recorder.errors[0].commandId).toBe('c-settings-bad');
+    expect(recorder.errors[1].commandId).toBe('c-settings-arr');
+    expect(recorder.errors[0].recoverable).toBe(true);
+  });
+
+  it('半垃圾 payload → sanitized merge 无错误事件（坏字段静默 strip，好字段生效）', async () => {
+    const { recorder, callbacks } = makeRecorder();
+    const timeScaleSpy = vi.spyOn(scriptPlayer, 'setTimeScale').mockImplementation(() => {});
+    const session = new ReaderRuntimeWebSession({ callbacks });
+
+    await session.receive({
+      version: 1,
+      id: 'c-settings-mixed',
+      type: 'updateSettings',
+      payload: { timeScale: 2, debugOverlay: 'true', unknownField: 1 },
+    });
+
+    expect(recorder.errors, '字段级垃圾走静默 strip，不发错误事件').toEqual([]);
+    expect(timeScaleSpy, '好字段 timeScale 生效').toHaveBeenCalledWith(2);
+  });
+});

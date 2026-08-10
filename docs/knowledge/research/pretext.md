@@ -47,7 +47,7 @@
 
 本项目当前已有自研排版内核：
 
-- `src/core/layout/LayoutStreamBuilder.ts`
+- `src/core/layout/LayoutPlanner.ts`
 - `src/core/layout/TextLayoutEngine.ts`
 - `src/core/render/text/TextBuilder.ts`
 

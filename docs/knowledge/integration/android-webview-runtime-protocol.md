@@ -101,6 +101,7 @@ Web runtime 当前策略：
 
 - `source` 优先，直接作为脚本文本播放。
 - `sourceUrl` 会相对 `assetBaseUrl` / `assetManifest.baseUrl` 解析；非受控本地路径会被拒绝，HTTPS URL 可作为远端受控来源。
+
 - 若只传 `assetManifest`，runtime 会尝试用 `work.contentUri`、`work.id`、`source` 或 `script` 在 manifest assets 中找脚本资源。
 - legacy path-like script input 不再由播放器热路径自由 `fetch()`；宿主应改传 `source` 或受控 `sourceUrl`。
 
@@ -156,6 +157,12 @@ interface ReaderSettingsPayload {
 ```
 
 未来可扩展 `theme`、`quality`、`interactionEnabled`、`debugOverlay`。
+
+> 2026-08 主题二（S4a）：`updateSettings` payload 与 `window.KmdRuntimeConfig` 在 session 边界
+> 经 zod schema sanitize（strip-unknown + 逐字段类型回退 + 永不抛，见
+> `apps/editor/src/core/runtime/RuntimeConfigValidator.ts`）。payload 非对象 →
+> `SETTINGS_PAYLOAD_INVALID` 错误事件（复刻 `LOAD_SCRIPT_PAYLOAD_INVALID` 惯例）；
+> 字段级垃圾静默剥离 + console 诊断，不发错误事件。
 
 ### `dispose`
 

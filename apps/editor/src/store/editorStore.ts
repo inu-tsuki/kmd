@@ -19,10 +19,7 @@ export const useEditorStore = defineStore('editor', () => {
   const kmdContent = ref("");
   // SA-22：playbackState 是播放状态单一真相源（idle/loading/ready/playing/paused/ended/error），
   // 由 runtime adapter 写入（stop/load/play/pause/seek 全生命周期的 emit 链）。
-  // isPlaying 保留为派生布尔供旧消费者读，但**不再由 store action 直接写**——
-  // runScript/stopScript 原本乐观写 isPlaying=true/false 会与 adapter 的 emit 链竞争导致漂移。
   const playbackState = ref<ReaderRuntimePlaybackState>("idle");
-  const isPlaying = ref(false);
   const isPreviewMaximized = ref(false);  // 预览最大化 toggle（CSS overlay，不卸载 canvas）
   const player = shallowRef<ScriptPlayer | null>(null);
 
@@ -176,9 +173,9 @@ export const useEditorStore = defineStore('editor', () => {
 
   const runScript = async () => {
     if (player.value) {
-      // SA-22：不乐观写 isPlaying——player.stop()+load() 会发 loading→ready→playing 事件链，
-      // adapter 据此设 playbackState/isPlaying。原 isPlaying.value=true 会在 stop() 发的
-      // "idle"/"loading" 事件之前抢先写，造成与 adapter 短暂不一致。末尾 toggleAutoPlay(true)
+      // SA-22：不乐观写播放态——player.stop()+load() 会发 loading→ready→playing 事件链，
+      // adapter 据此设 playbackState。乐观抢先写会在 stop() 发的 "idle"/"loading"
+      // 事件之前生效，造成与 adapter 短暂不一致。末尾 toggleAutoPlay(true)
       // 必发 "playing" 事件，adapter 最终把状态设对。
       await player.value.stop();
       await player.value.load(kmdContent.value);
@@ -189,13 +186,13 @@ export const useEditorStore = defineStore('editor', () => {
 
   const stopScript = async () => {
     if (player.value) {
-      // SA-22：不写 isPlaying.value=false——player.stop() 发 "idle" 事件，adapter 设状态。
+      // SA-22：不写播放态——player.stop() 发 "idle" 事件，adapter 设 playbackState。
       await player.value.stop();
     }
   };
 
   const nextStep = () => {
-    player.value?.next(true);
+    player.value?.advanceToNextParagraph(true);
   };
 
   const seekRelative = (deltaSeconds: number) => {
@@ -604,7 +601,6 @@ export const useEditorStore = defineStore('editor', () => {
   return {
     kmdContent,
     playbackState,
-    isPlaying,
     isPreviewMaximized,
     togglePreviewMaximized: () => { isPreviewMaximized.value = !isPreviewMaximized.value; },
     player,

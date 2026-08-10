@@ -33,7 +33,7 @@ import { KineticChar } from '../core/KineticChar';
 import { DisplayAssembler } from '../core/render/text/DisplayAssembler';
 import type { Segment } from '../core/state/Segment';
 import type { LayoutGlyphPlan } from '../core/layout/LayoutPlanner';
-import { G, approxEq, makeFakeState } from './playback-harness';
+import { G, approxEq, makeFakeState, build, fillHex } from './playback-harness';
 
 /** 断言桥：1:1 保留原脚本 assert(cond, msg) 的诊断文本（vitest 自定义消息）。 */
 function assert(cond: boolean, message: string): void {
@@ -927,5 +927,61 @@ describe('[12] block/global 初始样式 recapture baseline（R16-High / SA-31�
         `R16 ended 重播：bold 不残留（实际 fontWeight ${(ch.style as any).fontWeight}）`,
       );
     }
+  });
+});
+
+describe('[13] rainbow 白底收口 + 邻接 override（主题二 S3 / 处方 6(d)，真实管线 build + seekToTime）', () => {
+  // 读 KineticChar 私有 modifiers Map 的键集合（测试专用窄访问；生产面不暴露）。
+  const modIds = (c: any): string[] => [...((c as any).modifiers?.keys?.() ?? [])];
+
+  it('rainbow 白底 + modifier 挂载 + seek 重放幂等（fill 恒白、rainbow modifier 恰好一个）', async () => {
+    const { segment, char, playbackState } = await build('{彩虹} @ f.rainbow');
+    // 构建期白底：rainbow 的 fillReset 经 styleManager.apply 写 "#ffffff"。
+    assert(
+      fillHex((char as any).baseStyleSnapshot.fill) === '#ffffff',
+      `S3-① 构建后 baseline.fill 恒白（实际 ${fillHex((char as any).baseStyleSnapshot.fill)}）`,
+    );
+    // seek 重放：registerBehaviors 清旧 modifier 后按 timePosition<=t 重 apply。
+    PlaybackController.seekToTime(segment, 0.5, playbackState);
+    assert(
+      fillHex(char.style.fill) === '#ffffff',
+      `S3-① SEEK 0.5 后 fill 恒白（实际 ${fillHex(char.style.fill)}）`,
+    );
+    assert(
+      modIds(char).filter((id) => id === 'rainbow').length === 1,
+      `S3-① SEEK 0.5 后 rainbow modifier 恰好一个（实际 ${modIds(char).join(',') || '∅'}）`,
+    );
+    // 多次 seek 往返幂等：modifier 不堆积、fill 不漂移。
+    PlaybackController.seekToTime(segment, 0.2, playbackState);
+    PlaybackController.seekToTime(segment, 0.8, playbackState);
+    assert(
+      fillHex(char.style.fill) === '#ffffff',
+      `S3-① 多次 seek 往返后 fill 恒白（实际 ${fillHex(char.style.fill)}）`,
+    );
+    assert(
+      modIds(char).filter((id) => id === 'rainbow').length === 1,
+      `S3-① 多次 seek 往返后 rainbow modifier 仍恰好一个（实际 ${modIds(char).join(',') || '∅'}）`,
+    );
+  });
+
+  it('f.red.f.rainbow 邻接 override：red 烘进 baseline，rainbow 重放时覆盖为白', async () => {
+    const { segment, char, playbackState } = await build('{彩虹} @ f.red.f.rainbow');
+    // red 是 pre-hold char 样式 → 烘进 baseline（P1 烘焙，探针验证 #ff4d4f）。
+    // rainbow 是 behavior record，不在构建期改写 baseline；其 fillReset 在 record 重放
+    // （seek/play）时覆盖为白——邻接 override 语义：同 color 互斥组后写者胜，
+    // 但时序上 red 属构建期烘焙、rainbow 属运行期重放，两相位各归其位。
+    assert(
+      fillHex((char as any).baseStyleSnapshot.fill) === '#ff4d4f',
+      `S3-② f.red.f.rainbow 构建后 baseline.fill = 红（P1 烘焙，实际 ${fillHex((char as any).baseStyleSnapshot.fill)}）`,
+    );
+    PlaybackController.seekToTime(segment, 0.5, playbackState);
+    assert(
+      fillHex(char.style.fill) === '#ffffff',
+      `S3-② SEEK 0.5 后 fill = 白（rainbow fillReset 重放覆盖 red，实际 ${fillHex(char.style.fill)}）`,
+    );
+    assert(
+      modIds(char).filter((id) => id === 'rainbow').length === 1,
+      `S3-② SEEK 0.5 后 rainbow modifier 恰好一个（实际 ${modIds(char).join(',') || '∅'}）`,
+    );
   });
 });

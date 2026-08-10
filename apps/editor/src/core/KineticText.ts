@@ -30,7 +30,6 @@ export class KineticText extends Container {
   public _displayAssembly: ParagraphDisplayAssembly = createEmptyParagraphDisplayAssembly();
   /** @deprecated Legacy compat mirror. Prefer `_displayAssembly.tokens`. */
   public tokens: TokenWrapper[] = [];
-  public _pendingGlobalEffects: any[] = [];
   /** @deprecated Legacy compat mirror. Prefer `_displayAssembly.chars`. */
   public _allCharsCached: KineticChar[] = [];
   /** @deprecated Legacy compat mirror. Prefer `_displayAssembly.executionItems`. */

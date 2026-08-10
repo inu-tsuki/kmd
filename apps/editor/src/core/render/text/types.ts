@@ -41,7 +41,6 @@ export interface TextBuildTarget {
   x: number;
   y: number;
   _options: TextHostOptions;
-  _pendingGlobalEffects: any[];
   // Canonical paragraph build output. New mainline code should read this instead of legacy mirrors.
   _displayAssembly: ParagraphDisplayAssembly;
   /** @deprecated Legacy compat mirror. Prefer `_displayAssembly.tokens`. */

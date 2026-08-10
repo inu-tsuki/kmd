@@ -58,7 +58,7 @@ const isScrubbing = ref(false);
 const wasPlaying = ref(false);
 
 // SA-22：播放状态读 store.playbackState（单一真相源），不再直读 player.autoPlay
-// （后者与 store.isPlaying 是两个不同步的真相源，Alt+Click 等路径会让它们漂移）。
+// （后者与 adapter 的 emit 链是两个不同步的真相源，Alt+Click 等路径会让它们漂移）。
 const isPlaying = computed(() => store.playbackState === "playing");
 
 const togglePlay = () => {

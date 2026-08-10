@@ -5,7 +5,7 @@
 > 权威范围：KMD 解析器主路径 `source -> KMDParser -> AstParser -> lowering -> ParagraphIR -> legacy projection -> runtime`，以及解析器源码阅读顺序
 
 > 本文档描述当前解析器主路径：`source -> AST -> IR -> legacy projection -> runtime`。
-> 阅读 `LayoutStreamBuilder`、`TextBuilder` 或 `ScriptPlayer` 前，建议先建立这套心智模型。
+> 阅读 `LayoutPlanner`、`TextBuilder` 或 `ScriptPlayer` 前，建议先建立这套心智模型。
 
 ## 总览
 
@@ -106,11 +106,11 @@ AST 节点描述的是源码结构，例如：
 2. `apps/editor/src/core/parser/AstParser.ts`
 3. `apps/editor/src/core/parser/lowering.ts`
 4. `apps/editor/src/core/render/text/TextBuilder.ts`
-5. `apps/editor/src/core/layout/LayoutStreamBuilder.ts`
+5. `apps/editor/src/core/layout/LayoutPlanner.ts`
 
 一句话记忆：
 
 - `Parser.ts`：编排入口
 - `AstParser.ts`：读语法
 - `lowering.ts`：定语义
-- `TextBuilder/LayoutStreamBuilder`：接执行
+- `TextBuilder/LayoutPlanner`：接执行

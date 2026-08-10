@@ -10,6 +10,7 @@ import {
   type RuntimeAssetContext,
 } from "./RuntimeAssetPolicy";
 import { parseReaderRuntimeCommandEnvelope } from "./ReaderRuntimeProtocol";
+import { sanitizeReaderRuntimeSettings } from "./RuntimeConfigValidator";
 import type {
   ReaderRuntimeAssetManifest,
   ReaderRuntimeCallbacks,
@@ -266,9 +267,27 @@ export class ReaderRuntimeWebSession implements ReaderRuntimeSession {
           this.setInspectionEnabled(payload?.enabled ?? false, payload?.mode);
           break;
         }
-        case "updateSettings":
-          await this.updateSettings((command.payload ?? {}) as ReaderRuntimeSettings);
+        case "updateSettings": {
+          const payload = command.payload;
+          // 防火墙（主题二 S4a / 处方 10）：payload 非 record → SETTINGS_PAYLOAD_INVALID
+          //（复刻 LOAD_SCRIPT_PAYLOAD_INVALID 惯例：按命令守卫 + commandId 回显）；
+          // 字段级垃圾 → sanitizeReaderRuntimeSettings 静默 strip + console 诊断，不发错误事件。
+          if (payload !== undefined && !isRecord(payload)) {
+            this.reportError({
+              commandId: command.id,
+              code: "SETTINGS_PAYLOAD_INVALID",
+              message: "updateSettings payload must be a plain object.",
+              recoverable: true,
+            });
+            return;
+          }
+          const { value: sanitized, diagnostics } = sanitizeReaderRuntimeSettings(payload ?? {});
+          for (const diagnostic of diagnostics) {
+            console.warn(`[ReaderRuntimeSession] updateSettings: ${diagnostic}`);
+          }
+          await this.updateSettings(sanitized);
           break;
+        }
         case "dispose":
           await this.dispose();
           break;

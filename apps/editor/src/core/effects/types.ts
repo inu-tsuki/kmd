@@ -17,6 +17,12 @@ export interface EffectMetadata {
   targetType: "char" | "group" | "both";
   mutexGroup?: string; // 互斥组名，例如 "color", "enter_anim"
   stackable?: boolean; // 是否允许同组叠加 (默认 false)
+  /**
+   * 内部样式：参与 apply 互斥记账，但对 has() 与 getRegisteredNames() 隐藏——
+   * 不渗入 commandCatalog 已知命令门、IntelliSense、分类钉表，不扩大语言表面。
+   * （主题二 S3：处方 6(d) rainbow 散写收口引入。）
+   */
+  internal?: boolean;
 }
 
 // 特效配置参数（允许用户自定义，例如 f.shake(strength=10)）

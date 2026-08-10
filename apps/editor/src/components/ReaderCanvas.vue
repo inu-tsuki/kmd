@@ -49,14 +49,9 @@ const stop = async () => {
   await runtime?.getPlayer().stop();
 };
 
-const next = () => {
-  runtime?.getPlayer().next(true);
-};
-
 defineExpose({
   loadAndPlay,
   stop,
-  next,
   getPlayer: () => runtime?.getPlayer() ?? null,
 });
 </script>

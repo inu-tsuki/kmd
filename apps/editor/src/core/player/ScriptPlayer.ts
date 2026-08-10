@@ -379,20 +379,23 @@ export class ScriptPlayer {
   }
 
   // ═══════════════════════════════════════════════════════════
-  //  Public API (兼容旧接口)
+  //  Public API（段落级导航）
   // ═══════════════════════════════════════════════════════════
 
   /**
-   * 跳转到指定段落（兼容旧接口）
-   * 内部转为 seekToTime
+   * 跳转到指定段落。内部转为 seekToTime（段落级导航是 editor 的稳定意图，
+   * 与 segment 内部 offsetInSegment 解耦）。
+   *
+   * 有意变更（主题二 S2）：原名 `seekTo`，兼容旧接口的框架标签已退役；
+   * 返回类型 Promise<void>→void（函数体无 await，唯一调用方不 await）。
    */
-  public async seekTo(index: number) {
+  public seekToParagraph(index: number) {
     if (!this.segment || index < 0 || index >= this.segment.paragraphs.length) return;
     const unit = this.segment.paragraphs[index];
     if (!unit) return;
 
     if (this.shouldLogRenderDiagnostics()) {
-      console.log(`[ScriptPlayer] seekTo(p[${index}]) -> seekToTime(${unit.offsetInSegment.toFixed(2)}s)`);
+      console.log(`[ScriptPlayer] seekToParagraph(p[${index}]) -> seekToTime(${unit.offsetInSegment.toFixed(2)}s)`);
     }
     this.seekToTime(unit.offsetInSegment);
 
@@ -537,9 +540,11 @@ export class ScriptPlayer {
   }
 
   /**
-   * 下一段落（兼容旧接口 — 在 Segment 模式下跳到下一段的起始位置）
+   * 推进到下一段落起始位置（段落级导航，见 seekToParagraph 的稳定性说明）。
+   *
+   * 有意变更（主题二 S2）：原名 `next`，返回类型 Promise<void>→void（函数体无 await）。
    */
-  public async next(force: boolean = false) {
+  public advanceToNextParagraph(force: boolean = false) {
     if (!this.segment) return;
 
     // 找到当前时间所在的段落

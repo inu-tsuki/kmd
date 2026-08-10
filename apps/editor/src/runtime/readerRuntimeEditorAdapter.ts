@@ -11,12 +11,10 @@ export interface EditorRuntimeAdapterStore {
   totalDuration: number;
   currentLine: number;
   timelineMarkers: ReaderRuntimeTimelineMarker[];
-  isPlaying: boolean;
   /**
-   * 完整播放生命周期态（idle/loading/ready/playing/paused/ended/error）。
-   * SA-22：原本 adapter 的 setPlaybackState 只写 event.isPlaying，把 7 值 union 塌缩成布尔，
-   * UI 无法区分 ended/paused/loading 等。playbackState 保留完整态作为单一真相源，
-   * isPlaying 保留为派生布尔（=== state==="playing"）供旧消费者读。
+   * 完整播放生命周期态（idle/loading/ready/playing/paused/ended/error），
+   * 播放状态的单一真相源。SA-22：协议事件的 isPlaying 布尔会把 7 值 union
+   * 塌缩成布尔，UI 无法区分 ended/paused/loading 等，故只消费完整态。
    */
   playbackState: ReaderRuntimePlaybackState;
   canvasConfig: {
@@ -55,10 +53,8 @@ export function createEditorRuntimeStateAdapter(store: EditorRuntimeAdapterStore
       }
     },
     setPlaybackState(event) {
-      // SA-22：保留完整 state（原塌缩为布尔导致 UI 无法区分 ended/paused 等）。
-      // playbackState 是单一真相源；isPlaying 作为派生布尔同步写（兼容旧消费者）。
+      // SA-22：只消费完整 state（单一真相源）；事件的 isPlaying 布尔不再落 store。
       store.playbackState = event.state;
-      store.isPlaying = event.isPlaying;
     },
     reportDiagnostic(diagnostic) {
       console.warn("[KMD Runtime Diagnostic]", diagnostic);

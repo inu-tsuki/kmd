@@ -3,6 +3,7 @@ import { Container } from "pixi.js";
 import { KineticChar } from "../../KineticChar";
 import { addContainerOffset } from "../../ContainerBehaviorOffset";
 import type { EffectFunction, EffectMetadata } from "../types";
+import { styleManager } from "../StyleManager";
 
 function defineEffect(fn: EffectFunction, meta: EffectMetadata) {
   return { fn, meta };
@@ -241,7 +242,11 @@ export const flash = defineEffect(_flash, {
 // 彩虹 (Rainbow)
 const _rainbow: EffectFunction = (target, params = {}) => {
   if (target instanceof KineticChar) {
-    target.style.fill = "#ffffff";
+    // 主题二 S3（处方 6(d)）：白底归位改走 styleManager.apply("fillReset")——
+    // internal 样式，参与 color 互斥记账但对语言表面隐藏。净行为零变化
+    // （'color' ∈ overrideGroups，skip/warn 分支对 color 永不触发），
+    // 标注为有意的路由收口。
+    styleManager.apply(target.style, "fillReset");
     const speed = params.speed || 0.002;
     const offset = params.delay !== undefined ? params.delay : (params.charIndex || 0) * 0.5;
     target.addModifier("rainbow", 'behavior', (time) => {

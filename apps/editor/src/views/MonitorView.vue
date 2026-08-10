@@ -116,7 +116,7 @@ let timer: any = null;
 
 onMounted(() => {
   timer = setInterval(() => {
-    auditLog.value = [...stageManager.camAuditLog].reverse().slice(0, 50);
+    auditLog.value = [...stageManager.getAuditSnapshot().entries].reverse().slice(0, 50);
     // 浅拷贝 markers 对象
     const currentMarkers: any = {};
     layout.globalMarkers.forEach((v, k) => {
