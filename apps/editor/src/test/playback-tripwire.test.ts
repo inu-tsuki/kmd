@@ -6,7 +6,8 @@
 //
 // 账目（只测不数原则的静态版——增删 it 块必须**有意识地**更新 EXPECTED_IT_BLOCKS）：
 //   49 = controller(10) + boundary(6) + styling(10) + pipeline(9) + r22(3) + background(10) + typography(1)
-// 与 331 断言的对应关系：it 块内含循环展开的断言（assert shim），331 是断言执行数、47 是 it 块数；
+// 与 331 断言的对应关系：it 块内含循环展开的断言（assert shim），331 是迁移时的断言执行数
+//（历史值），it 块数现为 49（主题二 S3 styling +2）；
 // 本锚点防「整个套件蒸发」，断言级增减由各套件自身门禁负责。
 
 import { describe, it, expect } from 'vitest';

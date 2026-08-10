@@ -35,9 +35,9 @@
 | API 改名 | 2 | `seekTo→seekToParagraph`、`next→advanceToNextParagraph`（均去 async） |
 | Tripwire | 47 → 49 | styling 8→10（新增 [13] 两个 it），记账入 S3 commit message |
 | core `as any` | 79 → 72 | S1 删文件 −1（78）；S4b adapter 收口 −6（72）。App.ts 剩 2 处（document.fonts / KmdRuntimeConfig，非 pixi 内部） |
-| reader bundle | 825,013 → 882,884 B（+57,871 B / +7.0%） | 全部在主 chunk——zod 全量打包进 reader 闭包（S4a 探针先行记账） |
+| reader bundle | 825,013 → 883,887 B（+58,874 B / +7.1%） | 主 chunk 564,614 → 623,488 B：S4a zod 全量打包 +57,871（探针先行记账）+ S4b adapter 收口 +1,003（App.ts 在 reader 闭包内）。S6 时曾误记 S4a 快照值 882,884，审查时以 HEAD 实测订正 |
 | golden diff | 零 | 语料前后字节一致 |
-| 分支 diff | 43 files，+1216 / −387 | 含新增测试（validator 11 it、adapter 13 it、styling [13] 2 it、session +2 it、e2e 1 spec）与文档 |
+| 分支 diff | 49 files，+1364 / −459 | 审查时实测（不含审查订正提交本身）；含新增测试（validator 11 it、adapter 13 it、styling [13] 2 it、session +2 it、e2e 1 spec）与文档 |
 
 ## 有意变更标注集
 
