@@ -23,7 +23,8 @@
 | S4a | `d3209a7` | 处方 10 前半：zod 配置防火墙（bundle 探针记账） | ✅ |
 | S4b | `ac80ed0` | 处方 10 后半：Pixi 私有访问 adapter | ✅ |
 | S5 | `9f02ee4` | Known Gaps 记录（纯文档） | ✅ |
-| S6 | 本提交 | 台账收口 | ✅ |
+| S6 | `b03d9c6` | 台账收口 | ✅ |
+| S7 | 本提交 | CLAUDE.md 健康重构 + roadmap 规划上下文节（文档可发现性） | ✅ |
 
 ## 账目表
 
@@ -58,6 +59,26 @@
 | `roadmap/phase-a-refactor/` 内 LayoutStreamBuilder 历史叙述 | 档案性质，不改写 |
 | `.vscode/CLAUDE.md` | 已本地同步，但被 `.gitignore` 排除（`.vscode/*`），不入版本库 |
 | Known Gaps A/B/C 三 bug | 记录不修（用户裁决，S5） |
+
+## S7 · CLAUDE.md 健康重构（2026-08-10，用户提问驱动）
+
+用户问"CLAUDE.md 是否只含原则与稳定引用"。审计发现两类腐化：
+
+1. **过期事实**：`bg` 命令"不存在"叙述（实际 2026-07 已注册，DIP-FX M2）；
+   `dumpReport()`/`camAuditLog` "compat wrapper"（S1/S2 已彻底删除）；
+   `presets.ts` 单文件路径（实为 `presets/` 目录）；"331 用例"/"vitest ^2.1.8"
+   散文数字（必腐，账目归 test-net-design 与 package.json）。
+2. **结构违规**：57 行架构描述 = `knowledge/runtime/core/` 三篇管道文档的第二副本；
+   24 行语法速查 = `knowledge/language/design.md` 的第二副本（Phase B 将改语言面，必腐）。
+
+处置：CLAUDE.md 193→137 行。架构节只留承重边界（reader 边界、scene.clear 单一路径、
+构建消费面、singleton 名单）+ 管道文档引用；语法节只留方向性速记 + 权威引用 +
+"不在本文件维护第二份语法"元规则。文档索引补 test-net-design / 健康检查 / 本台账三条
+（回答"后续规划如何用上文档"的发现路径问题）。`implementation-roadmap.md` 加
+"当前规划上下文"快照节（已完成/刻意不做/生效约束/下一步），每次主题收口更新。
+
+健康判据（今后维护 CLAUDE.md 用）：只含原则、门禁、注册缝、稳定引用；
+描述与账目一律下沉 knowledge/planning 文档。
 
 ## 门禁记录（S6 收口前）
 

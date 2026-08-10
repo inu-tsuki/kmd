@@ -40,7 +40,7 @@ pnpm community-api:build  # tsc
 pnpm community-api:test   # vitest run
 ```
 
-When working on parser, layout, effect routing, or shared runtime behavior, validate with `pnpm build` and `pnpm test` (vitest) before opening a PR. The editor test net (`apps/editor/src/test/`, vitest ^2.1.8) covers parser golden fixtures (full corpus + B0.1 syntax), layout coordinate stability, effects four-track classification, playback state-machine regression, INV-7/INV-8 invariant guards, GLSL shader compile gate, and frontmatter writeback — see `docs/planning/test-net-design-2026-07.md`. Add new regression cases as vitest tests under `src/test/`; golden files live under `src/test/__golden__/` and must be regenerated via `pnpm test:golden:write` then human-reviewed (never blind `--update`). Add sample KMD inputs under `apps/editor/public/` or `apps/editor/public/tests/`. Required gates scale with change scope — see the table under Working Stance & Principles.
+When working on parser, layout, effect routing, or shared runtime behavior, validate against the gate table below before opening a PR. Test net design, tripwire accounting, and golden-corpus philosophy live in `docs/planning/test-net-design-2026-07.md`.
 
 ## Working Stance & Principles
 
@@ -51,7 +51,7 @@ When working on parser, layout, effect routing, or shared runtime behavior, vali
 KMD 处于密集实验与验证期，没有生产/线上环境，不对既有用户负兼容责任。因此：
 
 - **摆脱兼容包袱**：不为"旧脚本逐字节不变"做设计；可以大刀阔斧重新设计 parser / runtime / 语言形态，无需弃用期、无需渐进绞杀。
-- **保留工艺资产**：递归下降、类型化 AST、source range、已固化的回归行为（playback 331 用例 / golden 快照）是技术成果，不因激进改革而丢弃；golden 语料是"已知正确行为的证据库（参照系）"，不是"不许裂的保险丝"。
+- **保留工艺资产**：递归下降、类型化 AST、source range、已固化的回归行为（playback tripwire 套件 / golden 快照）是技术成果，不因激进改革而丢弃；golden 语料是"已知正确行为的证据库（参照系）"，不是"不许裂的保险丝"。
 - **行为变更要有意为之**：改变既有行为时明确标注"这是有意变更"，由叙事验证 KMD 证明其更优，而非顺手偷袭。
 
 有效期：直到项目敲定稳定对外形态、或真正需要维护线上用户为止，届时复核改写为兼容策略。此姿态作用于语言形态与兼容策略；不蔓延到已解决的运行时正确性（record/replay、seek 幂等、reader-runtime 边界——那些是地基，不是包袱）。
@@ -84,59 +84,15 @@ KMD 处于密集实验与验证期，没有生产/线上环境，不对既有用
 
 ### Where the runtime lives
 
-The KMD core runtime code lives under `apps/editor/src/core/`. The reader-hostable contract layer is in `apps/editor/src/core/runtime/` (`ReaderRuntimeContract`, `ReaderRuntimeProtocol`, `ReaderRuntimeSession`, `RuntimeAssetPolicy`) and is consumed by `packages/reader-runtime-web`. Do **not** import editor UI modules (Vue components, Pinia, Monaco, TextMate, editor panels) from anything reached by the reader runtime hot path. Editor-only adapters that bridge runtime callbacks back to Pinia live in `apps/editor/src/runtime/`.
+The KMD core runtime lives under `apps/editor/src/core/`. Deep-dive pipeline docs:
+`docs/knowledge/runtime/core/parser-pipeline.md`, `effect-pipeline.md`,
+`command-routing.md` (also in the docs index below). This file records only
+load-bearing boundaries, not structure descriptions:
 
-### Editor pipeline (data flow)
-
-```
-KMD source text
-  → KMDParser (core/parser/Parser.ts)         # frontmatter + paragraph split
-    → KMDScanner                              # tokenize each paragraph line
-      → KMDCommandParser                      # parse @-chain effects (f.red.wave(...))
-  → KMDParagraphData[]                        # tokens, globalEffects, blockOptions
-
-Per paragraph render:
-  KineticText.init(input)
-    → LayoutPlanner                          # measure + expand layout cmds → LayoutStream
-      → TextLayoutEngine                      # assigns absolute x/y to each char
-    → DisplayAssembler                        # materializes KineticChar + TokenWrapper into Pixi scene
-  ParagraphExecutionPlan + ChainExecutionPlan
-    → TextPlayer.buildTimeline()              # GSAP timeline drives char reveal, effects, stage cues
-
-Multi-paragraph:
-  ScriptPlayer
-    → SegmentBuilder (scene-bake pass)        # pre-computes pData.snapshot for instant seekTo()
-    → PlaybackController                      # seek / replay / behavior re-register
-```
-
-### Global singletons (module-level, not Vue-injected)
-
-| Export          | File                                              | Purpose                                                  |
-| --------------- | ------------------------------------------------- | -------------------------------------------------------- |
-| `readerApp`     | `core/App.ts`                                     | Pixi `Application`, font loading                         |
-| `stageManager`  | `core/stage/StageManager.ts`                      | Façade over `StageRuntime`, host session, audit          |
-| `layout`        | `core/layout/LayoutEngine.ts`                     | Vertical flow accumulator, globalMarkers, scroll         |
-| `parser`        | `core/parser/Parser.ts`                           | KMD parser entry point                                   |
-| `scriptPlayer`  | `core/player/ScriptPlayer.ts`                     | Multi-paragraph playback + scene-baking                  |
-| `effectManager` | `core/effects/EffectManager.ts`                   | Visual effect registry with mutex groups                 |
-| `styleManager`  | `core/effects/StyleManager.ts`                    | Style modifier registry                                  |
-| `layoutManager` | `core/layout/LayoutManager.ts`                    | Layout command expander registry                         |
-
-### Core subsystems (`apps/editor/src/core/`)
-
-- **`parser/`** — `Parser.ts` extracts YAML frontmatter and splits paragraphs; `KMDScanner` handles block options, `---` scene-clear, braced groups, markdown sugars (`**bold**`, `*italic*`, `# heading`), timing pipes `|`, and `>` advance signals. Commands after `@` go through `KMDCommandParser`. `ScopeRouter` / `CompatProjector` / `commandCatalog.ts` form the Phase A.R parser boundary; parsers operate against a `CommandRegistryView` rather than reaching into managers directly.
-- **`layout/`** — `LayoutPlanner` does measurement and layout-stream expansion; `TextLayoutEngine` assigns coordinates; `LayoutEngine` (singleton) manages paragraph-level vertical stacking and resize. `LayoutPreflightResult` formalizes the phantom pass for forward-reference marker sync.
-- **`effects/`** — `EffectManager` (visual effects with mutex groups), `StyleManager` (style modifiers), `EffectProcessor` (char/group/block application). Presets in `presets.ts`. Style/effect classification flows through typed metadata.
-- **`stage/`** — `StageRuntime` owns camera/cameraOffset/buildMode/registry/apply/modifiers; `StageManager` is now a façade for host/presentation/audit/compat. Stage commands like `cam.move`, `cam.zoom`, `cam.rotate`, `scene.clear`, `pause` are registered in `stagePresets.ts`. `scene.clear` is the single runtime path for `---` (do not re-introduce `isSceneClear` displays in `SegmentBuilder`). Note: there is **no `bg` command** today — background is host-side `StageManager.setBackgroundColor` (solid color) plus an unused `backgroundLayer` container; `bg` is a planned command, see `docs/planning/ecosystem/special-commands-vocabulary-draft.md`.
-- **`player/`** — `ScriptPlayer` is the façade; `SegmentBuilder` handles segment build + paragraph placement (consumes `ParagraphBuildInput`, not raw text); `PlaybackController` handles seek/replay/behavior re-register; `TextPlayer` consumes `ParagraphExecutionPlan` rather than reading semantic fields off `KineticChar` (legacy compat surface only). `ScriptSourceLoader` is the asset/source loader, constrained by `RuntimeAssetPolicy` under reader runtime.
-- **`render/text/`** — Build context resolvers and `TextPlayer` execution machinery (timing cursor, stage cue scheduler, diagnostics sink).
-- **`runtime/`** — Reader runtime contract, protocol envelope (`version`/`id`/`type`/`payload`), session façade (`loadSource / play / pause / seek / setTimeScale / inspect / dispose`), and host asset policy.
-- **`types/`** — Shared contracts (`BaseCue`, `AnchorRef`, `ChainExecutionPlan`, `LayoutPreflightResult`, `DiagnosticEvent`, etc.). Effect/Layout/Stage command metadata typing lives here.
-- **`diagnostics/` / audit bus** — Build-scope collector + runtime-scope bus that aggregates parser/layout/execution/stage diagnostics. Legacy `dumpReport()` / `camAuditLog` paths are compat wrappers.
-
-### Vue / IDE layer (editor only)
-
-`src/App.vue` is the shell with toolbar + dock layout. `src/store/editorStore.ts` (Pinia) holds `kmdContent`, `canvasConfig`, `timelineMarkers`, `layoutTree` (dock state persisted in localStorage), and the player reference. The dock system (`src/components/DockSystem/`) is a recursive split-pane tree with panel types `editor`, `preview`, `monitor`, `inspector`. Monaco grammar/theme/IntelliSense is driven from `packages/language` assets.
+- Reader-hostable contract: `core/runtime/` (`ReaderRuntimeContract`, `ReaderRuntimeSession`, `RuntimeAssetPolicy`), consumed by `packages/reader-runtime-web`. Do **not** import editor UI (Vue components, Pinia, Monaco, TextMate, editor panels) from anything reached by the reader hot path. Editor-only bridges back to Pinia live in `apps/editor/src/runtime/`.
+- `scene.clear` is the single runtime path for `---`; do not re-introduce `isSceneClear` displays in `SegmentBuilder`.
+- `SegmentBuilder` consumes `ParagraphBuildInput` (not raw text); `TextPlayer` consumes `ParagraphExecutionPlan` (not semantic fields off `KineticChar`).
+- Module-level singletons (not Vue-injected): `readerApp`, `stageManager`, `layout`, `parser`, `scriptPlayer`, `effectManager`, `styleManager`, `layoutManager`.
 
 ## Roadmap Authority
 
@@ -148,7 +104,7 @@ Do not maintain phase status, completed work summaries, or next-step lists in th
 - Do **not** extract `apps/editor/src/core/` into `packages/core/` unless the repository strategy and package plan explicitly call for it. Reader-runtime package boundary changes should be reflected in `docs/planning/packages/reader-runtime-web.md`.
 - Import shared language assets via `@kmd/language`, never by reaching into `extensions/vscode-kmd/`.
 - Adding new behavior:
-  - Visual effects → export a `{ fn, meta }` from `core/effects/presets.ts` (auto-registers via `registerBatch`).
+  - Visual effects → add a `{ fn, meta }` preset in `core/effects/presets/` (visual/behavior/filter/entrance/timing; auto-registers via `registerBatch`).
   - Style modifiers → register in `core/effects/StyleManager.ts`.
   - Layout commands → register an expander in `core/layout/layoutExpanders.ts`.
   - Stage commands → register in `core/stage/stagePresets.ts`.
@@ -163,30 +119,19 @@ Do not maintain phase status, completed work summaries, or next-step lists in th
 - `docs/planning/ecosystem/repository-strategy.md` — when (not yet) to split packages.
 - `docs/knowledge/runtime/core/command-routing.md`, `effect-pipeline.md`, `parser-pipeline.md` — before touching command routing, effects, or the parser.
 - `docs/planning/TODO.md` — AI-collaboration task pool and historical execution log.
+- `docs/planning/test-net-design-2026-07.md` — test net design, tripwire accounting, golden-corpus philosophy.
+- `docs/planning/architecture-health-check-2026-07.md` — prescription ledger (处方 1–11 tracking); read before planning refactors.
+- `docs/planning/theme-2-yard-sweep-2026-08.md` — theme-2 ledger: removals/renames, intentional-change notes, and the "deliberately not done" list with destinations.
 
 When you change command routing, effects, layout, stage, or language semantics, update the corresponding doc in the same change. Place new docs under `planning/`, `knowledge/`, or `archive/` per the rules in `docs/README.md`.
 
 ## KMD Syntax (quick reference)
 
-```
----
-mode: stage          # stage | scroll | page
-designWidth: 1920
-designHeight: 1080
-fontFamily: Sasara Regular
----
+Authoritative grammar: `docs/knowledge/language/design.md` (封盘决议 D1–D27) plus
+chapter docs; old→new mapping in `migration.md`. Do not maintain a second grammar
+in this file — Phase B changes the language surface.
 
-[align=center .glitch]               # block options + global effects
-{Hello} {World} @ f.red.wave  f.blue.bold
-Plain text line @ .goto(0, 100)
----                                   # scene clear (fades out current text)
-```
-
-- `{...}` braced token group; maps 1:1 with effect chain slots.
-- `@` separates body from commands.
-- `f.effect(params)` per-token visual effect; bare `.effect` is global block effect.
-- `>` / `>>` / `>>>` timing advance (char / group / block).
-- `~` slow, `^` fast (line-scoped persistent speed sugars).
-- `|` or `|(1s)` segment-level pause.
-- `f.hold(1s)` effect-chain timing; `pause(Xs)` is a stage-level timeline pause.
-- `**bold**`, `*italic*`, `# heading` are Markdown sugars; `---` is scene-clear.
+Orientation for reading samples: `{...}` braced token group (1:1 with effect chain
+slots); `@` separates body from commands; `f.effect(params)` per-token vs bare
+`.effect` global; `>`/`>>`/`>>>` advance; `~`/`^` speed sugars; `|` pause;
+`---` scene clear; Markdown sugars `**bold**`/`*italic*`/`# heading`.
