@@ -15,3 +15,4 @@
 - `android-webview-runtime-protocol.md`：Android Reader 与 `reader-runtime-web` 的 WebView bridge 协议。
 - `editor-vscode-theme-loading.md`：Web Editor 加载 VS Code 颜色主题、映射 Shell 变量及项目路径边界。
 - `reader-runtime-web-bundle.md`：reader-only Web bundle 的构建入口、产物布局和边界检查。
+- `kmd-language-server.md`：KMD LSP server、diagnostics 适配与 VS Code client 的边界和验证方式。

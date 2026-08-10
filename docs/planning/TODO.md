@@ -515,11 +515,11 @@
 > 服务 VS Code、Neovim、Emacs 等任何 LSP 客户端。
 > P1 插件接口完成后，补全列表自动具备插件感知能力。
 
-- [ ] **V1.1 提取 `packages/kmd-language-server/`**:
+- [x] **V1.1 提取 `packages/kmd-language-server/`**:
   - 复用现有 `KMDParser` + `parser.validate()` — 零重写
   - 标准 LSP server 入口（`vscode-languageserver` npm 包）
   - `extensions/vscode-kmd/client.ts` 作为轻量 LSP client 包装
-- [ ] **V1.2 Diagnostics（错误波浪线）**:
+- [ ] **V1.2 Diagnostics（错误波浪线）**（2026-08-10：LSP `publishDiagnostics` 已完成；Web IDE 的 Monaco `setModelMarkers` 替换仍待迁移）:
   - `parser.validate(text)` → `publishDiagnostics`
   - 替代目前 Monaco 里手写的 `setModelMarkers` 逻辑
 - [ ] **V1.3 Completion（智能补全）**:

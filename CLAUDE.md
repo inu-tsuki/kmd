@@ -12,11 +12,12 @@ Workspaces (declared in `pnpm-workspace.yaml`):
 - `apps/community-api` — Express mock backend used by the Android reader course project.
 - `packages/core` — Private monorepo source package for parser, layout, effects, stage, render, player, and reader-runtime contracts. Imported as `@kmd/core`; deep imports are internal and unstable during Phase B.
 - `packages/language` — Shared KMD language assets (TextMate grammar, `language-configuration.json`). Imported as `@kmd/language`.
+- `packages/kmd-language-server` — Node LSP server for KMD diagnostics. Reuses `@kmd/core/parser/Parser`, supports stdio and Node IPC, and is consumed by the VS Code extension.
 - `packages/reader-runtime-web` — Reader-only WebView/browser bundle package. Package duties and extraction gates live in `docs/planning/packages/reader-runtime-web.md`.
+- `extensions/vscode-kmd` — VS Code language extension and lightweight LSP client. Keeps a packaged copy of `packages/language` assets that must stay in sync (verified by `pnpm language:check`).
 
 Not in the workspace:
 
-- `extensions/vscode-kmd` — VS Code language extension. Keeps a packaged copy of `packages/language` assets that must stay in sync (verified by `pnpm language:check`).
 - `apps/android-reader/` — Optional local checkout; ignored by this repo.
 
 ## Commands
@@ -33,6 +34,12 @@ pnpm test                 # editor vitest suite (parser golden + layout + effect
 pnpm test:parser          # parser integration + corpus golden (vitest)
 pnpm test:golden:write    # regenerate parser/layout golden files (REVIEW git diff, never blind-commit)
 pnpm language:check       # verify packages/language assets match extensions/vscode-kmd packaged copies
+
+pnpm language-server:build      # type-check and bundle the Node LSP server
+pnpm language-server:test       # LSP diagnostic adapter and core-parser integration tests
+pnpm language-server:check      # language-server build + tests
+pnpm vscode-kmd:build           # compile the lightweight VS Code LSP client
+pnpm vscode-kmd:typecheck
 
 pnpm reader:build         # build reader-runtime-web bundle to dist/reader-runtime/
 pnpm reader:preview
@@ -75,6 +82,7 @@ KMD 处于密集实验与验证期，没有生产/线上环境，不对既有用
 | 改动触及 | 必过门禁 |
 |---|---|
 | parser、layout 或共享 runtime | `pnpm build` + `pnpm test` + `pnpm test:parser` |
+| KMD LSP server 或 VS Code client | `pnpm language-server:check` + `pnpm vscode-kmd:typecheck` |
 | playback、seek、effect 管线、timeline/easing、stage modifiers | 上一行 + `pnpm test:playback` + `pnpm test:invariants` |
 | 浏览器渲染、Pixi 资源生命周期、ticker、WebGL 集成 | 再加 `pnpm test:e2e` |
 | 任何 `*Filter.ts` | 再加 `pnpm test:shaders` |
@@ -92,6 +100,7 @@ The KMD core runtime lives under `packages/core/src/`. Deep-dive pipeline docs:
 load-bearing boundaries, not structure descriptions:
 
 - Reader-hostable contract: `packages/core/src/runtime/` (`ReaderRuntimeContract`, `ReaderRuntimeSession`, `RuntimeAssetPolicy`), consumed by `packages/reader-runtime-web`. `scripts/check-core-boundary.mjs` rejects editor-only dependencies and relative imports escaping the package. Editor-only bridges back to Pinia live in `apps/editor/src/runtime/`; Monaco/TextMate integrations live in `apps/editor/src/editor/`.
+- Language-service host: `packages/kmd-language-server` adapts `KMDParser.validate()` to standard LSP diagnostics. `extensions/vscode-kmd/client.ts` owns only VS Code lifecycle and transport; parser semantics remain in `packages/core`.
 - `scene.clear` is the single runtime path for `---`; do not re-introduce `isSceneClear` displays in `SegmentBuilder`.
 - `SegmentBuilder` consumes `ParagraphBuildInput` (not raw text); `TextPlayer` consumes `ParagraphExecutionPlan` (not semantic fields off `KineticChar`).
 - Module-level singletons (not Vue-injected): `readerApp`, `stageManager`, `layout`, `parser`, `scriptPlayer`, `effectManager`, `styleManager`, `layoutManager`.
@@ -118,6 +127,7 @@ Do not maintain phase status, completed work summaries, or next-step lists in th
 - `docs/planning/roadmap/implementation-roadmap.md` — roadmap and sequencing authority; follow its links to active or historical phase records.
 - `docs/planning/packages/reader-runtime-web.md` — reader package boundary and completed internal `packages/core` extraction decision.
 - `docs/knowledge/integration/reader-runtime-web-bundle.md`, `android-webview-runtime-protocol.md` — before changing Android/WebView runtime integration.
+- `docs/knowledge/integration/kmd-language-server.md` — before changing the LSP server or VS Code client transport.
 - `docs/planning/ecosystem/repository-strategy.md` — monorepo package boundaries and later publication gates.
 - `docs/knowledge/runtime/core/command-routing.md`, `effect-pipeline.md`, `parser-pipeline.md` — before touching command routing, effects, or the parser.
 - `docs/planning/TODO.md` — AI-collaboration task pool and historical execution log.
