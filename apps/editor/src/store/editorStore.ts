@@ -1,8 +1,8 @@
 import { defineStore } from 'pinia';
 import { ref, shallowRef, watch } from 'vue';
-import type { ScriptPlayer } from '../core/player/ScriptPlayer';
-import type { ReaderRuntimePlaybackState } from '../core/runtime';
-import { stageManager } from '../core/stage/StageManager';
+import type { ScriptPlayer } from '@kmd/core/player/ScriptPlayer';
+import type { ReaderRuntimePlaybackState } from '@kmd/core/runtime';
+import { stageManager } from '@kmd/core/stage/StageManager';
 import {
   extractFrontMatterBlock,
   serializeFrontMatter,
@@ -10,7 +10,7 @@ import {
   getField,
   serializeUIValue,
   UI_FRONTMATTER_KEYS,
-} from '../core/parser/frontmatter';
+} from '@kmd/core/parser/frontmatter';
 import * as fsService from '../services/fileSystem';
 import type { FileNode } from '../services/fileSystem';
 

@@ -10,7 +10,7 @@
 // 无单例触点，无 teardown 需求。
 
 import { describe, it, expect } from 'vitest';
-import { PlaybackController } from '../core/player/PlaybackController';
+import { PlaybackController } from '@kmd/core/player/PlaybackController';
 import { makeFakeSegment, makeFakeState } from './playback-harness';
 
 describe('[1] derivePhase 穷举（F-2 单一真相源）', () => {

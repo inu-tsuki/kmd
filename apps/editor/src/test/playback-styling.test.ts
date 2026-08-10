@@ -23,16 +23,16 @@
 
 import { describe, it, expect, afterEach } from 'vitest';
 import { TextStyle } from 'pixi.js';
-import { PlaybackController } from '../core/player/PlaybackController';
-import { EffectProcessor } from '../core/effects/EffectProcessor';
-import { effectManager } from '../core/effects/EffectManager';
-import { styleManager } from '../core/effects/StyleManager';
-import { layout } from '../core/layout/LayoutEngine';
-import { KineticText } from '../core/KineticText';
-import { KineticChar } from '../core/KineticChar';
-import { DisplayAssembler } from '../core/render/text/DisplayAssembler';
-import type { Segment } from '../core/state/Segment';
-import type { LayoutGlyphPlan } from '../core/layout/LayoutPlanner';
+import { PlaybackController } from '@kmd/core/player/PlaybackController';
+import { EffectProcessor } from '@kmd/core/effects/EffectProcessor';
+import { effectManager } from '@kmd/core/effects/EffectManager';
+import { styleManager } from '@kmd/core/effects/StyleManager';
+import { layout } from '@kmd/core/layout/LayoutEngine';
+import { KineticText } from '@kmd/core/KineticText';
+import { KineticChar } from '@kmd/core/KineticChar';
+import { DisplayAssembler } from '@kmd/core/render/text/DisplayAssembler';
+import type { Segment } from '@kmd/core/state/Segment';
+import type { LayoutGlyphPlan } from '@kmd/core/layout/LayoutPlanner';
 import { G, approxEq, makeFakeState, build, fillHex } from './playback-harness';
 
 /** 断言桥：1:1 保留原脚本 assert(cond, msg) 的诊断文本（vitest 自定义消息）。 */

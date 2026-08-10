@@ -20,6 +20,7 @@ KMD 1.6 Phase A 与 Phase B Prep 已完成 parser、layout、execution、stage�
 
 - **已完成**：主题一（织网，PR #27）护栏与测试网；主题二（扫院子，PR #28）compat 退场 +
   处方 6(d)/10 收尾 + Known Gaps 记录。账目见 `docs/planning/theme-2-yard-sweep-2026-08.md`。
+- **已完成**：共享 runtime 从 editor 物理迁入 private `@kmd/core`；editor/reader 改走 workspace package，Monaco/TextMate 适配器留在 editor，包边界由独立 typecheck 与 import guard 守护。内部 API 仍不承诺稳定或发布。
 - **刻意不做（含去向）**：Known Gaps A/B/C 记录不修（B5/B3 验收输入）；
   `lastAuditLog` write-only → 后续；ReaderCanvas 剩余死暴露与 `@deprecated` mirrors → 处方 8；
   settings transaction → post-B。完整清单见台账"刻意不做"节。
@@ -60,6 +61,17 @@ KMD 1.6 Phase A 与 Phase B Prep 已完成 parser、layout、execution、stage�
 - 不把 parser/layout/effect 重写到 Kotlin。
 
 执行记录与后续 gate 见 `phase-r-reader-runtime-web.md`。
+
+### Completed: Private @kmd/core Physical Extraction
+
+2026-08-10 完成 monorepo 内部物理拆分：
+
+- parser、layout、effects、filters、stage、render、player、state、diagnostics、runtime contract 的单一事实源迁到 `packages/core/src/`。
+- editor 与 reader 通过 `@kmd/core` workspace dependency 消费；reader 不再跨 app 相对 import，也不再借 editor 工具链。
+- Monaco/TextMate 适配器迁到 `apps/editor/src/editor/`，保持 editor-only。
+- `pnpm core:check` 强制 editor-only 依赖禁入、相对路径不逃逸、legacy `apps/editor/src/core` 不复生。
+
+这是 private source package，不是 Phase B API 稳定宣言，也不是 npm 发布。后续语言/execution 重构可调整深层 exports；稳定发布须另立 ADR。
 
 ### Ready: Phase B, Android Integration Frozen
 

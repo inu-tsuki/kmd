@@ -1,9 +1,9 @@
 import * as monaco from 'monaco-editor';
-import { effectManager } from '../effects/EffectManager';
-import { styleManager } from '../effects/StyleManager';
-import { stageManager } from '../stage/StageManager';
-import { layoutManager } from '../layout/LayoutManager';
-import { parser } from '../parser/Parser';
+import { effectManager } from '@kmd/core/effects/EffectManager';
+import { styleManager } from '@kmd/core/effects/StyleManager';
+import { stageManager } from '@kmd/core/stage/StageManager';
+import { layoutManager } from '@kmd/core/layout/LayoutManager';
+import { parser } from '@kmd/core/parser/Parser';
 import { getKmdGrammar, createTmTokensProvider } from './tmGrammarLoader';
 
 // 定义语义 Token 类别

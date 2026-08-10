@@ -18,7 +18,7 @@
 import { describe, it, expect } from 'vitest';
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
-import { KMDParser } from '../core/parser/Parser';
+import { KMDParser } from '@kmd/core/parser/Parser';
 import { serializeParseResult } from './golden-serializer';
 
 const PUBLIC_DIR = join(import.meta.dirname, '..', '..', 'public');

@@ -12,10 +12,10 @@
 import { readFileSync, readdirSync, existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { TextStyle } from 'pixi.js';
-import { KMDParser } from '../src/core/parser/Parser';
-import { parser } from '../src/core/parser/Parser';
-import { LayoutPlanner } from '../src/core/layout/LayoutPlanner';
-import { TextLayoutEngine } from '../src/core/layout/TextLayoutEngine';
+import { KMDParser } from '@kmd/core/parser/Parser';
+import { parser } from '@kmd/core/parser/Parser';
+import { LayoutPlanner } from '@kmd/core/layout/LayoutPlanner';
+import { TextLayoutEngine } from '@kmd/core/layout/TextLayoutEngine';
 import { serializeParseResult } from '../src/test/golden-serializer';
 import { normalize } from '../src/test/golden-serializer';
 import '../src/test/setup'; // 引入 headless shim（DOMAdapter 合成度量），与 layout 测试同源。

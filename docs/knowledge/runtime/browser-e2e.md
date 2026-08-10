@@ -9,7 +9,7 @@ pnpm exec playwright install chromium
 pnpm test:e2e
 ```
 
-`pnpm test:e2e` 先构建 `@kmd/reader-runtime-web`，再启动本地 preview 并运行测试。CI 已有 reader build 时使用 `pnpm test:e2e:run`，避免重复构建。
+`pnpm test:e2e` 先构建 `@kmd/reader-runtime-web`，再由 `scripts/run-e2e.mjs` 直接持有本地 Vite preview 子进程并运行测试；结束时只回收自己启动的 server，若 4174 已有可用服务则复用但不终止。CI 已有 reader build 时使用 `pnpm test:e2e:run`，避免重复构建。直接持有进程可避免 Windows 上 Playwright 经 pnpm wrapper 启停 preview 后无法退出。
 
 ## Test Boundary
 

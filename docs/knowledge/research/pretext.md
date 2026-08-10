@@ -47,9 +47,9 @@
 
 本项目当前已有自研排版内核：
 
-- `src/core/layout/LayoutPlanner.ts`
-- `src/core/layout/TextLayoutEngine.ts`
-- `src/core/render/text/TextBuilder.ts`
+- `packages/core/src/layout/LayoutPlanner.ts`
+- `packages/core/src/layout/TextLayoutEngine.ts`
+- `packages/core/src/render/text/TextBuilder.ts`
 
 其中已经涉及：
 

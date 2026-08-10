@@ -45,6 +45,9 @@ importers:
 
   apps/editor:
     dependencies:
+      '@kmd/core':
+        specifier: workspace:*
+        version: link:../../packages/core
       '@kmd/language':
         specifier: workspace:*
         version: link:../../packages/language
@@ -54,9 +57,6 @@ importers:
       monaco-editor:
         specifier: ^0.55.1
         version: 0.55.1
-      peggy:
-        specifier: ^5.0.6
-        version: 5.0.6
       pinia:
         specifier: ^3.0.4
         version: 3.0.4(typescript@5.9.3)(vue@3.5.26(typescript@5.9.3))
@@ -75,9 +75,6 @@ importers:
       vue:
         specifier: ^3.5.24
         version: 3.5.26(typescript@5.9.3)
-      zod:
-        specifier: ^3.23.8
-        version: 3.25.76
     devDependencies:
       '@types/node':
         specifier: ^24.10.1
@@ -107,9 +104,39 @@ importers:
         specifier: ^3.1.4
         version: 3.2.2(typescript@5.9.3)
 
+  packages/core:
+    dependencies:
+      gsap:
+        specifier: ^3.14.2
+        version: 3.14.2
+      pixi.js:
+        specifier: ^8.15.0
+        version: 8.15.0
+      zod:
+        specifier: ^3.23.8
+        version: 3.25.76
+    devDependencies:
+      typescript:
+        specifier: ~5.9.3
+        version: 5.9.3
+
   packages/language: {}
 
-  packages/reader-runtime-web: {}
+  packages/reader-runtime-web:
+    dependencies:
+      '@kmd/core':
+        specifier: workspace:*
+        version: link:../core
+    devDependencies:
+      '@types/node':
+        specifier: ^24.10.1
+        version: 24.10.7
+      typescript:
+        specifier: ~5.9.3
+        version: 5.9.3
+      vite:
+        specifier: ^7.2.4
+        version: 7.3.1(@types/node@24.10.7)(tsx@4.21.0)
 
 packages:
 
@@ -434,10 +461,6 @@ packages:
   '@paralleldrive/cuid2@2.3.1':
     resolution: {integrity: sha512-XO7cAxhnTZl0Yggq6jOgjiOHhbgcO4NqFqwSmQpjK3b6TEE6Uj/jfSk6wzYyemh3+I0sHirKSetjQwn5cZktFw==}
 
-  '@peggyjs/from-mem@3.1.1':
-    resolution: {integrity: sha512-m5OEjgJaePWpyNtQCvRZkpLoV+z44eh6QIO9yEwQuOThdUdkECO3wcKLT3tFA3H8WM5bxU/K/dpmo7r/X16UEw==}
-    engines: {node: '>=20.8'}
-
   '@pixi/colord@2.9.6':
     resolution: {integrity: sha512-nezytU2pw587fQstUu1AsJZDVEynjskwOL+kibwcdxsMBFqPsFFNA7xl0ii/gXuDi6M0xj3mfRJj8pBSc2jCfA==}
 
@@ -753,7 +776,6 @@ packages:
   '@xmldom/xmldom@0.8.11':
     resolution: {integrity: sha512-cQzWCtO6C8TQiYl1ruKNn2U6Ao4o4WBBcbL61yJl84x+j5sOWWFU9X7DpND8XZG3daDppSsigMdfAIl2upQBRw==}
     engines: {node: '>=10.0.0'}
-    deprecated: this version has critical issues, please update to the latest version
 
   accepts@1.3.8:
     resolution: {integrity: sha512-PYAthTa2m2VKxuvSD3DPC/Gy+U+sOA1LAuT8mkmRuvw+NACSaeXEQ+NHcVF7rONl6qcaxV3Uuemwawk+7+SJLw==}
@@ -809,10 +831,6 @@ packages:
   combined-stream@1.0.8:
     resolution: {integrity: sha512-FQN4MRfuJeHf7cBbBMJFXhKSDq+2kAArBlmRBvcvFE5BB1HZKXtSFASDhdlz9zOYwxh8lDdnvmMOe/+5cdoEdg==}
     engines: {node: '>= 0.8'}
-
-  commander@14.0.3:
-    resolution: {integrity: sha512-H+y0Jo/T1RZ9qPP4Eh1pkcQcLRglraJaSLoyOtHxu6AapkjWVCy2Sit1QQ4x3Dng8qDlSsZEet7g5Pq06MvTgw==}
-    engines: {node: '>=20'}
 
   component-emitter@1.3.1:
     resolution: {integrity: sha512-T0+barUSQRTUQASh8bx02dl+DhF54GtIDY13Y3m9oWTklKbb3Wv974meRpeZ3lp1JpLVECWWNHC4vaG2XHXouQ==}
@@ -1161,11 +1179,6 @@ packages:
     resolution: {integrity: sha512-//nshmD55c46FuFw26xV/xFAaB5HF9Xdap7HJBBnrKdAd6/GxDBaNA1870O79+9ueg61cZLSVc+OaFlfmObYVQ==}
     engines: {node: '>= 14.16'}
 
-  peggy@5.0.6:
-    resolution: {integrity: sha512-Sud8Zus0JAgE+U4zwkJv29OOaXhviFI7J90/6cGfy3OoqR8dpnieeF9a46dj0bTtqiFnrFatldA6ltQyOJvNmg==}
-    engines: {node: '>=20'}
-    hasBin: true
-
   perfect-debounce@1.0.0:
     resolution: {integrity: sha512-xCy9V055GLEqoFaHoC1SoLIaLmWctgCUaBaWxDZ7/Zx4CTyX7cJQLJOok/orfjZAh9kEYpjJa4d0KcJmCbctZA==}
 
@@ -1235,11 +1248,6 @@ packages:
   safer-buffer@2.1.2:
     resolution: {integrity: sha512-YZo3K82SD7Riyi0E1EQPojLz7kpepnSQI9IyPbHHg1XXXevb5dJI7tpyN2ADxGcQbHG7vcyRHk0cbwqcQriUtg==}
 
-  semver@7.7.2:
-    resolution: {integrity: sha512-RF0Fw+rO5AMf9MAyaRXI4AV0Ulj5lMHqVxxdSgiVbixSCXoEmmX/jk0CuJw4+3SqroYO9VoUh+HcuJivvtJemA==}
-    engines: {node: '>=10'}
-    hasBin: true
-
   send@0.19.2:
     resolution: {integrity: sha512-VMbMxbDeehAxpOtWJXlcUS5E8iXh6QmN+BkRX1GARS3wRaXEEgzCcB10gTQazO42tpNIya8xIyNx8fll1OFPrg==}
     engines: {node: '>= 0.8.0'}
@@ -1269,10 +1277,6 @@ packages:
 
   siginfo@2.0.0:
     resolution: {integrity: sha512-ybx0WO1/8bSBLEWXZvEd7gMW3Sn3JFlW3TvX1nREbDLRNQNaeNN8WK0meBwPdAaOI7TtRRRJn/Es1zhrrCHu7g==}
-
-  source-map-generator@2.0.2:
-    resolution: {integrity: sha512-unCl5BQhF/us51DiT7SvlSY3QUPhyfAdHJxd8l7FXdwzqxli0UDMV2dEuei2SeGp3Z4rB/AJ9zKi1mGOp2K2ww==}
-    engines: {node: '>=20'}
 
   source-map-js@1.2.1:
     resolution: {integrity: sha512-UXWMKhLOwVKb728IUtQPXxfYU+usdybtUrK/8uGE8CQMvrhOpwvzDBwj0QhSL7MQc7vIsISBG8VQ8+IDQxpfQA==}
@@ -1673,10 +1677,6 @@ snapshots:
     dependencies:
       '@noble/hashes': 1.8.0
 
-  '@peggyjs/from-mem@3.1.1':
-    dependencies:
-      semver: 7.7.2
-
   '@pixi/colord@2.9.6': {}
 
   '@playwright/test@1.61.1':
@@ -2048,8 +2048,6 @@ snapshots:
     dependencies:
       delayed-stream: 1.0.0
 
-  commander@14.0.3: {}
-
   component-emitter@1.3.1: {}
 
   content-disposition@0.5.4:
@@ -2406,12 +2404,6 @@ snapshots:
 
   pathval@2.0.1: {}
 
-  peggy@5.0.6:
-    dependencies:
-      '@peggyjs/from-mem': 3.1.1
-      commander: 14.0.3
-      source-map-generator: 2.0.2
-
   perfect-debounce@1.0.0: {}
 
   picocolors@1.1.1: {}
@@ -2510,8 +2502,6 @@ snapshots:
 
   safer-buffer@2.1.2: {}
 
-  semver@7.7.2: {}
-
   send@0.19.2:
     dependencies:
       debug: 2.6.9
@@ -2570,8 +2560,6 @@ snapshots:
       side-channel-weakmap: 1.0.2
 
   siginfo@2.0.0: {}
-
-  source-map-generator@2.0.2: {}
 
   source-map-js@1.2.1: {}
 

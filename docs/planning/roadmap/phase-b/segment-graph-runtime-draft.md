@@ -36,7 +36,7 @@
 
 这是整套设计的地基。
 
-当前 Phase A 的 `Segment`（`apps/editor/src/core/state/Segment.ts`）结构：
+当前 Phase A 的 `Segment`（`packages/core/src/state/Segment.ts`）结构：
 
 ```ts
 interface Segment {

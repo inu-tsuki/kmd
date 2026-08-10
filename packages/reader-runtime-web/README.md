@@ -2,7 +2,7 @@
 
 WebView/browser runtime bundle for KMD Reader.
 
-This package owns the reader-only HTML entry and static bundle build. It still reuses the runtime implementation in `apps/editor/src/core/`; do not import editor UI modules such as Vue components, Pinia stores, Monaco, TextMate, or editor panels.
+This package owns the reader-only HTML entry and static bundle build. It consumes the shared runtime from the private workspace package `@kmd/core`; do not import editor UI modules such as Vue components, Pinia stores, Monaco, TextMate, or editor panels.
 
 ```bash
 pnpm --filter @kmd/reader-runtime-web build

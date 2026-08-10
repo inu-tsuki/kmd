@@ -22,11 +22,11 @@
 // 迁移保真：assert() shim 1:1 保留（expect(cond, message).toBe(true)，消息探针验证可见）。
 
 import { describe, it, expect } from 'vitest';
-import { PlaybackController } from '../core/player/PlaybackController';
-import { KMDParser } from '../core/parser/Parser';
-import { SegmentBuilder } from '../core/player/SegmentBuilder';
+import { PlaybackController } from '@kmd/core/player/PlaybackController';
+import { KMDParser } from '@kmd/core/parser/Parser';
+import { SegmentBuilder } from '@kmd/core/player/SegmentBuilder';
 import { Container } from 'pixi.js';
-import type { Segment } from '../core/state/Segment';
+import type { Segment } from '@kmd/core/state/Segment';
 import { build, fillHex, ownRecords } from './playback-harness';
 
 /** 断言桥：1:1 保留原脚本 assert(cond, msg) 的诊断文本（vitest 自定义消息）。 */

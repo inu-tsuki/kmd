@@ -156,7 +156,7 @@ Phase B 的 B0.1 将重写 parser 核心（正则成员解析 → 递归下降�
 - docs/planning/test-net-design-2026-07.md（本设计文档，权威，先通读 §1 理解为什么这么做）
 - docs/planning/architecture-health-check-2026-07.md（处方 5 出处）
 - apps/editor/src/final-parser-test.ts、final-playback-test.ts、test-invariants.ts、final-shader-test.ts（待收编散件）
-- apps/editor/src/core/parser/Parser.ts、core/layout/（LayoutPlanner / TextLayoutEngine）、core/effects/EffectManager.ts、core/effects/StyleManager.ts（被测对象）
+- packages/core/src/parser/Parser.ts、core/layout/（LayoutPlanner / TextLayoutEngine）、core/effects/EffectManager.ts、core/effects/StyleManager.ts（被测对象）
 - .github/workflows/ci.yml、playwright.config.ts（现有门禁）
 - apps/community-api/package.json（vitest ^2.1.8 版本参照）
 

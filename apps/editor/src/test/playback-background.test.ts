@@ -22,16 +22,16 @@
 
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { Assets, Container, Sprite, Texture } from 'pixi.js';
-import { PlaybackController } from '../core/player/PlaybackController';
-import { EffectProcessor } from '../core/effects/EffectProcessor';
-import { effectManager } from '../core/effects/EffectManager';
-import { stageManager } from '../core/stage/StageManager';
-import { StageRuntime } from '../core/stage/StageRuntime';
-import { buildStageModifierApplyParams, buildStageModifierRecord } from '../core/stage/stagePresets';
-import { layout } from '../core/layout/LayoutEngine';
-import { TextDuotoneFilter, BackgroundDuotoneFilter } from '../core/filters/duotone';
-import { TextEmbossFilter, BackgroundEmbossFilter } from '../core/filters/emboss';
-import { GrayFilter } from '../core/filters/GrayFilter';
+import { PlaybackController } from '@kmd/core/player/PlaybackController';
+import { EffectProcessor } from '@kmd/core/effects/EffectProcessor';
+import { effectManager } from '@kmd/core/effects/EffectManager';
+import { stageManager } from '@kmd/core/stage/StageManager';
+import { StageRuntime } from '@kmd/core/stage/StageRuntime';
+import { buildStageModifierApplyParams, buildStageModifierRecord } from '@kmd/core/stage/stagePresets';
+import { layout } from '@kmd/core/layout/LayoutEngine';
+import { TextDuotoneFilter, BackgroundDuotoneFilter } from '@kmd/core/filters/duotone';
+import { TextEmbossFilter, BackgroundEmbossFilter } from '@kmd/core/filters/emboss';
+import { GrayFilter } from '@kmd/core/filters/GrayFilter';
 import { G } from './playback-harness';
 
 /** 断言桥：1:1 保留原脚本 assert(cond, msg) 的诊断文本（vitest 自定义消息）。 */

@@ -8,8 +8,8 @@ import {
   type ReaderRuntimeEventType,
   type ReaderRuntimeOptions,
   type ReaderRuntimeSession,
-} from "../../../apps/editor/src/core/runtime";
-import { sanitizeKmdRuntimeConfig } from "../../../apps/editor/src/core/runtime/RuntimeConfigValidator";
+} from "@kmd/core/runtime";
+import { sanitizeKmdRuntimeConfig } from "@kmd/core/runtime/RuntimeConfigValidator";
 import "./style.css";
 
 const DEFAULT_DEMO_SOURCE = `KMD Reader Runtime

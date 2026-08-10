@@ -14,7 +14,7 @@ import {
   resetPreflightWarnings,
   resizeApp,
   syncBatcherTextureLimits,
-} from '../core/render/pixiInternalsAdapter';
+} from '@kmd/core/render/pixiInternalsAdapter';
 
 interface FakeLimits {
   maxTextures?: number;

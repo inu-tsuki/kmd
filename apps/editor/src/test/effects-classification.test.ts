@@ -8,8 +8,8 @@
 // 表来自 live registry dump（effectManager.getMetadata），非静态文件推断——是运行时真相。
 
 import { describe, it, expect } from 'vitest';
-import { effectManager } from '../core/effects/EffectManager';
-import { styleManager } from '../core/effects/StyleManager';
+import { effectManager } from '@kmd/core/effects/EffectManager';
+import { styleManager } from '@kmd/core/effects/StyleManager';
 
 // ─── 分类表（提交的真相；改分类须显式改此表） ──────────────────────────
 //

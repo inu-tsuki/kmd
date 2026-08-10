@@ -232,7 +232,7 @@ style 管线只涉及 `StyleRecord` 与 `baseStyleSnapshot`，其余三类各自
 
 5 处 `KineticChar.style` / `baseStyleSnapshot` 写入方分布在一条隐含管线的相位上。
 处方 6 的收口形态是**显式有序阶段**而非魔法函数——把相位顺序显式化、定统一写入契约，
-明确"哪个相位、谁、写什么"。契约定义在 `apps/editor/src/core/player/StyleWritePort.ts`，
+明确"哪个相位、谁、写什么"。契约定义在 `packages/core/src/player/StyleWritePort.ts`，
 接口为 `recaptureBaseline`（P2）/ `registerPostHoldWrite`（P2b）。
 
 | 相位 | 模块 | 写什么 | 为什么存在 | 收口状态 |

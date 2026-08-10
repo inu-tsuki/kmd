@@ -18,9 +18,9 @@
 // 单进程顺序执行下一 it 一 session，afterEach restore mocks；不做跨 it 会话共存。
 
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { readerApp } from '../core/App';
-import { scriptPlayer } from '../core/player/ScriptPlayer';
-import { ReaderRuntimeWebSession } from '../core/runtime/ReaderRuntimeSession';
+import { readerApp } from '@kmd/core/App';
+import { scriptPlayer } from '@kmd/core/player/ScriptPlayer';
+import { ReaderRuntimeWebSession } from '@kmd/core/runtime/ReaderRuntimeSession';
 
 const SOURCE = '{Hello} @ f.hold(1s).bold';
 

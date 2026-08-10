@@ -10,11 +10,22 @@
 // 运行：pnpm --filter @kmd/editor test（vitest） 或 pnpm test:shaders（旧 tsx 脚本，迁移期并存）。
 
 import { describe, it, expect } from 'vitest';
-import { readFileSync, readdirSync, writeFileSync, unlinkSync, existsSync, mkdirSync } from 'node:fs';
+import { readFileSync, readdirSync, writeFileSync, unlinkSync, existsSync } from 'node:fs';
 import { join, relative } from 'node:path';
-import { execSync } from 'node:child_process';
+import { tmpdir } from 'node:os';
+import { execFileSync } from 'node:child_process';
 
-const FILTERS_DIR = join(import.meta.dirname, '..', 'core', 'filters');
+const FILTERS_DIR = join(
+  import.meta.dirname,
+  '..',
+  '..',
+  '..',
+  '..',
+  'packages',
+  'core',
+  'src',
+  'filters',
+);
 
 function collectFilterFiles(dir: string): string[] {
   return readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
@@ -24,13 +35,16 @@ function collectFilterFiles(dir: string): string[] {
   });
 }
 
-function glslangAvailable(): boolean {
-  try {
-    execSync('glslangValidator --version', { stdio: ['pipe', 'pipe', 'pipe'] });
-    return true;
-  } catch {
-    return false;
+function resolveGlslangCommand(): string | null {
+  for (const command of ['glslangValidator', 'glslang']) {
+    try {
+      execFileSync(command, ['--version'], { stdio: ['pipe', 'pipe', 'pipe'] });
+      return command;
+    } catch {
+      // Continue: Khronos release archives renamed the executable to `glslang` in 16.5.0.
+    }
   }
+  return null;
 }
 
 function extractShaders(source: string): { shader: string }[] {
@@ -44,11 +58,15 @@ function extractShaders(source: string): { shader: string }[] {
 }
 
 const files = collectFilterFiles(FILTERS_DIR).sort();
+const glslangCommand = resolveGlslangCommand();
 
 describe('shader compile gate (glslangValidator)', () => {
-  it('glslangValidator is available (no SKIP escape hatch)', () => {
+  it('glslangValidator/glslang is available (no SKIP escape hatch)', () => {
     // §3 支柱 4：去 SKIP_SHADER_GATE 逃生门——glslang 缺失即 fail，不假绿。
-    expect(glslangAvailable(), 'glslangValidator 未安装；brew install glslang / pacman -S glslang').toBe(true);
+    expect(
+      glslangCommand,
+      'glslangValidator/glslang 未安装；brew install glslang / pacman -S glslang',
+    ).not.toBeNull();
   });
 
   it('there is at least one *Filter.ts file', () => {
@@ -69,11 +87,10 @@ describe('shader compile gate (glslangValidator)', () => {
 
   it.each(cases)('%s compiles', ({ label, shader }) => {
     const tmpName = label.replace(/[^a-zA-Z0-9_-]/g, '-');
-    const tmpFile = `/tmp/kmd-shader-${tmpName}.frag`;
-    mkdirSync('/tmp', { recursive: true });
+    const tmpFile = join(tmpdir(), `kmd-shader-${process.pid}-${tmpName}.frag`);
     writeFileSync(tmpFile, shader);
     try {
-      execSync(`glslangValidator "${tmpFile}"`, {
+      execFileSync(glslangCommand!, [tmpFile], {
         stdio: ['pipe', 'pipe', 'pipe'],
         timeout: 10_000,
       });

@@ -126,7 +126,7 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue';
 import { useEditorStore } from '../store/editorStore';
-import { layout } from '../core/layout/LayoutEngine';
+import { layout } from '@kmd/core/layout/LayoutEngine';
 
 const store = useEditorStore();
 const activeTab = ref('canvas');

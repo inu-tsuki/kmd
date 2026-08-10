@@ -103,8 +103,8 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from "vue";
-import { stageManager } from "../core/stage/StageManager";
-import { layout } from "../core/layout/LayoutEngine";
+import { stageManager } from "@kmd/core/stage/StageManager";
+import { layout } from "@kmd/core/layout/LayoutEngine";
 import { useEditorStore } from "../store/editorStore";
 
 const store = useEditorStore();

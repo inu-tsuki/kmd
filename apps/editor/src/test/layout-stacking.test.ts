@@ -18,9 +18,9 @@ import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { TextStyle } from 'pixi.js';
-import { parser } from '../core/parser/Parser';
-import { LayoutPlanner } from '../core/layout/LayoutPlanner';
-import { TextLayoutEngine } from '../core/layout/TextLayoutEngine';
+import { parser } from '@kmd/core/parser/Parser';
+import { LayoutPlanner } from '@kmd/core/layout/LayoutPlanner';
+import { TextLayoutEngine } from '@kmd/core/layout/TextLayoutEngine';
 
 const PUBLIC_DIR = join(import.meta.dirname, '..', '..', 'public');
 const FIXTURE = join(PUBLIC_DIR, 'tests', 'layout-coords.kmd');

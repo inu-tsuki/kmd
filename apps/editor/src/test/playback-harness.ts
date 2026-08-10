@@ -24,9 +24,9 @@
 // 本文件的所有消费者 playback-*.test.ts，含 playback-tripwire.test.ts 计数锚点）。
 
 import { Container } from 'pixi.js';
-import { KMDParser } from '../core/parser/Parser';
-import { SegmentBuilder } from '../core/player/SegmentBuilder';
-import type { Segment } from '../core/state/Segment';
+import { KMDParser } from '@kmd/core/parser/Parser';
+import { SegmentBuilder } from '@kmd/core/player/SegmentBuilder';
+import type { Segment } from '@kmd/core/state/Segment';
 import { G, SYNTHETIC_METRICS, approxEq } from './setup';
 
 // 同源转导出：消费者从本 harness 一站式取齐 playback 断言工具，不必各自 import setup。

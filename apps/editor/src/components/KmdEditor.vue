@@ -5,8 +5,8 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, watch } from "vue";
 import * as monaco from "monaco-editor";
-import { registerKMDLanguage } from "../core/editor/kmd-lang";
-import { parser } from "../core/parser/Parser";
+import { registerKMDLanguage } from "../editor/kmd-lang";
+import { parser } from "@kmd/core/parser/Parser";
 import { useEditorStore } from "../store/editorStore";
 
 const props = defineProps<{

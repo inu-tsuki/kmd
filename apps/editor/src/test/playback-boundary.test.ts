@@ -7,7 +7,7 @@
 // stageManager.apply → StageRuntime.apply → gsap.getTweensOf，tsx 下不可 headless 跑非空 records。
 // 本套件测的是「哪些 record 被判定为可重放」的纯逻辑形状，**不是**真实 apply 管线；后者由
 // [13]-[20.5]（playback-pipeline.test.ts）与浏览器 e2e 覆盖。
-//   镜像源码对照：apps/editor/src/core/player/PlaybackController.ts 的 replayStageModifiers
+//   镜像源码对照：packages/core/src/player/PlaybackController.ts 的 replayStageModifiers
 //   （R8-3 + R9-High + R10 修复后版本）。若该方法演进，本镜像必须同步，否则此套件验证的是历史算法。
 //
 // ⚠️ 诚实注记二（为何不暴露私有方法直接测）：把 replayStageModifiers 提为 public 或抽 helper
