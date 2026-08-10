@@ -9,7 +9,6 @@ import type {
 
 export class CompatBinder {
   public static bindParagraphTarget(target: TextBuildTarget, paragraph: KMDParagraphData) {
-    target._pendingGlobalEffects = paragraph.globalEffects as any[];
     Object.assign(target._options, paragraph.blockOptions);
   }
 

@@ -20,7 +20,7 @@ type GsapTimeline = TimelineBuildResult["timeline"];
  * | **P3 unrollGroupChain** | TextPlayer | tl.call 内 applyStyleRecursively 写 char.style + 登记 StyleRecord | 组级 hold 链 post-hold 动态样式 | **follow-up**（随 TextPlayer 拆分迁入） |
  * | **P4 unrollCharChain** | TextPlayer | tl.call 内 styleManager.apply 写 char.style + 登记 StyleRecord | char 级 hold 链 post-hold 动态样式 | **follow-up**（随 TextPlayer 拆分迁入） |
  * | **P4 replay** | PlaybackController.replayStyles | styleManager.apply 写 char.style | seek 重放 timePosition<=currentTime 的 StyleRecord | **follow-up #10** |
- * | **外部直写** | presets/behavior.ts:244 | `target.style.fill = "#ffffff"` 直写 | 某 behavior preset 绕过 styleManager 的散写 | **follow-up**（最该清理的散写，建议下个维护窗口改走 styleManager.apply） |
+ * | **外部直写** | ~~presets/behavior.ts:244~~ | ~~`target.style.fill = "#ffffff"` 直写~~ | ~~某 behavior preset 绕过 styleManager 的散写~~ | **已收口**（主题二 S3：改走 `styleManager.apply(style, "fillReset")`——internal 样式，参与 color 互斥记账但对语言表面隐藏；净行为零变化，标注为有意的路由收口） |
  *
  * ## 收口形态：显式有序阶段，而非魔法函数
  *

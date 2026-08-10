@@ -22,16 +22,23 @@ class StyleManager {
   }
 
   public has(name: string) {
-    return !!this.registry[name];
+    return this.isVisible(name);
   }
 
   public getMetadata(name: string) {
     return this.registry[name]?.meta;
   }
 
-  // 供 IntelliSense/诊断枚举命令名，避免外部强转访问私有 registry
+  // 供 IntelliSense/诊断枚举命令名，避免外部强转访问私有 registry。
+  // internal 样式（如 fillReset）参与 apply 互斥记账但对枚举隐藏，
+  // 不渗入 commandCatalog 已知命令门 / IntelliSense / 分类钉表（主题二 S3）。
   public getRegisteredNames(): string[] {
-    return Object.keys(this.registry);
+    return Object.keys(this.registry).filter((name) => this.isVisible(name));
+  }
+
+  private isVisible(name: string): boolean {
+    const entry = this.registry[name];
+    return !!entry && !entry.meta.internal;
   }
 
   /**

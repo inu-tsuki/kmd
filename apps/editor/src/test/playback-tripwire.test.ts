@@ -5,7 +5,7 @@
 // 钉死 7 个迁移套件的 it() 块总数。
 //
 // 账目（只测不数原则的静态版——增删 it 块必须**有意识地**更新 EXPECTED_IT_BLOCKS）：
-//   47 = controller(10) + boundary(6) + styling(8) + pipeline(9) + r22(3) + background(10) + typography(1)
+//   49 = controller(10) + boundary(6) + styling(10) + pipeline(9) + r22(3) + background(10) + typography(1)
 // 与 331 断言的对应关系：it 块内含循环展开的断言（assert shim），331 是断言执行数、47 是 it 块数；
 // 本锚点防「整个套件蒸发」，断言级增减由各套件自身门禁负责。
 
@@ -25,7 +25,7 @@ const SUITES = [
 
 // 覆盖蒸发保险丝：7 个迁移套件的 it 块总数。增删 it 块时必须同步更新此值（并在 commit message
 // 记录账目），防止套件被静默删除或裁剪而门禁仍绿。
-const EXPECTED_IT_BLOCKS = 47;
+const EXPECTED_IT_BLOCKS = 49;
 
 describe('playback 覆盖蒸发保险丝', () => {
   it('7 个迁移套件全部存在（防整文件静默删除）', () => {

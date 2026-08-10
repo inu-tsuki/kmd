@@ -160,6 +160,12 @@ const _stroke: StyleFunction = (style) => {
 };
 export const stroke = defineStyle(_stroke, { type: 'style', track: 'instant', targetType: 'char', mutexGroup: 'stroke' });
 
+// 内部样式：rainbow 等 behavior 挂 modifier 前需先把 fill 归位白底。
+// internal:true → 参与 apply 互斥记账（mutexGroup 'color'），但对 has() 与
+// getRegisteredNames() 隐藏，不扩大语言表面（主题二 S3：处方 6(d) 收口）。
+const _fillReset: StyleFunction = (style) => { style.fill = "#ffffff"; };
+export const fillReset = defineStyle(_fillReset, { type: 'style', track: 'instant', targetType: 'char', mutexGroup: 'color', internal: true });
+
 function shouldLogStylePresetDiagnostics() {
   try {
     const runtimeConfig = (globalThis as any).KmdRuntimeConfig;
