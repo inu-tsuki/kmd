@@ -145,9 +145,9 @@ onMounted(async () => {
         `[Editor-Jump] Alt+Click at line ${line}, seeking to p[${targetIdx}]`,
       );
       // SA-22：Alt+Click 是 seek 不是 play，不乐观声明播放态。
-      // seekTo → seekToTime 会据 derivePhase 决定：正在播则 resume（发 "playing" 事件，adapter 设态），
+      // seekToParagraph → seekToTime 会据 derivePhase 决定：正在播则 resume（发 "playing" 事件，adapter 设态），
       // 暂停则停留 paused。乐观写 playbackState 会与实际播放态漂移。
-      player.seekTo(targetIdx);
+      player.seekToParagraph(targetIdx);
     }
   });
 

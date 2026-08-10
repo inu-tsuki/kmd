@@ -192,7 +192,7 @@ export const useEditorStore = defineStore('editor', () => {
   };
 
   const nextStep = () => {
-    player.value?.next(true);
+    player.value?.advanceToNextParagraph(true);
   };
 
   const seekRelative = (deltaSeconds: number) => {

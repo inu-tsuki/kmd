@@ -10,7 +10,6 @@ import type { CameraModifier, StageEffectFunction, StageSceneClearHandler } from
 import gsap from "gsap";
 import type {
   CameraState,
-  StageAuditEntry,
   StageAuditSnapshot,
   StageCommandMetadata,
   StageCommandMetadataMap,
@@ -192,12 +191,6 @@ class StageManager {
 
   public clearAuditSnapshot() {
     this.auditPort.clear();
-  }
-  /**
-   * @deprecated 兼容期 getter。未来请改用 `getAuditSnapshot().entries`。
-   */
-  public get camAuditLog(): StageAuditEntry[] {
-    return this.getAuditSnapshot().entries;
   }
 
   public setAuditPort(port: StageAuditPort) {
