@@ -1,0 +1,2277 @@
+{
+  "diagnostics": [],
+  "metadata": {
+    "bgColor": "#020913",
+    "designHeight": 1080,
+    "designWidth": 1920,
+    "fontColor": "#bffcff",
+    "fontFamily": "monospace",
+    "mode": "stage",
+    "speed": 46,
+    "title": "示例 - 全息通讯断讯",
+    "variables": {}
+  },
+  "paragraphs": [
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 11,
+        "lines": [
+          {
+            "body": [],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "stage",
+                    "name": "bg",
+                    "params": {
+                      "color": "#020913"
+                    },
+                    "prefix": "bare",
+                    "raw": "bg(color=\"#020913\")"
+                  }
+                ],
+                "line": 12,
+                "prefix": "bare",
+                "range": {
+                  "end": 21,
+                  "start": 2
+                },
+                "raw": "bg(color=\"#020913\")",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "command-only",
+            "line": 12,
+            "range": {
+              "end": 21,
+              "start": 0
+            },
+            "raw": "@ bg(color=\"#020913\")",
+            "type": "line"
+          },
+          {
+            "body": [],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "stage",
+                    "name": "cam.drift",
+                    "params": {
+                      "0": 4,
+                      "1": 0.001
+                    },
+                    "prefix": "bare",
+                    "raw": "cam.drift(4, 0.001)"
+                  }
+                ],
+                "line": 13,
+                "prefix": "bare",
+                "range": {
+                  "end": 21,
+                  "start": 2
+                },
+                "raw": "cam.drift(4, 0.001)",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "command-only",
+            "line": 13,
+            "range": {
+              "end": 21,
+              "start": 0
+            },
+            "raw": "@ cam.drift(4, 0.001)",
+            "type": "line"
+          },
+          {
+            "body": [
+              {
+                "children": [
+                  {
+                    "groupId": 1,
+                    "line": 14,
+                    "marks": [],
+                    "range": {
+                      "end": 22,
+                      "start": 1
+                    },
+                    "text": "INCOMING TRANSMISSION",
+                    "type": "text"
+                  }
+                ],
+                "groupId": 1,
+                "line": 14,
+                "range": {
+                  "end": 23,
+                  "start": 0
+                },
+                "type": "group"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "name": "hologram",
+                    "params": {
+                      "flicker": 0.12,
+                      "float": 1.5,
+                      "glow": 1.3,
+                      "jitter": 1.5,
+                      "radius": 5,
+                      "scan": 5,
+                      "shadow": "#03131f",
+                      "speed": 1.2,
+                      "tint": "#68f7ff"
+                    },
+                    "prefix": "f",
+                    "raw": "f.hologram(tint=\"#68f7ff\", shadow=\"#03131f\", scan=5, jitter=1.5, glow=1.3, radius=5, flicker=0.12, speed=1.2, float=1.5).digitalFlicker(rate=9, duty=0.12, intensity=0.5, minAlpha=0.45).big"
+                  },
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "name": "digitalFlicker",
+                    "params": {
+                      "duty": 0.12,
+                      "intensity": 0.5,
+                      "minAlpha": 0.45,
+                      "rate": 9
+                    },
+                    "prefix": "f",
+                    "raw": "f.hologram(tint=\"#68f7ff\", shadow=\"#03131f\", scan=5, jitter=1.5, glow=1.3, radius=5, flicker=0.12, speed=1.2, float=1.5).digitalFlicker(rate=9, duty=0.12, intensity=0.5, minAlpha=0.45).big"
+                  },
+                  {
+                    "blocking": false,
+                    "family": "style",
+                    "name": "big",
+                    "params": {},
+                    "prefix": "f",
+                    "raw": "f.hologram(tint=\"#68f7ff\", shadow=\"#03131f\", scan=5, jitter=1.5, glow=1.3, radius=5, flicker=0.12, speed=1.2, float=1.5).digitalFlicker(rate=9, duty=0.12, intensity=0.5, minAlpha=0.45).big"
+                  }
+                ],
+                "line": 14,
+                "prefix": "f",
+                "range": {
+                  "end": 214,
+                  "start": 26
+                },
+                "raw": "f.hologram(tint=\"#68f7ff\", shadow=\"#03131f\", scan=5, jitter=1.5, glow=1.3, radius=5, flicker=0.12, speed=1.2, float=1.5).digitalFlicker(rate=9, duty=0.12, intensity=0.5, minAlpha=0.45).big",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 14,
+            "range": {
+              "end": 214,
+              "start": 0
+            },
+            "raw": "{INCOMING TRANSMISSION} @ f.hologram(tint=\"#68f7ff\", shadow=\"#03131f\", scan=5, jitter=1.5, glow=1.3, radius=5, flicker=0.12, speed=1.2, float=1.5).digitalFlicker(rate=9, duty=0.12, intensity=0.5, minAlpha=0.45).big",
+            "type": "line"
+          }
+        ],
+        "source": "// 镜头 1：信标从黑场中逐字上线。\n@ bg(color=\"#020913\")\n@ cam.drift(4, 0.001)\n{INCOMING TRANSMISSION} @ f.hologram(tint=\"#68f7ff\", shadow=\"#03131f\", scan=5, jitter=1.5, glow=1.3, radius=5, flicker=0.12, speed=1.2, float=1.5).digitalFlicker(rate=9, duty=0.12, intensity=0.5, minAlpha=0.45).big",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [
+        {
+          "blocking": false,
+          "level": "block",
+          "name": "bg",
+          "params": {
+            "color": "#020913"
+          }
+        },
+        {
+          "blocking": false,
+          "level": "block",
+          "name": "cam.drift",
+          "params": {
+            "0": 4,
+            "1": 0.001
+          }
+        }
+      ],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "braceGroupId": 1,
+            "commands": [],
+            "content": "INCOMING TRANSMISSION",
+            "effects": [
+              {
+                "blocking": false,
+                "name": "hologram",
+                "params": {
+                  "flicker": 0.12,
+                  "float": 1.5,
+                  "glow": 1.3,
+                  "jitter": 1.5,
+                  "radius": 5,
+                  "scan": 5,
+                  "shadow": "#03131f",
+                  "speed": 1.2,
+                  "tint": "#68f7ff"
+                }
+              },
+              {
+                "blocking": false,
+                "name": "digitalFlicker",
+                "params": {
+                  "duty": 0.12,
+                  "intensity": 0.5,
+                  "minAlpha": 0.45,
+                  "rate": 9
+                }
+              },
+              {
+                "blocking": false,
+                "name": "big",
+                "params": {}
+              }
+            ],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 14,
+            "params": {},
+            "range": {
+              "end": 22,
+              "start": 1
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": [
+          {
+            "blocking": false,
+            "level": "block",
+            "name": "bg",
+            "params": {
+              "color": "#020913"
+            }
+          },
+          {
+            "blocking": false,
+            "level": "block",
+            "name": "cam.drift",
+            "params": {
+              "0": 4,
+              "1": 0.001
+            }
+          }
+        ]
+      },
+      "lineOffset": 11,
+      "tokens": [
+        {
+          "braceGroupId": 1,
+          "commands": [],
+          "content": "INCOMING TRANSMISSION",
+          "effects": [
+            {
+              "blocking": false,
+              "name": "hologram",
+              "params": {
+                "flicker": 0.12,
+                "float": 1.5,
+                "glow": 1.3,
+                "jitter": 1.5,
+                "radius": 5,
+                "scan": 5,
+                "shadow": "#03131f",
+                "speed": 1.2,
+                "tint": "#68f7ff"
+              }
+            },
+            {
+              "blocking": false,
+              "name": "digitalFlicker",
+              "params": {
+                "duty": 0.12,
+                "intensity": 0.5,
+                "minAlpha": 0.45,
+                "rate": 9
+              }
+            },
+            {
+              "blocking": false,
+              "name": "big",
+              "params": {}
+            }
+          ],
+          "isBraced": true,
+          "layoutInstructions": [],
+          "line": 14,
+          "params": {},
+          "range": {
+            "end": 22,
+            "start": 1
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 16,
+        "lines": [
+          {
+            "body": [
+              {
+                "children": [
+                  {
+                    "groupId": 2,
+                    "line": 16,
+                    "marks": [],
+                    "range": {
+                      "end": 23,
+                      "start": 1
+                    },
+                    "text": "CHANNEL 7 :: ENCRYPTED",
+                    "type": "text"
+                  }
+                ],
+                "groupId": 2,
+                "line": 16,
+                "range": {
+                  "end": 24,
+                  "start": 0
+                },
+                "type": "group"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "name": "neonGlow",
+                    "params": {
+                      "color": "#ff3bd4",
+                      "pulse": 0.24,
+                      "radius": 6,
+                      "shadow": "#16051d",
+                      "speed": 1.3,
+                      "strength": 1.6
+                    },
+                    "prefix": "f",
+                    "raw": "f.neonGlow(color=\"#ff3bd4\", shadow=\"#16051d\", strength=1.6, radius=6, pulse=0.24, speed=1.3)"
+                  }
+                ],
+                "line": 16,
+                "prefix": "f",
+                "range": {
+                  "end": 119,
+                  "start": 27
+                },
+                "raw": "f.neonGlow(color=\"#ff3bd4\", shadow=\"#16051d\", strength=1.6, radius=6, pulse=0.24, speed=1.3)",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 16,
+            "range": {
+              "end": 119,
+              "start": 0
+            },
+            "raw": "{CHANNEL 7 :: ENCRYPTED} @ f.neonGlow(color=\"#ff3bd4\", shadow=\"#16051d\", strength=1.6, radius=6, pulse=0.24, speed=1.3)",
+            "type": "line"
+          }
+        ],
+        "source": "{CHANNEL 7 :: ENCRYPTED} @ f.neonGlow(color=\"#ff3bd4\", shadow=\"#16051d\", strength=1.6, radius=6, pulse=0.24, speed=1.3)",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "braceGroupId": 2,
+            "commands": [],
+            "content": "CHANNEL 7 :: ENCRYPTED",
+            "effects": [
+              {
+                "blocking": false,
+                "name": "neonGlow",
+                "params": {
+                  "color": "#ff3bd4",
+                  "pulse": 0.24,
+                  "radius": 6,
+                  "shadow": "#16051d",
+                  "speed": 1.3,
+                  "strength": 1.6
+                }
+              }
+            ],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 16,
+            "params": {},
+            "range": {
+              "end": 23,
+              "start": 1
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 16,
+      "tokens": [
+        {
+          "braceGroupId": 2,
+          "commands": [],
+          "content": "CHANNEL 7 :: ENCRYPTED",
+          "effects": [
+            {
+              "blocking": false,
+              "name": "neonGlow",
+              "params": {
+                "color": "#ff3bd4",
+                "pulse": 0.24,
+                "radius": 6,
+                "shadow": "#16051d",
+                "speed": 1.3,
+                "strength": 1.6
+              }
+            }
+          ],
+          "isBraced": true,
+          "layoutInstructions": [],
+          "line": 16,
+          "params": {},
+          "range": {
+            "end": 23,
+            "start": 1
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 18,
+        "lines": [
+          {
+            "body": [],
+            "commandChains": [],
+            "heading": false,
+            "kind": "scene-clear",
+            "line": 18,
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "raw": "---",
+            "type": "line"
+          }
+        ],
+        "source": "---",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": true,
+            "isSugar": false,
+            "kind": "scene-clear",
+            "layoutInstructions": [
+              {
+                "blocking": false,
+                "line": 18,
+                "params": {},
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "scene.clear"
+              },
+              {
+                "blocking": true,
+                "line": 18,
+                "params": {
+                  "0": 0.5
+                },
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "pause"
+              }
+            ],
+            "line": 18,
+            "params": {},
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 18,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": true,
+          "isSugar": false,
+          "layoutInstructions": [
+            {
+              "blocking": false,
+              "line": 18,
+              "params": {},
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "scene.clear"
+            },
+            {
+              "blocking": true,
+              "line": 18,
+              "params": {
+                "0": 0.5
+              },
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "pause"
+            }
+          ],
+          "line": 18,
+          "params": {},
+          "range": {
+            "end": 3,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [
+          {
+            "chain": {
+              "commands": [
+                {
+                  "blocking": false,
+                  "family": "effect",
+                  "level": "block",
+                  "name": "hologram",
+                  "params": {
+                    "flicker": 0.18,
+                    "float": 4,
+                    "glow": 1.8,
+                    "jitter": 3,
+                    "radius": 7,
+                    "scan": 6,
+                    "shadow": "#02101d",
+                    "speed": 1.7,
+                    "tint": "#66f7ff"
+                  },
+                  "prefix": "dot",
+                  "raw": ".hologram:block(tint=\"#66f7ff\", shadow=\"#02101d\", scan=6, jitter=3, glow=1.8, radius=7, flicker=0.18, speed=1.7, float=4)"
+                }
+              ],
+              "line": 24,
+              "prefix": "dot",
+              "range": {
+                "end": 122,
+                "start": 1
+              },
+              "raw": ".hologram:block(tint=\"#66f7ff\", shadow=\"#02101d\", scan=6, jitter=3, glow=1.8, radius=7, flicker=0.18, speed=1.7, float=4)",
+              "type": "command-chain"
+            },
+            "line": 24,
+            "range": {
+              "end": 122,
+              "start": 1
+            },
+            "type": "block-option-command"
+          }
+        ],
+        "lineOffset": 20,
+        "lines": [
+          {
+            "body": [],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "stage",
+                    "name": "bg",
+                    "params": {
+                      "color": "#03101d"
+                    },
+                    "prefix": "bare",
+                    "raw": "bg(color=\"#03101d\")"
+                  }
+                ],
+                "line": 21,
+                "prefix": "bare",
+                "range": {
+                  "end": 21,
+                  "start": 2
+                },
+                "raw": "bg(color=\"#03101d\")",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "command-only",
+            "line": 21,
+            "range": {
+              "end": 21,
+              "start": 0
+            },
+            "raw": "@ bg(color=\"#03101d\")",
+            "type": "line"
+          },
+          {
+            "body": [],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "stage",
+                    "name": "cam.drift",
+                    "params": {
+                      "0": 8,
+                      "1": 0.0018
+                    },
+                    "prefix": "bare",
+                    "raw": "cam.drift(8, 0.0018)"
+                  }
+                ],
+                "line": 22,
+                "prefix": "bare",
+                "range": {
+                  "end": 22,
+                  "start": 2
+                },
+                "raw": "cam.drift(8, 0.0018)",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "command-only",
+            "line": 22,
+            "range": {
+              "end": 22,
+              "start": 0
+            },
+            "raw": "@ cam.drift(8, 0.0018)",
+            "type": "line"
+          },
+          {
+            "body": [],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": true,
+                    "family": "stage",
+                    "name": "cam.zoom",
+                    "params": {
+                      "0": 0.88,
+                      "1": 0.8
+                    },
+                    "prefix": "bare",
+                    "raw": "cam.zoom(0.88, 0.8s)!"
+                  }
+                ],
+                "line": 23,
+                "prefix": "bare",
+                "range": {
+                  "end": 23,
+                  "start": 2
+                },
+                "raw": "cam.zoom(0.88, 0.8s)!",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "command-only",
+            "line": 23,
+            "range": {
+              "end": 23,
+              "start": 0
+            },
+            "raw": "@ cam.zoom(0.88, 0.8s)!",
+            "type": "line"
+          },
+          {
+            "body": [
+              {
+                "line": 25,
+                "marks": [],
+                "range": {
+                  "end": 24,
+                  "start": 0
+                },
+                "text": "REMOTE AVATAR :: UNIT 07",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 25,
+            "range": {
+              "end": 24,
+              "start": 0
+            },
+            "raw": "REMOTE AVATAR :: UNIT 07",
+            "type": "line"
+          }
+        ],
+        "source": "// 镜头 2：全息角色投影，扫描、漂浮、RGB 抖动协同工作。\n@ bg(color=\"#03101d\")\n@ cam.drift(8, 0.0018)\n@ cam.zoom(0.88, 0.8s)!\n[.hologram:block(tint=\"#66f7ff\", shadow=\"#02101d\", scan=6, jitter=3, glow=1.8, radius=7, flicker=0.18, speed=1.7, float=4)]\nREMOTE AVATAR :: UNIT 07",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [
+        {
+          "blocking": false,
+          "level": "block",
+          "name": "hologram",
+          "params": {
+            "flicker": 0.18,
+            "float": 4,
+            "glow": 1.8,
+            "jitter": 3,
+            "radius": 7,
+            "scan": 6,
+            "shadow": "#02101d",
+            "speed": 1.7,
+            "tint": "#66f7ff"
+          }
+        },
+        {
+          "blocking": false,
+          "level": "block",
+          "name": "bg",
+          "params": {
+            "color": "#03101d"
+          }
+        },
+        {
+          "blocking": false,
+          "level": "block",
+          "name": "cam.drift",
+          "params": {
+            "0": 8,
+            "1": 0.0018
+          }
+        },
+        {
+          "blocking": true,
+          "level": "block",
+          "name": "cam.zoom",
+          "params": {
+            "0": 0.88,
+            "1": 0.8
+          }
+        }
+      ],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "REMOTE AVATAR :: UNIT 07",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 25,
+            "params": {},
+            "range": {
+              "end": 24,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": [
+          {
+            "blocking": false,
+            "level": "block",
+            "name": "hologram",
+            "params": {
+              "flicker": 0.18,
+              "float": 4,
+              "glow": 1.8,
+              "jitter": 3,
+              "radius": 7,
+              "scan": 6,
+              "shadow": "#02101d",
+              "speed": 1.7,
+              "tint": "#66f7ff"
+            }
+          },
+          {
+            "blocking": false,
+            "level": "block",
+            "name": "bg",
+            "params": {
+              "color": "#03101d"
+            }
+          },
+          {
+            "blocking": false,
+            "level": "block",
+            "name": "cam.drift",
+            "params": {
+              "0": 8,
+              "1": 0.0018
+            }
+          },
+          {
+            "blocking": true,
+            "level": "block",
+            "name": "cam.zoom",
+            "params": {
+              "0": 0.88,
+              "1": 0.8
+            }
+          }
+        ]
+      },
+      "lineOffset": 20,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "REMOTE AVATAR :: UNIT 07",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 25,
+          "params": {},
+          "range": {
+            "end": 24,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 27,
+        "lines": [
+          {
+            "body": [
+              {
+                "children": [
+                  {
+                    "groupId": 3,
+                    "line": 27,
+                    "marks": [],
+                    "range": {
+                      "end": 17,
+                      "start": 1
+                    },
+                    "text": "Can you hear me?",
+                    "type": "text"
+                  }
+                ],
+                "groupId": 3,
+                "line": 27,
+                "range": {
+                  "end": 18,
+                  "start": 0
+                },
+                "type": "group"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "name": "digitalFlicker",
+                    "params": {
+                      "duty": 0.2,
+                      "intensity": 0.62,
+                      "minAlpha": 0.3,
+                      "rate": 15
+                    },
+                    "prefix": "f",
+                    "raw": "f.digitalFlicker(rate=15, duty=0.2, intensity=0.62, minAlpha=0.3).hologram(tint=\"#9fffff\", scan=4, jitter=1, glow=0.9, flicker=0.08, speed=1.1, float=1)"
+                  },
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "name": "hologram",
+                    "params": {
+                      "flicker": 0.08,
+                      "float": 1,
+                      "glow": 0.9,
+                      "jitter": 1,
+                      "scan": 4,
+                      "speed": 1.1,
+                      "tint": "#9fffff"
+                    },
+                    "prefix": "f",
+                    "raw": "f.digitalFlicker(rate=15, duty=0.2, intensity=0.62, minAlpha=0.3).hologram(tint=\"#9fffff\", scan=4, jitter=1, glow=0.9, flicker=0.08, speed=1.1, float=1)"
+                  }
+                ],
+                "line": 27,
+                "prefix": "f",
+                "range": {
+                  "end": 173,
+                  "start": 21
+                },
+                "raw": "f.digitalFlicker(rate=15, duty=0.2, intensity=0.62, minAlpha=0.3).hologram(tint=\"#9fffff\", scan=4, jitter=1, glow=0.9, flicker=0.08, speed=1.1, float=1)",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 27,
+            "range": {
+              "end": 173,
+              "start": 0
+            },
+            "raw": "{Can you hear me?} @ f.digitalFlicker(rate=15, duty=0.2, intensity=0.62, minAlpha=0.3).hologram(tint=\"#9fffff\", scan=4, jitter=1, glow=0.9, flicker=0.08, speed=1.1, float=1)",
+            "type": "line"
+          }
+        ],
+        "source": "{Can you hear me?} @ f.digitalFlicker(rate=15, duty=0.2, intensity=0.62, minAlpha=0.3).hologram(tint=\"#9fffff\", scan=4, jitter=1, glow=0.9, flicker=0.08, speed=1.1, float=1)",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "braceGroupId": 3,
+            "commands": [],
+            "content": "Can you hear me?",
+            "effects": [
+              {
+                "blocking": false,
+                "name": "digitalFlicker",
+                "params": {
+                  "duty": 0.2,
+                  "intensity": 0.62,
+                  "minAlpha": 0.3,
+                  "rate": 15
+                }
+              },
+              {
+                "blocking": false,
+                "name": "hologram",
+                "params": {
+                  "flicker": 0.08,
+                  "float": 1,
+                  "glow": 0.9,
+                  "jitter": 1,
+                  "scan": 4,
+                  "speed": 1.1,
+                  "tint": "#9fffff"
+                }
+              }
+            ],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 27,
+            "params": {},
+            "range": {
+              "end": 17,
+              "start": 1
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 27,
+      "tokens": [
+        {
+          "braceGroupId": 3,
+          "commands": [],
+          "content": "Can you hear me?",
+          "effects": [
+            {
+              "blocking": false,
+              "name": "digitalFlicker",
+              "params": {
+                "duty": 0.2,
+                "intensity": 0.62,
+                "minAlpha": 0.3,
+                "rate": 15
+              }
+            },
+            {
+              "blocking": false,
+              "name": "hologram",
+              "params": {
+                "flicker": 0.08,
+                "float": 1,
+                "glow": 0.9,
+                "jitter": 1,
+                "scan": 4,
+                "speed": 1.1,
+                "tint": "#9fffff"
+              }
+            }
+          ],
+          "isBraced": true,
+          "layoutInstructions": [],
+          "line": 27,
+          "params": {},
+          "range": {
+            "end": 17,
+            "start": 1
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 29,
+        "lines": [
+          {
+            "body": [],
+            "commandChains": [],
+            "heading": false,
+            "kind": "scene-clear",
+            "line": 29,
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "raw": "---",
+            "type": "line"
+          }
+        ],
+        "source": "---",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": true,
+            "isSugar": false,
+            "kind": "scene-clear",
+            "layoutInstructions": [
+              {
+                "blocking": false,
+                "line": 29,
+                "params": {},
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "scene.clear"
+              },
+              {
+                "blocking": true,
+                "line": 29,
+                "params": {
+                  "0": 0.5
+                },
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "pause"
+              }
+            ],
+            "line": 29,
+            "params": {},
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 29,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": true,
+          "isSugar": false,
+          "layoutInstructions": [
+            {
+              "blocking": false,
+              "line": 29,
+              "params": {},
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "scene.clear"
+            },
+            {
+              "blocking": true,
+              "line": 29,
+              "params": {
+                "0": 0.5
+              },
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "pause"
+            }
+          ],
+          "line": 29,
+          "params": {},
+          "range": {
+            "end": 3,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [
+          {
+            "chain": {
+              "commands": [
+                {
+                  "blocking": false,
+                  "family": "effect",
+                  "level": "block",
+                  "name": "hologram",
+                  "params": {
+                    "flicker": 0.34,
+                    "float": 7,
+                    "glow": 2.2,
+                    "jitter": 7,
+                    "radius": 8,
+                    "scan": 8,
+                    "shadow": "#16031a",
+                    "speed": 4.2,
+                    "tint": "#ff4bd8"
+                  },
+                  "prefix": "dot",
+                  "raw": ".hologram:block(tint=\"#ff4bd8\", shadow=\"#16031a\", scan=8, jitter=7, glow=2.2, radius=8, flicker=0.34, speed=4.2, float=7)"
+                }
+              ],
+              "line": 35,
+              "prefix": "dot",
+              "range": {
+                "end": 122,
+                "start": 1
+              },
+              "raw": ".hologram:block(tint=\"#ff4bd8\", shadow=\"#16031a\", scan=8, jitter=7, glow=2.2, radius=8, flicker=0.34, speed=4.2, float=7)",
+              "type": "command-chain"
+            },
+            "line": 35,
+            "range": {
+              "end": 122,
+              "start": 1
+            },
+            "type": "block-option-command"
+          },
+          {
+            "chain": {
+              "commands": [
+                {
+                  "blocking": false,
+                  "family": "effect",
+                  "level": "block",
+                  "name": "cyberGlitch",
+                  "params": {
+                    "blockSize": 20,
+                    "burst": 0.62,
+                    "frequency": 12,
+                    "jitter": 8,
+                    "noise": 0.32,
+                    "rgb": 28
+                  },
+                  "prefix": "dot",
+                  "raw": ".cyberGlitch:block(rgb=28, frequency=12, burst=0.62, blockSize=20, noise=0.32, jitter=8)"
+                }
+              ],
+              "line": 35,
+              "prefix": "dot",
+              "range": {
+                "end": 211,
+                "start": 123
+              },
+              "raw": ".cyberGlitch:block(rgb=28, frequency=12, burst=0.62, blockSize=20, noise=0.32, jitter=8)",
+              "type": "command-chain"
+            },
+            "line": 35,
+            "range": {
+              "end": 211,
+              "start": 123
+            },
+            "type": "block-option-command"
+          }
+        ],
+        "lineOffset": 31,
+        "lines": [
+          {
+            "body": [],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "stage",
+                    "name": "bg",
+                    "params": {
+                      "color": "#090414"
+                    },
+                    "prefix": "bare",
+                    "raw": "bg(color=\"#090414\")"
+                  }
+                ],
+                "line": 32,
+                "prefix": "bare",
+                "range": {
+                  "end": 21,
+                  "start": 2
+                },
+                "raw": "bg(color=\"#090414\")",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "command-only",
+            "line": 32,
+            "range": {
+              "end": 21,
+              "start": 0
+            },
+            "raw": "@ bg(color=\"#090414\")",
+            "type": "line"
+          },
+          {
+            "body": [],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "stage",
+                    "name": "cam.drift",
+                    "params": {
+                      "0": 0
+                    },
+                    "prefix": "bare",
+                    "raw": "cam.drift(0)"
+                  }
+                ],
+                "line": 33,
+                "prefix": "bare",
+                "range": {
+                  "end": 14,
+                  "start": 2
+                },
+                "raw": "cam.drift(0)",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "command-only",
+            "line": 33,
+            "range": {
+              "end": 14,
+              "start": 0
+            },
+            "raw": "@ cam.drift(0)",
+            "type": "line"
+          },
+          {
+            "body": [],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "stage",
+                    "name": "cam.shake",
+                    "params": {
+                      "0": 11
+                    },
+                    "prefix": "bare",
+                    "raw": "cam.shake(11)"
+                  }
+                ],
+                "line": 34,
+                "prefix": "bare",
+                "range": {
+                  "end": 15,
+                  "start": 2
+                },
+                "raw": "cam.shake(11)",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "command-only",
+            "line": 34,
+            "range": {
+              "end": 15,
+              "start": 0
+            },
+            "raw": "@ cam.shake(11)",
+            "type": "line"
+          },
+          {
+            "body": [
+              {
+                "line": 36,
+                "marks": [],
+                "range": {
+                  "end": 19,
+                  "start": 0
+                },
+                "text": "CONNECTION UNSTABLE",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 36,
+            "range": {
+              "end": 19,
+              "start": 0
+            },
+            "raw": "CONNECTION UNSTABLE",
+            "type": "line"
+          }
+        ],
+        "source": "// 镜头 3：干扰峰值把画面撕裂，并通过震动制造断讯冲击。\n@ bg(color=\"#090414\")\n@ cam.drift(0)\n@ cam.shake(11)\n[.hologram:block(tint=\"#ff4bd8\", shadow=\"#16031a\", scan=8, jitter=7, glow=2.2, radius=8, flicker=0.34, speed=4.2, float=7) .cyberGlitch:block(rgb=28, frequency=12, burst=0.62, blockSize=20, noise=0.32, jitter=8)]\nCONNECTION UNSTABLE",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [
+        {
+          "blocking": false,
+          "level": "block",
+          "name": "hologram",
+          "params": {
+            "flicker": 0.34,
+            "float": 7,
+            "glow": 2.2,
+            "jitter": 7,
+            "radius": 8,
+            "scan": 8,
+            "shadow": "#16031a",
+            "speed": 4.2,
+            "tint": "#ff4bd8"
+          }
+        },
+        {
+          "blocking": false,
+          "level": "block",
+          "name": "cyberGlitch",
+          "params": {
+            "blockSize": 20,
+            "burst": 0.62,
+            "frequency": 12,
+            "jitter": 8,
+            "noise": 0.32,
+            "rgb": 28
+          }
+        },
+        {
+          "blocking": false,
+          "level": "block",
+          "name": "bg",
+          "params": {
+            "color": "#090414"
+          }
+        },
+        {
+          "blocking": false,
+          "level": "block",
+          "name": "cam.drift",
+          "params": {
+            "0": 0
+          }
+        },
+        {
+          "blocking": false,
+          "level": "block",
+          "name": "cam.shake",
+          "params": {
+            "0": 11
+          }
+        }
+      ],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "CONNECTION UNSTABLE",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 36,
+            "params": {},
+            "range": {
+              "end": 19,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": [
+          {
+            "blocking": false,
+            "level": "block",
+            "name": "hologram",
+            "params": {
+              "flicker": 0.34,
+              "float": 7,
+              "glow": 2.2,
+              "jitter": 7,
+              "radius": 8,
+              "scan": 8,
+              "shadow": "#16031a",
+              "speed": 4.2,
+              "tint": "#ff4bd8"
+            }
+          },
+          {
+            "blocking": false,
+            "level": "block",
+            "name": "cyberGlitch",
+            "params": {
+              "blockSize": 20,
+              "burst": 0.62,
+              "frequency": 12,
+              "jitter": 8,
+              "noise": 0.32,
+              "rgb": 28
+            }
+          },
+          {
+            "blocking": false,
+            "level": "block",
+            "name": "bg",
+            "params": {
+              "color": "#090414"
+            }
+          },
+          {
+            "blocking": false,
+            "level": "block",
+            "name": "cam.drift",
+            "params": {
+              "0": 0
+            }
+          },
+          {
+            "blocking": false,
+            "level": "block",
+            "name": "cam.shake",
+            "params": {
+              "0": 11
+            }
+          }
+        ]
+      },
+      "lineOffset": 31,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "CONNECTION UNSTABLE",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 36,
+          "params": {},
+          "range": {
+            "end": 19,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 38,
+        "lines": [
+          {
+            "body": [
+              {
+                "children": [
+                  {
+                    "groupId": 4,
+                    "line": 38,
+                    "marks": [],
+                    "range": {
+                      "end": 17,
+                      "start": 1
+                    },
+                    "text": "PACKET LOSS: 87%",
+                    "type": "text"
+                  }
+                ],
+                "groupId": 4,
+                "line": 38,
+                "range": {
+                  "end": 18,
+                  "start": 0
+                },
+                "type": "group"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "name": "digitalFlicker",
+                    "params": {
+                      "duty": 0.42,
+                      "intensity": 0.85,
+                      "minAlpha": 0.12,
+                      "rate": 30
+                    },
+                    "prefix": "f",
+                    "raw": "f.digitalFlicker(rate=30, duty=0.42, intensity=0.85, minAlpha=0.12).chromaticAberration(x=14, y=2, pulse=0.7, speed=4)"
+                  },
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "name": "chromaticAberration",
+                    "params": {
+                      "pulse": 0.7,
+                      "speed": 4,
+                      "x": 14,
+                      "y": 2
+                    },
+                    "prefix": "f",
+                    "raw": "f.digitalFlicker(rate=30, duty=0.42, intensity=0.85, minAlpha=0.12).chromaticAberration(x=14, y=2, pulse=0.7, speed=4)"
+                  }
+                ],
+                "line": 38,
+                "prefix": "f",
+                "range": {
+                  "end": 139,
+                  "start": 21
+                },
+                "raw": "f.digitalFlicker(rate=30, duty=0.42, intensity=0.85, minAlpha=0.12).chromaticAberration(x=14, y=2, pulse=0.7, speed=4)",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 38,
+            "range": {
+              "end": 139,
+              "start": 0
+            },
+            "raw": "{PACKET LOSS: 87%} @ f.digitalFlicker(rate=30, duty=0.42, intensity=0.85, minAlpha=0.12).chromaticAberration(x=14, y=2, pulse=0.7, speed=4)",
+            "type": "line"
+          }
+        ],
+        "source": "{PACKET LOSS: 87%} @ f.digitalFlicker(rate=30, duty=0.42, intensity=0.85, minAlpha=0.12).chromaticAberration(x=14, y=2, pulse=0.7, speed=4)",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "braceGroupId": 4,
+            "commands": [],
+            "content": "PACKET LOSS: 87%",
+            "effects": [
+              {
+                "blocking": false,
+                "name": "digitalFlicker",
+                "params": {
+                  "duty": 0.42,
+                  "intensity": 0.85,
+                  "minAlpha": 0.12,
+                  "rate": 30
+                }
+              },
+              {
+                "blocking": false,
+                "name": "chromaticAberration",
+                "params": {
+                  "pulse": 0.7,
+                  "speed": 4,
+                  "x": 14,
+                  "y": 2
+                }
+              }
+            ],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 38,
+            "params": {},
+            "range": {
+              "end": 17,
+              "start": 1
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 38,
+      "tokens": [
+        {
+          "braceGroupId": 4,
+          "commands": [],
+          "content": "PACKET LOSS: 87%",
+          "effects": [
+            {
+              "blocking": false,
+              "name": "digitalFlicker",
+              "params": {
+                "duty": 0.42,
+                "intensity": 0.85,
+                "minAlpha": 0.12,
+                "rate": 30
+              }
+            },
+            {
+              "blocking": false,
+              "name": "chromaticAberration",
+              "params": {
+                "pulse": 0.7,
+                "speed": 4,
+                "x": 14,
+                "y": 2
+              }
+            }
+          ],
+          "isBraced": true,
+          "layoutInstructions": [],
+          "line": 38,
+          "params": {},
+          "range": {
+            "end": 17,
+            "start": 1
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 40,
+        "lines": [
+          {
+            "body": [],
+            "commandChains": [],
+            "heading": false,
+            "kind": "scene-clear",
+            "line": 40,
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "raw": "---",
+            "type": "line"
+          }
+        ],
+        "source": "---",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": true,
+            "isSugar": false,
+            "kind": "scene-clear",
+            "layoutInstructions": [
+              {
+                "blocking": false,
+                "line": 40,
+                "params": {},
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "scene.clear"
+              },
+              {
+                "blocking": true,
+                "line": 40,
+                "params": {
+                  "0": 0.5
+                },
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "pause"
+              }
+            ],
+            "line": 40,
+            "params": {},
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 40,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": true,
+          "isSugar": false,
+          "layoutInstructions": [
+            {
+              "blocking": false,
+              "line": 40,
+              "params": {},
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "scene.clear"
+            },
+            {
+              "blocking": true,
+              "line": 40,
+              "params": {
+                "0": 0.5
+              },
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "pause"
+            }
+          ],
+          "line": 40,
+          "params": {},
+          "range": {
+            "end": 3,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 42,
+        "lines": [
+          {
+            "body": [],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "stage",
+                    "name": "bg",
+                    "params": {
+                      "color": "#01060c"
+                    },
+                    "prefix": "bare",
+                    "raw": "bg(color=\"#01060c\")"
+                  }
+                ],
+                "line": 43,
+                "prefix": "bare",
+                "range": {
+                  "end": 21,
+                  "start": 2
+                },
+                "raw": "bg(color=\"#01060c\")",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "command-only",
+            "line": 43,
+            "range": {
+              "end": 21,
+              "start": 0
+            },
+            "raw": "@ bg(color=\"#01060c\")",
+            "type": "line"
+          },
+          {
+            "body": [],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": true,
+                    "family": "stage",
+                    "name": "cam.reset",
+                    "params": {
+                      "0": 0.6
+                    },
+                    "prefix": "bare",
+                    "raw": "cam.reset(0.6s)!"
+                  }
+                ],
+                "line": 44,
+                "prefix": "bare",
+                "range": {
+                  "end": 18,
+                  "start": 2
+                },
+                "raw": "cam.reset(0.6s)!",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "command-only",
+            "line": 44,
+            "range": {
+              "end": 18,
+              "start": 0
+            },
+            "raw": "@ cam.reset(0.6s)!",
+            "type": "line"
+          },
+          {
+            "body": [
+              {
+                "children": [
+                  {
+                    "groupId": 5,
+                    "line": 45,
+                    "marks": [],
+                    "range": {
+                      "end": 19,
+                      "start": 1
+                    },
+                    "text": "FIND THE RED DOOR.",
+                    "type": "text"
+                  }
+                ],
+                "groupId": 5,
+                "line": 45,
+                "range": {
+                  "end": 20,
+                  "start": 0
+                },
+                "type": "group"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "name": "hologram",
+                    "params": {
+                      "flicker": 0.14,
+                      "float": 2,
+                      "glow": 1.5,
+                      "jitter": 2,
+                      "radius": 6,
+                      "scan": 4,
+                      "shadow": "#020b12",
+                      "speed": 1.25,
+                      "tint": "#67e8ff"
+                    },
+                    "prefix": "f",
+                    "raw": "f.hologram(tint=\"#67e8ff\", shadow=\"#020b12\", scan=4, jitter=2, glow=1.5, radius=6, flicker=0.14, speed=1.25, float=2).big"
+                  },
+                  {
+                    "blocking": false,
+                    "family": "style",
+                    "name": "big",
+                    "params": {},
+                    "prefix": "f",
+                    "raw": "f.hologram(tint=\"#67e8ff\", shadow=\"#020b12\", scan=4, jitter=2, glow=1.5, radius=6, flicker=0.14, speed=1.25, float=2).big"
+                  }
+                ],
+                "line": 45,
+                "prefix": "f",
+                "range": {
+                  "end": 144,
+                  "start": 23
+                },
+                "raw": "f.hologram(tint=\"#67e8ff\", shadow=\"#020b12\", scan=4, jitter=2, glow=1.5, radius=6, flicker=0.14, speed=1.25, float=2).big",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 45,
+            "range": {
+              "end": 144,
+              "start": 0
+            },
+            "raw": "{FIND THE RED DOOR.} @ f.hologram(tint=\"#67e8ff\", shadow=\"#020b12\", scan=4, jitter=2, glow=1.5, radius=6, flicker=0.14, speed=1.25, float=2).big",
+            "type": "line"
+          }
+        ],
+        "source": "// 镜头 4：最后一帧恢复成低强度蓝色投影，然后切断信号。\n@ bg(color=\"#01060c\")\n@ cam.reset(0.6s)!\n{FIND THE RED DOOR.} @ f.hologram(tint=\"#67e8ff\", shadow=\"#020b12\", scan=4, jitter=2, glow=1.5, radius=6, flicker=0.14, speed=1.25, float=2).big",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [
+        {
+          "blocking": false,
+          "level": "block",
+          "name": "bg",
+          "params": {
+            "color": "#01060c"
+          }
+        },
+        {
+          "blocking": true,
+          "level": "block",
+          "name": "cam.reset",
+          "params": {
+            "0": 0.6
+          }
+        }
+      ],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "braceGroupId": 5,
+            "commands": [],
+            "content": "FIND THE RED DOOR.",
+            "effects": [
+              {
+                "blocking": false,
+                "name": "hologram",
+                "params": {
+                  "flicker": 0.14,
+                  "float": 2,
+                  "glow": 1.5,
+                  "jitter": 2,
+                  "radius": 6,
+                  "scan": 4,
+                  "shadow": "#020b12",
+                  "speed": 1.25,
+                  "tint": "#67e8ff"
+                }
+              },
+              {
+                "blocking": false,
+                "name": "big",
+                "params": {}
+              }
+            ],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 45,
+            "params": {},
+            "range": {
+              "end": 19,
+              "start": 1
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": [
+          {
+            "blocking": false,
+            "level": "block",
+            "name": "bg",
+            "params": {
+              "color": "#01060c"
+            }
+          },
+          {
+            "blocking": true,
+            "level": "block",
+            "name": "cam.reset",
+            "params": {
+              "0": 0.6
+            }
+          }
+        ]
+      },
+      "lineOffset": 42,
+      "tokens": [
+        {
+          "braceGroupId": 5,
+          "commands": [],
+          "content": "FIND THE RED DOOR.",
+          "effects": [
+            {
+              "blocking": false,
+              "name": "hologram",
+              "params": {
+                "flicker": 0.14,
+                "float": 2,
+                "glow": 1.5,
+                "jitter": 2,
+                "radius": 6,
+                "scan": 4,
+                "shadow": "#020b12",
+                "speed": 1.25,
+                "tint": "#67e8ff"
+              }
+            },
+            {
+              "blocking": false,
+              "name": "big",
+              "params": {}
+            }
+          ],
+          "isBraced": true,
+          "layoutInstructions": [],
+          "line": 45,
+          "params": {},
+          "range": {
+            "end": 19,
+            "start": 1
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 47,
+        "lines": [
+          {
+            "body": [
+              {
+                "children": [
+                  {
+                    "groupId": 6,
+                    "line": 47,
+                    "marks": [],
+                    "range": {
+                      "end": 19,
+                      "start": 1
+                    },
+                    "text": "TRANSMISSION ENDED",
+                    "type": "text"
+                  }
+                ],
+                "groupId": 6,
+                "line": 47,
+                "range": {
+                  "end": 20,
+                  "start": 0
+                },
+                "type": "group"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "name": "digitalFlicker",
+                    "params": {
+                      "duty": 0.3,
+                      "intensity": 0.76,
+                      "minAlpha": 0.2,
+                      "rate": 20
+                    },
+                    "prefix": "f",
+                    "raw": "f.digitalFlicker(rate=20, duty=0.3, intensity=0.76, minAlpha=0.2)"
+                  }
+                ],
+                "line": 47,
+                "prefix": "f",
+                "range": {
+                  "end": 88,
+                  "start": 23
+                },
+                "raw": "f.digitalFlicker(rate=20, duty=0.3, intensity=0.76, minAlpha=0.2)",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 47,
+            "range": {
+              "end": 88,
+              "start": 0
+            },
+            "raw": "{TRANSMISSION ENDED} @ f.digitalFlicker(rate=20, duty=0.3, intensity=0.76, minAlpha=0.2)",
+            "type": "line"
+          }
+        ],
+        "source": "{TRANSMISSION ENDED} @ f.digitalFlicker(rate=20, duty=0.3, intensity=0.76, minAlpha=0.2)",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "braceGroupId": 6,
+            "commands": [],
+            "content": "TRANSMISSION ENDED",
+            "effects": [
+              {
+                "blocking": false,
+                "name": "digitalFlicker",
+                "params": {
+                  "duty": 0.3,
+                  "intensity": 0.76,
+                  "minAlpha": 0.2,
+                  "rate": 20
+                }
+              }
+            ],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 47,
+            "params": {},
+            "range": {
+              "end": 19,
+              "start": 1
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 47,
+      "tokens": [
+        {
+          "braceGroupId": 6,
+          "commands": [],
+          "content": "TRANSMISSION ENDED",
+          "effects": [
+            {
+              "blocking": false,
+              "name": "digitalFlicker",
+              "params": {
+                "duty": 0.3,
+                "intensity": 0.76,
+                "minAlpha": 0.2,
+                "rate": 20
+              }
+            }
+          ],
+          "isBraced": true,
+          "layoutInstructions": [],
+          "line": 47,
+          "params": {},
+          "range": {
+            "end": 19,
+            "start": 1
+          },
+          "sugar": []
+        }
+      ]
+    }
+  ],
+  "rawParagraphs": [
+    "// 镜头 1：信标从黑场中逐字上线。\n@ bg(color=\"#020913\")\n@ cam.drift(4, 0.001)\n{INCOMING TRANSMISSION} @ f.hologram(tint=\"#68f7ff\", shadow=\"#03131f\", scan=5, jitter=1.5, glow=1.3, radius=5, flicker=0.12, speed=1.2, float=1.5).digitalFlicker(rate=9, duty=0.12, intensity=0.5, minAlpha=0.45).big",
+    "{CHANNEL 7 :: ENCRYPTED} @ f.neonGlow(color=\"#ff3bd4\", shadow=\"#16051d\", strength=1.6, radius=6, pulse=0.24, speed=1.3)",
+    "---",
+    "// 镜头 2：全息角色投影，扫描、漂浮、RGB 抖动协同工作。\n@ bg(color=\"#03101d\")\n@ cam.drift(8, 0.0018)\n@ cam.zoom(0.88, 0.8s)!\n[.hologram:block(tint=\"#66f7ff\", shadow=\"#02101d\", scan=6, jitter=3, glow=1.8, radius=7, flicker=0.18, speed=1.7, float=4)]\nREMOTE AVATAR :: UNIT 07",
+    "{Can you hear me?} @ f.digitalFlicker(rate=15, duty=0.2, intensity=0.62, minAlpha=0.3).hologram(tint=\"#9fffff\", scan=4, jitter=1, glow=0.9, flicker=0.08, speed=1.1, float=1)",
+    "---",
+    "// 镜头 3：干扰峰值把画面撕裂，并通过震动制造断讯冲击。\n@ bg(color=\"#090414\")\n@ cam.drift(0)\n@ cam.shake(11)\n[.hologram:block(tint=\"#ff4bd8\", shadow=\"#16031a\", scan=8, jitter=7, glow=2.2, radius=8, flicker=0.34, speed=4.2, float=7) .cyberGlitch:block(rgb=28, frequency=12, burst=0.62, blockSize=20, noise=0.32, jitter=8)]\nCONNECTION UNSTABLE",
+    "{PACKET LOSS: 87%} @ f.digitalFlicker(rate=30, duty=0.42, intensity=0.85, minAlpha=0.12).chromaticAberration(x=14, y=2, pulse=0.7, speed=4)",
+    "---",
+    "// 镜头 4：最后一帧恢复成低强度蓝色投影，然后切断信号。\n@ bg(color=\"#01060c\")\n@ cam.reset(0.6s)!\n{FIND THE RED DOOR.} @ f.hologram(tint=\"#67e8ff\", shadow=\"#020b12\", scan=4, jitter=2, glow=1.5, radius=6, flicker=0.14, speed=1.25, float=2).big",
+    "{TRANSMISSION ENDED} @ f.digitalFlicker(rate=20, duty=0.3, intensity=0.76, minAlpha=0.2)"
+  ]
+}

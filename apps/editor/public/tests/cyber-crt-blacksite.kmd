@@ -1,0 +1,56 @@
+---
+title: 示例 - CRT 黑站终端
+mode: stage
+speed: 34
+designWidth: 1920
+designHeight: 1080
+bgColor: "#020503"
+fontColor: "#8dffad"
+fontFamily: monospace
+---
+
+// 镜头 1：CRT 开机，自检文本用快速连接符逐项点亮。
+@ bg(color="#020503")
+[.crtDisplay:block(density=4.5, curvature=0.16, flicker=0.09, noise=0.09, grain=5, speed=1.5, vignette=0.7, softness=0.28)]
+KAIROS BIOS v4.9.7
+
+MEMORY CHECK > OK
+NEURAL LINK > OK
+ICE GATE > ARMED
+
+{BLACKSITE TERMINAL ONLINE} @ f.neonGlow(color="#73ff98", shadow="#011006", strength=1.5, radius=5, width=1, pulse=0.14, speed=0.9).digitalFlicker(rate=13, duty=0.1, intensity=0.45, minAlpha=0.5)
+
+---
+
+// 镜头 2：逐行认证，停顿模拟真实终端等待响应。
+@ bg(color="#010402")
+@ cam.zoom(0.9, 0.7s)!
+[.crtDisplay:block(density=5, curvature=0.2, flicker=0.12, noise=0.12, grain=4, speed=2, vignette=0.66, softness=0.3)]
+LOGIN: GHOST_09
+
+HANDSHAKE|...| ACCEPTED
+DECRYPTING VAULT|(0.8s)...| 73%
+BYPASSING ICE|(1.1s)...| COMPLETE
+
+---
+
+// 镜头 3：红色告警覆盖终端，故障块和 RGB 撕裂达到峰值。
+@ bg(color="#100103")
+@ cam.shake(9)
+[.crtDisplay:block(density=7, curvature=0.23, flicker=0.22, noise=0.2, grain=3, speed=3.5, vignette=0.62, softness=0.24) .cyberGlitch:block(rgb=22, frequency=11, burst=0.55, blockSize=16, noise=0.3, jitter=7)]
+INTRUSION DETECTED
+
+{COUNTERMEASURE ACTIVE} @ f.neonGlow(color="#ff294d", shadow="#190105", strength=2.6, radius=10, width=2.5, pulse=0.52, speed=3).digitalFlicker(rate=28, duty=0.38, intensity=0.82, minAlpha=0.16).chromaticAberration(x=12, y=1, pulse=0.6, speed=3.5).big
+
+---
+
+// 镜头 4：清除告警后，终端用冷白色输出最终坐标。
+@ bg(color="#010706")
+@ cam.reset(0.5s)!
+[.crtDisplay:block(density=3.5, curvature=0.12, flicker=0.05, noise=0.06, grain=7, speed=0.9, vignette=0.76, softness=0.36)]
+ROOT ACCESS: GRANTED
+
+{COORDINATES EXTRACTED} @ f.neonGlow(color="#00f5ff", shadow="#021016", strength=2, radius=7, width=1.5, pulse=0.2, speed=0.8).chromaticAberration(x=3, y=0, pulse=0.15, speed=0.9)
+
+35.6895 N :: 139.6917 E
+TRACE ERASED > EXIT

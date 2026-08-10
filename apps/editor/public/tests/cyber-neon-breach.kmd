@@ -1,0 +1,46 @@
+---
+title: 示例 - 霓虹边界入侵
+mode: stage
+speed: 42
+designWidth: 1920
+designHeight: 1080
+bgColor: "#03040a"
+fontColor: "#d8ffff"
+fontFamily: monospace
+---
+
+// 镜头 1：用呼吸霓虹和轻微色差建立城市招牌质感。
+@ bg(color="#03040a")
+@ cam.zoom(0.78, 1.2s)!
+{NIGHT CITY} @ f.neonGlow(color="#00f5ff", shadow="#020714", strength=2.6, radius=11, width=2.5, pulse=0.28, speed=0.8).chromaticAberration(x=4, y=0.5, pulse=0.24, speed=1.2).big.big
+
+{DISTRICT :: 09} @ f.neonGlow(color="#ff2bd6", shadow="#12031a", strength=2.1, radius=8, pulse=0.42, speed=1.6).digitalFlicker(rate=14, duty=0.14, intensity=0.45, minAlpha=0.5)
+
+---
+
+// 镜头 2：安全边界开始失稳，短促震动配合逐字跳帧。
+@ bg(color="#080311")
+@ cam.reset(0.4s)!
+@ cam.move(-180, 0, 0.7s)!
+{SECURITY PERIMETER} @ f.neonGlow(color="#ff375f", shadow="#160207", strength=2.4, radius=9, pulse=0.5, speed=2.4).digitalFlicker(rate=24, duty=0.28, intensity=0.72, minAlpha=0.25).big
+
+@ cam.shake(7)
+{UNSTABLE} @ f.cyberGlitch(rgb=18, frequency=8, burst=0.45, blockSize=12, noise=0.24, jitter=5).chromaticAberration(x=8, y=1, pulse=0.5, speed=2.8)
+
+---
+
+// 镜头 3：完整的 AE 式 glitch burst，镜头快速推近。
+@ bg(color="#020207")
+@ cam.reset(0.25s)!
+@ cam.zoom(1.24, 0.55s)!
+[.neonGlow:block(color="#00f5ff", shadow="#04020b", strength=3.1, radius=13, width=3, pulse=0.32, speed=1.9) .cyberGlitch:block(rgb=24, frequency=10, burst=0.5, blockSize=18, noise=0.28, jitter=6) .chromaticAberration:block(x=12, y=1.5, pulse=0.55, speed=3.2)]
+SIGNAL BREACH
+
+---
+
+// 镜头 4：故障骤停，绿色许可信息作为干净收束。
+@ bg(color="#020806")
+@ cam.reset(0.8s)!
+{ACCESS} > {GRANTED} @ f.neonGlow(color="#45ff9a", shadow="#02150b", strength=2.8, radius=10, width=2, pulse=0.18, speed=0.7).chromaticAberration(x=2, y=0, pulse=0.1, speed=0.6).big.big
+
+{WELCOME, GHOST.} @ f.digitalFlicker(rate=10, duty=0.08, intensity=0.35, minAlpha=0.65)
