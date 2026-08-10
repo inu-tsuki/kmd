@@ -185,6 +185,20 @@ export const useEditorStore = defineStore('editor', () => {
     }
   };
 
+  const runScriptFromLine = async (lineNumber: number): Promise<boolean> => {
+    const activePlayer = player.value;
+    if (!activePlayer || !Number.isFinite(lineNumber) || lineNumber < 1) return false;
+
+    // 右键播放必须消费编辑器当前文本，不能沿用上次运行留下的 paragraphs/timeline。
+    // ScriptPlayer.load 自带 stop-before-build，因此这里只负责 load → line seek → play。
+    await activePlayer.load(kmdContent.value);
+    syncConfigFromPlayer();
+
+    if (!activePlayer.seekToSourceLine(Math.floor(lineNumber))) return false;
+    activePlayer.toggleAutoPlay(true);
+    return true;
+  };
+
   const stopScript = async () => {
     if (player.value) {
       // SA-22：不写播放态——player.stop() 发 "idle" 事件，adapter 设 playbackState。
@@ -627,6 +641,7 @@ export const useEditorStore = defineStore('editor', () => {
     dirtyFiles,
     setPlayer,
     runScript,
+    runScriptFromLine,
     stopScript,
     nextStep,
     seekRelative,

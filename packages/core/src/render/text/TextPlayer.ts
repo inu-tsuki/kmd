@@ -92,6 +92,12 @@ export interface EntranceFilterRecord {
   timePosition: number;
 }
 
+/** 源码行在当前段落子时间轴上的首个可执行位置。行号为 1-based。 */
+export interface SourceLineAnchor {
+  line: number;
+  timePosition: number;
+}
+
 /**
  * buildTimeline 的返回结果
  */
@@ -102,6 +108,7 @@ export interface TimelineBuildResult {
   instantEffects: InstantEffectRecord[];
   entranceFilters: EntranceFilterRecord[];
   stageModifierRecords: StageModifierRecord[];
+  sourceLineAnchors: SourceLineAnchor[];
   duration: number; // 秒
   /** >>> 触发的时间点 (秒)。ScriptPlayer 应在此位置启动下一段落的子 Timeline。undefined 表示无提前推进。 */
   advanceTime?: number;
@@ -145,6 +152,8 @@ export class TextPlayer {
     const instantEffects: InstantEffectRecord[] = [];
     const entranceFilters: EntranceFilterRecord[] = [];
     const stageModifierRecords: StageModifierRecord[] = [];
+    const sourceLineAnchors: SourceLineAnchor[] = [];
+    const anchoredSourceLines = new Set<number>();
     // 基准揭示速度 (毫秒 → 秒)
     const baseSpeedMs = options.speed ?? target._options?.speed ?? 50;
     const baseSpeed = baseSpeedMs / 1000;
@@ -181,6 +190,16 @@ export class TextPlayer {
 
       const timing = EffectProcessor.resolveTiming(item.timingSugars);
       const { delayOverride, isSugarGo, isInstantGo } = timelineCursor.applyTiming(timing);
+
+      // 行级导航锚点要取该行第一个可执行 item 的真实 cursor，而非段落起点。
+      // 放在 timing sugar 消解之后，使「从此行播放」与自然播放的行首时机同源。
+      if (item.line !== undefined && !anchoredSourceLines.has(item.line)) {
+        anchoredSourceLines.add(item.line);
+        sourceLineAnchors.push({
+          line: item.line + 1,
+          timePosition: timelineCursor.position,
+        });
+      }
 
       // ── 4. Stage 指令（仅空字符：管道符、场景清除等） ──
       // 非空字符的舞台指令见 §5.5（与字符同时触发，阻塞延迟到 token 末）
@@ -276,6 +295,7 @@ export class TextPlayer {
       instantEffects,
       entranceFilters,
       stageModifierRecords,
+      sourceLineAnchors,
       duration: timelineCursor.position,
       advanceTime: timelineCursor.advanceTime,
     };

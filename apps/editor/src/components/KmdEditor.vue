@@ -20,6 +20,7 @@ const store = useEditorStore();
 const editorContainer = ref<HTMLElement | null>(null);
 let editor: monaco.editor.IStandaloneCodeEditor | null = null;
 let isDisposed = false;
+let contextMenuLine: number | null = null;
 
 // 现代装饰器集合管理
 let decorationsCollection: monaco.editor.IEditorDecorationsCollection | null =
@@ -123,33 +124,41 @@ onMounted(async () => {
     },
   });
 
-  // Alt + 点击：跳转播放
+  // Alt + 点击：只跳转，不改变播放意图。
   editor.onMouseDown((e) => {
     if (e.event.altKey && e.target.position) {
       const player = store.player;
       if (!player) return;
       const line = e.target.position.lineNumber;
-      const paragraphs = player.paragraphs;
-
-      // 寻找该行所属的段落 (或之前的最后一个段落)
-      let targetIdx = 0;
-      for (let i = 0; i < paragraphs.length; i++) {
-        const p = paragraphs[i];
-        if (p && p.lineOffset !== undefined && p.lineOffset + 1 <= line) {
-          targetIdx = i;
-        } else if (p && p.lineOffset !== undefined && p.lineOffset + 1 > line) {
-          break;
-        }
-      }
-
-      console.log(
-        `[Editor-Jump] Alt+Click at line ${line}, seeking to p[${targetIdx}]`,
-      );
+      console.log(`[Editor-Jump] Alt+Click at line ${line}`);
       // SA-22：Alt+Click 是 seek 不是 play，不乐观声明播放态。
-      // seekToParagraph → seekToTime 会据 derivePhase 决定：正在播则 resume（发 "playing" 事件，adapter 设态），
+      // seekToSourceLine → seekToTime 会据 derivePhase 决定：正在播则 resume（发 "playing" 事件，adapter 设态），
       // 暂停则停留 paused。乐观写 playbackState 会与实际播放态漂移。
-      player.seekToParagraph(targetIdx);
+      player.seekToSourceLine(line);
     }
+  });
+
+  // Monaco 右键会提供鼠标命中的近似文本位置。先记录该行，菜单 action
+  // 执行时再消费，避免依赖右键是否会同步移动 Monaco 光标。
+  editor.onContextMenu((event) => {
+    contextMenuLine = event.target.position?.lineNumber ?? null;
+  });
+
+  editor.addAction({
+    id: 'kmd.play-from-source-line',
+    label: '从此行开始播放',
+    contextMenuGroupId: 'navigation',
+    contextMenuOrder: 1,
+    run: async (actionEditor) => {
+      const line = contextMenuLine ?? actionEditor.getPosition()?.lineNumber ?? null;
+      contextMenuLine = null;
+      if (line === null) return;
+
+      const started = await store.runScriptFromLine(line);
+      if (!started) {
+        console.warn(`[Editor-PlayFromLine] line ${line} has no playable content at or after it`);
+      }
+    },
   });
 
   // 监听编辑内容变化
@@ -190,6 +199,7 @@ onUnmounted(() => {
     } catch (e) {}
     editor = null;
   }
+  contextMenuLine = null;
 });
 </script>
 
