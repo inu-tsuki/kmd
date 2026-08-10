@@ -11,12 +11,29 @@ import { TextStyle } from "pixi.js";
 export type EffectTrack = "entrance" | "behavior" | "instant" | "timing";
 export type EffectSurface = "text" | "background";
 
+/**
+ * 可序列化的 preset 参数描述。运行时 preset 与 LSP/Inspector 可以读取同一份
+ * 默认值和边界，避免工具层再维护一张镜像表。
+ */
+export interface EffectParameterMetadata {
+  type: "number" | "color" | "boolean" | "string";
+  default: number | string | boolean;
+  min?: number;
+  max?: number;
+  step?: number;
+  description: string;
+}
+
 export interface EffectMetadata {
   type: "behavior" | "style" | "filter" | "action" | "anim";
   track: EffectTrack;
   targetType: "char" | "group" | "both";
   mutexGroup?: string; // 互斥组名，例如 "color", "enter_anim"
   stackable?: boolean; // 是否允许同组叠加 (默认 false)
+  /** 面向效果库浏览和工具投影的稳定分类；不参与运行时路由。 */
+  category?: string;
+  /** 参数默认值与合法边界；preset 实现应复用此 schema 做归一化。 */
+  parameters?: Readonly<Record<string, EffectParameterMetadata>>;
   /**
    * 内部样式：参与 apply 互斥记账，但对 has() 与 getRegisteredNames() 隐藏——
    * 不渗入 commandCatalog 已知命令门、IntelliSense、分类钉表，不扩大语言表面。

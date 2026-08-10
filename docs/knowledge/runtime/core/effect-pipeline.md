@@ -6,7 +6,7 @@
 
 ## 特效元数据 (meta)
 
-每个特效在 `presets/` 目录的分类文件中（`behavior.ts`/`entrance.ts`/`filter.ts`/`visual.ts`/`timing.ts`，由 `presets/index.ts` 用 `export *` 聚合）通过 `defineEffect(fn, meta)` 注册。
+每个特效在 `presets/` 目录的分类文件中（`behavior.ts`/`entrance.ts`/`filter.ts`/`visual.ts`/`timing.ts`，主题组合放 `cyberpunk.ts`，由 `presets/index.ts` 用 `export *` 聚合）通过 `defineEffect(fn, meta)` 注册。
 
 > **注意**：`defineEffect` 是每个 preset 文件内联的本地 helper（`presets/filter.ts:7`），不从外部 import；新 preset 必须写进既有分类文件或新建文件并在 `index.ts` 加 `export *`。`EffectManager` 构造时 `registerBatch(Presets)` 自动注册，**无需改 `Parser.validate()` 白名单**——`f.xxx` 命令经 `registryView.has()` 链自动 known。
 
@@ -19,6 +19,8 @@ export const wave = defineEffect(_wave, {
   stackable: true,        // 允许同 mutex 叠加
 });
 ```
+
+`EffectMetadata.category` 与 `EffectMetadata.parameters` 是可选的工具投影字段，不参与 track/target 路由。`parameters` 记录参数类型、默认值、范围、步进和说明；实现应由同一份 schema 归一化输入，而不是在 preset、LSP、Inspector 各写一遍默认值。当前赛博朋克组合 preset 是第一批使用者；它仍是 core 内建 metadata，不代表 `effect-preset-and-plugin-contract.md` 已升级为稳定第三方 API。
 
 **`targetType` 决定 apply 时的目标对象**：
 - `"char"` → `effectManager.apply(kineticChar, ...)` — 特效实现内有 `instanceof KineticChar` 守卫
@@ -65,13 +67,13 @@ core/filters/
 | Track | 时间驱动 | seek 行为 | 典型特效 |
 |-------|---------|----------|---------|
 | `entrance` | gsap Tween (一次性) | GSAP 自动插值 | fadeIn, slideUp, punch |
-| `behavior` | Ticker 回调 (持续) | `registerBehaviors(t)` 重注册 | shake, wave, rainbow, blur, rgbShift, warp |
+| `behavior` | Ticker 回调 (持续) | `registerBehaviors(t)` 重注册 | shake, wave, blur, rgbShift, cyberGlitch, crtDisplay, neonGlow |
 | `instant` | 立即执行 (一次性) | style 经 `StyleRecord` 重放；filter 经 `InstantEffectRecord` 重放 | red, bold, font (style) / pixelate (filter) |
 | `timing` | cursor 控制 | Timeline 位置隐含 | hold, pause |
 
 > **`instant` track 说明**：原是“死桶”——`TextPlayer.placeCharOnTimeline` 只读 `.behavior`/`.entrance`，`instant` 滤镜 fn 永不执行。现已修复：非 style 的 instant 特效（如静态 filter）经 `InstantEffectRecord` 收集，seek 时由 `PlaybackController.registerInstantEffects` 从 `target.filters` 重置后 force 重 apply，靠 fn 返回的 filter 实例做幂等清理。`InstantCleanup.filterInstance` 支持 `Filter | Filter[]`（组合预设 return 数组）。现有 blur/rgbShift/warp 因含可选 `addModifier` 动画仍填 `behavior`；纯静态滤镜（pixelate 及 M1 的 gray/threshold/posterize/duotone/sharpen/emboss/edge/outline/bloom/halftone）用 `instant`。**block 作用域 filter 也经 `SegmentBuilder` 路由进 record + `segmentTl.call`**（与 char/group 路径对称，非 `applyGroupEffects` 同步挂载）——instant 进 `InstantEffectRecord`、behavior 进 `BehaviorRecord`，char/group/block × instant/behavior 六路径 seek 幂等均覆盖。
 
-> **`behavior` track filter cleanup 说明**（M2 准备修复）：behavior-track filter（blur/rgbShift/warp 及 M2 displace/dissolve/scanline/noise/underwater）除 `addModifier` 外还会把 filter push 进 `target.filters`。原 `clearBehaviors` 只 `removeModifier`、不碰 filters → 每次 seek 累积一个 filter + stop/clearScreen 时 GPU 资源不释放。现已修复，与 instant 路径对称：
+> **`behavior` track filter cleanup 说明**（M2 准备修复）：behavior-track filter（blur/rgbShift/warp、M2 displace/dissolve/scanline/noise/underwater 以及 cyberpunk 组合 preset）除 `addModifier` 外还会把 filter push 进 `target.filters`。原 `clearBehaviors` 只 `removeModifier`、不碰 filters → 每次 seek 累积一个 filter + stop/clearScreen 时 GPU 资源不释放。现已修复，与 instant 路径对称：
 > - **fn 返回值契约**：char 级 fn `return filter`（`Filter | Filter[]`）；容器级（`:group`/`:block`，无 `addModifier`）fn `return { filters, tickerFn }`（`BehaviorFilterResult`），ticker 回调驱动 `uTime`/`uProgress`，cleanup 时 `gsap.ticker.remove(tickerFn)`。**`Filter[]` 首次实战**：M2 `underwater` 组合预设 char 级 `return { filters: [...] }`（无 tickerFn，addModifier 驱动）/ 容器级 `return { filters: [...], tickerFn }`——`unpackBehaviorResult` 经 `'filters' in result` 分支捕获数组，`clearBehaviors` 的 `Array.isArray` 分支逐个移除+`destroyFilterDeep`。回归覆盖见 `final-playback-test.ts` [20.5]。
 > - **`BehaviorCleanup`** 扩展 `target?`/`filterInstance?`/`tickerFn?`；`clearBehaviors` 在 `removeModifier`（守卫：仅 KineticChar 有此方法）之外，从 `target.filters` 移除 filter + 深销毁（见下文 `destroyFilterDeep`）+ 移除 ticker。
 > - **容器级 animation 驱动**：`addModifier` 是 KineticChar 专属；容器级用 `gsap.ticker.add(fn)` 注册回调更新 filter uniform（与 `addModifier` 同源，都是 `gsap.ticker`）。char 级与容器级在 fn 内按 `target instanceof KineticChar` 分走两条路，cleanup 统一由 `clearBehaviors` 处理。
@@ -360,6 +362,36 @@ export const xxx = defineEffect(_xxx, { type: "filter", track: "instant"|"behavi
 | `dissolve` | behavior | both | filter_dissolve | ceil(scale) | 噪声场与 uProgress 阈值比较消散 + 边缘上色（M2，progress 同构 fadeShake） |
 | `displace` | behavior | both | filter_displace | ceil(amount) | sin 组合噪声场驱动 UV 位移（M2，underwater 几何半边，amount=像素值，推荐 :block） |
 | `underwater` | behavior | both | filter_underwater | — | **组合预设**：displace+duotone+blur；内嵌 duotone 随 surface 选择文字/背景 profile |
+| `cyberGlitch` | behavior | both | filter_cyber_glitch | — | AE Glitch 思路：RGB split + 彩噪 + burst pixelate；char 级附带确定性水平跳帧 |
+| `crtDisplay` | behavior | both | filter_crt_display | — | CRT 组合：scanline + mono noise + vignette，统一 ticker 驱动 |
+| `neonGlow` | behavior | both | filter_neon_glow | outline/Bloom padding | 霓虹组合：duotone + 文字 outline + pulsing Bloom；背景 profile 不套文字 outline |
+| `digitalFlicker` | behavior | char | filter_digital_flicker | — | 数字闪断：分帧 alpha gate + noise + scanline；只支持逐字 modifier 语义 |
+| `hologram` | behavior | both | filter_hologram | Bloom padding | 全息投影：surface-aware duotone + scanline + RGB jitter + Bloom；char 级附带漂浮/透明度闪烁 |
+| `chromaticAberration` | behavior | both | filter_rgb | — | 可独立控制 x/y 与 pulse 的色差预设；与 rgbShift 共用 filter_rgb 互斥族 |
+
+### 赛博朋克组合 preset 参数
+
+这些 preset 借鉴 AE 常见的 Glitch、Glow、Flicker、Hologram、Chromatic Aberration 组合方式，但只编排仓库已有 Pixi/GSAP primitive，没有新增 shader。下表的默认值与边界来自 `EffectMetadata.parameters`，运行时也用同一份 schema 钳制。
+
+| preset | 关键参数（默认值；范围） | 推荐用法 |
+|---|---|---|
+| `cyberGlitch` | `rgb=10 [0,64]`, `frequency=4 [0.1,30]`, `burst=0.22 [0.02,1]`, `blockSize=10 [1,64]`, `noise=0.16 [0,1]`, `jitter=3 [0,32]` | 标题/告警的间歇信号撕裂，char 或 `:block` |
+| `crtDisplay` | `density=3 [0.25,12]`, `curvature=0.12 [0,1]`, `flicker=0.08 [0,0.8]`, `noise=0.06 [0,1]`, `speed=1.2 [0,12]` | 终端、监视器、录像回放，推荐 `:block` |
+| `neonGlow` | `strength=1.8 [0,6]`, `radius=7 [1,32]`, `threshold=0.3 [0,1]`, `width=2 [0.5,16]`, `pulse=0.25 [0,1]`, `speed=1.1 [0,10]` | 霓虹招牌/主标题；`color`、`shadow` 接受 hex |
+| `digitalFlicker` | `rate=12 [0.5,60]`, `duty=0.22 [0.02,1]`, `intensity=0.65 [0,1]`, `minAlpha=0.25 [0,1]`, `noise=0.08 [0,1]` | 逐字电子不稳、损坏 UI；`targetType:"char"` |
+| `hologram` | `scan=4 [0.25,12]`, `jitter=2.5 [0,24]`, `glow=1.2 [0,6]`, `flicker=0.16 [0,0.8]`, `speed=1.6 [0,12]`, `float=2 [0,24]` | 全息人物/远程通信；`tint`、`shadow` 接受 hex |
+| `chromaticAberration` | `x=6 [-64,64]`, `y=0 [-64,64]`, `pulse=0.3 [0,1]`, `speed=1.2 [0,12]` | 镜头边缘色差、音乐节拍呼吸，char 或 `:block` |
+
+语法示例：
+
+```kmd
+[.crtDisplay:block(density=4, curvature=0.14, noise=0.08)]
+SIGNAL ONLINE
+
+{NEON} @ f.neonGlow(color="#00f5ff", strength=2.2, pulse=0.35)
+
+{FAULT} @ f.cyberGlitch(rgb=16, burst=0.3).digitalFlicker(rate=18)
+```
 
 ### 背景命令 bg（DIP-FX M2 Task B）
 

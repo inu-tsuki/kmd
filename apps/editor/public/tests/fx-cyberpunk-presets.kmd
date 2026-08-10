@@ -1,0 +1,43 @@
+---
+title: fx - Cyberpunk Preset Library
+mode: stage
+speed: 55
+designWidth: 1920
+designHeight: 1080
+bgColor: "#05070d"
+fontColor: "#d7ffff"
+fontFamily: monospace
+---
+
+// 1. AE Glitch / RGB split / block pixel burst
+[.cyberGlitch:block(rgb=16, frequency=5, burst=0.28, blockSize=14, noise=0.2)]
+SIGNAL BREACH
+
+---
+
+// 2. CRT scanline / barrel curvature / snow / vignette
+[.crtDisplay:block(density=4, curvature=0.14, flicker=0.08, noise=0.08, speed=1.4)]
+TERMINAL 2077
+
+---
+
+// 3. Neon duotone / outline / bloom pulse
+[.neonGlow:block(color="#00f5ff", shadow="#07131f", strength=2.2, radius=9, pulse=0.35)]
+NEON CITY
+
+---
+
+// 4. Per-character digital alpha gate
+{SYSTEM} @ f.digitalFlicker(rate=18, duty=0.3, intensity=0.75, minAlpha=0.2)
+
+---
+
+// 5. Surface-aware hologram composite
+[.hologram:block(tint="#66f7ff", shadow="#03131f", scan=5, jitter=3, glow=1.5, float=3)]
+REMOTE AVATAR
+
+---
+
+// 6. Independent X/Y chromatic aberration with breathing amplitude
+[.chromaticAberration:block(x=10, y=1.5, pulse=0.45, speed=1.8)]
+COLOR FRINGE
