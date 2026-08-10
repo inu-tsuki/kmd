@@ -1,4 +1,13 @@
-import { Application, Assets, DefaultBatcher, Graphics, Texture, UPDATE_PRIORITY } from "pixi.js";
+import { Application, Assets, Graphics, UPDATE_PRIORITY } from "pixi.js";
+import {
+  bindEmptyTextureUnits,
+  capBatchableTextures,
+  preflightRenderer,
+  primeBatchShader,
+  renderApp,
+  resizeApp,
+  syncBatcherTextureLimits,
+} from "./render/pixiInternalsAdapter";
 import {
   collectRuntimeFonts,
   resolveRuntimeAssetUrl,
@@ -81,74 +90,40 @@ class ReaderApp {
   }
 
   private stabilizeRendererForHost() {
-    const renderer = this.pixiApp.renderer as any;
-    const limits = renderer?.limits;
-    if (!limits || !this.isAndroidLikeHost()) return;
+    if (!this.isAndroidLikeHost()) return;
+    // 主题二 S4b（处方 10）：pixi 私有访问收口到 pixiInternalsAdapter——
+    // preflight 探测内部面，缺失 → warn once + 依赖步骤优雅跳过，永不崩。
+    const renderer = this.pixiApp.renderer;
+    const report = preflightRenderer(renderer);
+    if (!report.limits) return;
 
     const stableTextureLimit = this.getAndroidBatchableTextureLimit();
-    const originalMaxBatchableTextures = limits.maxBatchableTextures;
-    const stableMaxBatchableTextures = Math.min(originalMaxBatchableTextures ?? stableTextureLimit, stableTextureLimit);
-
-    if (originalMaxBatchableTextures !== stableMaxBatchableTextures) {
-      limits.maxBatchableTextures = stableMaxBatchableTextures;
+    const capResult = capBatchableTextures(renderer, stableTextureLimit);
+    if (!capResult) return;
+    if (capResult.capped) {
       this.logRuntimeDiagnostic(
         "[ReaderApp] Capped Pixi maxBatchableTextures for Android WebView compatibility:",
         {
-          originalMaxBatchableTextures,
-          stableMaxBatchableTextures,
-          maxTextures: limits.maxTextures,
-          renderer: renderer?.name,
-          webGLVersion: renderer?.context?.webGLVersion,
+          originalMaxBatchableTextures: capResult.originalMaxBatchableTextures,
+          stableMaxBatchableTextures: capResult.stableMaxBatchableTextures,
+          maxTextures: capResult.maxTextures,
+          renderer: capResult.rendererName,
+          webGLVersion: capResult.webGLVersion,
         },
       );
     }
 
-    this.primeAndroidBatchShader(stableMaxBatchableTextures);
-    this.updateExistingBatchers(stableMaxBatchableTextures);
-    this.bindEmptyTextureUnitsForAndroid(renderer);
-    this.installAndroidRendererStabilizer(stableMaxBatchableTextures);
+    const effectiveLimit = capResult.stableMaxBatchableTextures ?? stableTextureLimit;
+    if (!primeBatchShader(effectiveLimit)) {
+      this.logRuntimeDiagnostic("[ReaderApp] Failed to prime Android batch shader.");
+    }
+    syncBatcherTextureLimits(renderer, effectiveLimit);
+    bindEmptyTextureUnits(renderer);
+    this.installAndroidRendererStabilizer(effectiveLimit);
   }
 
   private getAndroidBatchableTextureLimit() {
     return 8;
-  }
-
-  private primeAndroidBatchShader(maxTextures: number) {
-    try {
-      const batcher = new DefaultBatcher({ maxTextures });
-      batcher._updateMaxTextures(maxTextures);
-      batcher.destroy();
-    } catch (error) {
-      this.logRuntimeDiagnostic("[ReaderApp] Failed to prime Android batch shader.", error);
-    }
-  }
-
-  private updateExistingBatchers(maxTextures: number) {
-    const renderer = this.pixiApp.renderer as any;
-    const batchPipe = renderer?.renderPipes?.batch;
-    if (!batchPipe) return;
-
-    const visitBatcher = (batcher: any) => {
-      if (!batcher) return;
-      batcher.maxTextures = maxTextures;
-      batcher._updateMaxTextures?.(maxTextures);
-    };
-
-    Object.values(batchPipe._activeBatches ?? {}).forEach(visitBatcher);
-    Object.values(batchPipe._batchersByInstructionSet ?? {}).forEach((batchersByName: any) => {
-      Object.values(batchersByName ?? {}).forEach(visitBatcher);
-    });
-  }
-
-  private bindEmptyTextureUnitsForAndroid(renderer = this.pixiApp.renderer as any) {
-    const textureSystem = renderer?.texture;
-    const maxTextureUnits = Number(renderer?.limits?.maxTextures ?? 0);
-    if (!textureSystem || !Number.isFinite(maxTextureUnits) || maxTextureUnits <= 0) return;
-
-    const safeTextureUnits = Math.min(maxTextureUnits, 32);
-    for (let unit = 0; unit < safeTextureUnits; unit += 1) {
-      textureSystem.bind(Texture.EMPTY, unit);
-    }
   }
 
   private installAndroidRendererStabilizer(maxTextures: number) {
@@ -156,8 +131,9 @@ class ReaderApp {
     this.androidRendererStabilizerInstalled = true;
     this.pixiApp.ticker.add(
       () => {
-        this.updateExistingBatchers(maxTextures);
-        this.bindEmptyTextureUnitsForAndroid();
+        // 每帧调用——adapter 内部面对缺失静默跳过（warn once 防日志淹没）。
+        syncBatcherTextureLimits(this.pixiApp.renderer, maxTextures);
+        bindEmptyTextureUnits(this.pixiApp.renderer);
       },
       undefined,
       UPDATE_PRIORITY.HIGH,
@@ -223,58 +199,41 @@ class ReaderApp {
   }
 
   public resizeToHost(container?: HTMLElement | null) {
-    const renderer = this.pixiApp.renderer as any;
-    if (!renderer) return;
-
-    const appWithResize = this.pixiApp as any;
-    if (typeof appWithResize.resize === "function") {
-      appWithResize.resize();
-      return;
-    }
-
-    const target =
-      container ??
-      this.androidViewportContainer ??
-      this.pixiApp.canvas?.parentElement ??
-      null;
-    const rect = target?.getBoundingClientRect();
-    const width = Math.max(
-      1,
-      Math.round(
-        rect?.width ||
-          globalThis.innerWidth ||
-          this.pixiApp.canvas?.clientWidth ||
-          this.pixiApp.screen.width ||
-          0,
-      ),
-    );
-    const height = Math.max(
-      1,
-      Math.round(
-        rect?.height ||
-          globalThis.innerHeight ||
-          this.pixiApp.canvas?.clientHeight ||
-          this.pixiApp.screen.height ||
-          0,
-      ),
-    );
-
-    if (typeof renderer.resize === "function") {
-      renderer.resize(width, height);
-    }
+    // adapter 守卫 renderer 存在后才试 app.resize（pre-init 时 Application.resize 会崩）。
+    // fallback 尺寸测量惰性传入——app.resize 存在时不触碰 DOM。
+    resizeApp(this.pixiApp, () => {
+      const target =
+        container ??
+        this.androidViewportContainer ??
+        this.pixiApp.canvas?.parentElement ??
+        null;
+      const rect = target?.getBoundingClientRect();
+      const width = Math.max(
+        1,
+        Math.round(
+          rect?.width ||
+            globalThis.innerWidth ||
+            this.pixiApp.canvas?.clientWidth ||
+            this.pixiApp.screen.width ||
+            0,
+        ),
+      );
+      const height = Math.max(
+        1,
+        Math.round(
+          rect?.height ||
+            globalThis.innerHeight ||
+            this.pixiApp.canvas?.clientHeight ||
+            this.pixiApp.screen.height ||
+            0,
+        ),
+      );
+      return { width, height };
+    });
   }
 
   public renderOnce() {
-    const appWithRender = this.pixiApp as any;
-    if (typeof appWithRender.render === "function") {
-      appWithRender.render();
-      return;
-    }
-
-    const renderer = this.pixiApp.renderer as any;
-    if (typeof renderer?.render === "function") {
-      renderer.render(this.pixiApp.stage);
-    }
+    renderApp(this.pixiApp);
   }
 
   public async loadFonts(options: ReaderAppInitOptions = {}) {
