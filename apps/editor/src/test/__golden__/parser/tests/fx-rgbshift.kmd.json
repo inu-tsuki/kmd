@@ -1,0 +1,888 @@
+{
+  "diagnostics": [],
+  "metadata": {
+    "bgColor": "#0a0a0f",
+    "designHeight": 1080,
+    "designWidth": 1920,
+    "fontColor": "#e0e0e0",
+    "mode": "stage",
+    "speed": 50,
+    "title": "fx - rgbShift 色彩撕裂滤镜",
+    "variables": {}
+  },
+  "paragraphs": [
+    {
+      "ast": {
+        "blockOptions": [
+          {
+            "chain": {
+              "commands": [
+                {
+                  "blocking": false,
+                  "family": "effect",
+                  "level": "block",
+                  "name": "rgbShift",
+                  "params": {
+                    "dist": 5
+                  },
+                  "prefix": "dot",
+                  "raw": ".rgbShift:block(dist=5)"
+                }
+              ],
+              "line": 11,
+              "prefix": "dot",
+              "range": {
+                "end": 24,
+                "start": 1
+              },
+              "raw": ".rgbShift:block(dist=5)",
+              "type": "command-chain"
+            },
+            "line": 11,
+            "range": {
+              "end": 24,
+              "start": 1
+            },
+            "type": "block-option-command"
+          }
+        ],
+        "lineOffset": 10,
+        "lines": [
+          {
+            "body": [
+              {
+                "line": 12,
+                "marks": [],
+                "range": {
+                  "end": 11,
+                  "start": 0
+                },
+                "text": "字符边缘渗出红蓝色差。",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 12,
+            "range": {
+              "end": 11,
+              "start": 0
+            },
+            "raw": "字符边缘渗出红蓝色差。",
+            "type": "line"
+          }
+        ],
+        "source": "// block 作用域：静态色彩撕裂（默认 dist=5）\n[.rgbShift:block(dist=5)]\n字符边缘渗出红蓝色差。",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [
+        {
+          "blocking": false,
+          "level": "block",
+          "name": "rgbShift",
+          "params": {
+            "dist": 5
+          }
+        }
+      ],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "字符边缘渗出红蓝色差。",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 12,
+            "params": {},
+            "range": {
+              "end": 11,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": [
+          {
+            "blocking": false,
+            "level": "block",
+            "name": "rgbShift",
+            "params": {
+              "dist": 5
+            }
+          }
+        ]
+      },
+      "lineOffset": 10,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "字符边缘渗出红蓝色差。",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 12,
+          "params": {},
+          "range": {
+            "end": 11,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 14,
+        "lines": [
+          {
+            "body": [],
+            "commandChains": [],
+            "heading": false,
+            "kind": "scene-clear",
+            "line": 14,
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "raw": "---",
+            "type": "line"
+          }
+        ],
+        "source": "---",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": true,
+            "isSugar": false,
+            "kind": "scene-clear",
+            "layoutInstructions": [
+              {
+                "blocking": false,
+                "line": 14,
+                "params": {},
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "scene.clear"
+              },
+              {
+                "blocking": true,
+                "line": 14,
+                "params": {
+                  "0": 0.5
+                },
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "pause"
+              }
+            ],
+            "line": 14,
+            "params": {},
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 14,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": true,
+          "isSugar": false,
+          "layoutInstructions": [
+            {
+              "blocking": false,
+              "line": 14,
+              "params": {},
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "scene.clear"
+            },
+            {
+              "blocking": true,
+              "line": 14,
+              "params": {
+                "0": 0.5
+              },
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "pause"
+            }
+          ],
+          "line": 14,
+          "params": {},
+          "range": {
+            "end": 3,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [
+          {
+            "chain": {
+              "commands": [
+                {
+                  "blocking": false,
+                  "family": "effect",
+                  "level": "block",
+                  "name": "rgbShift",
+                  "params": {
+                    "anim": true,
+                    "dist": 8
+                  },
+                  "prefix": "dot",
+                  "raw": ".rgbShift:block(dist=8, anim=true)"
+                }
+              ],
+              "line": 17,
+              "prefix": "dot",
+              "range": {
+                "end": 35,
+                "start": 1
+              },
+              "raw": ".rgbShift:block(dist=8, anim=true)",
+              "type": "command-chain"
+            },
+            "line": 17,
+            "range": {
+              "end": 35,
+              "start": 1
+            },
+            "type": "block-option-command"
+          }
+        ],
+        "lineOffset": 16,
+        "lines": [
+          {
+            "body": [
+              {
+                "line": 18,
+                "marks": [],
+                "range": {
+                  "end": 16,
+                  "start": 0
+                },
+                "text": "色差持续抖动，像失锁的视频信号。",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 18,
+            "range": {
+              "end": 16,
+              "start": 0
+            },
+            "raw": "色差持续抖动，像失锁的视频信号。",
+            "type": "line"
+          }
+        ],
+        "source": "// 动画撕裂：anim=true 时差随时间抖动，信号劣化感\n[.rgbShift:block(dist=8, anim=true)]\n色差持续抖动，像失锁的视频信号。",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [
+        {
+          "blocking": false,
+          "level": "block",
+          "name": "rgbShift",
+          "params": {
+            "anim": true,
+            "dist": 8
+          }
+        }
+      ],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "色差持续抖动，像失锁的视频信号。",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 18,
+            "params": {},
+            "range": {
+              "end": 16,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": [
+          {
+            "blocking": false,
+            "level": "block",
+            "name": "rgbShift",
+            "params": {
+              "anim": true,
+              "dist": 8
+            }
+          }
+        ]
+      },
+      "lineOffset": 16,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "色差持续抖动，像失锁的视频信号。",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 18,
+          "params": {},
+          "range": {
+            "end": 16,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 20,
+        "lines": [
+          {
+            "body": [],
+            "commandChains": [],
+            "heading": false,
+            "kind": "scene-clear",
+            "line": 20,
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "raw": "---",
+            "type": "line"
+          }
+        ],
+        "source": "---",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": true,
+            "isSugar": false,
+            "kind": "scene-clear",
+            "layoutInstructions": [
+              {
+                "blocking": false,
+                "line": 20,
+                "params": {},
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "scene.clear"
+              },
+              {
+                "blocking": true,
+                "line": 20,
+                "params": {
+                  "0": 0.5
+                },
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "pause"
+              }
+            ],
+            "line": 20,
+            "params": {},
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 20,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": true,
+          "isSugar": false,
+          "layoutInstructions": [
+            {
+              "blocking": false,
+              "line": 20,
+              "params": {},
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "scene.clear"
+            },
+            {
+              "blocking": true,
+              "line": 20,
+              "params": {
+                "0": 0.5
+              },
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "pause"
+            }
+          ],
+          "line": 20,
+          "params": {},
+          "range": {
+            "end": 3,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 22,
+        "lines": [
+          {
+            "body": [
+              {
+                "children": [
+                  {
+                    "groupId": 1,
+                    "line": 23,
+                    "marks": [],
+                    "range": {
+                      "end": 5,
+                      "start": 1
+                    },
+                    "text": "逐字撕裂",
+                    "type": "text"
+                  }
+                ],
+                "groupId": 1,
+                "line": 23,
+                "range": {
+                  "end": 6,
+                  "start": 0
+                },
+                "type": "group"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "name": "rgbShift",
+                    "params": {
+                      "dist": 4
+                    },
+                    "prefix": "f",
+                    "raw": "f.rgbShift(dist=4)"
+                  }
+                ],
+                "line": 23,
+                "prefix": "f",
+                "range": {
+                  "end": 27,
+                  "start": 9
+                },
+                "raw": "f.rgbShift(dist=4)",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 23,
+            "range": {
+              "end": 27,
+              "start": 0
+            },
+            "raw": "{逐字撕裂} @ f.rgbShift(dist=4)",
+            "type": "line"
+          }
+        ],
+        "source": "// char 作用域：逐字撕裂\n{逐字撕裂} @ f.rgbShift(dist=4)",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "braceGroupId": 1,
+            "commands": [],
+            "content": "逐字撕裂",
+            "effects": [
+              {
+                "blocking": false,
+                "name": "rgbShift",
+                "params": {
+                  "dist": 4
+                }
+              }
+            ],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 23,
+            "params": {},
+            "range": {
+              "end": 5,
+              "start": 1
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 22,
+      "tokens": [
+        {
+          "braceGroupId": 1,
+          "commands": [],
+          "content": "逐字撕裂",
+          "effects": [
+            {
+              "blocking": false,
+              "name": "rgbShift",
+              "params": {
+                "dist": 4
+              }
+            }
+          ],
+          "isBraced": true,
+          "layoutInstructions": [],
+          "line": 23,
+          "params": {},
+          "range": {
+            "end": 5,
+            "start": 1
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 25,
+        "lines": [
+          {
+            "body": [],
+            "commandChains": [],
+            "heading": false,
+            "kind": "scene-clear",
+            "line": 25,
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "raw": "---",
+            "type": "line"
+          }
+        ],
+        "source": "---",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": true,
+            "isSugar": false,
+            "kind": "scene-clear",
+            "layoutInstructions": [
+              {
+                "blocking": false,
+                "line": 25,
+                "params": {},
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "scene.clear"
+              },
+              {
+                "blocking": true,
+                "line": 25,
+                "params": {
+                  "0": 0.5
+                },
+                "range": {
+                  "end": 3,
+                  "start": 0
+                },
+                "type": "pause"
+              }
+            ],
+            "line": 25,
+            "params": {},
+            "range": {
+              "end": 3,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 25,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": true,
+          "isSugar": false,
+          "layoutInstructions": [
+            {
+              "blocking": false,
+              "line": 25,
+              "params": {},
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "scene.clear"
+            },
+            {
+              "blocking": true,
+              "line": 25,
+              "params": {
+                "0": 0.5
+              },
+              "range": {
+                "end": 3,
+                "start": 0
+              },
+              "type": "pause"
+            }
+          ],
+          "line": 25,
+          "params": {},
+          "range": {
+            "end": 3,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 27,
+        "lines": [
+          {
+            "body": [
+              {
+                "children": [
+                  {
+                    "groupId": 2,
+                    "line": 28,
+                    "marks": [],
+                    "range": {
+                      "end": 5,
+                      "start": 1
+                    },
+                    "text": "词组撕裂",
+                    "type": "text"
+                  }
+                ],
+                "groupId": 2,
+                "line": 28,
+                "range": {
+                  "end": 6,
+                  "start": 0
+                },
+                "type": "group"
+              }
+            ],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": false,
+                    "family": "effect",
+                    "level": "group",
+                    "name": "rgbShift",
+                    "params": {
+                      "anim": true,
+                      "dist": 6
+                    },
+                    "prefix": "f",
+                    "raw": "f.rgbShift:group(dist=6, anim=true)"
+                  }
+                ],
+                "line": 28,
+                "prefix": "f",
+                "range": {
+                  "end": 44,
+                  "start": 9
+                },
+                "raw": "f.rgbShift:group(dist=6, anim=true)",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "content",
+            "line": 28,
+            "range": {
+              "end": 44,
+              "start": 0
+            },
+            "raw": "{词组撕裂} @ f.rgbShift:group(dist=6, anim=true)",
+            "type": "line"
+          }
+        ],
+        "source": "// group 作用域：词组级动画撕裂\n{词组撕裂} @ f.rgbShift:group(dist=6, anim=true)",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "braceGroupId": 2,
+            "commands": [],
+            "content": "词组撕裂",
+            "effects": [
+              {
+                "blocking": false,
+                "level": "group",
+                "name": "rgbShift",
+                "params": {
+                  "anim": true,
+                  "dist": 6
+                }
+              }
+            ],
+            "isBraced": true,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 28,
+            "params": {},
+            "range": {
+              "end": 5,
+              "start": 1
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": []
+      },
+      "lineOffset": 27,
+      "tokens": [
+        {
+          "braceGroupId": 2,
+          "commands": [],
+          "content": "词组撕裂",
+          "effects": [
+            {
+              "blocking": false,
+              "level": "group",
+              "name": "rgbShift",
+              "params": {
+                "anim": true,
+                "dist": 6
+              }
+            }
+          ],
+          "isBraced": true,
+          "layoutInstructions": [],
+          "line": 28,
+          "params": {},
+          "range": {
+            "end": 5,
+            "start": 1
+          },
+          "sugar": []
+        }
+      ]
+    }
+  ],
+  "rawParagraphs": [
+    "// block 作用域：静态色彩撕裂（默认 dist=5）\n[.rgbShift:block(dist=5)]\n字符边缘渗出红蓝色差。",
+    "---",
+    "// 动画撕裂：anim=true 时差随时间抖动，信号劣化感\n[.rgbShift:block(dist=8, anim=true)]\n色差持续抖动，像失锁的视频信号。",
+    "---",
+    "// char 作用域：逐字撕裂\n{逐字撕裂} @ f.rgbShift(dist=4)",
+    "---",
+    "// group 作用域：词组级动画撕裂\n{词组撕裂} @ f.rgbShift:group(dist=6, anim=true)"
+  ]
+}

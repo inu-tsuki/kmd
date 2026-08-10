@@ -1,0 +1,29 @@
+---
+title: fx - warp 波纹扭曲滤镜
+mode: stage
+speed: 50
+designWidth: 1920
+designHeight: 1080
+bgColor: "#0a0a1a"
+fontColor: "#00fff0"
+---
+
+// block 作用域：容器级波纹（整段一起扭，behavior 轨 ticker 驱动）
+[.warp:block(freq=10, amp=0.05, speed=0.01)]
+整段文字像水中倒影一样波动。
+
+---
+
+// 高频大幅参数对比
+[.warp:block(freq=20, amp=0.1, speed=0.04)]
+更高频、更大幅的扭曲，接近故障感。
+
+---
+
+// char 作用域：逐字独立波纹（char 级走 stage modifier 路径）
+{逐字扭曲} @ f.warp
+
+---
+
+// group 作用域：词组级波纹
+{词组扭曲} @ f.warp:group(freq=12, amp=0.06, speed=0.02)

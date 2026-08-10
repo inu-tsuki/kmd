@@ -1,7 +1,7 @@
 # 编辑器测试网设计（架构体检处方 5）
 
-> 状态：已实施（2026-07-20，PR feat/test-net）/ 设计仍为权威
-> 最近更新：2026-07-20
+> 状态：已实施（2026-07-20，PR feat/test-net）/ 设计仍为权威；主题一增量见 §8
+> 最近更新：2026-08-03（主题一：织网）
 > 出处：架构体检处方 5（`architecture-health-check-2026-07.md`）
 > 目标读者：实施编码者 + 未来维护者
 > 相关：`architecture-health-check-2026-07.md`、`roadmap/phase-b/1.6-phase-b-plan.md`（B0.1 重写 parser，本网的直接消费者）、`../knowledge/runtime/core/lifecycle-invariants.md`
@@ -192,3 +192,52 @@ Phase B 的 B0.1 将重写 parser 核心（正则成员解析 → 递归下降�
 
 完成后提交 PR 前给出：改动摘要（新增哪些套件、收编/退役哪些脚本）；黄金网覆盖了哪些语料与 B0.1 语法；布局/分类测试的快照规模；CI 变更；全部门禁结果；发现的现状 bug 清单（若有，单独列不顺手改）；仍存在的盲区。不要自行合并 PR，交给主审审核。
 ```
+
+## 8. 主题一：织网（2026-08 增量）
+
+> 出处：Phase B 前验证安全网扩展（主线外支线，2026-08-03 落地）。
+> 纲领：实验期姿态（golden 语料是证据库不是保险丝）+ 探针先于写代码 + harness 不掩盖生产行为。
+
+### 8.1 落了什么
+
+**契约层钉死**（此前零自动化）：
+- `reader-runtime-protocol.test.ts`：信封解析 6 错误码 × string/object 双路径、7 命令 / 6 事件类型、事件工厂线上形状（id/sessionId undefined 键经 stringify 消失）。
+- `runtime-asset-policy.test.ts`：URL 管控矩阵（https/within-base 放行、file:/data: 拦截）、字体收集、Android WebView 门、`RuntimeValueResolver` marker/var 消解。诚实盲区注记：同源 http 分支 node 不可测（setup.ts 禁 stub window），由 e2e 隐式覆盖。
+- `reader-runtime-session.test.ts`：状态机、`receive()` 永不抛、5 个 session 错误码、dispose 静默、seek 数学。
+
+**playback 渐拆完成**（支柱 3 收官）：331 断言全部 in-process，子进程包装与 3846 行旧脚本退役。
+`test:playback` 门禁改为子串过滤（`vitest run src/test/playback`），覆盖 7 个迁移套件 + harness：
+
+| 旧 main() 调用 | 新套件 / describe |
+|---|---|
+| [1]-[4] testDerivePhase/SeekToTime/PlaySegment/DeriveReplayMode | `playback-controller.test.ts` |
+| [5] testResetBoundaryFilter（镜像算法） | `playback-boundary.test.ts`（R8-1/R8-2/R8-3/R9/R10/R11 六组） |
+| [6]-[12] resolvePauseDuration/Graphics 清理/KineticText box/replayStyles/ended 重播/pre-hold baseline/DisplayAssembler/block recapture | `playback-styling.test.ts` |
+| [13]-[20.5] 端到端管线/group-block style/filter 三轨/多 token/多段/post-hold/M2 氛围 | `playback-pipeline.test.ts` |
+| [21]-[23] R22 lastSeekTime/GSAP 前提探针/boundary guard | `playback-r22.test.ts` |
+| [24]-[33] stage 默认参数对齐 + bg 生命周期 SA-39…SA-47 | `playback-background.test.ts` |
+| [34] reader typography settings | `playback-typography.test.ts` |
+
+迁移机械学（可复用于后续类似搬迁）：assert(cond,msg) → `expect(Boolean(cond), msg).toBe(true)` 桥（保诊断文本，真值语义）；tripwire 数值**只测不数**（每批迁移后读子进程 `N passed` 实测行）；迁移期旧套件与新套件并存双保险；`new KMDParser()` 替代单例（braceIdCounter 不累积）；monkeypatch → `vi.spyOn` + `vi.restoreAllMocks`。
+
+覆盖蒸发锚点的两次形态：迁移期用 `EXPECTED_PLAYBACK_CASES`（钉子进程断言执行数）；S15 退役后替代为 `playback-tripwire.test.ts`（钉 7 套件 it 块总数 = 47，防整套件静默删除；断言级增减由各套件自身门禁负责）。审查整改补记：`reader-runtime-session.test.ts`（会话状态机/receive 永不抛/六信封错误码/dispose 语义/updateSettings 门）为 S3 正式交付。
+
+两处有意变更（已标注）：[26] bg 测试的隐式顺序前提 → 显式 `beforeEach(clearBgSprite)` 顺序无关化；[34] `TextBuildContextResolver.configure` 从不回退 → it 内自设置。
+
+**e2e 扩展**（此前 1 spec / 2 测 → 5 spec / 9 测）：
+- `tests/e2e/helpers.ts`：协议 helpers 抽取（sendRuntimeCommand/waitForEvent/inspectRenderedStage + attachRuntimeEventRecorder/loadFixture/stubFixtureAsset/attachErrorObservers/waitForProgressTimeMs）。
+- `seek.spec.ts`：runtimeReady capabilities 精确对象钉死（`DEFAULT_CAPABILITIES`，宿主 UI 显隐押此表）、timeMs seek 往返、markerId-only seek 现状（SEEK_TARGET_MISSING，协议文档已注记）、progressChanged.timeMs 分段单调（段切换归零是自然语义）。
+- `scene-clear.spec.ts`：跨 `---` seek 内容层/背景层存活、自然播放跨场景零错误。
+- `cam.spec.ts`：stage 树快照差分（camera 平移进 world.pivot——首版误钉 position 的教训；seek 后等 rAF 帧 settle）、shake 双采样非常驻（e2e 独有覆盖）、reset 回基线。
+
+**§B-bis 预乘裁决 CONFIRMED**（INV-8 遗留 TODO 清零）：两证链——
+(1) 源码引用门禁 `premultiply-source-gate.test.ts`（CI 钉死 FilterSystem.js `alphaMode = "premultiplied-alpha"` 行，pixi 升级移除即红）；
+(2) 经验像素探针 `premultiply-invariant.spec.ts`（浏览器内从现场滤镜实例拾取 Filter/GlProgram 类身份 + node 侧提取生产 GrayFilter 片元源码构造探针滤镜，滤半透明红矩形读回灰度，α 参数化预测带判别；FALSIFIED 带有意失败防沉默通过）。GrayFilter.ts:22 模板注释已转引用。
+
+**语料弹药**：`cam-focus.kmd` / `cam-drift.kmd` / `fx-warp.kmd` / `fx-rgbshift.kmd` + 4 条 golden（corpus 40→44，其余 golden 零变动）。
+
+### 8.2 刻意不做（及理由）
+
+- **pre-commit 钩子**：仓库刻意无 husky/lint-staged；invariants 守卫已是 CI 硬门禁（合并拦截点已存在），新工具换文档钦定「非阻塞」的小赢不值。
+- **packages/core 抽取 / settings transaction / bg.* subject 语法 / Phase C**：门禁未至，属后续阶段。
+- **TextPlayer/PlaybackController 预拆分**：B4/B5 主线收编，抢先动手会撞车。

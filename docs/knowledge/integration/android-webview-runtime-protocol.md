@@ -126,6 +126,11 @@ interface SeekPayloadFuture {
 }
 ```
 
+> **实现现状（2026-08 主题一织网，e2e `tests/e2e/seek.spec.ts` 钉死）**：`ReaderRuntimeSession.seek`
+> 当前消解 `timeMs`（Future 字段已实现）与 `progress` 两个目标；`segmentId / checkpointId / markerId`
+> 仅解析不消解——只带这些字段的 seek 触发 `SEEK_TARGET_MISSING` 错误事件（非定位）。
+> marker 定位属 v1.5 演进项；演进时同步更新本注记与 e2e 钉死。
+
 ### `setInspectionEnabled`
 
 用于触发或关闭 runtime diagnostics。当前可返回 `inspectionReported`。

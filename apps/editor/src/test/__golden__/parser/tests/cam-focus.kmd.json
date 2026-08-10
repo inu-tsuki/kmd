@@ -1,0 +1,701 @@
+{
+  "diagnostics": [],
+  "metadata": {
+    "designHeight": 1080,
+    "designWidth": 1920,
+    "mode": "stage",
+    "speed": 50,
+    "title": "cam - focus 镜头聚焦",
+    "variables": {}
+  },
+  "paragraphs": [
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 8,
+        "lines": [
+          {
+            "body": [],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": true,
+                    "family": "stage",
+                    "name": "cam.focus",
+                    "params": {
+                      "0": 1160,
+                      "1": 540,
+                      "2": 1
+                    },
+                    "prefix": "bare",
+                    "raw": "cam.focus(1160, 540, 1s)!"
+                  }
+                ],
+                "line": 9,
+                "prefix": "bare",
+                "range": {
+                  "end": 27,
+                  "start": 2
+                },
+                "raw": "cam.focus(1160, 540, 1s)!",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "command-only",
+            "line": 9,
+            "range": {
+              "end": 27,
+              "start": 0
+            },
+            "raw": "@ cam.focus(1160, 540, 1s)!",
+            "type": "line"
+          },
+          {
+            "body": [
+              {
+                "line": 10,
+                "marks": [],
+                "range": {
+                  "end": 11,
+                  "start": 0
+                },
+                "text": "镜头聚焦到画布右半区。",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 10,
+            "range": {
+              "end": 11,
+              "start": 0
+            },
+            "raw": "镜头聚焦到画布右半区。",
+            "type": "line"
+          }
+        ],
+        "source": "// 聚焦到画布右侧（绝对坐标，以画布中心为原点换算后桥接 cam.move）\n@ cam.focus(1160, 540, 1s)!\n镜头聚焦到画布右半区。",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [
+        {
+          "blocking": true,
+          "level": "block",
+          "name": "cam.focus",
+          "params": {
+            "0": 1160,
+            "1": 540,
+            "2": 1
+          }
+        }
+      ],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "镜头聚焦到画布右半区。",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 10,
+            "params": {},
+            "range": {
+              "end": 11,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": [
+          {
+            "blocking": true,
+            "level": "block",
+            "name": "cam.focus",
+            "params": {
+              "0": 1160,
+              "1": 540,
+              "2": 1
+            }
+          }
+        ]
+      },
+      "lineOffset": 8,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "镜头聚焦到画布右半区。",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 10,
+          "params": {},
+          "range": {
+            "end": 11,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 12,
+        "lines": [
+          {
+            "body": [],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": true,
+                    "family": "stage",
+                    "name": "cam.focus",
+                    "params": {
+                      "0": 480,
+                      "1": 270,
+                      "2": 1.5
+                    },
+                    "prefix": "bare",
+                    "raw": "cam.focus(480, 270, 1.5s)!"
+                  }
+                ],
+                "line": 13,
+                "prefix": "bare",
+                "range": {
+                  "end": 28,
+                  "start": 2
+                },
+                "raw": "cam.focus(480, 270, 1.5s)!",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "command-only",
+            "line": 13,
+            "range": {
+              "end": 28,
+              "start": 0
+            },
+            "raw": "@ cam.focus(480, 270, 1.5s)!",
+            "type": "line"
+          },
+          {
+            "body": [
+              {
+                "line": 14,
+                "marks": [],
+                "range": {
+                  "end": 9,
+                  "start": 0
+                },
+                "text": "镜头聚焦到左上角。",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 14,
+            "range": {
+              "end": 9,
+              "start": 0
+            },
+            "raw": "镜头聚焦到左上角。",
+            "type": "line"
+          }
+        ],
+        "source": "// 聚焦到左上区域（带显式时长）\n@ cam.focus(480, 270, 1.5s)!\n镜头聚焦到左上角。",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [
+        {
+          "blocking": true,
+          "level": "block",
+          "name": "cam.focus",
+          "params": {
+            "0": 480,
+            "1": 270,
+            "2": 1.5
+          }
+        }
+      ],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "镜头聚焦到左上角。",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 14,
+            "params": {},
+            "range": {
+              "end": 9,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": [
+          {
+            "blocking": true,
+            "level": "block",
+            "name": "cam.focus",
+            "params": {
+              "0": 480,
+              "1": 270,
+              "2": 1.5
+            }
+          }
+        ]
+      },
+      "lineOffset": 12,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "镜头聚焦到左上角。",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 14,
+          "params": {},
+          "range": {
+            "end": 9,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 16,
+        "lines": [
+          {
+            "body": [],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": true,
+                    "family": "stage",
+                    "name": "cam.focus",
+                    "params": {
+                      "0": 960,
+                      "1": 540
+                    },
+                    "prefix": "bare",
+                    "raw": "cam.focus(960, 540)!"
+                  }
+                ],
+                "line": 17,
+                "prefix": "bare",
+                "range": {
+                  "end": 22,
+                  "start": 2
+                },
+                "raw": "cam.focus(960, 540)!",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "command-only",
+            "line": 17,
+            "range": {
+              "end": 22,
+              "start": 0
+            },
+            "raw": "@ cam.focus(960, 540)!",
+            "type": "line"
+          },
+          {
+            "body": [
+              {
+                "line": 18,
+                "marks": [],
+                "range": {
+                  "end": 7,
+                  "start": 0
+                },
+                "text": "镜头回到正中。",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 18,
+            "range": {
+              "end": 7,
+              "start": 0
+            },
+            "raw": "镜头回到正中。",
+            "type": "line"
+          }
+        ],
+        "source": "// 聚焦回画布中心（默认时长）\n@ cam.focus(960, 540)!\n镜头回到正中。",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [
+        {
+          "blocking": true,
+          "level": "block",
+          "name": "cam.focus",
+          "params": {
+            "0": 960,
+            "1": 540
+          }
+        }
+      ],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "镜头回到正中。",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 18,
+            "params": {},
+            "range": {
+              "end": 7,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": [
+          {
+            "blocking": true,
+            "level": "block",
+            "name": "cam.focus",
+            "params": {
+              "0": 960,
+              "1": 540
+            }
+          }
+        ]
+      },
+      "lineOffset": 16,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "镜头回到正中。",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 18,
+          "params": {},
+          "range": {
+            "end": 7,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    },
+    {
+      "ast": {
+        "blockOptions": [],
+        "lineOffset": 20,
+        "lines": [
+          {
+            "body": [],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": true,
+                    "family": "stage",
+                    "name": "cam.focus",
+                    "params": {
+                      "0": 1160,
+                      "1": 540,
+                      "2": 1
+                    },
+                    "prefix": "bare",
+                    "raw": "cam.focus(1160, 540, 1s)!"
+                  }
+                ],
+                "line": 21,
+                "prefix": "bare",
+                "range": {
+                  "end": 27,
+                  "start": 2
+                },
+                "raw": "cam.focus(1160, 540, 1s)!",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "command-only",
+            "line": 21,
+            "range": {
+              "end": 27,
+              "start": 0
+            },
+            "raw": "@ cam.focus(1160, 540, 1s)!",
+            "type": "line"
+          },
+          {
+            "body": [
+              {
+                "line": 22,
+                "marks": [],
+                "range": {
+                  "end": 5,
+                  "start": 0
+                },
+                "text": "定位目标。",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 22,
+            "range": {
+              "end": 5,
+              "start": 0
+            },
+            "raw": "定位目标。",
+            "type": "line"
+          },
+          {
+            "body": [],
+            "commandChains": [
+              {
+                "commands": [
+                  {
+                    "blocking": true,
+                    "family": "stage",
+                    "name": "cam.zoom",
+                    "params": {
+                      "0": 1.2,
+                      "1": 1
+                    },
+                    "prefix": "bare",
+                    "raw": "cam.zoom(1.2, 1s)!"
+                  }
+                ],
+                "line": 23,
+                "prefix": "bare",
+                "range": {
+                  "end": 20,
+                  "start": 2
+                },
+                "raw": "cam.zoom(1.2, 1s)!",
+                "type": "command-chain"
+              }
+            ],
+            "heading": false,
+            "kind": "command-only",
+            "line": 23,
+            "range": {
+              "end": 20,
+              "start": 0
+            },
+            "raw": "@ cam.zoom(1.2, 1s)!",
+            "type": "line"
+          },
+          {
+            "body": [
+              {
+                "line": 24,
+                "marks": [],
+                "range": {
+                  "end": 5,
+                  "start": 0
+                },
+                "text": "推近目标。",
+                "type": "text"
+              }
+            ],
+            "commandChains": [],
+            "heading": false,
+            "kind": "content",
+            "line": 24,
+            "range": {
+              "end": 5,
+              "start": 0
+            },
+            "raw": "推近目标。",
+            "type": "line"
+          }
+        ],
+        "source": "// 聚焦后缩放组合（聚焦与常规镜头指令在同一叙事序列）\n@ cam.focus(1160, 540, 1s)!\n定位目标。\n@ cam.zoom(1.2, 1s)!\n推近目标。",
+        "type": "paragraph"
+      },
+      "blockOptions": {},
+      "diagnostics": [],
+      "globalEffects": [
+        {
+          "blocking": true,
+          "level": "block",
+          "name": "cam.focus",
+          "params": {
+            "0": 1160,
+            "1": 540,
+            "2": 1
+          }
+        },
+        {
+          "blocking": true,
+          "level": "block",
+          "name": "cam.zoom",
+          "params": {
+            "0": 1.2,
+            "1": 1
+          }
+        }
+      ],
+      "ir": {
+        "blockOptions": {},
+        "diagnostics": [],
+        "inline": [
+          {
+            "commands": [],
+            "content": "定位目标。",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 22,
+            "params": {},
+            "range": {
+              "end": 5,
+              "start": 0
+            },
+            "sugar": []
+          },
+          {
+            "commands": [],
+            "content": "\n",
+            "effects": [],
+            "isPipe": false,
+            "isSceneClear": false,
+            "isSugar": false,
+            "kind": "newline",
+            "layoutInstructions": [],
+            "line": 22,
+            "params": {},
+            "range": {
+              "end": 5,
+              "start": 5
+            },
+            "sugar": []
+          },
+          {
+            "commands": [],
+            "content": "推近目标。",
+            "effects": [],
+            "isBraced": false,
+            "kind": "text",
+            "layoutInstructions": [],
+            "line": 24,
+            "params": {},
+            "range": {
+              "end": 5,
+              "start": 0
+            },
+            "sugar": []
+          }
+        ],
+        "paragraphEffects": [
+          {
+            "blocking": true,
+            "level": "block",
+            "name": "cam.focus",
+            "params": {
+              "0": 1160,
+              "1": 540,
+              "2": 1
+            }
+          },
+          {
+            "blocking": true,
+            "level": "block",
+            "name": "cam.zoom",
+            "params": {
+              "0": 1.2,
+              "1": 1
+            }
+          }
+        ]
+      },
+      "lineOffset": 20,
+      "tokens": [
+        {
+          "commands": [],
+          "content": "定位目标。",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 22,
+          "params": {},
+          "range": {
+            "end": 5,
+            "start": 0
+          },
+          "sugar": []
+        },
+        {
+          "commands": [],
+          "content": "\n",
+          "effects": [],
+          "isPipe": false,
+          "isSceneClear": false,
+          "isSugar": false,
+          "layoutInstructions": [],
+          "line": 22,
+          "params": {},
+          "range": {
+            "end": 5,
+            "start": 5
+          },
+          "sugar": []
+        },
+        {
+          "commands": [],
+          "content": "推近目标。",
+          "effects": [],
+          "isBraced": false,
+          "layoutInstructions": [],
+          "line": 24,
+          "params": {},
+          "range": {
+            "end": 5,
+            "start": 0
+          },
+          "sugar": []
+        }
+      ]
+    }
+  ],
+  "rawParagraphs": [
+    "// 聚焦到画布右侧（绝对坐标，以画布中心为原点换算后桥接 cam.move）\n@ cam.focus(1160, 540, 1s)!\n镜头聚焦到画布右半区。",
+    "// 聚焦到左上区域（带显式时长）\n@ cam.focus(480, 270, 1.5s)!\n镜头聚焦到左上角。",
+    "// 聚焦回画布中心（默认时长）\n@ cam.focus(960, 540)!\n镜头回到正中。",
+    "// 聚焦后缩放组合（聚焦与常规镜头指令在同一叙事序列）\n@ cam.focus(1160, 540, 1s)!\n定位目标。\n@ cam.zoom(1.2, 1s)!\n推近目标。"
+  ]
+}
