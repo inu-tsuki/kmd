@@ -9,7 +9,7 @@
 //
 // 与 parser-golden.test.ts / layout-coords.test.ts 共用同一序列化与计算逻辑（单一真相源）。
 
-import { readFileSync, readdirSync, existsSync, mkdirSync, writeFileSync } from 'node:fs';
+import { readFileSync, existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { TextStyle } from 'pixi.js';
 import { KMDParser } from '@kmd/core/parser/Parser';
@@ -18,6 +18,7 @@ import { LayoutPlanner } from '@kmd/core/layout/LayoutPlanner';
 import { TextLayoutEngine } from '@kmd/core/layout/TextLayoutEngine';
 import { serializeParseResult } from '../src/test/golden-serializer';
 import { normalize } from '../src/test/golden-serializer';
+import { collectParserGoldenCorpus } from '../src/test/parser-golden-corpus';
 import '../src/test/setup'; // 引入 headless shim（DOMAdapter 合成度量），与 layout 测试同源。
 
 const ROOT = join(import.meta.dirname, '..');
@@ -26,19 +27,6 @@ const PARSER_GOLDEN = join(ROOT, 'src', 'test', '__golden__', 'parser');
 const LAYOUT_GOLDEN = join(ROOT, 'src', 'test', '__golden__', 'layout');
 
 // ─── parser goldens ─────────────────────────────────────────────────
-function collectCorpus(): { name: string; path: string }[] {
-  const out: { name: string; path: string }[] = [];
-  const testsDir = join(PUBLIC_DIR, 'tests');
-  for (const name of readdirSync(testsDir).sort()) {
-    if (name.endsWith('.kmd')) out.push({ name: `tests/${name}`, path: join(testsDir, name) });
-  }
-  for (const name of readdirSync(PUBLIC_DIR).sort()) {
-    if (!name.endsWith('.kmd')) continue;
-    if (existsSync(join(PUBLIC_DIR, name))) out.push({ name: `top/${name}`, path: join(PUBLIC_DIR, name) });
-  }
-  return out;
-}
-
 function writeIfChanged(path: string, content: string): 'written' | 'unchanged' {
   mkdirSync(dirname(path), { recursive: true });
   if (existsSync(path) && readFileSync(path, 'utf-8') === content) return 'unchanged';
@@ -48,7 +36,7 @@ function writeIfChanged(path: string, content: string): 'written' | 'unchanged' 
 
 let parserWritten = 0;
 let parserUnchanged = 0;
-for (const { name, path } of collectCorpus()) {
+for (const { name, path } of collectParserGoldenCorpus(PUBLIC_DIR)) {
   const source = readFileSync(path, 'utf-8');
   const result = new KMDParser().parse(source);
   const serialized = serializeParseResult(result);
