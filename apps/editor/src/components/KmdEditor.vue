@@ -6,6 +6,10 @@
 import { ref, onMounted, onUnmounted, watch } from "vue";
 import * as monaco from "monaco-editor";
 import { registerKMDLanguage } from "../editor/kmd-lang";
+import {
+  KMD_EDITOR_INPUT_OPTIONS,
+  loadKmdEditorFont,
+} from '../editor/editorOptions';
 import { themeService } from "../editor/ThemeService";
 import { parser } from "@kmd/core/parser/Parser";
 import { useEditorStore } from "../store/editorStore";
@@ -106,13 +110,18 @@ onMounted(async () => {
   // Wait for TM grammar to load before creating editor (ensures correct initial highlight)
   await registerKMDLanguage();
 
+  // Monaco 缓存字体度量。必须在 create() 前完成字体加载，否则先使用后备字体
+  // 测量、随后切换到 Fira Code 时，光标与文字的横向位置会逐列累积偏差。
+  const fontLoaded = await loadKmdEditorFont(document.fonts);
+  if (!editorContainer.value || isDisposed) return;
+  if (fontLoaded) monaco.editor.remeasureFonts();
+
   editor = monaco.editor.create(editorContainer.value, {
     value: props.modelValue,
     language: "kmd",
     theme: themeService.activeThemeName,
     automaticLayout: true,
-    fontSize: 14,
-    fontFamily: "'Fira Code', 'Courier New', monospace",
+    ...KMD_EDITOR_INPUT_OPTIONS,
     minimap: { enabled: false },
     scrollBeyondLastLine: false,
     lineNumbers: "on",
