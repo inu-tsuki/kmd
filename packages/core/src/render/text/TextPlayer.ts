@@ -160,6 +160,7 @@ export class TextPlayer {
     const allChars = plan.items.map(item => item.char);
     const chainPlansByToken = new Map<number, RuntimeParagraphExecutionPlan["chainPlans"][number]>();
     const tokenPlansByToken = new Map<number, RuntimeParagraphExecutionPlan["tokenPlans"][number]>();
+    const tokenRevealPositions = new Map<number, number>();
     plan.tokenPlans.forEach((tokenPlan) => {
       tokenPlansByToken.set(tokenPlan.tokenIdx, tokenPlan);
       if (tokenPlan.chainPlan) {
@@ -190,6 +191,13 @@ export class TextPlayer {
 
       const timing = EffectProcessor.resolveTiming(item.timingSugars);
       const { delayOverride, isSugarGo, isInstantGo } = timelineCursor.applyTiming(timing);
+
+      // Token 容器的 :group 效果只在 token-end 时才能拿到完整 wrapper，
+      // 但它的语义时钟必须对齐该组首个可见字符的揭示时刻（D12）。
+      // 在 timing sugar 消解后记录真实 cursor，稍后构建容器 record 时回用。
+      if (char.text.trim() && !tokenRevealPositions.has(item.tokenIdx)) {
+        tokenRevealPositions.set(item.tokenIdx, timelineCursor.position);
+      }
 
       // 行级导航锚点要取该行第一个可执行 item 的真实 cursor，而非段落起点。
       // 放在 timing sugar 消解之后，使「从此行播放」与自然播放的行首时机同源。
@@ -250,8 +258,23 @@ export class TextPlayer {
             }
             this.unrollCharChain(tl, wrapper, tokenPlan.visualEffects, timelineCursor.position, behaviors, holdCharConfig, styleRecords, instantEffects, entranceFilters, stageModifierRecords, options.playbackState);
           } else {
+            // wrapper 在 token-end 才完整，但 :group 视觉链以首字揭示 cursor 为语义起点。
+            // 无可见字符的退化 token 回退到当前 cursor。
+            const tokenRevealPosition = tokenRevealPositions.get(item.tokenIdx) ?? timelineCursor.position;
             // unrollGroupChain 返回 chain 内 pause 指令的累计时长，追加到 deferredCursorAdvance
-            const pauseFromChain = this.unrollGroupChain(tl, wrapper, tokenPlan.visualEffects, timelineCursor.position, behaviors, styleRecords, instantEffects, entranceFilters, stageModifierRecords, options.playbackState);
+            const pauseFromChain = this.unrollGroupChain(
+              tl,
+              wrapper,
+              tokenPlan.visualEffects,
+              timelineCursor.position,
+              tokenRevealPosition,
+              behaviors,
+              styleRecords,
+              instantEffects,
+              entranceFilters,
+              stageModifierRecords,
+              options.playbackState,
+            );
             if (pauseFromChain > 0) {
               timelineCursor.addDeferredAdvance(pauseFromChain);
             }
@@ -462,7 +485,7 @@ export class TextPlayer {
    *
    * 无 hold 链时：
    *   - behaviors 由 placeCharOnTimeline 逐字注册（与出现时机 stagger），此处不重复
-   *   - 样式/入场效果仍在此处于 token-end 时间点应用
+   *   - 容器效果在 token-end 构建 record，但时间锚定到该组首字揭示时刻
    *
    * 有 hold:group 时（placeCharOnTimeline 已跳过所有 behaviors）：
    *   - isCharLevel 特效 (targetType="char" 或 level="char") → 逐字独立应用到 wrapper.chars
@@ -474,6 +497,7 @@ export class TextPlayer {
     wrapper: TokenWrapper,
     effects: EffectConfig[],
     startPosition: number,
+    tokenRevealPosition: number,
     behaviors: BehaviorRecord[],
     styleRecords: StyleRecord[],
     instantEffects: InstantEffectRecord[],
@@ -530,7 +554,7 @@ export class TextPlayer {
     }
 
     // ── 2. 视觉链条展开 ──
-    chainCursor = startPosition;
+    chainCursor = tokenRevealPosition;
     let groupHoldEncountered = false;
     // 是否存在组级 hold — 影响 char-level behaviors 的分流策略
     const hasGroupHold = visualConfigs.some(c => c.name === "hold" && c.level !== "char");

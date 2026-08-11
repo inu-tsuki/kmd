@@ -110,15 +110,17 @@ test('cyberpunk title chains keep first-frame filter fan-out bounded', async ({ 
     return marker!.timeMs!;
   };
 
-  // speed=34ms/char；+900ms 覆盖 20–23 字标题的 token-end，此时 :group filter
-  // 已挂载，能同时捕获逐字 reveal 与容器滤镜首帧，而不是只测前几个字符。
+  // speed=34ms/char；+50ms 锁定首字阶段，验证 :group filter 不等待 token-end。
+  // +900ms 再覆盖 20–23 字标题的末字，验证容器滤镜没有随揭示过程重复堆积。
   const blacksiteStart = markerTime('BLACKSITE TERMINAL ONLINE');
+  const blacksiteFirstGlyph = await probeSeek(page, blacksiteStart + 50);
   const blacksite = await probeSeek(page, blacksiteStart + 900);
   const countermeasure = await probeSeek(page, markerTime('COUNTERMEASURE ACTIVE') + 900);
   const coordinates = await probeSeek(page, markerTime('COORDINATES EXTRACTED') + 900);
   const blacksiteNatural = await probeNatural(page, blacksiteStart, blacksiteStart + 900);
 
   console.log('[cyberpunk-performance]', {
+    blacksiteFirstGlyph,
     blacksite,
     countermeasure,
     coordinates,
@@ -133,6 +135,9 @@ test('cyberpunk title chains keep first-frame filter fan-out bounded', async ({ 
   // 数量门禁故意留有少量容器/场景累积余量：回归前三个 seek 点依次为
   // 43 / 175 / 282 个 filter。帧间隔作为诊断数据输出，不设硬阈值，避免 CI 负载
   // 把性能探针变成时序假阳性。
+  expect(blacksiteFirstGlyph.filterCount).toBeGreaterThan(0);
+  expect(blacksiteFirstGlyph.filterCount).toBeLessThanOrEqual(8);
+  expect(blacksiteFirstGlyph.filteredNodeCount).toBeLessThanOrEqual(3);
   expect(blacksite.filterCount).toBeLessThanOrEqual(8);
   expect(countermeasure.filterCount).toBeLessThanOrEqual(24);
   expect(coordinates.filterCount).toBeLessThanOrEqual(32);

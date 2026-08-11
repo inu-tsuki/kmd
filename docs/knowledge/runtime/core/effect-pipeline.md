@@ -105,7 +105,9 @@ token.effects: EffectConfig[]
   │   └─ partition() → layoutCmds 进 stream, stageConfigs 进 charData
   │
   └─ TextPlayer.buildTimeline()
-      └─ 在 token 末字符触发 unrollGroupChain():
+      └─ 在 token 末字处收集完整 wrapper 并展开 unrollGroupChain():
+          │  容器 record 的时间锚点回填为该组首个可见字符的揭示 cursor，
+          │  因此 :group 滤镜在首字出现前已挂载，不等待末字（D12）。
           │
           ├─ isCharLevel (targetType === "char" 或 "both"，或显式 :char):
           │   └─ wrapper.chars.forEach(char => effectManager.apply(char, ...))

@@ -117,9 +117,36 @@ describe('cyberpunk effect preset library', () => {
     perChar.segment.timeline.kill();
   });
 
+  it('显式 :group 的容器特效在首字揭示时生效，不等待末字', async () => {
+    const scoped = await build(
+      '{COORDINATES EXTRACTED} @ f.neonGlow:group(color="#00f5ff").chromaticAberration:group(x=3, y=0)',
+    );
+    const groupRecords = scoped.segment.behaviors.filter((item) => (
+      item.effectName === 'neonGlow' || item.effectName === 'chromaticAberration'
+    ));
+    const target = groupRecords[0]?.target;
+
+    expect(groupRecords).toHaveLength(2);
+    expect(groupRecords.every((item) => item.target === target)).toBe(true);
+    expect(groupRecords.map((item) => item.timePosition)).toEqual([0, 0]);
+    expect(target?.filters ?? []).toHaveLength(0);
+
+    PlaybackController.playSegment(scoped.segment, scoped.playbackState);
+    expect((target?.filters ?? []).map((filter: any) => filter.constructor.name)).toEqual([
+      'TextDuotoneFilter',
+      'OutlineFilter',
+      'BloomFilter',
+      'RGBSplitFilter',
+    ]);
+
+    PlaybackController.clearBehaviors(scoped.playbackState);
+    scoped.segment.timeline.kill();
+  });
+
   it('显式 :group 对 instant 和 entrance 也只挂载到容器', async () => {
     const instant = await build('{PIXEL} @ f.pixelate:group(size=8)');
     expect(instant.segment.instantEffects).toHaveLength(1);
+    expect(instant.segment.instantEffects[0]?.timePosition).toBeCloseTo(0, 6);
     const instantTarget = instant.segment.instantEffects[0]?.target;
     expect(instantTarget).not.toBe(instant.char);
 
@@ -135,6 +162,7 @@ describe('cyberpunk effect preset library', () => {
     const entrance = await build('{BLUR} @ f.blurIn:group(0.5s)');
     expect(entrance.segment.entranceFilters).toHaveLength(1);
     const entranceRecord = entrance.segment.entranceFilters[0];
+    expect(entranceRecord?.timePosition).toBeCloseTo(0, 6);
     expect(entranceRecord?.target).not.toBe(entrance.char);
     expect((entranceRecord?.target.filters ?? []).map((filter: any) => filter.constructor.name)).toEqual([
       'BlurFilter',
