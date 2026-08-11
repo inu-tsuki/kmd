@@ -614,6 +614,11 @@ export class TextPlayer {
       const resolved = EffectProcessor.resolveParams(config.params || {});
       const track = EffectProcessor.getTrack(config.name);
 
+      // timing-track 返回的是 cursor 控制结果（如 { type: "speedMultiplier" }），
+      // 不是 GPU Filter。链式 slow/fast 的倍率接入仍由 execution-plan 后续负责，
+      // 但这里必须在构建期截断，不能落入下方 instantEffects 资源桶。
+      if (track === "timing") continue;
+
       if (isStyle) {
         // Bug 2: :bg scope style 不走 applyStyleRecursively（Sprite 无 getGraphicsLayer/tokens）。
         if (config.level === "bg") {
@@ -810,6 +815,9 @@ export class TextPlayer {
       for (let i = 0; i < activeEffects.length; i++) {
         const { config, origIdx } = activeEffects[i]!;
         const track = EffectProcessor.getTrack(config.name);
+        // 与 group-chain 对称：timing 结果不是 Filter，禁止落入 instantEffects。
+        // 链式 slow/fast 的倍率消费仍是独立的 execution-plan 已知缺口。
+        if (track === "timing") continue;
         // R17/SA-32：isStyle 经 classifyStyleWrite 单一真相源。
         const isStyle = EffectProcessor.classifyStyleWrite(config).isStyle;
         const resolved = EffectProcessor.resolveParams(config.params);

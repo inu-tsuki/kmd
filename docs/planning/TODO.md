@@ -574,18 +574,19 @@
 > 各附证据锚点；A 作为 B5 验收输入，C 由 B3 明文保留机制（post-B 仍是活问题）。
 > 不在 Phase B 开工前夜扰动执行层。
 
-### A · 链式 `f.slow`/`f.fast` 丢 speedMultiplier —— **仍存在**
+### A · 链式 `f.slow`/`f.fast` 丢 speedMultiplier —— **倍率缺口仍存在，资源错分流已修**
 
 - **现象**：特效链内的 `f.slow`/`f.fast` 返回值（`{type:"speedMultiplier", value}`）
   在 chain 路由中丢失；糖衣 `~`/`^` 正常工作。
-- **证据链**：
-  - chain 路由把 timing-track 命令当普通效果推入 instantEffects 桶：
-    `TextPlayer.ts:643-652`（group 链）/ `:792-800`（char 链）；
-  - instant 桶消费端把 `{type:"speedMultiplier"}` 返回值当伪 filter 丢弃：
-    `BehaviorRecordBuilder.ts:328-348`（apply 只看 filterInstance/graphicsLayer，
-    timing 返回值无消费路径）；
+- **2026-08-11 安全修复**：用户从速度段落按源码行跳转后再播放，`stop()` 在
+  `clearInstantEffects → destroyFilterDeep` 对 `{type:"speedMultiplier"}` 调 `destroy()` 崩溃。
+  group/char chain 现都在构建期截断 timing track，不再写入 `InstantEffectRecord`；真实
+  `final-test.kmd` 速度语法糖行跳转 + stop 已有回归。没有在清理期加 `typeof destroy` 守卫，
+  因为 timing 结果从所有权上就不是滤镜资源。
+- **倍率缺口证据链**：
+  - chain 路由现安全跳过 timing-track，但尚未把其返回值接入 execution plan 的 cursor；
   - block 路同样丢：`StyleRecordBuilder.ts:125` 处 applyGroupEffects 返回值未消费；
-  - 唯一达 cursor 的是 sugar：`TextPlayer.ts:182-183` 经
+  - 唯一达 cursor 的仍是 sugar：`TextPlayer` 经
     `EffectProcessor.resolveTiming(item.timingSugars)` → `timelineCursor.applyTiming`；
   - `KineticChar.timingResults`（`KineticChar.ts:46`）为死字段（写入即弃）。
 - **处置**：作为 B5（Execution Debt Closure）验收输入——

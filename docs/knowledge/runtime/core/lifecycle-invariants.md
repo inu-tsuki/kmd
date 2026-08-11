@@ -109,6 +109,10 @@ entrance filter（blurIn 等）的 tween 在时间线上，seek 时靠 `timeline
 
 **附带约束（聚合）**：跨层聚合 record 时（如 `SegmentBuilder` 把 `buildResult.stageModifierRecords` 并进 `allStageModifierRecords`）必须 spread 全部字段（`{...modRecord, timePosition}`），不能只挑已知字段拷贝——否则单字段（如 `isClearBoundary`）会在聚合点丢失。
 
+**资源桶约束**：token-chain 的 `timing` track 必须在构建期与 `instant` track 分离。
+`slow`/`fast` 返回的 cursor 控制对象不是 Filter，不得写入 `InstantEffectRecord` /
+`activeInstantCleanups`。清理期不靠 `typeof destroy` 守卫掩盖错分流；所有权在 record 构建期确立。
+
 **审计触发**：R2 review（SA-14）。
 
 ### INV-8: 外部依赖边界行为假设须可复现验证

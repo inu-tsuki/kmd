@@ -71,6 +71,12 @@ core/filters/
 | `instant` | 立即执行 (一次性) | style 经 `StyleRecord` 重放；filter 经 `InstantEffectRecord` 重放 | red, bold, font (style) / pixelate (filter) |
 | `timing` | cursor 控制 | Timeline 位置隐含 | hold, pause |
 
+`InstantEffectRecord` 是 GPU/Graphics 资源桶，不是所有非 entrance/behavior 命令的兜底桶。
+timing-track 返回的是 `{type:"delay"}` / `{type:"speedMultiplier"}` 等 cursor 控制结果，
+token-chain 构建必须在进入 instant 分支前截断。否则跳转重放会把 timing 结果登记成
+`InstantCleanup.filterInstance`，随后 stop/seek 对普通对象调用 `Filter.destroy()` 并中断清理。
+链式 `f.slow`/`f.fast` 的倍率消费仍是 execution-plan 已知缺口；安全分流与倍率接入是两件事。
+
 > **`instant` track 说明**：原是“死桶”——`TextPlayer.placeCharOnTimeline` 只读 `.behavior`/`.entrance`，`instant` 滤镜 fn 永不执行。现已修复：非 style 的 instant 特效（如静态 filter）经 `InstantEffectRecord` 收集，seek 时由 `PlaybackController.registerInstantEffects` 从 `target.filters` 重置后 force 重 apply，靠 fn 返回的 filter 实例做幂等清理。`InstantCleanup.filterInstance` 支持 `Filter | Filter[]`（组合预设 return 数组）。现有 blur/rgbShift/warp 因含可选 `addModifier` 动画仍填 `behavior`；纯静态滤镜（pixelate 及 M1 的 gray/threshold/posterize/duotone/sharpen/emboss/edge/outline/bloom/halftone）用 `instant`。**block 作用域 filter 也经 `SegmentBuilder` 路由进 record + `segmentTl.call`**（与 char/group 路径对称，非 `applyGroupEffects` 同步挂载）——instant 进 `InstantEffectRecord`、behavior 进 `BehaviorRecord`，char/group/block × instant/behavior 六路径 seek 幂等均覆盖。
 
 > **`behavior` track filter cleanup 说明**（M2 准备修复）：behavior-track filter（blur/rgbShift/warp、M2 displace/dissolve/scanline/noise/underwater 以及 cyberpunk 组合 preset）除 `addModifier` 外还会把 filter push 进 `target.filters`。原 `clearBehaviors` 只 `removeModifier`、不碰 filters → 每次 seek 累积一个 filter + stop/clearScreen 时 GPU 资源不释放。现已修复，与 instant 路径对称：
