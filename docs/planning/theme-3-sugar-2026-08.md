@@ -5,7 +5,9 @@
 > 体例对齐：`theme-2-yard-sweep-2026-08.md`。
 > 重整原因：PR #29 已实现原菜单六项中的四项（主题系统、Hot Replay、LSP 骨架、DIP-FX 部分），
 > 并做了两件菜单外大事（@kmd/core 物理拆分、赛博朋克特效库）。本规划 = PR 审查账目 + 剩余糖的切片。
-> v2（2026-08-11）：写入用户三裁决 + 审查新发现 F8/F9 + page 模式设计附录。
+> v3（2026-08-12）：用户 review 八问落点——Q1 showcase 子目录（S8）、Q2 项目模型 v0 设计页、
+> Q6 锚点契约 v0 设计页（并入 S7 设计页集）、Q7/Q8 事实整理入附录 D（gate #6/#8 输入）、
+> Q3/Q4/Q5 入刻意不做。
 
 ## 0. PR #29 审查账目
 
@@ -72,8 +74,12 @@
 - **S4 · 主题残件**：设置区主题选择器（默认/项目/内置 Dracula+One Dark，走同一 load 路径）；两主题开箱即用验收；F3/F4/F6；**F8/F9 仅当作者未修时接管**（F8 sanitize 全名；F9 改前缀选择器或精确 scope）。
 - **S5 · V1.4 enabler**：`EffectMetadata.description?: string`（可选，不破坏现有 meta）；presets 逐文件补描述（先 cyberpunk + visual 高频子集）；LSP hover provider 骨架（`onHover` 读 registry meta）；hover 测试。
 - **S6 · DIP-FX M3 审计**：按 spec §0.3 补 `:block` 连续级双示样例（色调/邻域类）；Chromium 探针跑 surface profile 表（§0.6）；整理报告入 `docs/planning/apps/editor-dip-effect-library.md`。不加新 behavior。
-- **S7 · page 模式设计页**：附录 A 成文，交用户过目；不实现。
-- **S8 · 台账收口**：本文件转台账 + roadmap「当前规划上下文」更新。
+- **S7 · 设计页集**（用户 review 驱动，三页一页一题，交用户过目，不实现）：
+  - 附录 A · page 模式呈现层（原 S7）；
+  - 附录 B · editor 内 project 模型 v0（Q2：以"kmd 作为作品"场景为中心；首个消费者 = S4 主题选择器的主题归属；不做标准化承诺）；
+  - 附录 C · 锚点系统契约 v0（Q6：`sourceLineAnchors` 提升为 ready payload 并列项；per-token 按需打锚列为 post-B；形状升级 line→(node, localTime) 归 B4 验收，见 Q4）。
+- **S8 · showcase 语料子目录**（Q1）：四份展示作品移 `public/tests/showcase/`；golden 收集器按子目录规则跳过（替代四行名单）；playback/e2e 读取路径同步更新；corpus 断言同步。
+- **S9 · 台账收口**：本文件转台账 + roadmap「当前规划上下文」更新。
 
 ## 4. 门禁与纪律
 
@@ -91,6 +97,11 @@
 | P5.3 GrammarService | 冻结 |
 | page 模式实现 | 设计过目后另议 |
 | V1.3 completion | 后续主题 |
+| Q3 shader gate 形态灵活化 | 记录不修：丑是刻意的钉（INV-8 源码行钉）；regex 提共享 util 消重复可顺手，形态不动 |
+| Q4 seek 图化形状升级 | B4 验收输入（line→(node, localTime)）；现状是退化情形不是死路 |
+| Q5 脚本侧组合高级特效 | 缺件二：参数时间化（Phase B/C 语言面）+ preset 原子性（v1.7 P1 插件化）；cyberpunk.ts 即未来插件原型 |
+| Q7 三层 speed 定义 | 事实整理入附录 D；定义页用户执笔（gate #6） |
+| Q8 IR 桥梁切分 | 现状不切（Phase B 改语义）；切点 = execution plan 层，ADR 保私有即护此可能 |
 
 ## 附录 A · page 模式一页设计（S7 交付物草稿，待用户过目）
 
@@ -116,3 +127,35 @@
 1. 页边界切在行盒间还是允许段内切页（长段超一屏时）？
 2. 翻页过渡是 runtime 内置（timeline cue）还是 host 驱动（视口 API）？
 3. page 与 `---` scene.clear 的交互：隐式清场已存在，显式 `---` 在 page 模式是否 = 强制换页？
+
+## 附录 B · project 模型 v0 设计页（S7 交付物草稿）
+
+**现状**：无标准。三碎片：frontmatter 契约（per-work）、editor 文件夹打开能力、
+`project.yaml`（仅 `editorTheme:` 一字段，projectThemeLoader 首读）。
+**v0 提案**：editor 内模型，不承诺跨端标准。字段候选：`editorTheme`（已存在）、
+`showcaseDir`（S8 联动，可选）、`defaultWork`（打开文件夹时的首载作品）。
+**非目标**：不定义插件清单、不定义构建配置（v1.7 P1 的事）、不写跨端标准文档。
+**开放问题**：主题归属 project 级还是 editor 级（用户偏好覆盖项目默认）？
+
+## 附录 C · 锚点契约 v0 设计页（S7 交付物草稿）
+
+**现状**：三层锚点——`timelineMarkers`（协议级，ready payload）、`sourceLineAnchors`
+（player 内部，line→timePosition 线性）、`checkpoints`（segment 内部）。
+**v0 提案**：`sourceLineAnchors` 提升为 ready payload 并列项（消费者：LSP hover、
+editor minimap、page 模式页↔时间映射）；per-token 锚按需（默认不打，成本在体积）。
+**post-B**：形状升级 line→(node, localTime)（Q4 图化），v0 字段保留为退化视图。
+**测试**：protocol 测试同步钉新 payload 形状（主题一惯例）。
+
+## 附录 D · gate #6/#8 输入：三层 speed 与 IR 桥梁（事实整理，用户执笔定义页）
+
+**三层 speed 现状**（亲手核实）：
+1. 时间轴 speed = `settings.timeScale`（协议级透传，宿主全局；ReaderRuntimeContract:111）。
+2. 入场 speed = 语言糖 `~`/`^` + char_stagger（构建期消解，作者节奏意图）。
+3. 特效执行 speed = **wall-clock**：modifier tickerFn 走 performance.now()，与 playhead
+   脱钩——Known Gap B 残留即此取舍，主题二已定型为设计语义（持续物理叠加）。
+表现力上三者皆必要；第三层改 timeline 驱动 = seek 一致但物理语义变，定义成本最高。
+
+**IR 桥梁现状**：parser→IR（语言面，稳）→lowering→execution plan（语义面，较稳）→
+GSAP timeline→Pixi（后端，可换）。切点 = execution plan 层（TextPlayer 已消费 plan）；
+plan 形状仍漏 timeline 语义（timePosition 等 gsap 向字段）→ 真后端无关需 Phase B 重定义。
+现在不切；ADR「保私有、不承诺 semver」即护住后切的可能。
