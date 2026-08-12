@@ -3,6 +3,7 @@ import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import type { CommunityStore } from '../data/store.js';
+import { issueQuerySchema, toRevisionDto } from '../dto/revisionDto.js';
 import { getActiveRevision, toWorkDetailDto, toWorkSummaryDto, workQuerySchema } from '../dto/workDto.js';
 
 const appRoot = fileURLToPath(new URL('../..', import.meta.url));
@@ -38,6 +39,19 @@ export function createWorksRouter(store: CommunityStore): Router {
     }
 
     response.json(toWorkDetailDto(work));
+  });
+
+  router.get('/:id/revisions', (request, response) => {
+    const work = store.getWork(request.params.id);
+
+    if (!work) {
+      response.status(404).json({ error: 'work_not_found' });
+      return;
+    }
+
+    response.json(store.listRevisions(work.id).map((revision) => (
+      toRevisionDto(work.id, revision)
+    )));
   });
 
   router.get('/:id/source', async (request, response, next) => {
@@ -91,6 +105,16 @@ export function createWorksRouter(store: CommunityStore): Router {
   });
 
   router.get('/:id/issues', (request, response) => {
+    const parsed = issueQuerySchema.safeParse(request.query);
+
+    if (!parsed.success) {
+      response.status(400).json({
+        error: 'invalid_query',
+        issues: parsed.error.flatten()
+      });
+      return;
+    }
+
     const work = store.getWork(request.params.id);
 
     if (!work) {
@@ -98,7 +122,17 @@ export function createWorksRouter(store: CommunityStore): Router {
       return;
     }
 
-    response.json(store.listIssues(request.params.id));
+    if (
+      parsed.data.revisionId
+      && !store.listRevisions(work.id).some((revision) => (
+        revision.id === parsed.data.revisionId
+      ))
+    ) {
+      response.status(404).json({ error: 'revision_not_found' });
+      return;
+    }
+
+    response.json(store.listIssues(work.id, parsed.data.revisionId));
   });
 
   return router;

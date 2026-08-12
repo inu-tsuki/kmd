@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import type { KmdScriptRevision, Work } from '../domain/types.js';
+import { toRevisionDto } from './revisionDto.js';
 
 export const workQuerySchema = z.object({
   mode: z.enum(['scroll', 'paged', 'stage', 'interactive']).optional(),
@@ -66,15 +67,6 @@ function toActiveScriptDto(revision: KmdScriptRevision) {
 function toScriptRefDto(work: Work) {
   return {
     activeRevisionId: work.script.activeRevisionId,
-    revisions: work.script.revisions.map((revision) => ({
-      id: revision.id,
-      label: revision.label,
-      sourceUrl: revision.sourceUrl,
-      mimeType: revision.mimeType,
-      kmdVersion: revision.kmdVersion,
-      runtimeVersion: revision.runtimeVersion,
-      createdAt: revision.createdAt,
-      contentHash: revision.contentHash
-    }))
+    revisions: work.script.revisions.map((revision) => toRevisionDto(work.id, revision))
   };
 }

@@ -18,11 +18,15 @@ The service listens on `http://localhost:3000` by default. Android emulators sho
 - `GET /works`
 - `GET /works/:id`
 - `GET /works/:id/source`
+- `GET /works/:id/revisions`
 - `GET /works/:id/revisions/:revisionId/source`
 - `GET /works/:id/issues`
 - `POST /reviews`
 
-`GET /works` supports `mode`, `status`, and `q` query parameters.
+`GET /works` supports `mode`, `status`, and `q` query parameters. `GET /works/:id/issues`
+accepts an optional `revisionId` query and returns only issues anchored to that immutable revision.
+The revision list exposes client-facing metadata and immutable revision source URLs, never server-local
+`sourcePath` values. `/works/:id/source` remains the active-revision alias.
 
 ## Work And KMD Source
 
