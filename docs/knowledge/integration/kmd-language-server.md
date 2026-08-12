@@ -2,7 +2,7 @@
 
 > 文档状态：Active
 > 最近更新：2026-08-13
-> 权威范围：`packages/kmd-language-server` 与 `extensions/vscode-kmd` 的 LSP V1.1/V1.2 基线
+> 权威范围：`packages/kmd-language-server` 与 `extensions/vscode-kmd` 的 LSP V1.1–V1.3 基线
 
 ## 边界
 
@@ -36,6 +36,24 @@ VS Code / 其他 LSP client
   避免把同名正文标红，也修正 block option 经 legacy projection 后落到正文行的问题。
 - 兼容验证层若重复返回相同 `line + message`，适配层只发布一次；其他错误保留原有顺序。
 - 非 unknown-command 且没有列信息时，范围退化为目标行的非空白区域。
+
+## Completion 约定
+
+- Server 声明 `completionProvider`，触发字符与现有 Monaco provider 对齐：`.`、空格、`@`、`(`、`:`。
+- `provideKmdCompletions()` 是无状态纯函数；stdio 与 Node IPC 共用同一 adapter，focused tests 可脱离
+  transport 验证 replacement range 与语境分流。
+- 当前语境延续 Web IDE 已有能力：`f.` 补 effect/style，`cam.` 补 camera 指令，`@` command zone
+  补全部内建命令，合法命令成员后的 `:` 补 `char/group/block`，参数括号内补当前文档 marker 与
+  `var.*`。命令区边界与 production parser 一样忽略转义和 inline group 内的 `@`；区内语境再由
+  quote/escape/parenthesis-depth scanner 判定，字符串括号、嵌套调用、正文或 frontmatter 冒号不会误触发。
+- Production completion 不导入 effect/style/layout/stage manager。`completionCatalog.ts` 是 Node-safe 的
+  **作者可见内建命令快照**，不是稳定插件 API；parity test 按 registry metadata 排除 `internal` 项后
+  双向比较，新增、删除或错误暴露内建命令时门禁会失败。frontmatter 变量直接复用 core 的行级保真
+  parser，不在 LSP 内维护第二套 `var:` 规则。
+- P1 plugin contribution contract 尚未落地，因此 V1.3 不承诺动态插件补全。未来应由可序列化 metadata
+  projection 替换内建快照，而不是让 language server 加载 Pixi/GSAP runtime 实现。
+- Web IDE 的 Monaco provider 暂时保留。V1.3 只让标准 LSP client 获得同等级能力，不在本阶段改变
+  Monaco transport 或 editor 行为。
 
 ## 入口与构建
 
@@ -85,5 +103,5 @@ parser 应直接返回带 source range / diagnostic code 的结构化诊断，�
 
 ## 当前能力与后续
 
-当前完成 TODO V1.1/V1.2 的可运行基线：server、双 transport、文档同步、diagnostics 和 VS Code
-activate/deactivate client。Completion、hover 与 semantic tokens 属于 V1.3–V1.5，不在本基线内。
+当前完成 TODO V1.1–V1.3 的可运行基线：server、双 transport、文档同步、diagnostics、completion 和
+VS Code activate/deactivate client。Hover 与 semantic tokens 属于 V1.4/V1.5，不在本基线内。

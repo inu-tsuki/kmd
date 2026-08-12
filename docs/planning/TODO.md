@@ -527,10 +527,10 @@
 - [ ] **V1.2 Diagnostics（错误波浪线）**（2026-08-10：LSP `publishDiagnostics` 已完成；Web IDE 的 Monaco `setModelMarkers` 替换仍待迁移）:
   - `parser.validate(text)` → `publishDiagnostics`
   - 替代目前 Monaco 里手写的 `setModelMarkers` 逻辑
-- [ ] **V1.3 Completion（智能补全）**:
-  - 复用 `kmd-lang.ts` 里的补全逻辑，迁移到 LSP `onCompletion`
-  - 补全来源：`effectManager` / `styleManager` / `stageManager` / `layoutManager` 注册表
-  - v1.7 P1 完成后：补全列表自动包含所有已安装插件贡献的指令
+- [x] **V1.3 Completion（智能补全）**（2026-08-12：LSP `onCompletion` 最小闭环完成）:
+  - 复用 `kmd-lang.ts` 的语境规则：`f.` / `cam.` / `@` / `:` / 参数内 marker 与 `var.*`
+  - Node-safe 作者可见内建命令快照避免 completion 直接加载 Pixi/GSAP manager；focused parity test 按 metadata 排除 `internal` 项后与四类 live registry 双向校验，防止静默漂移或内部命令泄漏
+  - Monaco provider 暂保留；动态插件补全仍等待 v1.7 P1 的可序列化 metadata contribution，不把本轮快照声明为稳定插件 API
 - [ ] **V1.4 Hover 文档**:
   - 悬停在 effect/layout/stage 名称上显示简短说明
   - 来源：`EffectMeta.description`（为 meta 增加可选 description 字段）
