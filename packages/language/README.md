@@ -8,6 +8,16 @@ configuration through stable package subpaths:
 - `@kmd/language/syntaxes/kmd.tmLanguage.json`
 - `@kmd/language/language-configuration.json`
 
-The VS Code extension still keeps local packaged copies so it can work without a
-build step. Run `pnpm language:check` after changing these assets to catch drift
-between the package and extension copies.
+`packages/language` is the canonical source. The VS Code extension keeps static
+packaged copies because an installed VSIX cannot resolve monorepo workspace
+files. After changing an asset, run:
+
+```bash
+pnpm language:sync
+pnpm language:check
+```
+
+`language:sync` is the only write step and copies bytes without parsing or
+serializing JSON. It is deliberately explicit: build and package commands run
+the read-only `language:check` first and fail on drift instead of silently
+rewriting tracked extension files. Review copied asset diffs before committing.

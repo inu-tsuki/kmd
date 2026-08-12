@@ -1,37 +1,23 @@
-import { readFile } from 'node:fs/promises';
-import { relative, resolve } from 'node:path';
+import { inspectLanguageAssets } from './language-assets.mjs';
 
-const root = resolve(import.meta.dirname, '..');
+const results = await inspectLanguageAssets();
+const problems = results.filter(result => result.status !== 'synced');
 
-const pairs = [
-  [
-    'packages/language/syntaxes/kmd.tmLanguage.json',
-    'extensions/vscode-kmd/syntaxes/kmd.tmLanguage.json',
-  ],
-  [
-    'packages/language/language-configuration.json',
-    'extensions/vscode-kmd/language-configuration.json',
-  ],
-];
-
-let hasMismatch = false;
-
-for (const [packagePath, extensionPath] of pairs) {
-  const packageFile = resolve(root, packagePath);
-  const extensionFile = resolve(root, extensionPath);
-  const [packageContent, extensionContent] = await Promise.all([
-    readFile(packageFile, 'utf8'),
-    readFile(extensionFile, 'utf8'),
-  ]);
-
-  if (packageContent !== extensionContent) {
-    hasMismatch = true;
-    console.error(`Language asset drift: ${relative(root, packageFile)} != ${relative(root, extensionFile)}`);
+for (const result of problems) {
+  if (result.status === 'missing-source') {
+    console.error(`Canonical language asset is missing: ${result.sourceDisplayPath}`);
+  } else if (result.status === 'missing-packaged-copy') {
+    console.error(`Packaged language asset is missing: ${result.packagedCopyDisplayPath}`);
+  } else {
+    console.error(
+      `Language asset drift: ${result.sourceDisplayPath} != ${result.packagedCopyDisplayPath}`,
+    );
   }
 }
 
-if (hasMismatch) {
+if (problems.length > 0) {
   console.error('Keep @kmd/language and the VS Code extension packaged assets in sync.');
+  console.error('Run `pnpm language:sync`, review the copied assets, then rerun this check.');
   process.exitCode = 1;
 } else {
   console.log('Language assets are in sync.');

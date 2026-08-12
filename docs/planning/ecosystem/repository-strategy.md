@@ -270,7 +270,7 @@ Android Reader 之后应依赖稳定构建产物或 release artifact，而不是
 - runtime hot path 已移除 Pinia/editor shell 直接依赖。
 - Phase B 的 `DocumentSemanticIR`、state/control-flow 和 segment graph 边界已经进入主线或完成设计审查。
 - Web editor 与 runtime 的 import 边界足够清楚，能用 pnpm workspace 或 package export 表达。
-- VS Code 扩展、Web editor 和未来 language service 对 grammar/runtime 的共享策略已经明确；当前 grammar 已先通过 `packages/language/` 提供包引用，扩展打包复制流程仍待后续收敛。
+- VS Code 扩展、Web editor 和未来 language service 对 grammar/runtime 的共享策略已经明确；当前 grammar 通过 `packages/language/` 提供包引用，扩展静态副本由共享清单和显式 `pnpm language:sync` 字节复制，`language:check`、根构建与扩展 package check 负责阻止漂移。
 - `pnpm core:check`、`pnpm build`、`pnpm test`、`pnpm test:parser`、`pnpm reader:build` 与 Android Reader 的基础构建 gate 均可持续通过。
 
 在 gate 满足前，允许继续调整 `@kmd/core` 深层 exports，但必须保持包私有、同步修改所有 workspace 消费者，并通过边界和行为门禁；不得把物理目录存在误写成稳定发布承诺。

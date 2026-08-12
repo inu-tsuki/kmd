@@ -519,6 +519,11 @@
   - 复用现有 `KMDParser` + `parser.validate()` — 零重写
   - 标准 LSP server 入口（`vscode-languageserver` npm 包）
   - `extensions/vscode-kmd/client.ts` 作为轻量 LSP client 包装
+- [x] **V1.1a 语言资产打包副本同步**（2026-08-13）:
+  - `packages/language` 为 canonical，VSIX 保留静态 grammar/config 副本
+  - 共享 asset pair 清单；显式 `pnpm language:sync` 使用 `copyFile` 保持字节一致
+  - 根/扩展 build 与 package check 先做只读 `language:check`，不自动写副本
+  - `node:test` 覆盖 copy、no-op、drift、missing source 零部分写
 - [ ] **V1.2 Diagnostics（错误波浪线）**（2026-08-10：LSP `publishDiagnostics` 已完成；Web IDE 的 Monaco `setModelMarkers` 替换仍待迁移）:
   - `parser.validate(text)` → `publishDiagnostics`
   - 替代目前 Monaco 里手写的 `setModelMarkers` 逻辑
