@@ -1,7 +1,7 @@
 # KMD Implementation Roadmap
 
 > 文档状态：Active
-> 最近更新：2026-08-10
+> 最近更新：2026-08-13
 > 权威范围：KMD 当前主线判断与阶段顺序——已完成阶段、当前焦点、gated 下一阶段（Phase B 恢复条件）
 
 ## 当前判断
@@ -28,7 +28,7 @@ KMD 1.6 Phase A 与 Phase B Prep 已完成 parser、layout、execution、stage�
   `AuditBus` 继续保留 layout preflight/calculation 的 result、marker 与 bounds 聚合证据。
 - **生效约束**：parser/scanner/语言面属 Phase B 浪潮，维护期不碰；timeline/stage 行为变更须有意标注；
   处方 1–11 追踪见 `docs/planning/architecture-health-check-2026-07.md`。
-- **下一步**：Phase B 按 `phase-b/1.6-phase-b-plan.md` 从 B0.1 恢复（gate #6/#8 完成后）。
+- **下一步**：B0 架构与 B0.1 候选设计的评审包已齐备（gate #6，不代表采纳），并已闭合合法/非法输入兼容边界、top-level/block-option/inline-pause/comment/range 入口、结构化 diagnostics/LSP、typed AST runtime 读取约束与 S1–S5 owner/门禁；待决策者明确采纳 ADR 决策 1–14、通过 gate #8 后，Phase B 才按 `phase-b/1.6-phase-b-plan.md` 从 B0.1 恢复。
 
 ## 阶段顺序
 

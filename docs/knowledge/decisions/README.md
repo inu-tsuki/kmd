@@ -1,6 +1,6 @@
 # Architecture Decisions
 
-> 最近更新：2026-08-10
+> 最近更新：2026-08-13
 
 这里预留给 ADR。每份文档应记录一个重要选择：背景、决策、取舍、替代方案和后续复核条件。
 
@@ -23,3 +23,4 @@ YYYY-MM-DD-short-decision-title.md
 - `2026-07-20-record-replay-seek-idempotency.md`：record/replay 保证 seek 幂等（状态 = 脚本位置的纯函数）。
 - `2026-07-20-reader-runtime-reexport-not-core-package.md`：历史决策；reader-runtime 曾以相对路径 re-export core，现已被 2026-08-10 决策取代。
 - `2026-08-10-extract-private-core-package.md`：物理抽出私有 `@kmd/core`，但不冻结或发布 Phase B 前的内部 API。
+- `2026-08-12-typed-chain-ast-legacy-projection.md`（提案中）：B0.1 以 typed syntax AST 保存语言事实，并由单一 `LegacyCommandAdapter` 降级 command/inline-pause typed value；明确 decoded/raw、NUMBER legacy compatibility、malformed intentional tightening、structured diagnostics/LSP 与 AST tooling/runtime 边界；现有 `CompatProjector` 仍只负责 ParagraphIR → runtime data；待 gate #8 决策者评审。

@@ -1,6 +1,6 @@
 # 历史形态与迁移
 
-> 最近更新：2026-07-08
+> 最近更新：2026-08-13
 > 状态：随实现更新（本文对照"当前已实现语法"与"封盘规范"，实现推进时逐项勾销）
 
 新规范落地前，现有 `.kmd` 语料（`apps/editor/public/`）按旧形态运行。本文是旧 → 新对照表与解析器工程债清单。
@@ -17,7 +17,7 @@
 | `markStart(p)` / `markEnd(p)` | 点/域访问器（`mark(p)` + `.start`/`.end`） | D14 | 待选区模型落地后收编 |
 | `var.` 强制前缀 | 作用域链裸名；`var.` 为全限定/文档级声明 | D19 | 旧写法天然兼容（是新规范的子集） |
 | `pause:char` 的"层级"读法 | 实例化粒度"逐字"读法 | D12 | 语义澄清，行为兼容 |
-| `:bg`（`CommandLevel` 加 `"bg"`，DIP-FX M2 Task B，2026-07-09） | `bg.<effect>(...)`——`bg` 作内建对象主语（同 `cam`/`flow`/`var`），覆盖范围归主语，不归 `:` | D12 | **临时兼容保留**：`:bg` 在旧解析器下先用（`CompatProjector` 思路），Phase B 落地时改写为 `bg` 主语形态，非逐字迁移 |
+| `:bg`（`CommandLevel` 加 `"bg"`，DIP-FX M2 Task B，2026-07-09） | `bg.<effect>(...)`——`bg` 作内建对象主语（同 `cam`/`flow`/`var`），覆盖范围归主语，不归 `:` | D12 | **临时兼容保留**：B0.1 由 `LegacyCommandAdapter` 把 transitional suffix 投影为旧 `CommandLevel.bg`；B0.2 改写为 `bg` 主语形态。`CompatProjector` 不解析该后缀 |
 | 链数失配 first/last 重分配 | 诊断错误 | D17 | **行为变更**：依赖旧行为的脚本需显式改写 |
 | `[align=center .glitch]` 混装 | 段级选项 + 段首句子的两类定义 | D22 | 语义澄清，形态不变 |
 
@@ -37,7 +37,7 @@
 
 ## 迁移步骤建议
 
-1. 新链解析器（递归下降）+ 主语作用域链，旧形态全部走兼容投影（`CompatProjector` 的既有职责），行为不变。
+1. 新链解析器（递归下降）先产出 typed syntax AST；旧形态由唯一 `LegacyCommandAdapter` 降为 legacy command 值，再走现有 `ScopeRouter` / lowering。`CompatProjector` 保持既有 `ParagraphIR → runtime-shaped data` 职责，不解析 typed value；合法旧 corpus 行为不变。
 2. 打开诊断：失配、重名、弃用形态提示。
 3. 语料迁移：`apps/editor/public/` 与 `public/tests/` 逐个改写为新形态，作为新解析器的回归样本（沿 `final-parser-test.ts` 惯例加测试脚本）。
 4. 兼容形态进入弃用期，最终移除并更新 `packages/language` 语法资产与 `kmd-writing-guide.md`。
