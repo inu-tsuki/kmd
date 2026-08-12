@@ -362,8 +362,8 @@
 - [ ] **Hot Replay**: Monaco "从此处播放" + segment seek。
 - [ ] **Monaco 视觉增强**: Segment 边界标记、Minimap 增强、控制流折叠。
 - [ ] **Inspector v2**: 指令元数据 + 实时调参 → 自动改写 KMD 源码。
-- [x] **VS Code 颜色主题加载**（2026-08-10：标准已展开 JSON + 项目路径加载完成；JSONC、`include`、扩展清单与热监听边界见 `docs/knowledge/integration/editor-vscode-theme-loading.md`）:
-  - Monaco 与 VS Code `tokenColors` 格式完全兼容（已用 TM grammar），任何 `.json` 主题文件可直接传入 `defineTheme`
+- [x] **VS Code 颜色主题加载**（2026-08-12：JSONC + 项目内相对 `include` 已补齐；扩展清单与热监听边界见 `docs/knowledge/integration/editor-vscode-theme-loading.md`）:
+  - Monaco 通过 TM grammar 兼容常用 VS Code `tokenColors`；复杂父 scope、排除 selector 等边界见集成文档
   - IDE Shell 变量映射：从主题 `colors` 对象提取 ~10 个键注入 CSS 变量
     ```
     editor.background       → --bg-editor
@@ -375,7 +375,9 @@
     ...
     ```
   - 加载来源：项目文件夹中的 `theme.json` 或 `project.yaml` 中 `editorTheme:` 字段
-  - 效果：Dracula、One Dark、Catppuccin 等主流 VS Code 主题开箱即用
+  - 支持 JSONC 注释、尾逗号与 base-first `include`；循环、越根或任一层损坏时整棵回退
+  - `dark/light/hc/hcLight` 缺色、空白色按类型回退；按钮强调色使用成对背景/前景，普通表面强调文字独立保证可读
+  - 效果：Dracula、One Dark、Catppuccin 等主题中可直接读取的 JSON/JSONC 颜色主题文件开箱即用
 
 ## 7. 插件化生态 (v1.7.0 - Plugin Architecture)
 
@@ -466,7 +468,7 @@
 
 ### P5. 主题系统插件化
 
-> **核心前提**：Monaco 已使用 TM grammar，与 VS Code `tokenColors` 完全兼容。
+> **核心前提**：Monaco 已使用 TM grammar，可投影常用 VS Code `tokenColors`；复杂 selector 不声称完全等价。
 > 主题分两层：语法着色层（Monaco `tokenColors`）+ IDE 外壳层（CSS variables）。
 
 - [x] **P5.1 提取默认主题为独立文件**:
@@ -479,6 +481,7 @@
   - 自动提取 `colors` → CSS variables（映射表约 15 个键）
   - 自动传递 `tokenColors` → Monaco `defineTheme`
   - 在 `project.yaml` 中声明：`editorTheme: ./themes/dracula.json`
+  - 支持 JSONC 与相对当前主题文件的项目内 `include`；`colors` 子级覆盖、`tokenColors` 基底在前
 
 - [ ] **P5.3 GrammarService — 语法插件化（方案 B）**:
   - 插件可通过 `SyntaxContribution` 贡献新 TM pattern（repository 条目 + bodyIncludes）

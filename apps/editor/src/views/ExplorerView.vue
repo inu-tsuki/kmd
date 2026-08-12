@@ -208,9 +208,9 @@ function getFileIcon(name: string): string {
 }
 
 .open-folder-btn {
-  background: var(--accent-secondary);
+  background: var(--accent-background);
   border: none;
-  color: #fff;
+  color: var(--accent-foreground);
   padding: 5px 14px;
   border-radius: 3px;
   cursor: pointer;
@@ -245,7 +245,7 @@ function getFileIcon(name: string): string {
   background: var(--bg-active);
 }
 .tree-item.active .item-name {
-  color: var(--accent-primary);
+  color: var(--accent-text);
 }
 
 .item-icon {

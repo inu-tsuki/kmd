@@ -86,7 +86,7 @@ const ghostStyle = computed(() => {
 
 <style scoped>
 .splitter-bar {
-  background: #111;
+  background: var(--border-dark);
   position: relative;
   z-index: 100;
   transition: background 0.2s;
@@ -94,7 +94,7 @@ const ghostStyle = computed(() => {
 }
 
 .splitter-bar:hover {
-  background: #007acc;
+  background: var(--accent-background);
 }
 
 /* 增加鼠标热区：通过透明伪元素或直接扩大宽度 */
@@ -127,16 +127,16 @@ const ghostStyle = computed(() => {
 
 .ghost-line {
   position: absolute;
-  background: #007acc;
-  box-shadow: 0 0 8px rgba(0, 122, 204, 0.8);
+  background: var(--accent-background);
+  box-shadow: 0 0 0 1px var(--accent-foreground);
   pointer-events: none;
 }
 
 .ghost-line.horizontal {
-  border-left: 1px dashed #fff;
+  border-left: 1px dashed var(--accent-foreground);
 }
 
 .ghost-line.vertical {
-  border-top: 1px dashed #fff;
+  border-top: 1px dashed var(--accent-foreground);
 }
 </style>

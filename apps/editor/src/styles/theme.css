@@ -21,8 +21,9 @@
   --text-dim: #888888;
   --text-bright: var(--text-header);
   
-  --accent-primary: #4fc08d;
-  --accent-secondary: #007acc;
+  /* activityBar foreground/background are one contrast-safe accent pair. */
+  --accent-background: #007acc;
+  --accent-foreground: #ffffff;
   --accent-warn: #d19a66;
   --accent-error: #f44747;
   
@@ -80,9 +81,9 @@
   color: var(--text-bright);
 }
 .kmd-btn.primary {
-  background: var(--accent-secondary);
-  border-color: var(--accent-secondary);
-  color: white;
+  background: var(--accent-background);
+  border-color: var(--accent-background);
+  color: var(--accent-foreground);
 }
 .kmd-btn.primary:hover {
   background: #118ad4;
@@ -112,7 +113,7 @@
 }
 
 .kmd-playing-line-margin {
-  background: var(--accent-primary) !important;
+  background: var(--accent-background) !important;
   width: 5px !important;
   margin-left: 2px !important;
   z-index: 10;

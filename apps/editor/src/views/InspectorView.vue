@@ -187,8 +187,8 @@ onUnmounted(() => {
 
 .view-tab.active {
   opacity: 1;
-  color: var(--accent-primary);
-  box-shadow: inset 0 -2px 0 var(--accent-primary);
+  color: var(--accent-text);
+  box-shadow: inset 0 -2px 0 var(--accent-text);
 }
 
 .view-tab.disabled {
@@ -219,7 +219,7 @@ onUnmounted(() => {
 .kmd-group-header {
   font-size: 9px;
   font-weight: 900;
-  color: var(--accent-secondary);
+  color: var(--accent-text);
   text-transform: uppercase;
   letter-spacing: 1px;
   margin-bottom: 12px;
@@ -296,7 +296,7 @@ onUnmounted(() => {
   cursor: pointer;
 }
 .kmd-chip:hover {
-  border-color: var(--accent-secondary);
+  border-color: var(--accent-background);
   color: var(--text-bright);
 }
 

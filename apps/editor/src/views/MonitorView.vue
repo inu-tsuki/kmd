@@ -160,7 +160,7 @@ onUnmounted(() => {
 
 .tab.active {
   background: var(--bg-editor);
-  color: var(--accent-primary);
+  color: var(--accent-text);
 }
 
 .tab-content {
@@ -201,7 +201,7 @@ onUnmounted(() => {
 }
 
 .value-box.active {
-  color: var(--accent-primary);
+  color: var(--accent-text);
   box-shadow: 0 0 5px rgba(79, 192, 141, 0.3);
 }
 
@@ -219,7 +219,7 @@ onUnmounted(() => {
 }
 
 .time {
-  color: var(--accent-secondary);
+  color: var(--accent-text);
   margin-right: 8px;
 }
 .effect,

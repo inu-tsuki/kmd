@@ -169,7 +169,7 @@ const handleScrubEnd = () => {
 }
 .time-block:hover {
   opacity: 1;
-  background: var(--accent-secondary);
+  background: var(--accent-background);
 }
 
 .time-block.scene {
@@ -182,7 +182,7 @@ const handleScrubEnd = () => {
   top: 0;
   bottom: 0;
   width: 2px;
-  background: var(--accent-primary);
+  background: var(--accent-background);
   z-index: 10;
   pointer-events: none;
 }
@@ -193,7 +193,7 @@ const handleScrubEnd = () => {
   left: -4px;
   width: 10px;
   height: 10px;
-  background: var(--accent-primary);
+  background: var(--accent-background);
   border-radius: 50%;
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
 }
@@ -201,7 +201,7 @@ const handleScrubEnd = () => {
 .time-info {
   font-family: "Fira Code", monospace;
   font-size: 11px;
-  color: var(--accent-primary);
+  color: var(--accent-text);
   min-width: 100px;
 }
 
@@ -212,7 +212,7 @@ const handleScrubEnd = () => {
 .play-btn {
   background: transparent;
   border: 1px solid var(--border-dark);
-  color: var(--accent-primary);
+  color: var(--accent-text);
   width: 28px;
   height: 22px;
   border-radius: 3px;
@@ -243,12 +243,12 @@ const handleScrubEnd = () => {
   cursor: pointer;
 }
 .speed-btn:hover {
-  border-color: var(--accent-primary);
-  color: var(--accent-primary);
+  border-color: var(--accent-text);
+  color: var(--accent-text);
 }
 .speed-btn.active {
-  background: var(--accent-primary);
-  border-color: var(--accent-primary);
-  color: #fff;
+  background: var(--accent-background);
+  border-color: var(--accent-background);
+  color: var(--accent-foreground);
 }
 </style>
