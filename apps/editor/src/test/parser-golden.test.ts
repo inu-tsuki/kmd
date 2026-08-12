@@ -9,7 +9,8 @@
 // - 黄金存在但有 diff → 测试报错展示 diff，提示运行生成脚本重写**并人工审**。
 // - vitest --update 不会触碰本套件的黄金文件（它们是普通 .json，不是 vitest snapshot）。
 //
-// 语料覆盖（§3 支柱 2a）：public/tests/*.kmd（排除展示作品）+ 顶层 public/*.kmd。
+// 语料覆盖（§3 支柱 2a）：public/tests/*.kmd（功能 fixture）+ 顶层 public/*.kmd。
+// 展示作品位于 public/examples/，不进入 parser 特征快照。
 // B0.1 触及语法覆盖审计见 src/test/__fixtures__/b0-1-coverage.kmd 与下方专用断言。
 //
 // 确定性：每个用例 new KMDParser()，避免单例 braceIdCounter 跨调用累加导致 braceGroupId 抖动
@@ -20,10 +21,7 @@ import { readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { KMDParser } from '@kmd/core/parser/Parser';
 import { serializeParseResult } from './golden-serializer';
-import {
-  collectParserGoldenCorpus,
-  PARSER_GOLDEN_EXCLUDED_TEST_FILES,
-} from './parser-golden-corpus';
+import { collectParserGoldenCorpus } from './parser-golden-corpus';
 
 const PUBLIC_DIR = join(import.meta.dirname, '..', '..', 'public');
 const GOLDEN_DIR = join(import.meta.dirname, '__golden__', 'parser');
@@ -67,11 +65,9 @@ describe('parser golden fixtures (full corpus)', () => {
     expect(corpus.some((c) => c.name.startsWith('top/'))).toBe(true);
   });
 
-  it('keeps narrative demos out of parser goldens', () => {
-    for (const name of PARSER_GOLDEN_EXCLUDED_TEST_FILES) {
-      expect(existsSync(join(PUBLIC_DIR, 'tests', name)), `${name} should remain a public demo`).toBe(true);
-      expect(corpus.some((entry) => entry.name === `tests/${name}`)).toBe(false);
-    }
+  it('uses directory ownership instead of an exclusion list for narrative demos', () => {
+    expect(existsSync(join(PUBLIC_DIR, 'examples', 'cyberpunk', 'cyber-crt-blacksite.kmd'))).toBe(true);
+    expect(corpus.some((entry) => entry.name.includes('cyber-crt-blacksite'))).toBe(false);
   });
 });
 

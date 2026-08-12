@@ -14,9 +14,5 @@ await build({
   banner: {
     js: '#!/usr/bin/env node',
   },
-  external: [
-    'vscode-languageserver/node',
-    'vscode-languageserver-textdocument',
-  ],
   logLevel: 'info',
 });

@@ -3,7 +3,7 @@ import {
   attachErrorObservers,
   attachRuntimeEventRecorder,
   collectRuntimeEvents,
-  loadFixture,
+  loadExample,
   sendRuntimeCommand,
   waitForEvent,
   waitForProgressTimeMs,
@@ -97,7 +97,7 @@ test('cyberpunk title chains keep first-frame filter fan-out bounded', async ({ 
 
   await page.goto('/');
   await waitForEvent(page, 'runtimeReady');
-  const source = await loadFixture('cyber-crt-blacksite.kmd');
+  const source = await loadExample('cyberpunk/cyber-crt-blacksite.kmd');
   await sendRuntimeCommand(page, 'loadScript', {
     source,
     work: { id: 'cyberpunk-performance-e2e', title: 'cyberpunk performance e2e' },

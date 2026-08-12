@@ -105,13 +105,6 @@ importers:
         version: 3.2.2(typescript@5.9.3)
 
   extensions/vscode-kmd:
-    dependencies:
-      '@kmd/language-server':
-        specifier: workspace:*
-        version: link:../../packages/kmd-language-server
-      vscode-languageclient:
-        specifier: ^9.0.1
-        version: 9.0.1
     devDependencies:
       '@types/node':
         specifier: ^24.10.1
@@ -119,12 +112,18 @@ importers:
       '@types/vscode':
         specifier: ^1.82.0
         version: 1.125.0
+      esbuild:
+        specifier: ^0.27.2
+        version: 0.27.2
       sharp:
         specifier: ^0.34.5
         version: 0.34.5
       typescript:
         specifier: ~5.9.3
         version: 5.9.3
+      vscode-languageclient:
+        specifier: ^9.0.1
+        version: 9.0.1
 
   packages/core:
     dependencies:

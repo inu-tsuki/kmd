@@ -11,7 +11,8 @@
 `Diagnostic[]`，并通过 `TextDocuments` 跟踪文档。
 
 `extensions/vscode-kmd/client.ts` 是轻量 VS Code client，只负责扩展生命周期、KMD 文档选择器和
-Node IPC transport。语法高亮资产仍由 `packages/language` 与扩展内静态副本提供，二者同步门禁仍是
+Node IPC transport；它从扩展自身的 `dist/server.js` 启动 server，不解析 monorepo workspace 包。
+语法高亮资产仍由 `packages/language` 与扩展内静态副本提供，二者同步门禁仍是
 `pnpm language:check`。
 
 ```text
@@ -55,11 +56,18 @@ pnpm language-server:build
 pnpm language-server:check
 pnpm vscode-kmd:typecheck
 pnpm vscode-kmd:build
+pnpm --filter vscode-kmd package:check
 ```
 
-`pnpm build` 会构建 server 与 client，`pnpm test` 会运行语言服务器测试。Server build 使用 esbuild
-把私有、源码态的 `@kmd/core` parser 依赖收进 Node bundle；`vscode-languageserver` 协议运行库保留为
-包依赖。`@kmd/core` 的 deep import 仍是 monorepo 内部接口，不构成独立发布承诺。
+`pnpm build` 会先构建 server，再编译 client 并把 server bundle 复制进扩展；`pnpm test` 会运行语言
+服务器测试。Server build 使用 esbuild 把私有、源码态的 `@kmd/core` parser 与 LSP 运行库一起收进
+Node bundle；client 也 bundle `vscode-languageclient`，只把 VS Code 宿主模块保留为 external，因此
+VSIX 不携带 workspace 依赖或 `node_modules`。`@kmd/core` 的 deep import 仍是 monorepo 内部接口，
+不构成独立发布承诺。
+
+当前 LSP Range 适配仍从兼容层消息 `Unknown command: "x"` 中提取命令名。这是过渡实现：Phase B
+parser 应直接返回带 source range / diagnostic code 的结构化诊断，届时删除消息文本反解析；本 PR
+不扩 parser 诊断合同。
 
 ## 当前能力与后续
 

@@ -18,6 +18,7 @@ import type { Page } from '@playwright/test';
 
 export const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 export const testsDir = path.join(repoRoot, 'apps/editor/public/tests');
+export const examplesDir = path.join(repoRoot, 'apps/editor/public/examples');
 
 export type RuntimeEvent = {
   type: string;
@@ -45,6 +46,11 @@ export type RuntimeEvent = {
 /** 读 apps/editor/public/tests/ 下的 fixture 源文件。 */
 export async function loadFixture(name: string): Promise<string> {
   return fs.readFile(path.join(testsDir, name), 'utf8');
+}
+
+/** 读 apps/editor/public/examples/ 下的展示作品，不混入 parser golden fixture。 */
+export async function loadExample(relativePath: string): Promise<string> {
+  return fs.readFile(path.join(examplesDir, relativePath), 'utf8');
 }
 
 /** fixture 语料引用的测试资产（不打进 reader bundle，经 page.route 旁路供给）。 */

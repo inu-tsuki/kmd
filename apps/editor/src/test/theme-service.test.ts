@@ -1,4 +1,6 @@
 import { describe, expect, it } from 'vitest';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import {
   DEFAULT_THEME_NAME,
   ThemeService,
@@ -77,6 +79,41 @@ describe('VS Code theme conversion', () => {
       '--accent-secondary': '#ff00ff',
     });
   });
+
+  it('keeps every bundled KMD token selector aligned with a grammar scope prefix', () => {
+    const theme = JSON.parse(readFileSync(
+      join(import.meta.dirname, '..', 'themes', 'kmd-dark.theme.json'),
+      'utf8',
+    ));
+    const grammar = JSON.parse(readFileSync(
+      join(
+        import.meta.dirname,
+        '..',
+        '..',
+        '..',
+        '..',
+        'packages',
+        'language',
+        'syntaxes',
+        'kmd.tmLanguage.json',
+      ),
+      'utf8',
+    ));
+    const grammarScopes = Array.from(
+      JSON.stringify(grammar).matchAll(/\"name\"\s*:\s*\"([^\"]+)\"/g),
+      (match) => match[1]!,
+    );
+    const selectors = theme.tokenColors.flatMap((rule: { scope?: string | string[] }) => (
+      Array.isArray(rule.scope) ? rule.scope : [rule.scope]
+    )).filter((scope: unknown): scope is string => typeof scope === 'string');
+
+    for (const selector of selectors) {
+      expect(
+        grammarScopes.some((scope: string) => scope === selector || scope.startsWith(`${selector}.`)),
+        `${selector} does not match a KMD TextMate grammar scope`,
+      ).toBe(true);
+    }
+  });
 });
 
 describe('ThemeService fallback', () => {
@@ -130,7 +167,15 @@ describe('project theme loading boundary', () => {
     );
 
     const requested: string[] = [];
+    const definedThemeNames: string[] = [];
     const service = new ThemeService(() => null);
+    service.attachMonaco({
+      defineTheme: (name) => {
+        expect(name).toMatch(/^[a-z0-9-]+$/i);
+        definedThemeNames.push(name);
+      },
+      setTheme: () => undefined,
+    });
     const result = await loadProjectTheme(
       {} as FileSystemDirectoryHandle,
       service,
@@ -147,6 +192,7 @@ describe('project theme loading boundary', () => {
       usedFallback: false,
     });
     expect(service.activeThemeName).toContain('themes-dracula-json');
+    expect(definedThemeNames.at(-1)).toBe('kmd-project-theme-themes-dracula-json');
   });
 
   it('falls back when a configured theme is missing', async () => {

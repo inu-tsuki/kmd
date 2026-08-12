@@ -412,6 +412,11 @@ export class ScriptPlayer {
    * 可播放行；超过最后一个锚点时不回退到旧内容，而是返回 false。
    * 本方法只跳转，不改变播放意图；编辑器的右键「从此行播放」在调用后
    * 显式 play，Alt+Click 则保留现有的 seek-only 语义。
+   *
+   * 这是 editor 对当前线性 execution projection 的源码导航，不是控制流语义。
+   * Segment Graph 落地后，source position 必须先解析成 node/path candidate/local time；
+   * 分支脚本没有唯一全局时间，调用方需提供当前 path context 或显式采用 defaultPath。
+   * 设计边界见 docs/planning/runtime/portable-language-runtime-boundaries.md §3。
    */
   public seekToSourceLine(lineNumber: number): boolean {
     if (!this.segment || !Number.isFinite(lineNumber) || lineNumber < 1) return false;

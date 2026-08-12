@@ -9,8 +9,8 @@
 //
 // 运行：pnpm --filter @kmd/editor test（vitest） 或 pnpm test:shaders（旧 tsx 脚本，迁移期并存）。
 
-import { describe, it, expect } from 'vitest';
-import { readFileSync, readdirSync, writeFileSync, unlinkSync, existsSync } from 'node:fs';
+import { afterAll, describe, it, expect } from 'vitest';
+import { readFileSync, readdirSync, writeFileSync, rmSync, mkdtempSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import { tmpdir } from 'node:os';
 import { execFileSync } from 'node:child_process';
@@ -59,6 +59,9 @@ function extractShaders(source: string): { shader: string }[] {
 
 const files = collectFilterFiles(FILTERS_DIR).sort();
 const glslangCommand = resolveGlslangCommand();
+const shaderTempDir = mkdtempSync(join(tmpdir(), 'kmd-shaders-'));
+
+afterAll(() => rmSync(shaderTempDir, { recursive: true, force: true }));
 
 describe('shader compile gate (glslangValidator)', () => {
   it('glslangValidator/glslang is available (no SKIP escape hatch)', () => {
@@ -75,19 +78,23 @@ describe('shader compile gate (glslangValidator)', () => {
 
   // 动态生成每文件每 shader 的用例——但 vitest 静态收集，故用 it.each。
   // 预先展开文件×shader 索引列表。
-  const cases: { label: string; file: string; shader: string }[] = [];
+  const cases: { label: string; file: string; shader: string; tempIndex: number }[] = [];
   for (const file of files) {
     const display = relative(FILTERS_DIR, file);
     const source = readFileSync(file, 'utf-8');
     const shaders = extractShaders(source);
     shaders.forEach((s, idx) => {
-      cases.push({ label: `${display} #${idx + 1}`, file: display, shader: s.shader });
+      cases.push({
+        label: `${display} #${idx + 1}`,
+        file: display,
+        shader: s.shader,
+        tempIndex: cases.length,
+      });
     });
   }
 
-  it.each(cases)('%s compiles', ({ label, shader }) => {
-    const tmpName = label.replace(/[^a-zA-Z0-9_-]/g, '-');
-    const tmpFile = join(tmpdir(), `kmd-shader-${process.pid}-${tmpName}.frag`);
+  it.each(cases)('%s compiles', ({ label, shader, tempIndex }) => {
+    const tmpFile = join(shaderTempDir, `${tempIndex}.frag`);
     writeFileSync(tmpFile, shader);
     try {
       execFileSync(glslangCommand!, [tmpFile], {
@@ -99,7 +106,7 @@ describe('shader compile gate (glslangValidator)', () => {
       const stderr = err.stderr?.toString() || err.message;
       expect.fail(`${label} GLSL 编译失败:\n${stderr.split('\n').slice(0, 10).join('\n')}`);
     } finally {
-      if (existsSync(tmpFile)) unlinkSync(tmpFile);
+      rmSync(tmpFile, { force: true });
     }
   });
 });

@@ -123,11 +123,16 @@ The `!` suffix marks commands as asynchronous (non-blocking):
 pnpm install                  # run from the repository root
 pnpm language-server:build
 pnpm vscode-kmd:build
+pnpm --filter vscode-kmd package:check
 npm install -g @vscode/vsce   # if not already installed
 cd extensions/vscode-kmd
 vsce package
 code --install-extension vscode-kmd-0.2.0.vsix
 ```
+
+`vscode-kmd:build` 会 bundle client，并把已 bundle 的语言服务器复制到扩展内 `dist/server.js`。
+VSIX 因而不依赖 monorepo 的 `workspace:*` 包或 `node_modules`；`.vscodeignore` 只保留
+client/server、语言资产、图标、README、LICENSE 与 manifest。
 
 ### Manual Installation
 Copy the `vscode-kmd` folder to:

@@ -28,9 +28,9 @@ Run from the repo root. Package manager is **pnpm**. There is no lint script.
 pnpm install
 pnpm dev                  # editor dev server (vite)
 pnpm core:check           # core boundary guard + standalone TypeScript check
-pnpm build                # core check + editor vue-tsc type-check + production build
+pnpm build                # core check + LSP server build + VS Code client build + editor type-check/build
 pnpm preview              # editor: preview production build
-pnpm test                 # editor vitest suite (parser golden + layout + effects + playback + invariants + shaders + frontmatter)
+pnpm test                 # core check + LSP tests + editor vitest suite (parser/layout/effects/playback/invariants/shaders/frontmatter)
 pnpm test:parser          # parser integration + corpus golden (vitest)
 pnpm test:golden:write    # regenerate parser/layout golden files (REVIEW git diff, never blind-commit)
 pnpm language:check       # verify packages/language assets match extensions/vscode-kmd packaged copies

@@ -1,4 +1,5 @@
 import type { ExtensionContext } from 'vscode';
+import { join } from 'node:path';
 import {
   LanguageClient,
   TransportKind,
@@ -9,7 +10,7 @@ import {
 let client: LanguageClient | undefined;
 
 export function activate(context: ExtensionContext): void {
-  const serverModule = require.resolve('@kmd/language-server/server');
+  const serverModule = join(context.extensionPath, 'dist', 'server.js');
   const serverOptions: ServerOptions = {
     run: { module: serverModule, transport: TransportKind.ipc },
     debug: {

@@ -111,7 +111,7 @@ M3 不再扩张完整 `bg.*` / `frame.*`、插件 loader 或滤镜数量。未�
 - docs/knowledge/runtime/core/lifecycle-invariants.md
 - docs/knowledge/decisions/2026-07-10-dip-fx-surface-profiles.md
 
-先不要新增 effect。第一步在 production reader bundle + Playwright Chromium 中完整自然播放 apps/editor/public/tests/fx-cyberpunk-title.kmd，核对各镜头的画面差异、console/Pixi 错误、背景纹理存活，以及 seek、stop、replay 一致性，并把证据记录到 M3 plan。
+先不要新增 effect。第一步在 production reader bundle + Playwright Chromium 中完整自然播放 apps/editor/public/examples/cyberpunk/fx-cyberpunk-title.kmd，核对各镜头的画面差异、console/Pixi 错误、背景纹理存活，以及 seek、stop、replay 一致性，并把证据记录到 M3 plan。
 
 然后优先只重编 demo，使用现有 gravity、jump/jumpIn、wave、shake、dissolve 与 underwater，做出至少一个明确的“运动 + DIP filter”镜头。保持 DIP filter 与非 DIP behavior 的边界，不扩张完整 bg.* / frame.*，不实现插件 loader，不改变 :bg 兼容语法。
 

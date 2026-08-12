@@ -12,6 +12,9 @@ TextMate tokenizer 返回最具体的原始 scope（例如 `keyword.operator.at.
 
 ## 项目加载
 
+这里的“项目”是 File System Access API 打开的 editor workspace 俗称，并非已标准化的 KMD
+Project；三层模型与后续迁移边界见 [`editor-project-model.md`](../../planning/apps/editor-project-model.md)。
+
 打开或恢复一个 File System Access API 项目目录时，Editor 按以下顺序选主题：
 
 1. 若根目录 `project.yaml` 含根级标量 `editorTheme:`，读取它指向的项目内相对路径。

@@ -8,7 +8,7 @@
 现有样本大致分成两类：
 
 - `apps/community-api/content/works/*/rev-1.kmd`：短诗式作品种子，几乎没有指令，适合观察基础阅读节奏。
-- `apps/editor/public/*.kmd` 与 `apps/editor/public/tests/*.kmd`：语法与 runtime 回归脚本，覆盖 timing、stage、layout、effect、font、seek 等边界。
+- `apps/editor/public/*.kmd` 与 `apps/editor/public/tests/*.kmd`：语法与 runtime 功能 fixture，覆盖 timing、stage、layout、effect、font、seek 等边界；`apps/editor/public/examples/` 放叙事/展示作品，不进入 parser golden。
 
 ## 总体原则
 

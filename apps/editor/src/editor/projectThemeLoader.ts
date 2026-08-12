@@ -31,7 +31,10 @@ export function parseEditorThemePath(projectYaml: string): string | null {
 }
 
 function themeNameFromPath(path: string): string {
-  return `kmd-project-theme:${path.replace(/[^a-z0-9_-]+/gi, '-')}`;
+  const slug = path
+    .replace(/[^a-z0-9-]+/gi, '-')
+    .replace(/^-+|-+$/g, '');
+  return `kmd-project-theme-${slug || 'custom'}`;
 }
 
 export async function loadProjectTheme(

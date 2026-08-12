@@ -15,7 +15,7 @@ pnpm test:e2e
 
 - 通过正式 `window.KmdRuntime.receive` 协议加载、seek 和控制作品，不依赖 editor UI、Pinia store 或 Vite HMR module singleton。
 - 针对发布 bundle 运行，测试入口与 Android WebView/browser reader 使用同一构建产物。
-- fixture 继续放在 `apps/editor/public/tests/`；测试可通过 Playwright route 提供资源，不把测试资源复制进 reader 发布包。
+- 功能 fixture 放在 `apps/editor/public/tests/`；叙事/展示作品放在 `apps/editor/public/examples/`。两者都可由 Playwright 从仓库读取，测试资产通过 route 提供，不复制进 reader 发布包。
 - 断言稳定的运行时契约，例如 page/console 无错误、display tree 层级、texture/source 生命周期和 filter 归属。不要依赖 production 构造器名称；minification 会改写名称。
 - screenshot 和 trace 只作为失败证据。只有视觉输出本身是契约且环境已证明稳定时，才添加像素快照基线。
 
