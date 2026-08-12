@@ -1,59 +1,57 @@
 ---
-title: fx - 赛博朋克标题序列 (DIP-FX M2 demo)
+title: 示例 - 霓虹深潜协议
 mode: stage
-speed: 50
+speed: 42
 designWidth: 1920
 designHeight: 1080
-bgColor: "#0a0a0f"
-fontColor: "#00fff0"
+bgColor: "#03040a"
+fontColor: "#d8ffff"
 fontFamily: monospace
 ---
 
-// ━━ 镜头 1：背景图 + 连续色调底 ━━
-// bg(src) 落背景图，duotone:bg 压暗上色保证文字对比度（Task B 落地后 :bg 路由）
+// 镜头 1：DIP duotone 处理背景，entrance/behavior 只负责文字运动。
 @ bg(src="tests/assets/sample-bg.jpg")
-[.duotone:bg(shadow="#0d0221", highlight="#ff006e")]
-NEON CITY
+[align=center .duotone:bg(shadow="#08031a", highlight="#ff2bd6")]
+{NIGHT CITY :: SUBLEVEL 09} @ f.fadeIn(duration=1).wave(height=4, freq=0.002).big.big
 
 ---
 
-// ━━ 镜头 2：扫描线 + 噪声 + RGB 分裂组合 ━━
-// CRT 降解：scanline 周期亮度调制 + noise 数字噪声 + rgbShift 色彩撕裂
-@ bg(color="#0a0a0f")
-[.scanline:block(density=4, curvature=0.1, flicker=0.05) .noise:block(amount=0.15, mono=1, scale=6) .rgbShift:block(dist=8, anim=true)]
-SIGNAL LOST
+// 镜头 2：信号被拦截，三层 DIP 降解与短促入场协同。
+@ bg(color="#07020d")
+[align=center .scanline:block(density=4, curvature=0.1, flicker=0.06) .noise:block(amount=0.12, mono=1, scale=6) .rgbShift:block(dist=7, anim=true)]
+{SIGNAL INTERCEPTED} @ f.jumpIn(height=70, duration=0.7).shake(strength=1.2).big.big
 
 ---
 
-// ━━ 镜头 3：逐字扭曲 + glitch 消散 ━━
-// warp 逐字波纹扭曲（char 级）+ dissolve 消散转场
-{GLITCH} @ f.warp(freq=15, amp=0.08, speed=0.03).dissolve(duration=2, edge="#00fff0")
+// 镜头 3：身份层发生扭曲和青色消散。
+@ bg(color="#02030b")
+[align=center]
+{IDENTITY CORRUPTED} @ f.popIn(duration=0.65).warp(freq=15, amp=0.08, speed=0.03).dissolve(duration=2, edge="#00fff0").big.big
 
 ---
 
-// ━━ 镜头 4：水下（M2 旗舰组合） ━━
-// underwater = displace 波纹 + duotone 蓝移 + blur，整段水下沉浸感
-[.underwater:block(amount=15, scale=5, tint="#061230", highlight="#3aa0c0", blur=1)]
-DEEP BELOW
+// 镜头 4：水下 DIP 处理像素；jumpIn + gravity + wave 组成跃入、下沉与水波运动。
+@ bg(color="#020b18")
+[align=center .underwater:block(amount=18, scale=6, tint="#03152c", highlight="#35d7ff", blur=1.2)]
+{DESCENT PROTOCOL} @ f.jumpIn(height=110, duration=0.75).gravity(g=0.65, floor=520, bounce=0.32).wave(height=8, freq=0.003).big.big
 
 ---
 
-// ━━ 镜头 5：暗角 + 溶解转场收尾 ━━
-// vignette 径向暗角 + dissolve 消散，赛博朋克收束
-[.vignette:block .dissolve:block(duration=1.5, edge="#ff006e", scale=10)]
-SYSTEM OFF
+// 镜头 5：追踪器在暗角中溶解，运动幅度收紧。
+@ bg(color="#0b0209")
+[align=center .vignette:block .dissolve:block(duration=1.6, edge="#ff2b7a", scale=11)]
+{TRACE TERMINATED} @ f.fadeIn(duration=0.5).shake(strength=1.6).big.big
 
 ---
 
-// ━━ 镜头 6：背景图浮雕连续色调验证 ━━
-// emboss:bg 在真实照片上的浮雕效果（连续色调教科书级验证）
+// 镜头 6：同一背景切换为 emboss surface profile，像取证存档端。
 @ bg(src="tests/assets/sample-bg.jpg")
-[.emboss:bg(strength=1.5)]
-ARCHIVE
+[align=center .emboss:bg(strength=1.5)]
+{EVIDENCE VAULT :: SEALED} @ f.jumpIn(height=45, duration=0.55).big.big
 
 ---
 
-// ━━ 镜头 7：warp 容器级（扩展后 :block 路径） ━━
-// warp 扩展到容器级后可在 :block 用（此前 char-only 会 warn no-op）
-[.warp:block(freq=12, amp=0.06, speed=0.02)]
-整段扭曲，容器级 warp 验证。
+// 镜头 7：容器扭曲吞没最后的退出指令。
+@ bg(color="#010207")
+[align=center .warp:block(freq=12, amp=0.06, speed=0.02)]
+{GHOST LINK :: CLOSED} @ f.fadeIn(duration=0.8).wave(height=5, freq=0.002).big.big
