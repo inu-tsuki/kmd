@@ -1,7 +1,7 @@
 # KMD 仓库与本地开发编排策略
 
 > 文档状态：草案
-> 最近更新：2026-06-15
+> 最近更新：2026-08-10
 
 ## 1. 当前判断
 
@@ -13,7 +13,9 @@
 
 2026-05-19 调整：Phase B 语言设计暂缓直接实施，先插入 reader-runtime-web 抽离阶段。目标不是立刻抽纯 `packages/core`，而是先形成 Android WebView 可宿主、无 Pinia/editor shell 耦合的 reader runtime。
 
-2026-06-15 状态校准：Phase R 的 R0-R7 已完成，`packages/reader-runtime-web/` 已作为 workspace package 接管 reader-only bundle 构建。当前重点从“抽离 reader-runtime-web”转为“稳定 Android artifact 消费、保持包边界、审查 Phase B 语言设计”。纯 `packages/core` 仍后置。
+2026-06-15 状态校准：Phase R 的 R0-R7 已完成，`packages/reader-runtime-web/` 已作为 workspace package 接管 reader-only bundle 构建。
+
+2026-08-10 状态校准：共享 runtime 已物理迁入 private `packages/core/`。这次拆分只确立 monorepo 内部所有权和依赖方向，不把 Phase B 前的深层 API 冻结为稳定发布契约；npm 发布、独立版本与稳定 API 仍后置。
 
 ## 2. 整理原则
 
@@ -21,7 +23,7 @@
 - Android Reader、Web Reader、VS Code 扩展和未来社区 Web 都应复用核心 runtime，而不是复制 parser、layout 或 effect 语义。
 - 仓库可以逐步拆分，但核心 API 稳定之前，优先保持主仓库孵化。
 - 文档和产品计划应跟随主仓库维护，避免课程仓库成为唯一事实来源。
-- 纯 `packages/core` 抽包应晚于 reader-runtime-web，避免把未稳定的语言/IR/API 过早固化。
+- `packages/core` 已晚于 reader-runtime-web 完成物理拆分；在语言/IR/API 稳定前保持 private，避免把内部 exports 误当成公共承诺。
 - `reader-runtime-web` 可以先于 Phase B 抽离，因为 Android Reader 需要 WebView 可宿主的运行时产物。
 - grammar、language configuration 等低耦合语言资产可以先包化，作为未来多宿主共享的最小边界。
 
@@ -119,15 +121,17 @@ kmd/
 
 ## 6. 近期仓库结构
 
-主仓库近期保持低风险结构：
+主仓库当前结构：
 
 ```text
 kmd/
   apps/
-    editor/                # 当前 Web editor；runtime 暂留在 src/core/
+    editor/                # Web editor shell 与 editor-only 集成
     android-reader/        # 可选本地 checkout，独立 git，主仓库忽略
   packages/
+    core/                  # private 共享 runtime 源码包
     language/              # 共享 KMD grammar / language configuration
+    reader-runtime-web/    # WebView/browser reader bundle
   extensions/vscode-kmd/   # VS Code 扩展
   docs/
     planning/
@@ -137,7 +141,7 @@ kmd/
   scripts/
 ```
 
-后续在 runtime 边界稳定后，再演进为：
+后续在产品/API 边界稳定后，可继续演进为：
 
 ```text
 kmd/
@@ -183,11 +187,11 @@ packages/reader-runtime-web/   # 目标形态，可先以 reader-only entry 过�
 
 详细计划见 `docs/planning/roadmap/phase-r-reader-runtime-web.md`。Android 侧可行性审计见 `apps/android-reader/docs/knowledge/integration/core-portability-webview-feasibility.md`。
 
-### 阶段 B：主仓库内进一步抽包
+### 阶段 B：主仓库内 core 物理拆分与语言演进
 
-`packages/language/` 已作为先行包承接低耦合语言资产。`packages/reader-runtime-web/` 已在 Phase R 建立为 reader-only bundle 包。当前它仍复用 `apps/editor/src/core/` 的 runtime closure，这是有意的过渡状态：先稳定 Android/WebView artifact，再逐步沉淀纯 core。
+`packages/language/` 已作为先行包承接低耦合语言资产，`packages/reader-runtime-web/` 已在 Phase R 建立为 reader-only bundle 包。2026-08-10，共享 runtime 进一步物理迁入 private `packages/core/`，editor 与 reader 均通过 workspace package 消费。
 
-`packages/reader-runtime-web/` 稳定后，再评估从 reader runtime 中沉淀纯 core：
+当前 monorepo 形态为：
 
 ```text
 apps/community-web/
@@ -198,9 +202,9 @@ packages/language-service/
 extensions/vscode/
 ```
 
-此阶段仍然可以使用 pnpm workspace 统一开发。
+此阶段继续使用 pnpm workspace 统一开发。`@kmd/core` 的深层 exports 是内部开发表面，不是稳定 npm API；Phase B 可继续重构 parser / execution / segment graph。
 
-> 候选拆分对象不止纯 core：镜头/电影感能力（`StageRuntime` 等）作为“形态专属能力”，是未来插件化的候选。其能力分层依据与三段演进路径见 `presentation-modes-and-capability-layering-draft.md`（草案）。物理拆分仍受本文件门槛约束（core API 稳定前不拆）。
+> 候选拆分对象不止 core：镜头/电影感能力（`StageRuntime` 等）作为“形态专属能力”，仍是未来插件化的候选。其能力分层依据与三段演进路径见 `presentation-modes-and-capability-layering-draft.md`（草案）。进一步拆包和公开发布仍受稳定 API 门槛约束。
 
 ### 阶段 C：独立发布
 
@@ -214,7 +218,9 @@ extensions/vscode/
 
 Android Reader 之后应依赖稳定构建产物或 release artifact，而不是手动复制源码。
 
-2026-05-20 决策：`@kmd/reader-runtime-web` 先作为 monorepo workspace package 存在，接管 `pnpm reader:build` 和 `dist/reader-runtime/` 产物。暂不发布 npm，也暂不抽 `packages/core`。下一步如果 Android 真机 smoke 与 package artifact 流程稳定，可以考虑把 runtime closure 从 `apps/editor/src/core/` 继续搬入包内或拆出 `packages/core`。
+2026-05-20 决策：`@kmd/reader-runtime-web` 先作为 monorepo workspace package 存在，接管 `pnpm reader:build` 和 `dist/reader-runtime/` 产物，当时暂不抽 `packages/core`。
+
+2026-08-10 后续决策：Android artifact 与 WebView smoke 已稳定，runtime closure 迁入 private `@kmd/core`；不随物理拆分发布 npm，也不冻结 Phase B 前 API。见 `docs/knowledge/decisions/2026-08-10-extract-private-core-package.md`。
 
 ## 8. 命名对照表
 
@@ -244,20 +250,20 @@ Android Reader 之后应依赖稳定构建产物或 release artifact，而不是
 
 ## 10. 当前建议
 
-当前已经完成低风险 app-shell 迁移：
+当前已经完成 app-shell 与共享 runtime 的物理分层：
 
 - Web editor 位于 `apps/editor/`。
 - 根目录保留 pnpm workspace 与转发脚本。
 - `packages/language/` 提供共享 grammar/config 的包引用边界。
-- Phase R 已完成 reader-runtime-web 包边界；当前下一步是 Android smoke / artifact 稳定与 Phase B 语言设计收敛，而不是直接抽纯 `packages/core`。
+- Phase R 已完成 reader-runtime-web 包边界；`packages/core` 也已作为 private workspace package 落地。
 - Android Reader 可以临时位于 `apps/android-reader/`，但保持独立 git 并被主仓库忽略。
-- `apps/editor/src/core/` 暂时仍是共享 runtime 的事实来源。
+- `packages/core/src/` 是共享 runtime 的唯一事实来源；`apps/editor/src/editor/` 只承载 Monaco/TextMate 等 editor-only 适配器。
 
 第二阶段课程仓库初始化完成后，再考虑是否把本地主目录从 `playground/kmd` 移到 `projects/kmd/kmd`。
 
-## 11. 目录迁移触发条件
+## 11. 稳定 API 与发布触发条件
 
-在以下条件同时满足前，不建议把 `apps/editor/src/core/` 抽进纯 `packages/core/`：
+`packages/core` 的物理迁移已于 2026-08-10 完成，但保持 private。以下条件改为稳定公共 API、独立版本或 npm 发布的 gate：
 
 - Android Reader 课程仓库已经初始化并能独立提交。
 - reader-runtime-web 已有可被 Android WebView 加载的 runtime bundle。
@@ -265,13 +271,13 @@ Android Reader 之后应依赖稳定构建产物或 release artifact，而不是
 - Phase B 的 `DocumentSemanticIR`、state/control-flow 和 segment graph 边界已经进入主线或完成设计审查。
 - Web editor 与 runtime 的 import 边界足够清楚，能用 pnpm workspace 或 package export 表达。
 - VS Code 扩展、Web editor 和未来 language service 对 grammar/runtime 的共享策略已经明确；当前 grammar 已先通过 `packages/language/` 提供包引用，扩展打包复制流程仍待后续收敛。
-- `pnpm build`、`pnpm test:parser` 和 Android Reader 的基础构建 gate 都可在迁移后恢复。
+- `pnpm core:check`、`pnpm build`、`pnpm test`、`pnpm test:parser`、`pnpm reader:build` 与 Android Reader 的基础构建 gate 均可持续通过。
 
-例外：`packages/reader-runtime-web` 可以在上述条件完全满足前启动，因为它不是纯 core，而是 WebView 宿主运行时包。它必须明确保留 Web runtime 属性，不伪装成跨平台算法 core。
+在 gate 满足前，允许继续调整 `@kmd/core` 深层 exports，但必须保持包私有、同步修改所有 workspace 消费者，并通过边界和行为门禁；不得把物理目录存在误写成稳定发布承诺。
 
-在纯 core 触发条件满足前，推荐只做 reader-runtime-web 边界稳定、外壳级整理和文档归档：
+当前边界要求：
 
 - 主仓库继续叫 `kmd`。
 - Android 课程项目使用独立仓库 `kmd-reader-android`。
-- 当前主仓库内部继续保留 `apps/editor/src/core/`、`packages/language/`、`extensions/vscode-kmd/`、`docs/planning/roadmap/`、`docs/knowledge/language/`。
+- 当前主仓库内部保留 `packages/core/`、`packages/language/`、`packages/reader-runtime-web/`、`extensions/vscode-kmd/`、`docs/planning/roadmap/`、`docs/knowledge/language/`。
 - 如需把 Android 项目临时放在主仓库目录内，应使用被 `.gitignore` 忽略的 `/apps/android-reader/`。

@@ -159,18 +159,19 @@ const exportKmd = () => {
   flex-direction: column;
   width: 100vw;
   height: 100vh;
-  background: #1e1e1e;
-  color: #ccc;
+  background: var(--bg-editor);
+  color: var(--text-main);
 }
 
 .top-toolbar {
   height: 35px;
-  background: #2d2d2d;
+  background: var(--bg-header);
+  color: var(--text-header);
   display: flex;
   justify-content: space-between;
   padding: 0 10px;
   align-items: center;
-  border-bottom: 1px solid #111;
+  border-bottom: 1px solid var(--border-dark);
   z-index: 100;
 }
 
@@ -181,8 +182,8 @@ const exportKmd = () => {
 
 .status-bar {
   height: 22px;
-  background: #007acc;
-  color: #fff;
+  background: var(--bg-status-bar);
+  color: var(--text-status-bar);
   display: flex;
   align-items: center;
   padding: 0 10px;
@@ -215,31 +216,31 @@ const exportKmd = () => {
 }
 .splitpanes--vertical > .splitpanes__splitter {
   min-width: 3px;
-  background: #111;
-  border-left: 1px solid #333;
+  background: var(--border-dark);
+  border-left: 1px solid var(--border-main);
 }
 .splitpanes--horizontal > .splitpanes__splitter {
   min-height: 3px;
-  background: #111;
-  border-top: 1px solid #333;
+  background: var(--border-dark);
+  border-top: 1px solid var(--border-main);
 }
 .splitpanes__splitter:hover {
-  background: #007acc !important;
+  background: var(--accent-secondary) !important;
 }
 
 /* 通用 UI 元素 */
 .tool-btn {
   background: transparent;
   border: none;
-  color: #aaa;
+  color: var(--text-dim);
   padding: 2px 8px;
   font-size: 11px;
   cursor: pointer;
   border-radius: 2px;
 }
 .tool-btn:hover {
-  background: #3e3e3e;
-  color: #fff;
+  background: var(--bg-hover);
+  color: var(--text-header);
 }
 
 .btn-run {
@@ -257,7 +258,7 @@ const exportKmd = () => {
 }
 
 .brand {
-  color: #4fc08d;
+  color: var(--accent-primary);
   font-weight: bold;
   font-size: 13px;
 }
@@ -269,7 +270,7 @@ const exportKmd = () => {
 .divider {
   width: 1px;
   height: 14px;
-  background: #444;
+  background: var(--border-light);
   margin: 0 10px;
 }
 </style>

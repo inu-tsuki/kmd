@@ -1,2 +1,2 @@
-export type * from "../../../apps/editor/src/core/runtime";
-export * from "../../../apps/editor/src/core/runtime";
+export type * from "@kmd/core/runtime";
+export * from "@kmd/core/runtime";

@@ -8,7 +8,7 @@
 import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { parser } from '../core/parser/Parser';
+import { parser } from '@kmd/core/parser/Parser';
 
 const FINAL_TEST = join(import.meta.dirname, '..', '..', 'public', 'final-test.kmd');
 const source = readFileSync(FINAL_TEST, 'utf-8');

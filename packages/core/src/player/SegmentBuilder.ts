@@ -5,7 +5,13 @@ import { TextPlayer } from "../render/text/TextPlayer";
 import { EffectProcessor } from "../effects/EffectProcessor";
 import type { KMDMetadata, KMDParagraphData } from "../parser/types";
 import type { Checkpoint, InFlightAnimation, ParagraphUnit, Segment, StageModifierRecord } from "../state/Segment";
-import type { BehaviorRecord, StyleRecord, InstantEffectRecord, EntranceFilterRecord } from "../render/text/TextPlayer";
+import type {
+  BehaviorRecord,
+  StyleRecord,
+  InstantEffectRecord,
+  EntranceFilterRecord,
+  SourceLineAnchor,
+} from "../render/text/TextPlayer";
 import { stageManager } from "../stage/StageManager";
 import { createParagraphExecutionPlan } from "../execution/paragraphExecutionPlan";
 import type { PlaybackRuntimeState } from "./PlaybackController";
@@ -29,6 +35,7 @@ export interface SegmentBuildContext {
 export interface SegmentBuildResult {
   segment: Segment;
   timelineMarkers: ReaderRuntimeTimelineMarker[];
+  sourceLineAnchors: SourceLineAnchor[];
   activeTexts: KineticText[];
 }
 
@@ -44,6 +51,13 @@ export class SegmentBuilder {
     const allStageModifierRecords: StageModifierRecord[] = [];
     const paragraphUnits: ParagraphUnit[] = [];
     const markers: ReaderRuntimeTimelineMarker[] = [];
+    const sourceLineAnchorMap = new Map<number, number>();
+    const registerSourceLineAnchor = (line: number, timePosition: number) => {
+      const current = sourceLineAnchorMap.get(line);
+      if (current === undefined || timePosition < current) {
+        sourceLineAnchorMap.set(line, timePosition);
+      }
+    };
     const stageTweenRecords: InFlightAnimation[] = [];
     const activeTexts: KineticText[] = [];
 
@@ -100,6 +114,18 @@ export class SegmentBuilder {
           layout: layout.dumpState(),
           activeParagraphs: [...activeParagraphIndices],
         };
+
+        // 纯命令行没有 glyph/item，TextPlayer 无法为它产生行锚点。它们的语义在
+        // 段落文本之前执行，因此统一锚定到本段落的入口 cursor；这样右键
+        // `@ cam.*` / block option 会重放命令链，而不是跳过它直接到正文。
+        for (const line of pData.ast?.lines ?? []) {
+          if (line.kind === "command-only") {
+            registerSourceLineAnchor(line.line + 1, segmentCursor);
+          }
+        }
+        for (const option of pData.ast?.blockOptions ?? []) {
+          registerSourceLineAnchor(option.line + 1, segmentCursor);
+        }
 
         const hasSceneClearCue = pData.tokens.some((token) =>
           token.layoutInstructions.some((instruction) => instruction.type === "scene.clear"),
@@ -269,6 +295,11 @@ export class SegmentBuilder {
           });
         }
 
+        for (const anchor of buildResult.sourceLineAnchors) {
+          const absoluteTime = anchor.timePosition + segmentCursor;
+          registerSourceLineAnchor(anchor.line, absoluteTime);
+        }
+
         // inline/token 级 stage modifier 记录聚合由 StageModifierBuilder 接管（处方 6）。
         // R11 sequence 分配（build/push 顺序）+ spread 全部字段（含 isClearBoundary）原样保留。
         stageModifierBuilder.aggregateInlineRecords(buildResult.stageModifierRecords, segmentCursor);
@@ -363,6 +394,9 @@ export class SegmentBuilder {
     return {
       segment,
       timelineMarkers: markers,
+      sourceLineAnchors: [...sourceLineAnchorMap.entries()]
+        .map(([line, timePosition]) => ({ line, timePosition }))
+        .sort((left, right) => left.line - right.line),
       activeTexts,
     };
   }

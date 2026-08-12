@@ -1,0 +1,34 @@
+{
+  "name": "@kmd/language-server",
+  "private": true,
+  "version": "0.1.0",
+  "license": "Apache-2.0",
+  "type": "commonjs",
+  "main": "./dist/server.js",
+  "bin": {
+    "kmd-language-server": "./dist/server.js"
+  },
+  "exports": {
+    "./server": "./dist/server.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "pnpm run typecheck && node scripts/build.mjs",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "check": "pnpm run build && pnpm run test"
+  },
+  "dependencies": {
+    "@kmd/core": "workspace:*",
+    "vscode-languageserver": "^9.0.1",
+    "vscode-languageserver-textdocument": "^1.0.12"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.1",
+    "esbuild": "^0.27.2",
+    "typescript": "~5.9.3",
+    "vitest": "^2.1.8"
+  }
+}

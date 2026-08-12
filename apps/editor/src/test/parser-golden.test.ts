@@ -1,6 +1,6 @@
 // Parser 黄金 fixture 套件（支柱 2a / docs/planning/test-net-design-2026-07.md §3）。
 //
-// 这是 B0.1 parser 重写的安全网核心：解析全语料 → 稳定规范化序列化 → 对比提交的黄金文件。
+// 这是 B0.1 parser 重写的安全网核心：解析功能语料 → 稳定规范化序列化 → 对比提交的黄金文件。
 // B0.1 行为中性 ⟺ 黄金零变化。任何 diff 必须人工审查，**禁止无脑 --update**。
 //
 // 为什么不用 vitest toMatchFileSnapshot：那个 API 配 `vitest --update` 会自动重写黄金，
@@ -9,39 +9,24 @@
 // - 黄金存在但有 diff → 测试报错展示 diff，提示运行生成脚本重写**并人工审**。
 // - vitest --update 不会触碰本套件的黄金文件（它们是普通 .json，不是 vitest snapshot）。
 //
-// 语料覆盖（§3 支柱 2a）：public/tests/*.kmd（32）+ 顶层 public/*.kmd（6，排除 final-test copy 重复）。
+// 语料覆盖（§3 支柱 2a）：public/tests/*.kmd（功能 fixture）+ 顶层 public/*.kmd。
+// 展示作品位于 public/examples/，不进入 parser 特征快照。
 // B0.1 触及语法覆盖审计见 src/test/__fixtures__/b0-1-coverage.kmd 与下方专用断言。
 //
 // 确定性：每个用例 new KMDParser()，避免单例 braceIdCounter 跨调用累加导致 braceGroupId 抖动
 //（已在 golden-serializer.ts 验证 fresh-instance 字节确定）。这是测试侧决策，不改被测代码语义。
 
 import { describe, it, expect } from 'vitest';
-import { readFileSync, readdirSync, existsSync } from 'node:fs';
+import { readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
-import { KMDParser } from '../core/parser/Parser';
+import { KMDParser } from '@kmd/core/parser/Parser';
 import { serializeParseResult } from './golden-serializer';
+import { collectParserGoldenCorpus } from './parser-golden-corpus';
 
 const PUBLIC_DIR = join(import.meta.dirname, '..', '..', 'public');
 const GOLDEN_DIR = join(import.meta.dirname, '__golden__', 'parser');
 
-/** 收集全部语料：tests/*.kmd + 顶层 *.kmd（排除 'final-test copy.kmd' 字节重复）。 */
-function collectCorpus(): { name: string; path: string }[] {
-  const out: { name: string; path: string }[] = [];
-  // tests/ 子目录
-  const testsDir = join(PUBLIC_DIR, 'tests');
-  for (const name of readdirSync(testsDir).sort()) {
-    if (name.endsWith('.kmd')) out.push({ name: `tests/${name}`, path: join(testsDir, name) });
-  }
-  // 顶层
-  for (const name of readdirSync(PUBLIC_DIR).sort()) {
-    if (!name.endsWith('.kmd')) continue;
-    const st = existsSync(join(PUBLIC_DIR, name));
-    if (st) out.push({ name: `top/${name}`, path: join(PUBLIC_DIR, name) });
-  }
-  return out;
-}
-
-const corpus = collectCorpus();
+const corpus = collectParserGoldenCorpus(PUBLIC_DIR);
 
 /** 单次解析 + 序列化（fresh parser 实例，确定性）。 */
 function goldenFor(path: string): string {
@@ -78,6 +63,11 @@ describe('parser golden fixtures (full corpus)', () => {
     expect(corpus.length).toBeGreaterThan(30);
     expect(corpus.some((c) => c.name.startsWith('tests/'))).toBe(true);
     expect(corpus.some((c) => c.name.startsWith('top/'))).toBe(true);
+  });
+
+  it('uses directory ownership instead of an exclusion list for narrative demos', () => {
+    expect(existsSync(join(PUBLIC_DIR, 'examples', 'cyberpunk', 'cyber-crt-blacksite.kmd'))).toBe(true);
+    expect(corpus.some((entry) => entry.name.includes('cyber-crt-blacksite'))).toBe(false);
   });
 });
 

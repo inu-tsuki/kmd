@@ -12,8 +12,8 @@ import { describe, it, expect } from 'vitest';
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
 
-const ROOT = join(import.meta.dirname, '..', '..');
-const CORE = join(ROOT, 'src', 'core');
+const ROOT = join(import.meta.dirname, '..', '..', '..', '..');
+const CORE = join(ROOT, 'packages', 'core', 'src');
 
 const INV7_STAGE_PATTERNS: { re: RegExp; label: string }[] = [
   { re: /if\s*\([^)]*meta(?:\.type|\?\.type)\s*===\s*["']filter["']\s*&&\s*meta(?:\.track|\?\.track)\s*===\s*["']instant["']/, label: 'block track 分流 inline（应过 EffectProcessor.getTrack/classifyByTrack，SA-17）' },

@@ -1,6 +1,6 @@
 # Architecture Decisions
 
-> 最近更新：2026-07-10
+> 最近更新：2026-08-10
 
 这里预留给 ADR。每份文档应记录一个重要选择：背景、决策、取舍、替代方案和后续复核条件。
 
@@ -21,4 +21,5 @@ YYYY-MM-DD-short-decision-title.md
 - `2026-07-20-segment-timeline-not-graph-first.md`：段内确定性时间线 + 段间图边，而非图优先（Phase B 运行时形态）。
 - `2026-07-20-phase-r-before-phase-b.md`：reader-runtime 抽包（Phase R）先于语言工作（Phase B）。
 - `2026-07-20-record-replay-seek-idempotency.md`：record/replay 保证 seek 幂等（状态 = 脚本位置的纯函数）。
-- `2026-07-20-reader-runtime-reexport-not-core-package.md`：reader-runtime 相对路径 re-export core，而非立即抽 `packages/core`。
+- `2026-07-20-reader-runtime-reexport-not-core-package.md`：历史决策；reader-runtime 曾以相对路径 re-export core，现已被 2026-08-10 决策取代。
+- `2026-08-10-extract-private-core-package.md`：物理抽出私有 `@kmd/core`，但不冻结或发布 Phase B 前的内部 API。

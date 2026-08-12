@@ -1,13 +1,17 @@
 {
   "name": "vscode-kmd",
   "displayName": "KMD — Kinetic Markdown",
-  "description": "Syntax highlighting, auto-completion and language support for Kinetic Markdown (.kmd) files",
+  "description": "Syntax highlighting, diagnostics and language support for Kinetic Markdown (.kmd) files",
   "version": "0.2.0",
   "publisher": "inu-tsuki",
   "license": "Apache-2.0",
+  "main": "./dist/client.js",
   "engines": {
-    "vscode": "^1.80.0"
+    "vscode": "^1.82.0"
   },
+  "activationEvents": [
+    "onLanguage:kmd"
+  ],
   "categories": [
     "Programming Languages"
   ],
@@ -58,7 +62,18 @@
     "url": "https://github.com/inu-tsuki/kmd/issues"
   },
   "homepage": "https://github.com/inu-tsuki/kmd#readme",
+  "scripts": {
+    "build": "node scripts/build-client.mjs && node scripts/copy-server.mjs && node scripts/check-package.mjs",
+    "package:check": "node scripts/check-package.mjs",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {},
   "devDependencies": {
-    "sharp": "^0.34.5"
+    "@types/node": "^24.10.1",
+    "@types/vscode": "^1.82.0",
+    "esbuild": "^0.27.2",
+    "sharp": "^0.34.5",
+    "typescript": "~5.9.3",
+    "vscode-languageclient": "^9.0.1"
   }
 }

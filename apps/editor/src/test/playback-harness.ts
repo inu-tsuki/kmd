@@ -24,9 +24,10 @@
 // 本文件的所有消费者 playback-*.test.ts，含 playback-tripwire.test.ts 计数锚点）。
 
 import { Container } from 'pixi.js';
-import { KMDParser } from '../core/parser/Parser';
-import { SegmentBuilder } from '../core/player/SegmentBuilder';
-import type { Segment } from '../core/state/Segment';
+import { KMDParser } from '@kmd/core/parser/Parser';
+import { SegmentBuilder } from '@kmd/core/player/SegmentBuilder';
+import type { Segment } from '@kmd/core/state/Segment';
+import type { SourceLineAnchor } from '@kmd/core/render/text/TextPlayer';
 import { G, SYNTHETIC_METRICS, approxEq } from './setup';
 
 // 同源转导出：消费者从本 harness 一站式取齐 playback 断言工具，不必各自 import setup。
@@ -100,6 +101,7 @@ export interface PlaybackBuildResult {
   /** 首个 segment 首个文本里第一个非空白字符（跳过换行/空白 carrier）。 */
   char: any;
   playbackState: any;
+  sourceLineAnchors: SourceLineAnchor[];
 }
 
 /**
@@ -114,7 +116,7 @@ export async function build(source: string): Promise<PlaybackBuildResult> {
     activeBehaviorCleanups: [] as any[],
     activeInstantCleanups: [] as any[],
   } as any;
-  const { segment, activeTexts } = await SegmentBuilder.build({
+  const { segment, activeTexts, sourceLineAnchors } = await SegmentBuilder.build({
     container: new Container(),
     metadata: { variables: {} } as any,
     paragraphs: result.paragraphs,
@@ -124,7 +126,7 @@ export async function build(source: string): Promise<PlaybackBuildResult> {
   });
   const chars = (activeTexts[0] as any)._displayAssembly.chars;
   const char = chars.find((c: any) => c.text.trim()) ?? chars[0];
-  return { segment, char, playbackState };
+  return { segment, char, playbackState, sourceLineAnchors };
 }
 
 /** buildAndSeek 是 build 的历史别名（原脚本 :1694 的叫法）；语义相同，保留便于迁移对照。 */

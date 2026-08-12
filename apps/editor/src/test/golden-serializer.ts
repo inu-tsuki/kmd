@@ -21,7 +21,7 @@
 //
 // 这套规则是"现状特征"不是"正确性裁判"（§1.4）：发现现状 bug 单独记录，不在本任务顺手改行为。
 
-import type { KMDParseResult } from '../core/parser/types';
+import type { KMDParseResult } from '@kmd/core/parser/types';
 
 /**
  * 递归规范化：对象键按字母序排，数组顺序保留，undefined 被剔除。

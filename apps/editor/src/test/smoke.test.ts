@@ -3,7 +3,7 @@
 // 不断言业务语义——只确认 (1) vitest 能跑、(2) setup.ts 的 shim 不崩、(3) parser 单例可 import。
 // 业务断言进各自的 parser/layout/effects/playback 套件。
 import { describe, it, expect } from 'vitest';
-import { parser } from '../core/parser/Parser';
+import { parser } from '@kmd/core/parser/Parser';
 import { G } from './setup';
 
 describe('vitest smoke', () => {

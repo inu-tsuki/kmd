@@ -8,14 +8,16 @@ KMD (Kinetic Markdown) is a pnpm monorepo for a Markdown-like markup language an
 
 Workspaces (declared in `pnpm-workspace.yaml`):
 
-- `apps/editor` — Vue 3 + Pixi.js Web editor and editor-side KMD runtime code (`src/core/`).
+- `apps/editor` — Vue 3 + Pixi.js Web editor shell and editor-only Monaco/TextMate integrations.
 - `apps/community-api` — Express mock backend used by the Android reader course project.
+- `packages/core` — Private monorepo source package for parser, layout, effects, stage, render, player, and reader-runtime contracts. Imported as `@kmd/core`; deep imports are internal and unstable during Phase B.
 - `packages/language` — Shared KMD language assets (TextMate grammar, `language-configuration.json`). Imported as `@kmd/language`.
+- `packages/kmd-language-server` — Node LSP server for KMD diagnostics. Reuses `@kmd/core/parser/Parser`, supports stdio and Node IPC, and is consumed by the VS Code extension.
 - `packages/reader-runtime-web` — Reader-only WebView/browser bundle package. Package duties and extraction gates live in `docs/planning/packages/reader-runtime-web.md`.
+- `extensions/vscode-kmd` — VS Code language extension and lightweight LSP client. Keeps a packaged copy of `packages/language` assets that must stay in sync (verified by `pnpm language:check`).
 
 Not in the workspace:
 
-- `extensions/vscode-kmd` — VS Code language extension. Keeps a packaged copy of `packages/language` assets that must stay in sync (verified by `pnpm language:check`).
 - `apps/android-reader/` — Optional local checkout; ignored by this repo.
 
 ## Commands
@@ -25,12 +27,19 @@ Run from the repo root. Package manager is **pnpm**. There is no lint script.
 ```bash
 pnpm install
 pnpm dev                  # editor dev server (vite)
-pnpm build                # editor: vue-tsc type-check + production build
+pnpm core:check           # core boundary guard + standalone TypeScript check
+pnpm build                # core check + LSP server build + VS Code client build + editor type-check/build
 pnpm preview              # editor: preview production build
-pnpm test                 # editor vitest suite (parser golden + layout + effects + playback + invariants + shaders + frontmatter)
+pnpm test                 # core check + LSP tests + editor vitest suite (parser/layout/effects/playback/invariants/shaders/frontmatter)
 pnpm test:parser          # parser integration + corpus golden (vitest)
 pnpm test:golden:write    # regenerate parser/layout golden files (REVIEW git diff, never blind-commit)
 pnpm language:check       # verify packages/language assets match extensions/vscode-kmd packaged copies
+
+pnpm language-server:build      # type-check and bundle the Node LSP server
+pnpm language-server:test       # LSP diagnostic adapter and core-parser integration tests
+pnpm language-server:check      # language-server build + tests
+pnpm vscode-kmd:build           # compile the lightweight VS Code LSP client
+pnpm vscode-kmd:typecheck
 
 pnpm reader:build         # build reader-runtime-web bundle to dist/reader-runtime/
 pnpm reader:preview
@@ -73,23 +82,25 @@ KMD 处于密集实验与验证期，没有生产/线上环境，不对既有用
 | 改动触及 | 必过门禁 |
 |---|---|
 | parser、layout 或共享 runtime | `pnpm build` + `pnpm test` + `pnpm test:parser` |
+| KMD LSP server 或 VS Code client | `pnpm language-server:check` + `pnpm vscode-kmd:typecheck` |
 | playback、seek、effect 管线、timeline/easing、stage modifiers | 上一行 + `pnpm test:playback` + `pnpm test:invariants` |
 | 浏览器渲染、Pixi 资源生命周期、ticker、WebGL 集成 | 再加 `pnpm test:e2e` |
 | 任何 `*Filter.ts` | 再加 `pnpm test:shaders` |
 | `@kmd/language` 或 VS Code 扩展资产 | `pnpm language:check` |
 
-`pnpm build` 不编译 GLSL 模板字符串，shader 失败时它仍会过——shader 门禁（glslangValidator，硬 CI gate，无 `SKIP_SHADER_GATE` 逃生口；需 `glslangValidator` 在 PATH：`brew install glslang` / `pacman -S glslang` / `apt install glslang-tools`）负责抓这类错误。`test:e2e` 首次运行前 `pnpm exec playwright install chromium`。golden 文件（`src/test/__golden__/`）是特征快照——经 `pnpm test:golden:write` 再生后**人工审 git diff**，绝不盲提交（`vitest --update` 不碰它们：它们是纯 JSON，不是 vitest snapshot）。
+`pnpm build` 不编译 GLSL 模板字符串，shader 失败时它仍会过——shader 门禁（Khronos `glslangValidator`，16.5.0 官方归档中的可执行文件名为 `glslang`；硬 CI gate，无 `SKIP_SHADER_GATE` 逃生口；二者之一需在 PATH）负责抓这类错误。`test:e2e` 首次运行前 `pnpm exec playwright install chromium`。golden 文件（`apps/editor/src/test/__golden__/`）是特征快照——经 `pnpm test:golden:write` 再生后**人工审 git diff**，绝不盲提交（`vitest --update` 不碰它们：它们是纯 JSON，不是 vitest snapshot）。
 
 ## High-Level Architecture
 
 ### Where the runtime lives
 
-The KMD core runtime lives under `apps/editor/src/core/`. Deep-dive pipeline docs:
+The KMD core runtime lives under `packages/core/src/`. Deep-dive pipeline docs:
 `docs/knowledge/runtime/core/parser-pipeline.md`, `effect-pipeline.md`,
 `command-routing.md` (also in the docs index below). This file records only
 load-bearing boundaries, not structure descriptions:
 
-- Reader-hostable contract: `core/runtime/` (`ReaderRuntimeContract`, `ReaderRuntimeSession`, `RuntimeAssetPolicy`), consumed by `packages/reader-runtime-web`. Do **not** import editor UI (Vue components, Pinia, Monaco, TextMate, editor panels) from anything reached by the reader hot path. Editor-only bridges back to Pinia live in `apps/editor/src/runtime/`.
+- Reader-hostable contract: `packages/core/src/runtime/` (`ReaderRuntimeContract`, `ReaderRuntimeSession`, `RuntimeAssetPolicy`), consumed by `packages/reader-runtime-web`. `scripts/check-core-boundary.mjs` rejects editor-only dependencies and relative imports escaping the package. Editor-only bridges back to Pinia live in `apps/editor/src/runtime/`; Monaco/TextMate integrations live in `apps/editor/src/editor/`.
+- Language-service host: `packages/kmd-language-server` adapts `KMDParser.validate()` to standard LSP diagnostics. `extensions/vscode-kmd/client.ts` owns only VS Code lifecycle and transport; parser semantics remain in `packages/core`.
 - `scene.clear` is the single runtime path for `---`; do not re-introduce `isSceneClear` displays in `SegmentBuilder`.
 - `SegmentBuilder` consumes `ParagraphBuildInput` (not raw text); `TextPlayer` consumes `ParagraphExecutionPlan` (not semantic fields off `KineticChar`).
 - Module-level singletons (not Vue-injected): `readerApp`, `stageManager`, `layout`, `parser`, `scriptPlayer`, `effectManager`, `styleManager`, `layoutManager`.
@@ -101,22 +112,23 @@ Do not maintain phase status, completed work summaries, or next-step lists in th
 ## Conventions
 
 - Vue SFCs in PascalCase (`KmdEditor.vue`); stores / utilities in camelCase (`editorStore.ts`); 2-space indent, semicolons, single quotes in `.ts`.
-- Do **not** extract `apps/editor/src/core/` into `packages/core/` unless the repository strategy and package plan explicitly call for it. Reader-runtime package boundary changes should be reflected in `docs/planning/packages/reader-runtime-web.md`.
+- `@kmd/core` remains private during Phase B. Physical package boundaries are enforced, but deep exports are monorepo-internal and must not be presented as a stable npm API or independently versioned release contract.
 - Import shared language assets via `@kmd/language`, never by reaching into `extensions/vscode-kmd/`.
 - Adding new behavior:
-  - Visual effects → add a `{ fn, meta }` preset in `core/effects/presets/` (visual/behavior/filter/entrance/timing; auto-registers via `registerBatch`).
-  - Style modifiers → register in `core/effects/StyleManager.ts`.
-  - Layout commands → register an expander in `core/layout/layoutExpanders.ts`.
-  - Stage commands → register in `core/stage/stagePresets.ts`.
-  - Then update `KMDParser.validate()` in `core/parser/Parser.ts` if the new name must pass the known-command check.
+  - Visual effects → add a `{ fn, meta }` preset in `packages/core/src/effects/presets/` (visual/behavior/filter/entrance/timing; auto-registers via `registerBatch`).
+  - Style modifiers → register in `packages/core/src/effects/StyleManager.ts`.
+  - Layout commands → register an expander in `packages/core/src/layout/layoutExpanders.ts`.
+  - Stage commands → register in `packages/core/src/stage/stagePresets.ts`.
+  - Then update `KMDParser.validate()` in `packages/core/src/parser/Parser.ts` if the new name must pass the known-command check.
 
 ## Docs To Read Before Changing Things
 
 - `docs/README.md` — doc taxonomy (`planning/`, `knowledge/`, `archive/`).
 - `docs/planning/roadmap/implementation-roadmap.md` — roadmap and sequencing authority; follow its links to active or historical phase records.
-- `docs/planning/packages/reader-runtime-web.md` — reader package boundary and `packages/core` extraction gate.
+- `docs/planning/packages/reader-runtime-web.md` — reader package boundary and completed internal `packages/core` extraction decision.
 - `docs/knowledge/integration/reader-runtime-web-bundle.md`, `android-webview-runtime-protocol.md` — before changing Android/WebView runtime integration.
-- `docs/planning/ecosystem/repository-strategy.md` — when (not yet) to split packages.
+- `docs/knowledge/integration/kmd-language-server.md` — before changing the LSP server or VS Code client transport.
+- `docs/planning/ecosystem/repository-strategy.md` — monorepo package boundaries and later publication gates.
 - `docs/knowledge/runtime/core/command-routing.md`, `effect-pipeline.md`, `parser-pipeline.md` — before touching command routing, effects, or the parser.
 - `docs/planning/TODO.md` — AI-collaboration task pool and historical execution log.
 - `docs/planning/test-net-design-2026-07.md` — test net design, tripwire accounting, golden-corpus philosophy.

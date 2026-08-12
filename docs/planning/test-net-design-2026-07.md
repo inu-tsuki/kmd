@@ -78,7 +78,7 @@ Phase B 的 B0.1 将重写 parser 核心（正则成员解析 → 递归下降�
 - **编辑器无 vitest**；`apps/community-api` 用 `vitest ^2.1.8`——版本对齐它。
 - `final-parser-test.ts` 已在 dump 全量 parse 结果（`parser-output.json`）——黄金网的雏形，但只覆盖 `final-test.kmd` 一个文件。
 - `final-playback-test.ts` 的 headless shim（gsap 互操作 / document stub / DOMAdapter 合成度量）**确定性**，可提取为共享 setup，作为布局坐标测试的稳定基准。
-- 语料：`apps/editor/public/tests/` 32 个 `.kmd`（01–12 行为/时序 + 18 fx-* + fx-bg/cyberpunk）+ 顶层 7 个。
+- 语料：`apps/editor/public/tests/` 只放功能 fixture，和顶层 `.kmd` 一起进入 parser golden；纯叙事/展示作品放在 `apps/editor/public/examples/`，交给 playback 与浏览器 E2E 覆盖，目录本身表达测试所有权。
 - CI 现跑：language:check → build → parser → playback → invariants → reader typecheck/build → playwright e2e → community-api build/test。无 vitest 步骤，无 shaders。
 
 ## 3. 设计：四根支柱
@@ -91,9 +91,9 @@ Phase B 的 B0.1 将重写 parser 核心（正则成员解析 → 递归下降�
 
 ### 支柱 2 · 新增定向测试（Phase B 安全网的心脏，先做）
 
-**(a) Parser 黄金 fixture（全语料）——最高优先**
+**(a) Parser 黄金 fixture（功能语料）——最高优先**
 
-- 解析全语料（`public/tests/*.kmd` + 顶层 `*.kmd` + `final-test.kmd`）→ **稳定规范化序列化**（`ParagraphAst` + `ParagraphIR` + tokens/effects/layoutInstructions，键序稳定；位置 range 一并保留，因 B0.1 也应保持）→ 对比**提交的黄金文件**。
+- 解析功能语料（`public/tests/*.kmd`）+ 顶层 `*.kmd` → **稳定规范化序列化**（`ParagraphAst` + `ParagraphIR` + tokens/effects/layoutInstructions，键序稳定；位置 range 一并保留，因 B0.1 也应保持）→ 对比**提交的黄金文件**。`public/examples/` 不进入 golden。
 - **B0.1 行为中性 ⟺ 黄金零变化**。任何 diff 必须人工审查，**禁止无脑 `--update`**。
 - **语料覆盖审计**：确认覆盖 B0.1 触及表面——成员解析、量词（`1s`/`0.5line`/相对值）、`cam.*`、`hold`/`ease` 词形、`:bg`、括号组。缺则补 fixture，否则黄金网罩不住重写面。
 
@@ -136,7 +136,7 @@ Phase B 的 B0.1 将重写 parser 核心（正则成员解析 → 递归下降�
 ## 5. 验收（处方 5 完成条件）
 
 - `pnpm test` 跑完整 vitest 套件全绿。
-- Parser 黄金网覆盖全语料 + B0.1 触及语法的 fixture。
+- Parser 黄金网覆盖功能语料 + B0.1 触及语法的 fixture；展示作品走 playback / E2E。
 - CI 跑 vitest + `test:shaders`（装 glslang、无 SKIP 逃生门）。
 - 9 个散件全部收编或退役，无孤儿手动测试。
 - 更新 `CLAUDE.md` 的 “There is no full unit-test suite yet”（处方 5 复核条件）。
@@ -156,7 +156,7 @@ Phase B 的 B0.1 将重写 parser 核心（正则成员解析 → 递归下降�
 - docs/planning/test-net-design-2026-07.md（本设计文档，权威，先通读 §1 理解为什么这么做）
 - docs/planning/architecture-health-check-2026-07.md（处方 5 出处）
 - apps/editor/src/final-parser-test.ts、final-playback-test.ts、test-invariants.ts、final-shader-test.ts（待收编散件）
-- apps/editor/src/core/parser/Parser.ts、core/layout/（LayoutPlanner / TextLayoutEngine）、core/effects/EffectManager.ts、core/effects/StyleManager.ts（被测对象）
+- packages/core/src/parser/Parser.ts、core/layout/（LayoutPlanner / TextLayoutEngine）、core/effects/EffectManager.ts、core/effects/StyleManager.ts（被测对象）
 - .github/workflows/ci.yml、playwright.config.ts（现有门禁）
 - apps/community-api/package.json（vitest ^2.1.8 版本参照）
 
@@ -165,7 +165,7 @@ Phase B 的 B0.1 将重写 parser 核心（正则成员解析 → 递归下降�
 1. 引入 Vitest（^2.1.8 对齐 community-api）+ vitest.config.ts + setup.ts（把 final-playback-test.ts 里的 gsap 互操作 / document stub / DOMAdapter 合成度量 shim 提取为单一真相源）+ pnpm --filter @kmd/editor test 与根 pnpm test。
 
 2. 新增三类定向测试（先做，纯新增不动旧脚本）：
-   (a) parser 黄金 fixture：解析全语料（apps/editor/public/tests/*.kmd + 顶层 *.kmd + final-test.kmd）→ 稳定规范化序列化（ParagraphAst + ParagraphIR + tokens/effects/layoutInstructions，键序稳定，位置 range 保留）→ 对比提交的黄金文件。B0.1 行为中性 ⟺ 黄金零变化。审计语料是否覆盖 B0.1 触及语法（成员解析 / 量词 / cam.* / hold-ease 词形 / :bg / 括号组），缺则补 fixture。黄金更新必须人工审，禁止无脑 --update。
+   (a) parser 黄金 fixture：解析功能语料（apps/editor/public/tests/*.kmd）+ 顶层 *.kmd → 稳定规范化序列化（ParagraphAst + ParagraphIR + tokens/effects/layoutInstructions，键序稳定，位置 range 保留）→ 对比提交的黄金文件。展示作品位于 apps/editor/public/examples/，不进入 golden。B0.1 行为中性 ⟺ 黄金零变化。审计语料是否覆盖 B0.1 触及语法（成员解析 / 量词 / cam.* / hold-ease 词形 / :bg / 括号组），缺则补 fixture。黄金更新必须人工审，禁止无脑 --update。
    (b) 布局坐标稳定性：用 setup.ts 的确定性合成度量，解析语料 → 跑 layout → 快照每字符 x/y/baseline，测布局数学（堆叠 / align / 断行 / goto-flow-up-down 偏移 / marker 同步）。
    (c) effects 四轨分类：遍历 effectManager.getRegisteredNames() + styleManager，断言每个 preset 的 track/type/targetType/mutexGroup/stackable 对一张提交的分类表；改分类须显式改表。
 

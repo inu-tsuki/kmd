@@ -27,6 +27,7 @@
 `PlaybackController`（`PlaybackController.ts`）：
 - `playSegment`（`:36`）：注册 behaviors/instant effects 后 `tl.play()` 或 `tl.restart()`。
 - `seekToTime`（`:63`）：`segment.timeline.seek(clamped)` — GSAP 自动按 ease 插值所有 entrance tween 和 stage tween 到该位置。然后手动重注册 behaviors（`registerBehaviors`）、重放 styles（`replayStyles`）、重应用 instant filters（`registerInstantEffects`）——因为这三类不在时间线上。
+- `seekToSourceLine`：`TextPlayer.buildTimeline` 在 timing sugar 消解后记录每个 1-based 源码行的首个 cursor，`SegmentBuilder` 加上段落 `segmentCursor` 后聚合为全局行锚点。精确行命中该时刻；空行、注释或 frontmatter 向后吸附到最近可执行行；超过最后锚点则返回 `false`，不倒退播放旧内容。该 API 仅 seek，播放意图仍由调用方显式决定。
 - `onUpdate` 回调报告 `segmentTl.time() * 1000`；`onComplete` 暂停时间线（BUG-14 修复，`:369`）。
 
 ### 使用的 GSAP 方法

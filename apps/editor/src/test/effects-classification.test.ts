@@ -8,8 +8,8 @@
 // 表来自 live registry dump（effectManager.getMetadata），非静态文件推断——是运行时真相。
 
 import { describe, it, expect } from 'vitest';
-import { effectManager } from '../core/effects/EffectManager';
-import { styleManager } from '../core/effects/StyleManager';
+import { effectManager } from '@kmd/core/effects/EffectManager';
+import { styleManager } from '@kmd/core/effects/StyleManager';
 
 // ─── 分类表（提交的真相；改分类须显式改此表） ──────────────────────────
 //
@@ -61,6 +61,12 @@ const EFFECT_TABLE: Record<string, PresetClass> = {
   dissolve:  { track: 'behavior', type: 'filter', targetType: 'both', mutexGroup: 'filter_dissolve',  stackable: false },
   displace:  { track: 'behavior', type: 'filter', targetType: 'both', mutexGroup: 'filter_displace',  stackable: false },
   underwater:{ track: 'behavior', type: 'filter', targetType: 'both', mutexGroup: 'filter_underwater',stackable: false },
+  cyberGlitch:{ track: 'behavior', type: 'filter', targetType: 'both', mutexGroup: 'filter_cyber_glitch', stackable: false },
+  crtDisplay:{ track: 'behavior', type: 'filter', targetType: 'both', mutexGroup: 'filter_crt_display', stackable: false },
+  neonGlow:  { track: 'behavior', type: 'filter', targetType: 'both', mutexGroup: 'filter_neon_glow', stackable: false },
+  digitalFlicker:{ track: 'behavior', type: 'behavior', targetType: 'char', mutexGroup: 'alpha', stackable: false },
+  hologram:  { track: 'behavior', type: 'filter', targetType: 'both', mutexGroup: 'filter_hologram', stackable: false },
+  chromaticAberration:{ track: 'behavior', type: 'filter', targetType: 'both', mutexGroup: 'filter_rgb', stackable: false },
   pixelate:  { track: 'instant',  type: 'filter', targetType: 'both', mutexGroup: 'filter_pixelate',  stackable: true },
   gray:      { track: 'instant',  type: 'filter', targetType: 'both', mutexGroup: 'filter_color',     stackable: true },
   threshold: { track: 'instant',  type: 'filter', targetType: 'both', mutexGroup: 'filter_color',     stackable: true },

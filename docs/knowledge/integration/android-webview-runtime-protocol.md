@@ -4,7 +4,7 @@
 > 最近更新：2026-06-16
 > 权威范围：Android ↔ Web reader runtime 的桥协议——消息信封、v1 命令、v1 事件、ack 策略、生命周期状态机、capability 协商
 
-Web 侧 TypeScript 契约见 `apps/editor/src/core/runtime/ReaderRuntimeContract.ts`。
+Web 侧 TypeScript 契约见 `packages/core/src/runtime/ReaderRuntimeContract.ts`。
 
 ## 1. 目标
 
@@ -160,7 +160,7 @@ interface ReaderSettingsPayload {
 
 > 2026-08 主题二（S4a）：`updateSettings` payload 与 `window.KmdRuntimeConfig` 在 session 边界
 > 经 zod schema sanitize（strip-unknown + 逐字段类型回退 + 永不抛，见
-> `apps/editor/src/core/runtime/RuntimeConfigValidator.ts`）。payload 非对象 →
+> `packages/core/src/runtime/RuntimeConfigValidator.ts`）。payload 非对象 →
 > `SETTINGS_PAYLOAD_INVALID` 错误事件（复刻 `LOAD_SCRIPT_PAYLOAD_INVALID` 惯例）；
 > 字段级垃圾静默剥离 + console 诊断，不发错误事件。
 

@@ -109,6 +109,10 @@ entrance filter（blurIn 等）的 tween 在时间线上，seek 时靠 `timeline
 
 **附带约束（聚合）**：跨层聚合 record 时（如 `SegmentBuilder` 把 `buildResult.stageModifierRecords` 并进 `allStageModifierRecords`）必须 spread 全部字段（`{...modRecord, timePosition}`），不能只挑已知字段拷贝——否则单字段（如 `isClearBoundary`）会在聚合点丢失。
 
+**资源桶约束**：token-chain 的 `timing` track 必须在构建期与 `instant` track 分离。
+`slow`/`fast` 返回的 cursor 控制对象不是 Filter，不得写入 `InstantEffectRecord` /
+`activeInstantCleanups`。清理期不靠 `typeof destroy` 守卫掩盖错分流；所有权在 record 构建期确立。
+
 **审计触发**：R2 review（SA-14）。
 
 ### INV-8: 外部依赖边界行为假设须可复现验证
@@ -178,7 +182,7 @@ measurement、design viewport 与 rebuild 次数均不变，不能只断言“�
 | Pixi | v8.15 | `BlurFilter.destroy()` 不销毁 `blurXFilter`/`blurYFilter` 子 pass | 见 `destroyFilterDeep` 注释引用 | `destroyFilterDeep` 递归 destroy 子 pass |
 | Pixi | v8.15 | filters 数组元素 `configurable:false`，原地 splice 抛 "Cannot delete property '1'" | node 内联：`Object.getOwnPropertyDescriptor(filters,1).configurable===false`；splice 抛错 | 重建数组后整体赋值，不 splice（clearInstantEffects/clearBehaviors/clearEntranceFilters） |
 | Pixi | v8.15 | `vec3<f32>` uniform setter 用 `v[0]/v[1]/v[2]` 数组索引（`gl.uniform3f(loc,v[0],v[1],v[2])`），传 `{x,y,z}` 对象 → `undefined`→0 | 源码引用：`generateUniformsSyncTypes.mjs` `UNIFORM_TO_SINGLE_SETTERS` | colorUtils.ts 用 Float32Array 不用 {x,y,z} |
-| Pixi | v8.15 | 懒初始化 renderer——仅 `import` + 构造 `Container`/`Graphics`/`Filter` **不触发 WebGL/canvas/window**。`require('pixi.js')` 在 node 下 exit 0 无错 | node 内联：`node -e "require('pixi.js')"` exit 0；`node --import tsx -e "import('./src/core/player/PlaybackController.ts')"` 干净加载（SA-23 触发） | PlaybackController/ScriptPlayer 可在 `node --import tsx` 下 headless 测试，无需 mock pixi（`pnpm test:playback` 直接 import 真实模块） |
+| Pixi | v8.15 | 懒初始化 renderer——仅 `import` + 构造 `Container`/`Graphics`/`Filter` **不触发 WebGL/canvas/window**。`require('pixi.js')` 在 node 下 exit 0 无错 | node 内联：`node -e "require('pixi.js')"` exit 0；`node --import tsx -e "import('./packages/core/src/player/PlaybackController.ts')"` 干净加载（SA-23 触发） | PlaybackController/ScriptPlayer 可在 `node --import tsx` 下 headless 测试，无需 mock pixi（`pnpm test:playback` 直接 import 真实模块） |
 | tsx | 4.21 | CJS/ESM 互操作把 `import gsap from "gsap"` 当命名空间导入，默认导出落在 `.default`：`gsap.timeline` 是 `undefined`，`gsap.default.timeline` 是 function | node 内联：`import gsap from "gsap"` 后 `gsap.timeline===undefined`、`gsap.default.timeline===function`（SA-23 触发） | headless 测试用 `const G = (gsap as any).default ?? gsap` 解包；vite 生产环境标准 ESM 解析不受影响（各 preset 文件 `import gsap` 正常） |
 | tsx/gsap | 4.21/3.x | 生产代码（SegmentBuilder/PlaybackController 等）直接调 `gsap.timeline()` / `gsap.core`（不经测试文件的 G 别名）。tsx 下 gsap 命名空间这些是 undefined → `gsap.timeline is not a function` | node 探针：`SegmentBuilder.build` 抛 `gsap.timeline is not a function`（R17/SA-32 触发） | 端到端真实管线测试（`final-playback-test.ts` §13）需 **gsap hoist shim**：把 `gsap.default` 的属性提升到 `gsap` 命名空间——`for (const k of Object.keys(G)) { if(!(k in gsap)) gsap[k]=G[k]; }`。仅测 PlaybackController 的 §1-§12 用 G 别名绕过，但驱动真实 SegmentBuilder 必须补此 shim |
 | node/Pixi | v8.15 | KineticText 构造读 `(document as any).fonts`（`KineticText.ts:82`），node 下 `document` 未定义 → `ReferenceError` | node 探针：无 `document` 时构造 KineticText 抛 ReferenceError（R17/SA-32 触发） | 端到端测试需 **document stub**：`globalThis.document = { fonts:{ready:Promise.resolve()}, createElement:()=>({}) }`。**注意：不要 stub `window`**——`LayoutPlanner.isDiagnosticsEnabled` 检查 `typeof window`，未定义时早返回 false（line 348）；若 stub 了 window 会落到 `window.location.search` 崩溃 |

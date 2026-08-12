@@ -11,6 +11,8 @@ Phase R 的 R0-R7 已完成。`@kmd/reader-runtime-web` 已作为 workspace pack
 
 本文保留为 Phase R 的执行记录和后续 gate。当前阶段与下一步以 [`implementation-roadmap.md`](./implementation-roadmap.md) 为准。
 
+> 2026-08-10 后续变化：本文 R7 中“runtime closure 暂留 editor、暂不抽 core”是当时决策记录，现已由 private `@kmd/core` 物理拆分取代；见 `../packages/reader-runtime-web.md` 与 `../../knowledge/decisions/2026-08-10-extract-private-core-package.md`。
+
 ## 1. 背景
 
 Phase B 的语言设计已经扩展为完整新语法体系，不能再和 Android Reader 的可交付 runtime 需求绑在同一阶段里推进。

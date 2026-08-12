@@ -18,11 +18,11 @@ import {
   parseReaderRuntimeCommandEnvelope,
   createReaderRuntimeEventEnvelope,
   READER_RUNTIME_PROTOCOL_VERSION,
-} from '../core/runtime/ReaderRuntimeProtocol';
+} from '@kmd/core/runtime/ReaderRuntimeProtocol';
 import type {
   ReaderRuntimeCommandType,
   ReaderRuntimeEventType,
-} from '../core/runtime/ReaderRuntimeContract';
+} from '@kmd/core/runtime/ReaderRuntimeContract';
 
 const COMMAND_TYPES: ReaderRuntimeCommandType[] = [
   'loadScript',

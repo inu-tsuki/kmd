@@ -1,10 +1,11 @@
 import * as monaco from 'monaco-editor';
-import { effectManager } from '../effects/EffectManager';
-import { styleManager } from '../effects/StyleManager';
-import { stageManager } from '../stage/StageManager';
-import { layoutManager } from '../layout/LayoutManager';
-import { parser } from '../parser/Parser';
+import { effectManager } from '@kmd/core/effects/EffectManager';
+import { styleManager } from '@kmd/core/effects/StyleManager';
+import { stageManager } from '@kmd/core/stage/StageManager';
+import { layoutManager } from '@kmd/core/layout/LayoutManager';
+import { parser } from '@kmd/core/parser/Parser';
 import { getKmdGrammar, createTmTokensProvider } from './tmGrammarLoader';
+import { themeService } from './ThemeService';
 
 // 定义语义 Token 类别
 const tokenTypes = ['function', 'variable', 'keyword', 'string', 'number', 'operator', 'type', 'namespace', 'method'];
@@ -17,6 +18,7 @@ export const registerKMDLanguage = async () => {
   if (isRegistered) return;
   isRegistered = true;
 
+  themeService.attachMonaco(monaco.editor);
   monaco.languages.register({ id: 'kmd' });
 
   // --- 1. TM grammar (replaces Monarch) ---
@@ -74,29 +76,7 @@ export const registerKMDLanguage = async () => {
     releaseDocumentSemanticTokens: () => {}
   });
 
-  // --- 3. 主题与补全 ---
-  monaco.editor.defineTheme('kmd-theme', {
-    base: 'vs-dark',
-    inherit: true,
-    rules: [
-      { token: 'operator.at', foreground: 'FFD700', fontStyle: 'bold' }, 
-      { token: 'keyword.operator', foreground: 'FF7F50' },               
-      { token: 'string.quote', foreground: 'CE9178' },                   
-      { token: 'string.escape', foreground: 'D7BA7D', fontStyle: 'bold' }, 
-      { token: 'keyword.prefix', foreground: '569CD6', fontStyle: 'italic' }, 
-      { token: 'keyword.quantifier', foreground: 'C586C0' },             
-      { token: 'variable.predefined', foreground: '4FC1FF' },            
-      { token: 'keyword.header', foreground: '6A9955', fontStyle: 'bold' },
-      { token: 'keyword.scene-clear', foreground: 'FF6B6B', fontStyle: 'bold' },
-      { token: 'keyword.frontmatter.delimiter', foreground: '808080', fontStyle: 'italic' },
-      { token: 'function', foreground: 'DCDCAA' },                       
-      { token: 'variable.parameter', foreground: '9CDCFE' },
-      { token: 'delimiter.parenthesis', foreground: 'ABB2BF' },
-      { token: 'keyword.level', foreground: 'CE9178', fontStyle: 'italic' },
-    ],
-    colors: { 'editor.background': '#1E1E1E' }
-  });
-
+  // --- 3. 补全 ---
   monaco.languages.registerCompletionItemProvider('kmd', {
     triggerCharacters: ['.', ' ', '@', '(', ':'],
     provideCompletionItems: (model, position) => {

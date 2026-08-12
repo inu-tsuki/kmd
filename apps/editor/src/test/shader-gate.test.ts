@@ -9,12 +9,23 @@
 //
 // 运行：pnpm --filter @kmd/editor test（vitest） 或 pnpm test:shaders（旧 tsx 脚本，迁移期并存）。
 
-import { describe, it, expect } from 'vitest';
-import { readFileSync, readdirSync, writeFileSync, unlinkSync, existsSync, mkdirSync } from 'node:fs';
+import { afterAll, describe, it, expect } from 'vitest';
+import { readFileSync, readdirSync, writeFileSync, rmSync, mkdtempSync } from 'node:fs';
 import { join, relative } from 'node:path';
-import { execSync } from 'node:child_process';
+import { tmpdir } from 'node:os';
+import { execFileSync } from 'node:child_process';
 
-const FILTERS_DIR = join(import.meta.dirname, '..', 'core', 'filters');
+const FILTERS_DIR = join(
+  import.meta.dirname,
+  '..',
+  '..',
+  '..',
+  '..',
+  'packages',
+  'core',
+  'src',
+  'filters',
+);
 
 function collectFilterFiles(dir: string): string[] {
   return readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
@@ -24,13 +35,16 @@ function collectFilterFiles(dir: string): string[] {
   });
 }
 
-function glslangAvailable(): boolean {
-  try {
-    execSync('glslangValidator --version', { stdio: ['pipe', 'pipe', 'pipe'] });
-    return true;
-  } catch {
-    return false;
+function resolveGlslangCommand(): string | null {
+  for (const command of ['glslangValidator', 'glslang']) {
+    try {
+      execFileSync(command, ['--version'], { stdio: ['pipe', 'pipe', 'pipe'] });
+      return command;
+    } catch {
+      // Continue: Khronos release archives renamed the executable to `glslang` in 16.5.0.
+    }
   }
+  return null;
 }
 
 function extractShaders(source: string): { shader: string }[] {
@@ -44,11 +58,18 @@ function extractShaders(source: string): { shader: string }[] {
 }
 
 const files = collectFilterFiles(FILTERS_DIR).sort();
+const glslangCommand = resolveGlslangCommand();
+const shaderTempDir = mkdtempSync(join(tmpdir(), 'kmd-shaders-'));
+
+afterAll(() => rmSync(shaderTempDir, { recursive: true, force: true }));
 
 describe('shader compile gate (glslangValidator)', () => {
-  it('glslangValidator is available (no SKIP escape hatch)', () => {
+  it('glslangValidator/glslang is available (no SKIP escape hatch)', () => {
     // §3 支柱 4：去 SKIP_SHADER_GATE 逃生门——glslang 缺失即 fail，不假绿。
-    expect(glslangAvailable(), 'glslangValidator 未安装；brew install glslang / pacman -S glslang').toBe(true);
+    expect(
+      glslangCommand,
+      'glslangValidator/glslang 未安装；brew install glslang / pacman -S glslang',
+    ).not.toBeNull();
   });
 
   it('there is at least one *Filter.ts file', () => {
@@ -57,23 +78,26 @@ describe('shader compile gate (glslangValidator)', () => {
 
   // 动态生成每文件每 shader 的用例——但 vitest 静态收集，故用 it.each。
   // 预先展开文件×shader 索引列表。
-  const cases: { label: string; file: string; shader: string }[] = [];
+  const cases: { label: string; file: string; shader: string; tempIndex: number }[] = [];
   for (const file of files) {
     const display = relative(FILTERS_DIR, file);
     const source = readFileSync(file, 'utf-8');
     const shaders = extractShaders(source);
     shaders.forEach((s, idx) => {
-      cases.push({ label: `${display} #${idx + 1}`, file: display, shader: s.shader });
+      cases.push({
+        label: `${display} #${idx + 1}`,
+        file: display,
+        shader: s.shader,
+        tempIndex: cases.length,
+      });
     });
   }
 
-  it.each(cases)('%s compiles', ({ label, shader }) => {
-    const tmpName = label.replace(/[^a-zA-Z0-9_-]/g, '-');
-    const tmpFile = `/tmp/kmd-shader-${tmpName}.frag`;
-    mkdirSync('/tmp', { recursive: true });
+  it.each(cases)('%s compiles', ({ label, shader, tempIndex }) => {
+    const tmpFile = join(shaderTempDir, `${tempIndex}.frag`);
     writeFileSync(tmpFile, shader);
     try {
-      execSync(`glslangValidator "${tmpFile}"`, {
+      execFileSync(glslangCommand!, [tmpFile], {
         stdio: ['pipe', 'pipe', 'pipe'],
         timeout: 10_000,
       });
@@ -82,7 +106,7 @@ describe('shader compile gate (glslangValidator)', () => {
       const stderr = err.stderr?.toString() || err.message;
       expect.fail(`${label} GLSL 编译失败:\n${stderr.split('\n').slice(0, 10).join('\n')}`);
     } finally {
-      if (existsSync(tmpFile)) unlinkSync(tmpFile);
+      rmSync(tmpFile, { force: true });
     }
   });
 });

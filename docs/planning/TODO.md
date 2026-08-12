@@ -362,7 +362,7 @@
 - [ ] **Hot Replay**: Monaco "从此处播放" + segment seek。
 - [ ] **Monaco 视觉增强**: Segment 边界标记、Minimap 增强、控制流折叠。
 - [ ] **Inspector v2**: 指令元数据 + 实时调参 → 自动改写 KMD 源码。
-- [ ] **VS Code 颜色主题加载**:
+- [x] **VS Code 颜色主题加载**（2026-08-10：标准已展开 JSON + 项目路径加载完成；JSONC、`include`、扩展清单与热监听边界见 `docs/knowledge/integration/editor-vscode-theme-loading.md`）:
   - Monaco 与 VS Code `tokenColors` 格式完全兼容（已用 TM grammar），任何 `.json` 主题文件可直接传入 `defineTheme`
   - IDE Shell 变量映射：从主题 `colors` 对象提取 ~10 个键注入 CSS 变量
     ```
@@ -469,12 +469,12 @@
 > **核心前提**：Monaco 已使用 TM grammar，与 VS Code `tokenColors` 完全兼容。
 > 主题分两层：语法着色层（Monaco `tokenColors`）+ IDE 外壳层（CSS variables）。
 
-- [ ] **P5.1 提取默认主题为独立文件**:
+- [x] **P5.1 提取默认主题为独立文件**:
   - 将 `kmd-lang.ts` 中的 `defineTheme rules` 迁移为 VS Code 兼容格式
   - 输出为 `themes/kmd-dark.theme.json`（`tokenColors` 数组 + `colors` 对象）
   - 加载路径：`GrammarService` 或独立 `ThemeService` 负责 `monaco.editor.defineTheme()`
 
-- [ ] **P5.2 VS Code 颜色主题直接加载**:
+- [x] **P5.2 VS Code 颜色主题直接加载**:
   - `ThemeService.load(themeJson)` — 接受标准 VS Code `IVsCodeTheme` 格式
   - 自动提取 `colors` → CSS variables（映射表约 15 个键）
   - 自动传递 `tokenColors` → Monaco `defineTheme`
@@ -515,11 +515,11 @@
 > 服务 VS Code、Neovim、Emacs 等任何 LSP 客户端。
 > P1 插件接口完成后，补全列表自动具备插件感知能力。
 
-- [ ] **V1.1 提取 `packages/kmd-language-server/`**:
+- [x] **V1.1 提取 `packages/kmd-language-server/`**:
   - 复用现有 `KMDParser` + `parser.validate()` — 零重写
   - 标准 LSP server 入口（`vscode-languageserver` npm 包）
   - `extensions/vscode-kmd/client.ts` 作为轻量 LSP client 包装
-- [ ] **V1.2 Diagnostics（错误波浪线）**:
+- [ ] **V1.2 Diagnostics（错误波浪线）**（2026-08-10：LSP `publishDiagnostics` 已完成；Web IDE 的 Monaco `setModelMarkers` 替换仍待迁移）:
   - `parser.validate(text)` → `publishDiagnostics`
   - 替代目前 Monaco 里手写的 `setModelMarkers` 逻辑
 - [ ] **V1.3 Completion（智能补全）**:
@@ -574,18 +574,19 @@
 > 各附证据锚点；A 作为 B5 验收输入，C 由 B3 明文保留机制（post-B 仍是活问题）。
 > 不在 Phase B 开工前夜扰动执行层。
 
-### A · 链式 `f.slow`/`f.fast` 丢 speedMultiplier —— **仍存在**
+### A · 链式 `f.slow`/`f.fast` 丢 speedMultiplier —— **倍率缺口仍存在，资源错分流已修**
 
 - **现象**：特效链内的 `f.slow`/`f.fast` 返回值（`{type:"speedMultiplier", value}`）
   在 chain 路由中丢失；糖衣 `~`/`^` 正常工作。
-- **证据链**：
-  - chain 路由把 timing-track 命令当普通效果推入 instantEffects 桶：
-    `TextPlayer.ts:643-652`（group 链）/ `:792-800`（char 链）；
-  - instant 桶消费端把 `{type:"speedMultiplier"}` 返回值当伪 filter 丢弃：
-    `BehaviorRecordBuilder.ts:328-348`（apply 只看 filterInstance/graphicsLayer，
-    timing 返回值无消费路径）；
+- **2026-08-11 安全修复**：用户从速度段落按源码行跳转后再播放，`stop()` 在
+  `clearInstantEffects → destroyFilterDeep` 对 `{type:"speedMultiplier"}` 调 `destroy()` 崩溃。
+  group/char chain 现都在构建期截断 timing track，不再写入 `InstantEffectRecord`；真实
+  `final-test.kmd` 速度语法糖行跳转 + stop 已有回归。没有在清理期加 `typeof destroy` 守卫，
+  因为 timing 结果从所有权上就不是滤镜资源。
+- **倍率缺口证据链**：
+  - chain 路由现安全跳过 timing-track，但尚未把其返回值接入 execution plan 的 cursor；
   - block 路同样丢：`StyleRecordBuilder.ts:125` 处 applyGroupEffects 返回值未消费；
-  - 唯一达 cursor 的是 sugar：`TextPlayer.ts:182-183` 经
+  - 唯一达 cursor 的仍是 sugar：`TextPlayer` 经
     `EffectProcessor.resolveTiming(item.timingSugars)` → `timelineCursor.applyTiming`；
   - `KineticChar.timingResults`（`KineticChar.ts:46`）为死字段（写入即弃）。
 - **处置**：作为 B5（Execution Debt Closure）验收输入——

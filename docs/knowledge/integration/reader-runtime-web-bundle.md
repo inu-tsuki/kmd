@@ -1,10 +1,10 @@
 # Reader Runtime Web Bundle
 
 > 文档状态：Active
-> 最近更新：2026-06-16
+> 最近更新：2026-08-10
 > 权威范围：reader-runtime-web 的构建（`pnpm reader:build`）、`dist/reader-runtime/` 产物布局、Android Gradle 同步路径、`kmd-reader-runtime.local` 拦截、debug 探针、renderer crash 处理、bundle boundary、asset policy
 
-`reader-runtime-web` 是 Android WebView 与普通浏览器可加载的最小 KMD 播放器产物。包入口位于 `packages/reader-runtime-web/`。在 `packages/core` 抽离前，它复用 `apps/editor/src/core/` 的 runtime closure，但不复用 Vue editor shell。
+`reader-runtime-web` 是 Android WebView 与普通浏览器可加载的最小 KMD 播放器产物。包入口位于 `packages/reader-runtime-web/`，通过 workspace 依赖复用 private `@kmd/core` 的 runtime closure，不复用 Vue editor shell。
 
 ## Build
 
@@ -141,11 +141,12 @@ reader bundle 不应 import editor-only 模块：
 - Monaco、TextMate、Oniguruma。
 - editor panels 和 dock UI。
 
-`packages/core` 抽离前的过渡依赖（抽离条件见 [`planning/packages/reader-runtime-web.md`](../../planning/packages/reader-runtime-web.md) 的 Core Extraction Gate）：
+当前 package 依赖边界：
 
-- `packages/reader-runtime-web/src/*` 可以引用 `apps/editor/src/core/runtime`。
-- 被 runtime closure 拉入的 parser/layout/effects/stage/render/player 仍暂存在 `apps/editor/src/core/`。
-- 不得引用 `apps/editor/src/components`、`apps/editor/src/views`、`apps/editor/src/store` 或 `apps/editor/src/core/editor`。
+- `packages/reader-runtime-web/src/*` 通过 `@kmd/core/runtime` 消费 host contract。
+- parser/layout/effects/stage/render/player 的单一事实源位于 `packages/core/src/`。
+- 不得引用 `apps/editor/src/components`、`apps/editor/src/views`、`apps/editor/src/store`、`apps/editor/src/editor`，也不得恢复跨 app 相对 import。
+- `@kmd/core` 保持 private；reader bundle 可消费其内部源码，但这不等于稳定 npm API。
 
 产物级检查可以用：
 
@@ -159,4 +160,4 @@ Vite reader config 使用 `base: './'`，因此 Android packaged assets 和普�
 
 宿主可以通过 `window.KmdRuntimeConfig` 或后续 `loadScript/updateSettings` payload 注入 `assetBaseUrl` / `assetManifest`。默认值是 `import.meta.env.BASE_URL`，在 reader build 中为 `./`。
 
-2026-08 主题二（S4a）起，宿主 config / updateSettings payload 在 session 边界经 zod schema sanitize（strip-unknown + 逐字段类型回退 + 永不抛）；非法 payload 返回 `SETTINGS_PAYLOAD_INVALID`。见协议文档 `android-webview-runtime-protocol.md` updateSettings 节与 `apps/editor/src/core/runtime/RuntimeConfigValidator.ts`。
+2026-08 主题二（S4a）起，宿主 config / updateSettings payload 在 session 边界经 zod schema sanitize（strip-unknown + 逐字段类型回退 + 永不抛）；非法 payload 返回 `SETTINGS_PAYLOAD_INVALID`。见协议文档 `android-webview-runtime-protocol.md` updateSettings 节与 `packages/core/src/runtime/RuntimeConfigValidator.ts`。

@@ -19,10 +19,10 @@ import {
   collectRuntimeFonts,
   resolveControlledSourceUrl,
   resolveRuntimeAssetUrl,
-} from '../core/runtime/RuntimeAssetPolicy';
-import { ScriptSourceLoader } from '../core/player/ScriptSourceLoader';
-import { RuntimeValueResolver } from '../core/runtime/RuntimeValueResolver';
-import { layout } from '../core/layout/LayoutEngine';
+} from '@kmd/core/runtime/RuntimeAssetPolicy';
+import { ScriptSourceLoader } from '@kmd/core/player/ScriptSourceLoader';
+import { RuntimeValueResolver } from '@kmd/core/runtime/RuntimeValueResolver';
+import { layout } from '@kmd/core/layout/LayoutEngine';
 
 // ─── URL 解析与管控 ─────────────────────────────────────────────────────────
 

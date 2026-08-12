@@ -75,7 +75,7 @@ function loadDefaultVertexSource(): string {
 
 /** 从生产源提取 GrayFilter fragment（shader-gate 同款正则，永远测当前着色器）。 */
 function loadGrayFragmentSource(): string {
-  const file = fs.readFileSync(path.join(repoRoot, 'apps/editor/src/core/filters/GrayFilter.ts'), 'utf8');
+  const file = fs.readFileSync(path.join(repoRoot, 'packages/core/src/filters/GrayFilter.ts'), 'utf8');
   const match = file.match(/\/\*\s*glsl\s*\*\/\s*`([\s\S]*?)`/);
   if (!match) throw new Error('GrayFilter.ts 未找到 /* glsl */ 块——探针需更新');
   return match[1];

@@ -1,8 +1,8 @@
 # Reader Runtime Web Package
 
 > 文档状态：Active
-> 最近更新：2026-07-12
-> 权威范围：`@kmd/reader-runtime-web` 包的职责、禁止导入边界、build 命令、Core Extraction Gate（抽 `packages/core` 的触发条件）
+> 最近更新：2026-08-10
+> 权威范围：`@kmd/reader-runtime-web` 包的职责、禁止导入边界、build 命令、已完成的内部 Core Extraction 决策
 
 `@kmd/reader-runtime-web` 位于 `packages/reader-runtime-web/`，负责构建 Android WebView 与普通浏览器可加载的 KMD reader runtime 静态产物。
 
@@ -13,20 +13,20 @@
 - 通过 `window.KmdRuntime.receive` / `window.KmdAndroid.postMessage` 与宿主交换消息（协议见 [`android-webview-runtime-protocol.md`](../../knowledge/integration/android-webview-runtime-protocol.md)）。
 - 不依赖站点根路径（`base`、font copy 细节见 bundle 文档）。
 
-## 当前过渡依赖
+## 当前依赖
 
-R7 不移动整条 runtime closure。包入口允许引用 `apps/editor/src/core/runtime`，并由它继续拉起 parser、layout、effects、stage、render 和 player。
+包入口通过 workspace 依赖 `@kmd/core/runtime`，由 `@kmd/core` 拉起 parser、layout、effects、stage、render 和 player。reader 不再跨应用相对引用 editor，也不再借用 editor 的 TypeScript/Vite 工具链。
 
 禁止依赖：
 
 - `apps/editor/src/components`
 - `apps/editor/src/views`
 - `apps/editor/src/store`
-- `apps/editor/src/core/editor`
+- `apps/editor/src/editor`
 - Vue、Pinia、Monaco、TextMate、Oniguruma
 
 例外（2026-08 主题二 S4a）：`zod` 现已进入 reader 闭包——
-`core/runtime/RuntimeConfigValidator.ts` 为 boot/updateSettings 配置防火墙，
+`packages/core/src/runtime/RuntimeConfigValidator.ts` 为 boot/updateSettings 配置防火墙，
 bundle 增量 +57,871 B（全在主 chunk，记账见 `../theme-2-yard-sweep-2026-08.md`）。
 
 ## Build
@@ -35,17 +35,17 @@ bundle 增量 +57,871 B（全在主 chunk，记账见 `../theme-2-yard-sweep-202
 pnpm reader:build
 ```
 
-构建机制（`base`、font 复制、构建顺序、产物布局、Android Gradle 同步、generated assets 与 D0 fallback 关系）见 [`reader-runtime-web-bundle.md`](../../knowledge/integration/reader-runtime-web-bundle.md)。`@kmd/reader-runtime-web` 目前复用 editor 已安装的 Vite toolchain；runtime closure 迁出 `apps/editor/src/core/` 后再补独立依赖声明和发布脚本。
+构建机制（`base`、font 复制、构建顺序、产物布局、Android Gradle 同步、generated assets 与 D0 fallback 关系）见 [`reader-runtime-web-bundle.md`](../../knowledge/integration/reader-runtime-web-bundle.md)。`@kmd/reader-runtime-web` 已直接声明 TypeScript/Vite 开发依赖；其 package script 可独立完成 typecheck 与 bundle build。
 
-## Core Extraction Gate
+## Core Extraction Decision（2026-08-10 已完成）
 
-暂不抽 `packages/core`。后续触发条件：
+共享 runtime 已物理迁到 private workspace package `@kmd/core`。原 gate 中 Android WebView smoke、reader hot path 去 editor shell 依赖、语言设计收敛等条件已经满足；Phase B execution/session ownership 尚未最终稳定，因此采用以下边界：
 
-- runtime 内部 singleton 有更清晰的 session ownership。
-- layout/stage/render host boundary 稳定。
-- diagnostics 和 asset policy 不再依赖 editor 目录语义。
-- Android 真机 WebView smoke 稳定消费 `dist/reader-runtime/`。
-- Phase B 语言扩展不会破坏 reader runtime package boundary。
+- 包保持 `private: true`，不发布 npm，不承诺深层 exports 的 semver 稳定性。
+- 物理依赖必须经 `@kmd/core`，禁止恢复 `apps/editor/src/core` 或跨 app 相对路径。
+- `pnpm core:check` 守护 editor-only 依赖、相对路径逃逸和第二事实源。
+- Phase B 可重构内部 API，但必须同时恢复 editor build、reader build 和 runtime 回归门禁。
+- 稳定公共 API、独立版本和发布仍需在 session ownership 与 host boundary 收敛后另立决策。
 
 ## Deferred Runtime Work
 
@@ -111,7 +111,7 @@ seek 双向回归、真实浏览器 smoke，以及切换前后播放位置/sessi
 > 输入边界防御（strip/sanitize/永不抛），不引入任何字段语义特判，也不实现
 > rebuild transaction；transaction 仍押在 Phase B 最终 ownership 上（上文第 1 条）。
 
-本工作包不要求抽取纯 `@kmd/core`，也不改变 Android 的 DataStore、Compose 主题或
+本工作包不要求进一步稳定或发布 `@kmd/core`，也不改变 Android 的 DataStore、Compose 主题或
 自动保存开关。长期资源不变量见
 [`lifecycle-invariants.md`](../../knowledge/runtime/core/lifecycle-invariants.md)，其中 INV-9
 是所有 host preference projection 的作者权威边界。

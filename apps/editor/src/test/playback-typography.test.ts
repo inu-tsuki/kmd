@@ -14,10 +14,10 @@
 // 三会话共存无交叉影响；S3 契约套件已钉死会话生命周期与事件门控。
 
 import { describe, it, expect, afterEach, vi } from 'vitest';
-import { scriptPlayer } from '../core/player/ScriptPlayer';
-import { readerApp } from '../core/App';
-import { TextBuildContextResolver } from '../core/render/text/TextBuildContextResolver';
-import { ReaderRuntimeWebSession } from '../core/runtime/ReaderRuntimeSession';
+import { scriptPlayer } from '@kmd/core/player/ScriptPlayer';
+import { readerApp } from '@kmd/core/App';
+import { TextBuildContextResolver } from '@kmd/core/render/text/TextBuildContextResolver';
+import { ReaderRuntimeWebSession } from '@kmd/core/runtime/ReaderRuntimeSession';
 
 /** 断言桥：1:1 保留原脚本 assert(cond, msg) 的诊断文本（vitest 自定义消息）。 */
 function assert(cond: boolean, message: string): void {

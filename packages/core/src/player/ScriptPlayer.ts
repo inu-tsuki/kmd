@@ -11,6 +11,7 @@ import { stageManager } from "../stage/StageManager";
 import { PlaybackController, type PlaybackRuntimeState } from "./PlaybackController";
 import { SegmentBuilder } from "./SegmentBuilder";
 import { TextBuildContextResolver } from "../render/text/TextBuildContextResolver";
+import type { SourceLineAnchor } from "../render/text/TextPlayer";
 import type {
   ReaderRuntimeCallbacks,
   ReaderRuntimeTimelineMarker,
@@ -35,6 +36,7 @@ export class ScriptPlayer {
   private config: ScriptPlayerConfig = {};
   private runtimeCallbacks: ReaderRuntimeCallbacks = {};
   private timelineMarkers: ReaderRuntimeTimelineMarker[] = [];
+  private sourceLineAnchors: SourceLineAnchor[] = [];
 
   // ═══════════════════════════════════════════════════════════
   //  Segment-based 播放引擎 (Phase A)
@@ -300,6 +302,7 @@ export class ScriptPlayer {
     });
 
     this.timelineMarkers = buildResult.timelineMarkers;
+    this.sourceLineAnchors = buildResult.sourceLineAnchors;
     this.runtimeCallbacks.onTimelineChanged?.(this.timelineMarkers);
     this.activeTexts = buildResult.activeTexts;
     return buildResult.segment;
@@ -402,6 +405,34 @@ export class ScriptPlayer {
     // seekToTime 内部已按 isAutoPlaying 恢复 playSegment（R5-1），此处不再重复 resume。
   }
 
+  /**
+   * 跳转到指定源码行的第一个可执行时刻。
+   *
+   * 空行、注释和 frontmatter 本身没有 timeline item，因此向后选取最近的
+   * 可播放行；超过最后一个锚点时不回退到旧内容，而是返回 false。
+   * 本方法只跳转，不改变播放意图；编辑器的右键「从此行播放」在调用后
+   * 显式 play，Alt+Click 则保留现有的 seek-only 语义。
+   *
+   * 这是 editor 对当前线性 execution projection 的源码导航，不是控制流语义。
+   * Segment Graph 落地后，source position 必须先解析成 node/path candidate/local time；
+   * 分支脚本没有唯一全局时间，调用方需提供当前 path context 或显式采用 defaultPath。
+   * 设计边界见 docs/planning/runtime/portable-language-runtime-boundaries.md §3。
+   */
+  public seekToSourceLine(lineNumber: number): boolean {
+    if (!this.segment || !Number.isFinite(lineNumber) || lineNumber < 1) return false;
+    const normalizedLine = Math.floor(lineNumber);
+    const anchor = this.sourceLineAnchors.find((candidate) => candidate.line >= normalizedLine);
+    if (!anchor) return false;
+
+    if (this.shouldLogRenderDiagnostics()) {
+      console.log(
+        `[ScriptPlayer] seekToSourceLine(${normalizedLine}) -> line ${anchor.line} @ ${anchor.timePosition.toFixed(2)}s`,
+      );
+    }
+    this.seekToTime(anchor.timePosition);
+    return true;
+  }
+
   public get getMetadata() {
     return this.metadata;
   }
@@ -486,6 +517,7 @@ export class ScriptPlayer {
     this.activeTexts = [];
     this.segment = null;
     this.timelineMarkers = [];
+    this.sourceLineAnchors = [];
     this.runtimeCallbacks.onTimelineChanged?.([]);
     this.emitProgress({ timeMs: 0 });
     // suppressIdle：load/loadSourceContent 在 stop 前已发 loading，stop 的 idle 会让宿主 UI
@@ -534,6 +566,7 @@ export class ScriptPlayer {
     this.activeTexts = [];
     this.segment = null;
     this.timelineMarkers = [];
+    this.sourceLineAnchors = [];
     this.runtimeCallbacks.onTimelineChanged?.([]);
     this.emitProgress({ timeMs: 0 });
     this.emitPlaybackState("idle", false);

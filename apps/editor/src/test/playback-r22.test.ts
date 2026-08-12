@@ -22,8 +22,8 @@
 // （加强 = 把环境 flaky 变成回归 flaky）。生产浏览器 rAF 驱动 ticker，deferred 触发稳定。
 
 import { describe, it, expect } from 'vitest';
-import { PlaybackController } from '../core/player/PlaybackController';
-import type { Segment } from '../core/state/Segment';
+import { PlaybackController } from '@kmd/core/player/PlaybackController';
+import type { Segment } from '@kmd/core/state/Segment';
 import { G, build } from './playback-harness';
 
 /** 断言桥：1:1 保留原脚本 assert(cond, msg) 的诊断文本（vitest 自定义消息）。 */

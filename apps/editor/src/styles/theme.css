@@ -3,16 +3,23 @@
   --bg-editor: #1e1e1e;
   --bg-sidebar: #252526;
   --bg-header: #2d2d2d;
+  --bg-status-bar: #007acc;
   --bg-input: #3c3c3c;
   --bg-active: #37373d;
+  --bg-hover: #3e3e3e;
   
   --border-main: #333333;
   --border-light: #444444;
   --border-dark: #111111;
+  --focus-border: #007acc;
   
   --text-main: #cccccc;
+  --text-sidebar: #cccccc;
+  --text-header: #ffffff;
+  --text-status-bar: #ffffff;
+  --text-input: #ffffff;
   --text-dim: #888888;
-  --text-bright: #ffffff;
+  --text-bright: var(--text-header);
   
   --accent-primary: #4fc08d;
   --accent-secondary: #007acc;
@@ -20,7 +27,6 @@
   --accent-error: #f44747;
   
   --panel-header-height: 25px;
-  --tab-height: 30px;
 }
 
 /* 全局滚动条美化 */
@@ -41,14 +47,14 @@
   width: 100%;
   background: var(--bg-input);
   border: 1px solid var(--border-light);
-  color: var(--text-bright);
+  color: var(--text-input);
   padding: 4px 8px;
   border-radius: 2px;
   font-size: 12px;
   outline: none;
 }
 .kmd-input:focus, .kmd-select:focus {
-  border-color: var(--accent-secondary);
+  border-color: var(--focus-border);
 }
 
 .kmd-label {

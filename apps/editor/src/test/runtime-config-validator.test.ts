@@ -15,7 +15,7 @@ import { describe, it, expect } from 'vitest';
 import {
   sanitizeKmdRuntimeConfig,
   sanitizeReaderRuntimeSettings,
-} from '../core/runtime/RuntimeConfigValidator';
+} from '@kmd/core/runtime/RuntimeConfigValidator';
 
 describe('sanitizeReaderRuntimeSettings 垃圾输入矩阵', () => {
   it('合法配置字节相等透传（无诊断）', () => {

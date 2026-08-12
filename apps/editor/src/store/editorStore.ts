@@ -1,8 +1,8 @@
 import { defineStore } from 'pinia';
 import { ref, shallowRef, watch } from 'vue';
-import type { ScriptPlayer } from '../core/player/ScriptPlayer';
-import type { ReaderRuntimePlaybackState } from '../core/runtime';
-import { stageManager } from '../core/stage/StageManager';
+import type { ScriptPlayer } from '@kmd/core/player/ScriptPlayer';
+import type { ReaderRuntimePlaybackState } from '@kmd/core/runtime';
+import { stageManager } from '@kmd/core/stage/StageManager';
 import {
   extractFrontMatterBlock,
   serializeFrontMatter,
@@ -10,9 +10,10 @@ import {
   getField,
   serializeUIValue,
   UI_FRONTMATTER_KEYS,
-} from '../core/parser/frontmatter';
+} from '@kmd/core/parser/frontmatter';
 import * as fsService from '../services/fileSystem';
 import type { FileNode } from '../services/fileSystem';
+import { loadProjectTheme } from '../editor/projectThemeLoader';
 
 export const useEditorStore = defineStore('editor', () => {
   // --- 状态 (State) ---
@@ -184,6 +185,20 @@ export const useEditorStore = defineStore('editor', () => {
     }
   };
 
+  const runScriptFromLine = async (lineNumber: number): Promise<boolean> => {
+    const activePlayer = player.value;
+    if (!activePlayer || !Number.isFinite(lineNumber) || lineNumber < 1) return false;
+
+    // 右键播放必须消费编辑器当前文本，不能沿用上次运行留下的 paragraphs/timeline。
+    // ScriptPlayer.load 自带 stop-before-build，因此这里只负责 load → line seek → play。
+    await activePlayer.load(kmdContent.value);
+    syncConfigFromPlayer();
+
+    if (!activePlayer.seekToSourceLine(Math.floor(lineNumber))) return false;
+    activePlayer.toggleAutoPlay(true);
+    return true;
+  };
+
   const stopScript = async () => {
     if (player.value) {
       // SA-22：不写播放态——player.stop() 发 "idle" 事件，adapter 设 playbackState。
@@ -209,11 +224,17 @@ export const useEditorStore = defineStore('editor', () => {
 
   // --- 文件系统操作 ---
 
+  const applyProjectTheme = async (handle: FileSystemDirectoryHandle) => {
+    const result = await loadProjectTheme(handle)
+    if (result.error) console.warn(`[Theme] ${result.error}`)
+  }
+
   const openFolder = async () => {
     try {
       const handle = await fsService.openFolder()
       projectHandle.value = handle
       fileTree.value = await fsService.readDirectory(handle)
+      await applyProjectTheme(handle)
     } catch (err) {
       if ((err as Error).name !== 'AbortError') console.error('[FS] openFolder error:', err)
     }
@@ -225,6 +246,7 @@ export const useEditorStore = defineStore('editor', () => {
       if (!handle) return
       projectHandle.value = handle
       fileTree.value = await fsService.readDirectory(handle)
+      await applyProjectTheme(handle)
     } catch {
       // 静默失败，用户手动打开即可
     }
@@ -619,6 +641,7 @@ export const useEditorStore = defineStore('editor', () => {
     dirtyFiles,
     setPlayer,
     runScript,
+    runScriptFromLine,
     stopScript,
     nextStep,
     seekRelative,

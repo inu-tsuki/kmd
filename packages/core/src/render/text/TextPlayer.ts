@@ -92,6 +92,12 @@ export interface EntranceFilterRecord {
   timePosition: number;
 }
 
+/** 源码行在当前段落子时间轴上的首个可执行位置。行号为 1-based。 */
+export interface SourceLineAnchor {
+  line: number;
+  timePosition: number;
+}
+
 /**
  * buildTimeline 的返回结果
  */
@@ -102,6 +108,7 @@ export interface TimelineBuildResult {
   instantEffects: InstantEffectRecord[];
   entranceFilters: EntranceFilterRecord[];
   stageModifierRecords: StageModifierRecord[];
+  sourceLineAnchors: SourceLineAnchor[];
   duration: number; // 秒
   /** >>> 触发的时间点 (秒)。ScriptPlayer 应在此位置启动下一段落的子 Timeline。undefined 表示无提前推进。 */
   advanceTime?: number;
@@ -145,12 +152,15 @@ export class TextPlayer {
     const instantEffects: InstantEffectRecord[] = [];
     const entranceFilters: EntranceFilterRecord[] = [];
     const stageModifierRecords: StageModifierRecord[] = [];
+    const sourceLineAnchors: SourceLineAnchor[] = [];
+    const anchoredSourceLines = new Set<number>();
     // 基准揭示速度 (毫秒 → 秒)
     const baseSpeedMs = options.speed ?? target._options?.speed ?? 50;
     const baseSpeed = baseSpeedMs / 1000;
     const allChars = plan.items.map(item => item.char);
     const chainPlansByToken = new Map<number, RuntimeParagraphExecutionPlan["chainPlans"][number]>();
     const tokenPlansByToken = new Map<number, RuntimeParagraphExecutionPlan["tokenPlans"][number]>();
+    const tokenRevealPositions = new Map<number, number>();
     plan.tokenPlans.forEach((tokenPlan) => {
       tokenPlansByToken.set(tokenPlan.tokenIdx, tokenPlan);
       if (tokenPlan.chainPlan) {
@@ -181,6 +191,23 @@ export class TextPlayer {
 
       const timing = EffectProcessor.resolveTiming(item.timingSugars);
       const { delayOverride, isSugarGo, isInstantGo } = timelineCursor.applyTiming(timing);
+
+      // Token 容器的 :group 效果只在 token-end 时才能拿到完整 wrapper，
+      // 但它的语义时钟必须对齐该组首个可见字符的揭示时刻（D12）。
+      // 在 timing sugar 消解后记录真实 cursor，稍后构建容器 record 时回用。
+      if (char.text.trim() && !tokenRevealPositions.has(item.tokenIdx)) {
+        tokenRevealPositions.set(item.tokenIdx, timelineCursor.position);
+      }
+
+      // 行级导航锚点要取该行第一个可执行 item 的真实 cursor，而非段落起点。
+      // 放在 timing sugar 消解之后，使「从此行播放」与自然播放的行首时机同源。
+      if (item.line !== undefined && !anchoredSourceLines.has(item.line)) {
+        anchoredSourceLines.add(item.line);
+        sourceLineAnchors.push({
+          line: item.line + 1,
+          timePosition: timelineCursor.position,
+        });
+      }
 
       // ── 4. Stage 指令（仅空字符：管道符、场景清除等） ──
       // 非空字符的舞台指令见 §5.5（与字符同时触发，阻塞延迟到 token 末）
@@ -231,8 +258,23 @@ export class TextPlayer {
             }
             this.unrollCharChain(tl, wrapper, tokenPlan.visualEffects, timelineCursor.position, behaviors, holdCharConfig, styleRecords, instantEffects, entranceFilters, stageModifierRecords, options.playbackState);
           } else {
+            // wrapper 在 token-end 才完整，但 :group 视觉链以首字揭示 cursor 为语义起点。
+            // 无可见字符的退化 token 回退到当前 cursor。
+            const tokenRevealPosition = tokenRevealPositions.get(item.tokenIdx) ?? timelineCursor.position;
             // unrollGroupChain 返回 chain 内 pause 指令的累计时长，追加到 deferredCursorAdvance
-            const pauseFromChain = this.unrollGroupChain(tl, wrapper, tokenPlan.visualEffects, timelineCursor.position, behaviors, styleRecords, instantEffects, entranceFilters, stageModifierRecords, options.playbackState);
+            const pauseFromChain = this.unrollGroupChain(
+              tl,
+              wrapper,
+              tokenPlan.visualEffects,
+              timelineCursor.position,
+              tokenRevealPosition,
+              behaviors,
+              styleRecords,
+              instantEffects,
+              entranceFilters,
+              stageModifierRecords,
+              options.playbackState,
+            );
             if (pauseFromChain > 0) {
               timelineCursor.addDeferredAdvance(pauseFromChain);
             }
@@ -276,6 +318,7 @@ export class TextPlayer {
       instantEffects,
       entranceFilters,
       stageModifierRecords,
+      sourceLineAnchors,
       duration: timelineCursor.position,
       advanceTime: timelineCursor.advanceTime,
     };
@@ -313,11 +356,14 @@ export class TextPlayer {
     // 收集 behavior 特效（F4: resolveParams 解析变量引用）
     // - hold:char 链：全部跳过（unrollCharChain 以错开时序逐字处理）
     // - 组级 hold 链：全部跳过（unrollGroupChain 在链时间点统一分流到 char 或 container）
-    // - 无 hold 链：全部注册（与字符出现时间错开，stagger with appearance）
+    // - 无 hold 链：仅注册 char-level；显式 :group/:block/:bg 与 targetType="group"
+    //   留给 token-end 的 unrollGroupChain 统一挂到容器。此前这里无条件收集，导致
+    //   f.neonGlow:group 仍按每字创建多通道 Bloom，作用域语义失效且首帧滤镜爆炸。
     const hasHoldChar = visualEffects.some(e => e.name === "hold" && e.level === "char");
     const hasGroupHold = visualEffects.some(e => e.name === "hold" && e.level !== "char");
     if (!hasHoldChar && !hasGroupHold) {
       for (const cfg of classified.behavior) {
+        if (!EffectProcessor.isCharLevelEffect(cfg)) continue;
         behaviors.push({
           char,
           target: char,
@@ -337,6 +383,7 @@ export class TextPlayer {
       // R17/SA-32：isStyle 经 classifyStyleWrite 单一真相源（统一所有 style 判定入口）。
       for (const cfg of classified.instant) {
         if (EffectProcessor.classifyStyleWrite(cfg).isStyle) continue;
+        if (!EffectProcessor.isCharLevelEffect(cfg)) continue;
         instantEffects.push({
           target: char,
           effectName: cfg.name,
@@ -351,6 +398,7 @@ export class TextPlayer {
     let enterConfig: EffectConfig | null = null;
     const otherEntrance: EffectConfig[] = [];
     for (const cfg of classified.entrance) {
+      if (!EffectProcessor.isCharLevelEffect(cfg)) continue;
       const meta = effectManager.getMetadata(cfg.name);
       if (meta?.mutexGroup === "enter" && !enterConfig) {
         enterConfig = cfg;
@@ -437,7 +485,7 @@ export class TextPlayer {
    *
    * 无 hold 链时：
    *   - behaviors 由 placeCharOnTimeline 逐字注册（与出现时机 stagger），此处不重复
-   *   - 样式/入场效果仍在此处于 token-end 时间点应用
+   *   - 容器效果在 token-end 构建 record，但时间锚定到该组首字揭示时刻
    *
    * 有 hold:group 时（placeCharOnTimeline 已跳过所有 behaviors）：
    *   - isCharLevel 特效 (targetType="char" 或 level="char") → 逐字独立应用到 wrapper.chars
@@ -449,6 +497,7 @@ export class TextPlayer {
     wrapper: TokenWrapper,
     effects: EffectConfig[],
     startPosition: number,
+    tokenRevealPosition: number,
     behaviors: BehaviorRecord[],
     styleRecords: StyleRecord[],
     instantEffects: InstantEffectRecord[],
@@ -505,7 +554,7 @@ export class TextPlayer {
     }
 
     // ── 2. 视觉链条展开 ──
-    chainCursor = startPosition;
+    chainCursor = tokenRevealPosition;
     let groupHoldEncountered = false;
     // 是否存在组级 hold — 影响 char-level behaviors 的分流策略
     const hasGroupHold = visualConfigs.some(c => c.name === "hold" && c.level !== "char");
@@ -524,8 +573,12 @@ export class TextPlayer {
       // f.pause:char → pauseCharOverride 已处理
       if (isBlocking && config.level === "char") continue;
 
-      // hold → 推进链游标（链末尾无后续效果时为 no-op，外层暂停请用 pause 或 |）
-      if (isBlocking) {
+      // hold / 纯 blocking 边界 → 推进链游标或切换 post-hold 窗口。
+      // 显式容器作用域本身也被 classifyStyleWrite 标成 isBlocking（用于 P1 初始样式烘焙
+      // 的边界），但它仍是一个必须执行的视觉效果，不能在这里当 hold 吞掉。
+      const isContainerScopedEffect = !isStyle && config.name !== "hold" &&
+        (config.level === "group" || config.level === "block" || config.level === "bg");
+      if (isBlocking && !isContainerScopedEffect) {
         if (config.name === "hold") {
           const dur = EffectProcessor.resolvePauseDuration(config.params, 1);
           chainCursor += dur;
@@ -560,6 +613,11 @@ export class TextPlayer {
 
       const resolved = EffectProcessor.resolveParams(config.params || {});
       const track = EffectProcessor.getTrack(config.name);
+
+      // timing-track 返回的是 cursor 控制结果（如 { type: "speedMultiplier" }），
+      // 不是 GPU Filter。链式 slow/fast 的倍率接入仍由 execution-plan 后续负责，
+      // 但这里必须在构建期截断，不能落入下方 instantEffects 资源桶。
+      if (track === "timing") continue;
 
       if (isStyle) {
         // Bug 2: :bg scope style 不走 applyStyleRecursively（Sprite 无 getGraphicsLayer/tokens）。
@@ -757,6 +815,9 @@ export class TextPlayer {
       for (let i = 0; i < activeEffects.length; i++) {
         const { config, origIdx } = activeEffects[i]!;
         const track = EffectProcessor.getTrack(config.name);
+        // 与 group-chain 对称：timing 结果不是 Filter，禁止落入 instantEffects。
+        // 链式 slow/fast 的倍率消费仍是独立的 execution-plan 已知缺口。
+        if (track === "timing") continue;
         // R17/SA-32：isStyle 经 classifyStyleWrite 单一真相源。
         const isStyle = EffectProcessor.classifyStyleWrite(config).isStyle;
         const resolved = EffectProcessor.resolveParams(config.params);

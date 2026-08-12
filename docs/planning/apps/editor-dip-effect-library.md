@@ -76,7 +76,7 @@
 
 照现有 `RGBSplitFilter` + `blur`/`rgbShift` preset 抄：
 
-1. **GLSL**：`apps/editor/src/core/filters/XxxFilter.ts`——继承 Pixi v8 `Filter` + 自定义 fragment shader（30~80 行）。
+1. **GLSL**：`packages/core/src/filters/XxxFilter.ts`——继承 Pixi v8 `Filter` + 自定义 fragment shader（30~80 行）。
 2. **Preset**：在 `core/effects/presets/filter.ts`（或新建分类文件并在 `presets/index.ts` 导出）导出 `{ fn, meta }`，经 `registerBatch` 自动注册。
 3. **元数据**：按 `effects/types.ts` 的 `EffectMetadata` 填 `type:"filter"` / `track` / `targetType` / `mutexGroup` / `stackable`。
 4. **白名单**：~~在 `KMDParser.validate()` 加名字~~ —— **不需要**。`validate()` 经 `registryView.has()` 查注册表，preset 注册后自动 known（详见 spec §1 纠正 1）。CLAUDE.md 该条是硬编码时代遗留。

@@ -4,7 +4,7 @@ import type {
   ReaderRuntimePlaybackState,
   ReaderRuntimeTimelineMarker,
   ReaderRuntimeTypography,
-} from "../core/runtime";
+} from "@kmd/core/runtime";
 
 export interface EditorRuntimeAdapterStore {
   currentTime: number;

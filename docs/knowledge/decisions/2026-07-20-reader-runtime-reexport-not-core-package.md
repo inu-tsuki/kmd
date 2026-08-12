@@ -1,7 +1,9 @@
 # reader-runtime 相对路径 re-export，而非立即抽 packages/core
 
 - 日期：2026-07-20
-- 状态：已采纳（追溯归档，处方 9）
+- 状态：已取代（2026-08-10，由 `2026-08-10-extract-private-core-package.md` 取代）
+
+> 本 ADR 保留当时为什么不应过早冻结公共 API 的判断。2026-08-10 的后续决策只改变物理位置与 monorepo 依赖边界；`@kmd/core` 仍为 private，深层导出仍不构成稳定发布契约。
 
 ## 回应的力
 

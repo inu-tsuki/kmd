@@ -90,7 +90,7 @@ AST 节点描述的是源码结构，例如：
 > 性质：生产侧潜在确定性 bug，非测试侧问题
 > 状态：未修复（测试侧用 fresh `KMDParser` 实例规避，**未改被测代码**）
 
-`KMDParser` 是单例（`apps/editor/src/core/parser/Parser.ts:168` `export const parser = new KMDParser()`），其 `AstParser` 实例持 `private braceIdCounter = 0`（`AstParser.ts:26`），每次遇到 `{...}` 括号组时 `++this.braceIdCounter`（`AstParser.ts:304`）赋给 `groupId`，lowering 时映射到 `KMDToken.braceGroupId`。**该计数器跨 `parse()` 调用累加、从不重置**——同一输入第 N 次 parse 的 `braceGroupId` 会比第 N-1 次大一个递增量，`JSON.stringify` 输出非字节确定。
+`KMDParser` 是单例（`packages/core/src/parser/Parser.ts` 中 `export const parser = new KMDParser()`），其 `AstParser` 实例持 `private braceIdCounter = 0`，每次遇到 `{...}` 括号组时递增并赋给 `groupId`，lowering 时映射到 `KMDToken.braceGroupId`。**该计数器跨 `parse()` 调用累加、从不重置**——同一输入第 N 次 parse 的 `braceGroupId` 会比第 N-1 次大一个递增量，`JSON.stringify` 输出非字节确定。
 
 测试网黄金序列化因此无法用单例，改 `new KMDParser()` 每用例 fresh 实例（`apps/editor/src/test/parser-golden.test.ts`）。这是测试侧规避，**未触碰被测代码语义**。
 
@@ -102,11 +102,11 @@ AST 节点描述的是源码结构，例如：
 
 如果你要继续阅读解析器和后续模块，建议按这个顺序：
 
-1. `apps/editor/src/core/parser/Parser.ts`
-2. `apps/editor/src/core/parser/AstParser.ts`
-3. `apps/editor/src/core/parser/lowering.ts`
-4. `apps/editor/src/core/render/text/TextBuilder.ts`
-5. `apps/editor/src/core/layout/LayoutPlanner.ts`
+1. `packages/core/src/parser/Parser.ts`
+2. `packages/core/src/parser/AstParser.ts`
+3. `packages/core/src/parser/lowering.ts`
+4. `packages/core/src/render/text/TextBuilder.ts`
+5. `packages/core/src/layout/LayoutPlanner.ts`
 
 一句话记忆：
 

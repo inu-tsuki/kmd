@@ -7,7 +7,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from "vue";
-import { createReaderRuntime, type ReaderRuntimeWebSession } from "../core/runtime";
+import { createReaderRuntime, type ReaderRuntimeWebSession } from "@kmd/core/runtime";
 import { useEditorStore } from "../store/editorStore";
 import {
   createEditorRuntimeCallbacks,

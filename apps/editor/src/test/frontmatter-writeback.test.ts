@@ -13,8 +13,8 @@ import {
   getField,
   serializeUIValue,
   UI_FRONTMATTER_KEYS,
-} from '../core/parser/frontmatter';
-import { parser } from '../core/parser/Parser';
+} from '@kmd/core/parser/frontmatter';
+import { parser } from '@kmd/core/parser/Parser';
 
 interface CanvasConfig {
   mode: string;
