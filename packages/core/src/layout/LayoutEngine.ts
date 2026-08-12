@@ -3,7 +3,6 @@ import { Container } from "pixi.js";
 import { KineticText } from "../KineticText";
 import type { KineticTextOptions } from "../KineticText";
 import type { MarkerMap } from "./types";
-import { TextLayoutEngine } from "./TextLayoutEngine";
 import { stageManager } from "../stage/StageManager";
 import { readerLayoutHostView } from "./ReaderLayoutHostView";
 import type { LayoutHostDisposer, LayoutHostView } from "./LayoutHostView";
@@ -190,7 +189,6 @@ class LayoutEngine {
       }
     }
 
-    TextLayoutEngine.lastAuditLog = [];
   }
 
   private updateLineMarkers(posX: number, posY: number, width: number, isNext = false, isCurrent = false) {

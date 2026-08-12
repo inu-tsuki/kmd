@@ -145,16 +145,6 @@ export interface LayoutResult {
   displayOffsetY?: number; // 视觉偏移 Y（不影响排版流）
 }
 
-// 排版审计记录
-export interface LayoutAuditRecord {
-  text: string;
-  local: CursorState;
-  global: CursorState;
-  inFlow: boolean;
-  isFlowBroken: boolean;
-  justMoved: boolean;
-}
-
 // 排版引擎的运行上下文
 export interface LayoutContext {
   activeCursor: CursorState;

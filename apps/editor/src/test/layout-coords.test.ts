@@ -10,13 +10,16 @@
 // 黄金更新必须人工审（同 parser golden）：不用 vitest toMatchFileSnapshot（--update 会自动重写），
 // 改显式读文件 + toEqual，vitest --update 不触碰布局黄金。
 
-import { describe, it, expect } from 'vitest';
+import { afterEach, beforeEach, describe, it, expect } from 'vitest';
 import { readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { TextStyle } from 'pixi.js';
 import { parser } from '@kmd/core/parser/Parser';
 import { LayoutPlanner } from '@kmd/core/layout/LayoutPlanner';
 import { TextLayoutEngine } from '@kmd/core/layout/TextLayoutEngine';
+import type { LayoutItem } from '@kmd/core/layout/types';
+import { auditBus } from '@kmd/core/diagnostics/AuditBus';
+import { diagnosticsCollector } from '@kmd/core/diagnostics/DiagnosticsCollector';
 import { normalize } from './golden-serializer';
 
 const PUBLIC_DIR = join(import.meta.dirname, '..', '..', 'public');
@@ -84,6 +87,16 @@ function serializeLayoutSnapshot(snapshots: GlyphCoord[][]): string {
 }
 
 describe('layout coordinate stability', () => {
+  beforeEach(() => {
+    auditBus.clear();
+    diagnosticsCollector.clear();
+  });
+
+  afterEach(() => {
+    auditBus.clear();
+    diagnosticsCollector.clear();
+  });
+
   it('layout-coords.kmd snapshot matches committed golden', () => {
     const goldenPath = join(GOLDEN_DIR, 'layout-coords.kmd.json');
     const actual = serializeLayoutSnapshot(computeLayoutSnapshot());
@@ -184,5 +197,78 @@ describe('layout coordinate stability', () => {
     const a = serializeLayoutSnapshot(computeLayoutSnapshot());
     const b = serializeLayoutSnapshot(computeLayoutSnapshot());
     expect(a).toBe(b);
+  });
+
+  it('returns only the public LayoutResult shape without hidden per-result audit metadata', () => {
+    const source = readFileSync(FIXTURE, 'utf-8');
+    const paragraphs = parser.parse(source).paragraphs.filter((paragraph) => paragraph.ir);
+    let resultCount = 0;
+
+    expect(paragraphs.length).toBeGreaterThan(1);
+    for (const paragraph of paragraphs) {
+      const plan = LayoutPlanner.plan(paragraph.ir!, BASE_STYLE);
+      const results = TextLayoutEngine.calculate(plan.stream, {
+        ...LAYOUT_OPTIONS,
+        align: (paragraph.blockOptions.align || 'left') as 'left' | 'center' | 'right',
+        externalMarkers: new Map(),
+      });
+
+      resultCount += results.length;
+      for (const result of results) {
+        expect(Object.prototype.hasOwnProperty.call(result, '__auditMeta')).toBe(false);
+      }
+    }
+
+    expect(resultCount).toBeGreaterThan(0);
+
+    // 当前 parser 按 paragraph 拆分 fixture，多行 paragraph 没有在 layout stream 中保留
+    // newline item；额外用生产 LayoutItem 形状显式覆盖 calculate.onNewline。
+    const newlineItem: LayoutItem = {
+      isCommand: false,
+      width: 0,
+      height: 24,
+      charData: {
+        char: { text: '\n', style: { fontSize: 24 } },
+        fontSize: 24,
+        ascent: 19.2,
+        descent: 4.8,
+      },
+    };
+    const newlineResults = TextLayoutEngine.calculate([newlineItem], {
+      ...LAYOUT_OPTIONS,
+      externalMarkers: new Map(),
+    });
+
+    // Newline LayoutResult 只由 TextLayoutEngine.calculate 的 onNewline hook 产生；
+    // 钉住至少一个换行结果，避免测试只覆盖普通 onItem 路径。
+    expect(newlineResults).toHaveLength(1);
+    expect(newlineResults[0]!.item.charData?.char?.text).toBe('\n');
+    expect(Object.prototype.hasOwnProperty.call(newlineResults[0]!, '__auditMeta')).toBe(false);
+  });
+
+  it('keeps the aggregate layout calculation audit with result, marker, and bounds evidence', () => {
+    const source = readFileSync(FIXTURE, 'utf-8');
+    const paragraph = parser.parse(source).paragraphs.find((candidate) => candidate.ir)?.ir;
+    expect(paragraph).toBeDefined();
+    const plan = LayoutPlanner.plan(paragraph!, BASE_STYLE);
+    const results = TextLayoutEngine.calculate(plan.stream, LAYOUT_OPTIONS);
+    const calculations = auditBus.getEvents().filter(
+      (event) => event.payload?.event === 'layout.calculate.complete',
+    );
+    const calculation = calculations.at(-1);
+
+    expect(calculations).toHaveLength(1);
+    expect(calculation?.payload).toMatchObject({
+      event: 'layout.calculate.complete',
+      resultCount: results.length,
+      markerCount: expect.any(Number),
+      estimatedBounds: expect.objectContaining({
+        minX: expect.any(Number),
+        minY: expect.any(Number),
+        maxX: expect.any(Number),
+        maxY: expect.any(Number),
+      }),
+    });
+    expect(calculation?.payload).not.toHaveProperty('auditRecordCount');
   });
 });

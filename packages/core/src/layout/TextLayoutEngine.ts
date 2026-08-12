@@ -11,13 +11,11 @@ import type {
   LayoutEngineOptions,
   MarkerMap,
   LayoutResult,
-  LayoutAuditRecord,
   LayoutPreflightResult,
   LinePlan,
 } from './types';
 
 export class TextLayoutEngine {
-  public static lastAuditLog: LayoutAuditRecord[] = [];
   public static lastPreflightResult: LayoutPreflightResult | null = null;
 
   /**
@@ -147,7 +145,6 @@ export class TextLayoutEngine {
           y: currentState.context.activeCursor.y,
           inFlow: false,
         };
-        LayoutAuditEmitter.stampResultMeta(currentState.context, res);
         currentState.results.push(res);
         LineAccumulator.pushResult(currentState.lines, currentState.currentLineIndex, res);
         handleLineBreak(currentState);
@@ -167,7 +164,6 @@ export class TextLayoutEngine {
         };
 
         LineAccumulator.pushResult(currentState.lines, currentState.currentLineIndex, result);
-        LayoutAuditEmitter.stampResultMeta(currentState.context, result);
         currentState.results.push(result);
       },
     });
@@ -181,11 +177,9 @@ export class TextLayoutEngine {
         context.markers,
       );
     }
-    this.lastAuditLog = LayoutAuditEmitter.buildAuditLog(context, state.results);
 
     LayoutAuditEmitter.emitCalculation({
       resultCount: state.results.length,
-      auditRecordCount: this.lastAuditLog.length,
       markerCount: context.markers.size,
       estimatedBounds: preflight.estimatedBounds,
     });

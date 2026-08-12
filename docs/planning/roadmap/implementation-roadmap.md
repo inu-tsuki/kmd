@@ -22,8 +22,10 @@ KMD 1.6 Phase A 与 Phase B Prep 已完成 parser、layout、execution、stage�
   处方 6(d)/10 收尾 + Known Gaps 记录。账目见 `docs/planning/theme-2-yard-sweep-2026-08.md`。
 - **已完成**：共享 runtime 从 editor 物理迁入 private `@kmd/core`；editor/reader 改走 workspace package，Monaco/TextMate 适配器留在 editor，包边界由独立 typecheck 与 import guard 守护。内部 API 仍不承诺稳定或发布。
 - **刻意不做（含去向）**：Known Gaps A/B/C 记录不修（B5/B3 验收输入）；
-  `lastAuditLog` write-only → 后续；ReaderCanvas 剩余死暴露与 `@deprecated` mirrors → 处方 8；
+  ReaderCanvas 剩余死暴露与 `@deprecated` mirrors → 处方 8；
   settings transaction → post-B。完整清单见台账"刻意不做"节。
+- **已完成（2026-08-13）**：清退无消费者的 `TextLayoutEngine.lastAuditLog` 及逐结果隐藏审计副本；
+  `AuditBus` 继续保留 layout preflight/calculation 的 result、marker 与 bounds 聚合证据。
 - **生效约束**：parser/scanner/语言面属 Phase B 浪潮，维护期不碰；timeline/stage 行为变更须有意标注；
   处方 1–11 追踪见 `docs/planning/architecture-health-check-2026-07.md`。
 - **下一步**：Phase B 按 `phase-b/1.6-phase-b-plan.md` 从 B0.1 恢复（gate #6/#8 完成后）。
