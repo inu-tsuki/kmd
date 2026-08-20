@@ -44,7 +44,7 @@ fontColor: "#ffffff"
 
 // :bg gray + 文字——背景灰度，文字保持原色
 @ bg(src="tests/assets/sample-bg.jpg")
-[.gray:bg]
+[.grayscale:bg]
 灰度背景上的彩色文字
 
 ---
@@ -52,7 +52,7 @@ fontColor: "#ffffff"
 // :bg gray 回归用例——此前 bg 命令名碰撞导致 stage bg 死代码，:bg 静默失败
 // 修复后 bg 重命名为 box（元素级），stage bg 正常路由，:bg filter 作用于背景精灵
 @ bg(src="tests/assets/sample-bg.jpg")
-[.gray:bg]
+[.grayscale:bg]
 gray:bg 回归验证
 
 ---
@@ -60,7 +60,7 @@ gray:bg 回归验证
 // 内联 @ f.x:bg 链路——与块选项 [.x:bg] 走不同代码路径（TextPlayer.unrollGroupChain）
 // onBackgroundReady 延迟机制覆盖此路径
 @ bg(src="tests/assets/sample-bg.jpg")
-{内联灰背景} @ f.gray:bg
+{内联灰背景} @ f.grayscale:bg
 
 ---
 
