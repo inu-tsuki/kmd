@@ -1,18 +1,5 @@
 {
-  "diagnostics": [
-    {
-      "code": "container-incompatible",
-      "line": 46,
-      "message": "Command \"gray\" is char-only but was forced to :bg",
-      "severity": "warning"
-    },
-    {
-      "code": "container-incompatible",
-      "line": 54,
-      "message": "Command \"gray\" is char-only but was forced to :bg",
-      "severity": "warning"
-    }
-  ],
+  "diagnostics": [],
   "metadata": {
     "bgColor": "#000000",
     "designHeight": 1080,
@@ -1503,26 +1490,26 @@
               "commands": [
                 {
                   "blocking": false,
-                  "family": "style",
+                  "family": "effect",
                   "level": "bg",
-                  "name": "gray",
+                  "name": "grayscale",
                   "params": {},
                   "prefix": "dot",
-                  "raw": ".gray:bg"
+                  "raw": ".grayscale:bg"
                 }
               ],
               "line": 46,
               "prefix": "dot",
               "range": {
-                "end": 9,
+                "end": 14,
                 "start": 1
               },
-              "raw": ".gray:bg",
+              "raw": ".grayscale:bg",
               "type": "command-chain"
             },
             "line": 46,
             "range": {
-              "end": 9,
+              "end": 14,
               "start": 1
             },
             "type": "block-option-command"
@@ -1591,23 +1578,16 @@
             "type": "line"
           }
         ],
-        "source": "// :bg gray + 文字——背景灰度，文字保持原色\n@ bg(src=\"tests/assets/sample-bg.jpg\")\n[.gray:bg]\n灰度背景上的彩色文字",
+        "source": "// :bg gray + 文字——背景灰度，文字保持原色\n@ bg(src=\"tests/assets/sample-bg.jpg\")\n[.grayscale:bg]\n灰度背景上的彩色文字",
         "type": "paragraph"
       },
       "blockOptions": {},
-      "diagnostics": [
-        {
-          "code": "container-incompatible",
-          "line": 46,
-          "message": "Command \"gray\" is char-only but was forced to :bg",
-          "severity": "warning"
-        }
-      ],
+      "diagnostics": [],
       "globalEffects": [
         {
           "blocking": false,
           "level": "bg",
-          "name": "gray",
+          "name": "grayscale",
           "params": {}
         },
         {
@@ -1621,14 +1601,7 @@
       ],
       "ir": {
         "blockOptions": {},
-        "diagnostics": [
-          {
-            "code": "container-incompatible",
-            "line": 46,
-            "message": "Command \"gray\" is char-only but was forced to :bg",
-            "severity": "warning"
-          }
-        ],
+        "diagnostics": [],
         "inline": [
           {
             "commands": [],
@@ -1650,7 +1623,7 @@
           {
             "blocking": false,
             "level": "bg",
-            "name": "gray",
+            "name": "grayscale",
             "params": {}
           },
           {
@@ -1804,26 +1777,26 @@
               "commands": [
                 {
                   "blocking": false,
-                  "family": "style",
+                  "family": "effect",
                   "level": "bg",
-                  "name": "gray",
+                  "name": "grayscale",
                   "params": {},
                   "prefix": "dot",
-                  "raw": ".gray:bg"
+                  "raw": ".grayscale:bg"
                 }
               ],
               "line": 54,
               "prefix": "dot",
               "range": {
-                "end": 9,
+                "end": 14,
                 "start": 1
               },
-              "raw": ".gray:bg",
+              "raw": ".grayscale:bg",
               "type": "command-chain"
             },
             "line": 54,
             "range": {
-              "end": 9,
+              "end": 14,
               "start": 1
             },
             "type": "block-option-command"
@@ -1892,23 +1865,16 @@
             "type": "line"
           }
         ],
-        "source": "// :bg gray 回归用例——此前 bg 命令名碰撞导致 stage bg 死代码，:bg 静默失败\n// 修复后 bg 重命名为 box（元素级），stage bg 正常路由，:bg filter 作用于背景精灵\n@ bg(src=\"tests/assets/sample-bg.jpg\")\n[.gray:bg]\ngray:bg 回归验证",
+        "source": "// :bg gray 回归用例——此前 bg 命令名碰撞导致 stage bg 死代码，:bg 静默失败\n// 修复后 bg 重命名为 box（元素级），stage bg 正常路由，:bg filter 作用于背景精灵\n@ bg(src=\"tests/assets/sample-bg.jpg\")\n[.grayscale:bg]\ngray:bg 回归验证",
         "type": "paragraph"
       },
       "blockOptions": {},
-      "diagnostics": [
-        {
-          "code": "container-incompatible",
-          "line": 54,
-          "message": "Command \"gray\" is char-only but was forced to :bg",
-          "severity": "warning"
-        }
-      ],
+      "diagnostics": [],
       "globalEffects": [
         {
           "blocking": false,
           "level": "bg",
-          "name": "gray",
+          "name": "grayscale",
           "params": {}
         },
         {
@@ -1922,14 +1888,7 @@
       ],
       "ir": {
         "blockOptions": {},
-        "diagnostics": [
-          {
-            "code": "container-incompatible",
-            "line": 54,
-            "message": "Command \"gray\" is char-only but was forced to :bg",
-            "severity": "warning"
-          }
-        ],
+        "diagnostics": [],
         "inline": [
           {
             "commands": [],
@@ -1951,7 +1910,7 @@
           {
             "blocking": false,
             "level": "bg",
-            "name": "gray",
+            "name": "grayscale",
             "params": {}
           },
           {
@@ -2168,21 +2127,21 @@
                 "commands": [
                   {
                     "blocking": false,
-                    "family": "style",
+                    "family": "effect",
                     "level": "bg",
-                    "name": "gray",
+                    "name": "grayscale",
                     "params": {},
                     "prefix": "f",
-                    "raw": "f.gray:bg"
+                    "raw": "f.grayscale:bg"
                   }
                 ],
                 "line": 62,
                 "prefix": "f",
                 "range": {
-                  "end": 19,
+                  "end": 24,
                   "start": 10
                 },
-                "raw": "f.gray:bg",
+                "raw": "f.grayscale:bg",
                 "type": "command-chain"
               }
             ],
@@ -2190,14 +2149,14 @@
             "kind": "content",
             "line": 62,
             "range": {
-              "end": 19,
+              "end": 24,
               "start": 0
             },
-            "raw": "{内联灰背景} @ f.gray:bg",
+            "raw": "{内联灰背景} @ f.grayscale:bg",
             "type": "line"
           }
         ],
-        "source": "// 内联 @ f.x:bg 链路——与块选项 [.x:bg] 走不同代码路径（TextPlayer.unrollGroupChain）\n// onBackgroundReady 延迟机制覆盖此路径\n@ bg(src=\"tests/assets/sample-bg.jpg\")\n{内联灰背景} @ f.gray:bg",
+        "source": "// 内联 @ f.x:bg 链路——与块选项 [.x:bg] 走不同代码路径（TextPlayer.unrollGroupChain）\n// onBackgroundReady 延迟机制覆盖此路径\n@ bg(src=\"tests/assets/sample-bg.jpg\")\n{内联灰背景} @ f.grayscale:bg",
         "type": "paragraph"
       },
       "blockOptions": {},
@@ -2224,7 +2183,7 @@
               {
                 "blocking": false,
                 "level": "bg",
-                "name": "gray",
+                "name": "grayscale",
                 "params": {}
               }
             ],
@@ -2261,7 +2220,7 @@
             {
               "blocking": false,
               "level": "bg",
-              "name": "gray",
+              "name": "grayscale",
               "params": {}
             }
           ],
@@ -2633,11 +2592,11 @@
     "---",
     "// :bg emboss——连续色调表面的浮雕效果\n@ bg(src=\"tests/assets/sample-bg.jpg\")\n[.emboss:bg]\n背景图浮雕处理",
     "---",
-    "// :bg gray + 文字——背景灰度，文字保持原色\n@ bg(src=\"tests/assets/sample-bg.jpg\")\n[.gray:bg]\n灰度背景上的彩色文字",
+    "// :bg gray + 文字——背景灰度，文字保持原色\n@ bg(src=\"tests/assets/sample-bg.jpg\")\n[.grayscale:bg]\n灰度背景上的彩色文字",
     "---",
-    "// :bg gray 回归用例——此前 bg 命令名碰撞导致 stage bg 死代码，:bg 静默失败\n// 修复后 bg 重命名为 box（元素级），stage bg 正常路由，:bg filter 作用于背景精灵\n@ bg(src=\"tests/assets/sample-bg.jpg\")\n[.gray:bg]\ngray:bg 回归验证",
+    "// :bg gray 回归用例——此前 bg 命令名碰撞导致 stage bg 死代码，:bg 静默失败\n// 修复后 bg 重命名为 box（元素级），stage bg 正常路由，:bg filter 作用于背景精灵\n@ bg(src=\"tests/assets/sample-bg.jpg\")\n[.grayscale:bg]\ngray:bg 回归验证",
     "---",
-    "// 内联 @ f.x:bg 链路——与块选项 [.x:bg] 走不同代码路径（TextPlayer.unrollGroupChain）\n// onBackgroundReady 延迟机制覆盖此路径\n@ bg(src=\"tests/assets/sample-bg.jpg\")\n{内联灰背景} @ f.gray:bg",
+    "// 内联 @ f.x:bg 链路——与块选项 [.x:bg] 走不同代码路径（TextPlayer.unrollGroupChain）\n// onBackgroundReady 延迟机制覆盖此路径\n@ bg(src=\"tests/assets/sample-bg.jpg\")\n{内联灰背景} @ f.grayscale:bg",
     "---",
     "// bg(color) 清除图片回归——先设图片再设纯色，图片应消失\n@ bg(src=\"tests/assets/sample-bg.jpg\")\n@ bg(color=\"#1a0a2e\")\n{纯色替换图片} @ f.gray"
   ]
