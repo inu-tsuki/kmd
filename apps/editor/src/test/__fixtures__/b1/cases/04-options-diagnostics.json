@@ -1,0 +1,24 @@
+{
+  "kind": "options",
+  "engineDefaults": {
+    "mode": "stage",
+    "designWidth": 1920,
+    "speed": 40,
+    "align": "left"
+  },
+  "document": [
+    { "key": "mode", "value": "paged", "range": { "start": 0, "end": 11 } },
+    { "key": "speed", "value": 55, "range": { "start": 12, "end": 20 } },
+    { "key": "futureField", "value": "kept", "range": { "start": 21, "end": 35 } }
+  ],
+  "paragraphs": [
+    [
+      { "key": "speed", "value": 80, "range": { "start": 100, "end": 108 } },
+      { "key": "mode", "value": "scroll", "range": { "start": 109, "end": 120 } }
+    ],
+    [
+      { "key": "futureField", "value": "ignored", "range": { "start": 200, "end": 220 } }
+    ],
+    []
+  ]
+}

@@ -1,5 +1,6 @@
 import { Container } from "pixi.js";
 import { TextStyle } from "pixi.js";
+import type { CommandArgumentUnit, CommandArgumentUnits } from "../types/command";
 
 /**
  * 时间轨道分类 (Triple-Track)
@@ -22,6 +23,7 @@ export interface EffectParameterMetadata {
   max?: number;
   step?: number;
   description: string;
+  unit?: CommandArgumentUnit;
 }
 
 export interface EffectMetadata {
@@ -34,6 +36,10 @@ export interface EffectMetadata {
   category?: string;
   /** 参数默认值与合法边界；preset 实现应复用此 schema 做归一化。 */
   parameters?: Readonly<Record<string, EffectParameterMetadata>>;
+  /** 裸数字的默认单位由注册表 metadata 提供，语法层不补单位。 */
+  argumentUnits?: CommandArgumentUnits;
+  /** Internal style record replayed with the effect to preserve cross-lane source order. */
+  replayStyle?: string;
   /**
    * 内部样式：参与 apply 互斥记账，但对 has() 与 getRegisteredNames() 隐藏——
    * 不渗入 commandCatalog 已知命令门、IntelliSense、分类钉表，不扩大语言表面。

@@ -68,7 +68,7 @@ const EFFECT_TABLE: Record<string, PresetClass> = {
   hologram:  { track: 'behavior', type: 'filter', targetType: 'both', mutexGroup: 'filter_hologram', stackable: false },
   chromaticAberration:{ track: 'behavior', type: 'filter', targetType: 'both', mutexGroup: 'filter_rgb', stackable: false },
   pixelate:  { track: 'instant',  type: 'filter', targetType: 'both', mutexGroup: 'filter_pixelate',  stackable: true },
-  gray:      { track: 'instant',  type: 'filter', targetType: 'both', mutexGroup: 'filter_color',     stackable: true },
+  grayscale: { track: 'instant',  type: 'filter', targetType: 'both', mutexGroup: 'filter_color',     stackable: true },
   threshold: { track: 'instant',  type: 'filter', targetType: 'both', mutexGroup: 'filter_color',     stackable: true },
   duotone:   { track: 'instant',  type: 'filter', targetType: 'both', mutexGroup: 'filter_color',     stackable: true },
   posterize: { track: 'instant',  type: 'filter', targetType: 'both', mutexGroup: 'filter_color',     stackable: true },
@@ -180,7 +180,7 @@ describe('effects four-track classification table', () => {
   });
 
   it('filter mutex groups are unique per filter family (no cross-family collisions)', () => {
-    // 同一 mutexGroup 的滤镜应属同一视觉族（如 filter_color: gray/threshold/duotone/posterize）。
+    // 同一 mutexGroup 的滤镜应属同一视觉族（如 filter_color: grayscale/threshold/duotone/posterize）。
     // 这条不变量防"两个不相关滤镜误用同 mutex 导致互相踢"。
     const byMutex: Record<string, string[]> = {};
     for (const [name, cls] of Object.entries(EFFECT_TABLE)) {
@@ -188,8 +188,8 @@ describe('effects four-track classification table', () => {
         (byMutex[cls.mutexGroup] ??= []).push(name);
       }
     }
-    // filter_color 有 4 个（gray/threshold/duotone/posterize）——互斥族，预期。
-    expect(byMutex.filter_color?.sort()).toEqual(['duotone', 'gray', 'posterize', 'threshold']);
+    // filter_color 有 4 个（grayscale/threshold/duotone/posterize）——互斥族，预期。
+    expect(byMutex.filter_color?.sort()).toEqual(['duotone', 'grayscale', 'posterize', 'threshold']);
     expect(byMutex.filter_conv?.sort()).toEqual(['edge', 'emboss', 'sharpen']);
   });
 
@@ -198,12 +198,9 @@ describe('effects four-track classification table', () => {
     const styleNames = Object.keys(STYLE_TABLE);
     expect(new Set(effNames).size).toBe(effNames.length);
     expect(new Set(styleNames).size).toBe(styleNames.length);
-    // effect 与 style 名空间有意重叠 'gray'：effect gray = filter（灰度滤镜），
-    // style gray = color（灰色字色）。命令路由经 commandCatalog.getFamily 按族消歧，非 bug。
-    // 此处固定该重叠为已知现状，B0.1 若拆分名空间应显式更新此断言。
+    // D21 要求 effect/style 注册表之间也不得重名。灰度滤镜使用 grayscale，
+    // gray 只保留文字颜色样式身份。
     const overlap = effNames.filter((n) => styleNames.includes(n));
-    expect(overlap).toEqual(['gray']);
-    // 重叠名的两者分类应不同（否则真撞了）。
-    expect(EFFECT_TABLE.gray).not.toEqual(STYLE_TABLE.gray);
+    expect(overlap).toEqual([]);
   });
 });

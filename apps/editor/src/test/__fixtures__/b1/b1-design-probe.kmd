@@ -1,0 +1,11 @@
+---
+mode: stage
+speed: 50
+var:
+  trust: 2
+---
+@ var.trust = var.trust + 1
+@ temp = var.trust > 2 ? 5 : 0
+@ .wave(temp > 4 ? 20 : 5).rotate(var.trust)
+[speed=80]
+正文保持为烘焙输入。

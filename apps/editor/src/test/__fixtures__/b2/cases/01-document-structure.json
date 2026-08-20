@@ -1,0 +1,4 @@
+{
+  "kind": "document",
+  "source": "---\nmode: stage\n---\n[speed=80 align=center .wave]\n[if var.ready]\n第一段 {=var.name}\n第二行\n\n:::hero\n# truth\n# title @ .powerIn\n正文\n:::\n[if var.ready -> #truth | else -> #title]\n-> #truth\n---\n尾声"
+}

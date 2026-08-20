@@ -1,0 +1,1 @@
+cam.wave.(bg.fade(0.7~2s~>1).$preset):group!.$(var.enabled ? shake(strength=2) : wave)

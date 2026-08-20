@@ -3,6 +3,7 @@ import type {
   DiagnosticEvent,
   LayoutPreflightResult as SharedLayoutPreflightResult,
 } from "../types";
+import type { CommandArgumentUnits } from "../types/command";
 export type { LinePlan } from "../types";
 
 export type LayoutCommandType =
@@ -51,6 +52,8 @@ export interface LayoutCommandMetadata {
   readsMarkers?: boolean;
   internal?: boolean;
   description?: string;
+  /** 裸数字的默认单位由注册表 metadata 提供，语义层不维护命令名表。 */
+  argumentUnits?: CommandArgumentUnits;
 }
 
 export type LayoutCommandMetadataMap = Record<string, LayoutCommandMetadata>;

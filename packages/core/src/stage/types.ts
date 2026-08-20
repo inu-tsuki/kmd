@@ -1,3 +1,5 @@
+import type { CommandArgumentUnits } from "../types/command";
+
 export interface CameraState {
   x: number;
   y: number;
@@ -50,6 +52,8 @@ export interface StageCommandMetadata {
   blockingDefault?: boolean;
   capturesTween?: boolean;
   description?: string;
+  /** 裸数字的默认单位由注册表 metadata 提供。 */
+  argumentUnits?: CommandArgumentUnits;
 }
 
 export type StageCommandMetadataMap = Record<string, StageCommandMetadata>;

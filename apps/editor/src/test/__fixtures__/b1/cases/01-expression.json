@@ -1,0 +1,10 @@
+{
+  "kind": "expression",
+  "source": "var.trust > 3 ? var.score * 2 : 5",
+  "baseOffset": 100,
+  "at": 100,
+  "variables": {
+    "trust": 4,
+    "score": 8
+  }
+}

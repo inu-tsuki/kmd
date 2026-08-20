@@ -1,0 +1,16 @@
+---
+mode: stage
+var:
+  route: a
+  enabled: true
+---
+@ heading = .red -250ms-> wave
+:::hero
+# hero-start
+这段文字属于 hero 对象。
+:::
+@ hero.$(var.route == 'a' ? heading : gray).$(var.enabled ? shake)
+@ hero.+shake(strength=5)
+@ hero.-wave
+---
+下一场景不会继承 hero 或 heading。

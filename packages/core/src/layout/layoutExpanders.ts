@@ -167,6 +167,7 @@ export const layoutExpanderMetadata = {
     affectsFlow: false,
     affectsDisplay: true,
     description: "Token-scoped visual offset; expands to push/pop display offset.",
+    argumentUnits: { positional: ["px"] },
   },
   right: {
     name: "right",
@@ -175,6 +176,7 @@ export const layoutExpanderMetadata = {
     role: "display-offset",
     affectsFlow: false,
     affectsDisplay: true,
+    argumentUnits: { positional: ["px"] },
   },
   up: {
     name: "up",
@@ -183,6 +185,7 @@ export const layoutExpanderMetadata = {
     role: "display-offset",
     affectsFlow: false,
     affectsDisplay: true,
+    argumentUnits: { positional: ["px"] },
   },
   down: {
     name: "down",
@@ -191,6 +194,7 @@ export const layoutExpanderMetadata = {
     role: "display-offset",
     affectsFlow: false,
     affectsDisplay: true,
+    argumentUnits: { positional: ["px"] },
   },
   offset: {
     name: "offset",
@@ -200,6 +204,7 @@ export const layoutExpanderMetadata = {
     readsMarkers: true,
     affectsFlow: false,
     affectsDisplay: true,
+    argumentUnits: { positional: ["px", "px"] },
   },
   goto: {
     name: "goto",

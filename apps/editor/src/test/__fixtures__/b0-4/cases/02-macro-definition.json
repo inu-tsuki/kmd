@@ -1,0 +1,13 @@
+{
+  "kind": "macro-definition",
+  "documentEnd": 300,
+  "definitions": [
+    { "source": "heading = .red -250ms-> wave", "offset": 10, "sceneEnd": 200 },
+    { "source": "fallback = gray", "offset": 60, "sceneEnd": 200 }
+  ],
+  "registry": [
+    { "name": "red", "family": "style" },
+    { "name": "gray", "family": "style" },
+    { "name": "wave", "family": "effect" }
+  ]
+}

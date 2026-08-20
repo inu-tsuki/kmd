@@ -19,18 +19,21 @@ export const stageCommandMetadata: StageCommandMetadataMap = {
     kind: "camera",
     propertyKey: "camera.xy",
     capturesTween: true,
+    argumentUnits: { positional: ["px", "px", "s"] },
   },
   "cam.zoom": {
     name: "cam.zoom",
     kind: "camera",
     propertyKey: "camera.zoom",
     capturesTween: true,
+    argumentUnits: { positional: ["number", "s"] },
   },
   "cam.rotate": {
     name: "cam.rotate",
     kind: "camera",
     propertyKey: "camera.rotation",
     capturesTween: true,
+    argumentUnits: { positional: ["deg", "s"] },
   },
   "cam.focus": {
     name: "cam.focus",
@@ -43,6 +46,7 @@ export const stageCommandMetadata: StageCommandMetadataMap = {
     kind: "offset",
     propertyKey: "offset.xy",
     capturesTween: true,
+    argumentUnits: { positional: ["px", "px", "s"] },
   },
   "cam.reset": {
     name: "cam.reset",
@@ -50,12 +54,14 @@ export const stageCommandMetadata: StageCommandMetadataMap = {
     propertyKey: "camera.reset",
     capturesTween: true,
     description: "Resets camera, camera offset, and active camera modifiers.",
+    argumentUnits: { positional: ["s"] },
   },
   "cam.shake": {
     name: "cam.shake",
     kind: "modifier",
     modifierBased: true,
     capturesTween: true,
+    argumentUnits: { positional: ["number", "s"] },
   },
   "cam.drift": {
     name: "cam.drift",
@@ -69,6 +75,7 @@ export const stageCommandMetadata: StageCommandMetadataMap = {
     propertyKey: "playback.pause",
     blockingDefault: true,
     capturesTween: false,
+    argumentUnits: { positional: ["s"] },
   },
   "bg": {
     name: "bg",

@@ -1,0 +1,11 @@
+{
+  "chain": "{}.bold {}.wave {真:2}.bold mark(p).line.wave range(a,b).wave",
+  "registry": [
+    { "name": "bold", "family": "style" },
+    { "name": "wave", "family": "effect" }
+  ],
+  "braceGroups": [
+    { "id": 1, "text": "真相", "range": { "start": 0, "end": 4 } },
+    { "id": 2, "text": "真话", "range": { "start": 5, "end": 9 } }
+  ]
+}

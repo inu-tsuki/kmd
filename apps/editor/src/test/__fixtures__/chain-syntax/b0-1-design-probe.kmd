@@ -1,0 +1,17 @@
+# B0.1 target-syntax design probe
+
+夜色压低，标题从画面边缘逐字进入。
+@ {标题}.fade:char(0~800ms~>1).outline -1s-> .(cam.zoom(1~2s~>1.08))!
+
+提示音之后，两个对象按各自的句子槽位响应。
+@ flow.pause(click)   bg.tint("navy")
+
+同一拍内的成员同时启动，随后按连接符推进。
+@ {正文}.wave.blur~600ms,.2,1.15,.8,-.1~>settle
+
+引用只在这一层定界，求值继续留给后续切片。
+@ cam.$(var.focused ? focus(strength=+=.2) : idle)
+
+对象成员操作与文档状态写入保留结构位置。
+@ effobj.+pulse(strength=+=.1)
+@ var.opacity = clamp(input, 0, 1)

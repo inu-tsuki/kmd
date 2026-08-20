@@ -1,0 +1,12 @@
+{
+  "kind": "state",
+  "documentEnd": 500,
+  "frontmatter": [
+    { "name": "trust", "value": 2, "range": { "start": 10, "end": 15 } }
+  ],
+  "sentences": [
+    { "source": "var.trust = var.trust + 1", "offset": 50, "sceneEnd": 200 },
+    { "source": "temp = var.trust > 2 ? 5 : 0", "offset": 100, "sceneEnd": 200 }
+  ],
+  "foldOffsets": [75, 150]
+}

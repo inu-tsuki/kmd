@@ -1,0 +1,6 @@
+{
+  "source": "intro\n[if var.route -> #truth | else -> #lie]\n# truth\ntruth\n-> #end\n# lie\nlie\n# end\nend",
+  "variables": {
+    "route": true
+  }
+}
