@@ -252,6 +252,7 @@ export const layoutPresetMetadata = {
     affectsFlow: true,
     affectsDisplay: true,
     description: "Moves the cursor relatively in block/operator scope.",
+    argumentUnits: { positional: ["px", "px"] },
   },
   left: {
     name: "left",
@@ -261,6 +262,7 @@ export const layoutPresetMetadata = {
     readsMarkers: true,
     affectsFlow: true,
     affectsDisplay: true,
+    argumentUnits: { positional: ["px"] },
   },
   up: {
     name: "up",
@@ -270,6 +272,7 @@ export const layoutPresetMetadata = {
     readsMarkers: true,
     affectsFlow: true,
     affectsDisplay: true,
+    argumentUnits: { positional: ["px"] },
   },
   right: {
     name: "right",
@@ -278,6 +281,7 @@ export const layoutPresetMetadata = {
     role: "cursor",
     affectsFlow: true,
     affectsDisplay: true,
+    argumentUnits: { positional: ["px"] },
   },
   down: {
     name: "down",
@@ -286,6 +290,7 @@ export const layoutPresetMetadata = {
     role: "cursor",
     affectsFlow: true,
     affectsDisplay: true,
+    argumentUnits: { positional: ["px"] },
   },
   pushDisplayOffset: {
     name: "pushDisplayOffset",

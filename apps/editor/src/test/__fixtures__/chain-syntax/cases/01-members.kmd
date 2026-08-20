@@ -1,0 +1,1 @@
+cam.fade:char(1s, strength=+=.5, label="a,b")!.outline.blur

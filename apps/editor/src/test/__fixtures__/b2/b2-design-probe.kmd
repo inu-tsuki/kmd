@@ -1,0 +1,21 @@
+---
+mode: stage
+var:
+  trust: 4
+  route: truth
+  name: 月
+---
+# start
+:::hero
+[if var.trust > 3]
+[speed=80 .wave]
+你好，{=var.name}。{=var.route ? truth: 她说真话 | lie: 她说谎 | 她沉默} @ .red
+:::
+[if var.trust > 3 -> #truth | else -> #lie]
+# truth @ .powerIn
+真相
+-> #end
+# lie
+谎言
+# end
+结束|(click)

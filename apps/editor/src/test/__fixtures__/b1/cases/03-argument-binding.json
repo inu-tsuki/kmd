@@ -1,0 +1,22 @@
+{
+  "kind": "argument",
+  "chain": ".wave(var.trust > 3 ? 20 : 5).rotate(var.from~1s~>var.to)",
+  "at": 100,
+  "variables": {
+    "trust": 4,
+    "from": 10,
+    "to": 30
+  },
+  "registry": [
+    {
+      "name": "wave",
+      "family": "effect",
+      "metadata": { "argumentUnits": { "positional": ["number"] } }
+    },
+    {
+      "name": "rotate",
+      "family": "effect",
+      "metadata": { "argumentUnits": { "positional": ["deg"] } }
+    }
+  ]
+}

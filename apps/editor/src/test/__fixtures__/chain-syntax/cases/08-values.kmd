@@ -1,0 +1,1 @@
+effect(+1, .5, -1e-2, "line\n", true, 2char, 90deg, 15deg/char, +=.2, 0~2s~>1, click)

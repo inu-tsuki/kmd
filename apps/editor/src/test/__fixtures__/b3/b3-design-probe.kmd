@@ -1,0 +1,21 @@
+---
+mode: stage
+var:
+  route: true
+  count: 0
+---
+# start
+开场
+[if var.route -> #truth | else -> #lie]
+# truth
+真相 @ .wave
+-> #repeat
+# lie
+谎言
+# repeat
+再次进入
+@ var.count = var.count + 1
+[if var.count < 2 -> #repeat]
+---
+# end
+结束 @ pause(click)

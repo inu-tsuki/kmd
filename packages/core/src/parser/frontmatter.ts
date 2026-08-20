@@ -1,12 +1,12 @@
 // Frontmatter 行级解析/合并/序列化 —— 规范依据 docs/knowledge/language/frontmatter-schema.md
 // §3 解析规则:首行 `---` 定界;行级 `key: value`;注释符是 `//`(非 YAML `#`);
-// 值经 KMDCommandParser.autoConvert;`var:` 独占行开块,其下 ≥2 空格缩进进 variables。
+// 值由本模块按 frontmatter 标量规则解析;`var:` 独占行开块,其下 ≥2 空格缩进进 variables。
 //
 // §5 写回规则 W1–W4 要求往返保真:未涉及内容恒等。因此本模块刻意采用**行级保真模型**——
 // 保留每行原文(raw),写回时未动行原样输出,而非「解析成对象再重新序列化」。这是 W1(未知字段/
 // 顺序/注释保留)与 W3(未改字段写法不变)的最稳实现。
 
-import { KMDCommandParser } from "./KMDCommandParser";
+import { KMDCommandParser } from './KMDCommandParser';
 
 /** 单行 frontmatter 的结构化记录。未改行原样写回靠 raw;解析出的值仅供读取/比较。 */
 export interface FrontMatterLine {
@@ -18,16 +18,16 @@ export interface FrontMatterLine {
   key?: string;
   /** 行首缩进空格数(仅 key/var-entry 有意义) */
   indent?: number;
-  /** 经 autoConvert 的解析值,仅供读取/比较用,不参与写回(W3:未改字段写法不变) */
+  /** 经标量规则解析的值,仅供读取/比较用,不参与写回(W3:未改字段写法不变) */
   parsedValue?: any;
 }
 
 /**
  * 行级解析 frontmatter 文本(分隔符之间的内容,不含 `---` 行)。
- * 语义与 Parser.parseMetadata 逐行一致(§3 现状即规范 v1):
+ * 语义与 production compiler 的 frontmatter 收集规则一致：
  *  - 空行 / `//` 注释行:记录原文,不产出值;
  *  - `var:` 独占行(trim 后严格相等):开启变量块,后续 ≥2 空格缩进行进入 variables;
- *  - `key: value` 行:trim 后经 autoConvert;
+ *  - `key: value` 行:trim 后按 frontmatter 标量规则解析;
  *  - 未知 key 一律保留(§3.4 扩展缓冲)。
  * 注释/空行同样进数组,以保留顺序与原文,供序列化原样回写。
  */
@@ -54,14 +54,14 @@ export function parseFrontMatter(fmStr: string): FrontMatterLine[] {
 
     const colonIdx = line.indexOf(":");
     if (colonIdx === -1) {
-      // 无冒号的非注释行:parseMetadata 静默跳过,这里仍记录原文以保往返(W1)。
+      // 无冒号的非注释行不会进入 compiler options；这里仍记录原文以保往返(W1)。
       lines.push({ type: "comment", raw: line });
       continue;
     }
 
     const key = line.substring(0, colonIdx).trim();
     const val = line.substring(colonIdx + 1).trim();
-    const parsed = KMDCommandParser.autoConvert(val);
+    const parsed = parseFrontMatterScalar(val);
     const indentMatch = line.match(/^\s*/);
     const indent = indentMatch ? indentMatch[0].length : 0;
 
@@ -76,7 +76,17 @@ export function parseFrontMatter(fmStr: string): FrontMatterLine[] {
   return lines;
 }
 
-/** 定界结果:frontmatter 块定位 + 正文。与 Parser.ts:49-61 定界规则一致。 */
+/**
+ * Frontmatter 只接受标量，不需要借用命令语法解析器。这里保留 number、boolean、
+ * quoted string 的既有读取结果；其余文本原样保留，写回仍由 raw 字段负责。
+ */
+export function parseFrontMatterScalar(value: string): unknown {
+  // 并行编译前端落地期间继续复用 legacy 标量换算，避免改变现有作品读取结果。
+  // production switch 会在删除 legacy parser 时切换到独立的 frontmatter 标量规则。
+  return KMDCommandParser.autoConvert(value.trim());
+}
+
+/** 定界结果：frontmatter 块定位、行模型与正文。 */
 export interface FrontMatterBlock {
   /** 开分隔符所在行号(0-based) */
   startIdx: number;
@@ -89,7 +99,7 @@ export interface FrontMatterBlock {
 }
 
 /**
- * 从完整文档文本中提取 frontmatter 块。复刻 Parser.parse 的定界逻辑(§3.1):
+ * 从完整文档文本中提取 frontmatter 块，供 compiler 与编辑器写回复用：
  * 首行 trim === `---` 时,至下一个独占行 `---` 之间为 frontmatter;否则无 frontmatter。
  * 返回 null 表示文档无 frontmatter。返回的 body 是闭分隔符行之后的原文。
  */
@@ -106,7 +116,7 @@ export function extractFrontMatterBlock(text: string): FrontMatterBlock | null {
       break;
     }
   }
-  if (endIdx === -1) return null; // 未闭合:parseMetadata 同样静默跳过整块
+  if (endIdx === -1) return null; // 未闭合时不产生 frontmatter options。
 
   const fmStr = allLines.slice(1, endIdx).join("\n");
   const lines = parseFrontMatter(fmStr);
@@ -192,8 +202,8 @@ export function setField(
 }
 
 /**
- * 从行模型读出顶层 key 的解析值(经 autoConvert)。找不到返回 undefined。
- * 仅供 UI 同步用:取解析值而非原文,与 core parseMetadata 行为一致(回归项 c)。
+ * 从行模型读出顶层 key 的解析值。找不到返回 undefined。
+ * 仅供 UI 同步用：取解析值而非原文，与 compiler option 收集结果一致。
  */
 export function getField(lines: FrontMatterLine[], key: string): any {
   const hit = lines.find((l) => l.type === "key" && l.key === key);
@@ -201,8 +211,8 @@ export function getField(lines: FrontMatterLine[], key: string): any {
 }
 
 /**
- * 把行模型展平为 metadata 对象(metadata[key] / metadata.variables[key]),
- * 与 Parser.parseMetadata 写入的对象形状一致。供 core 复用同一解析。
+ * 把行模型展平为阶段设计探针使用的普通对象（metadata[key] / metadata.variables[key]）。
+ * production compiler 直接从行模型分别收集 options 与 StateStore 初始值。
  */
 export function linesToMetadata(lines: FrontMatterLine[], metadata: any): void {
   for (const l of lines) {
@@ -212,6 +222,6 @@ export function linesToMetadata(lines: FrontMatterLine[], metadata: any): void {
     } else if (l.type === "key") {
       metadata[l.key!] = l.parsedValue;
     }
-    // blank/comment/var-open 不写入对象(parseMetadata 同样不写)。
+    // blank/comment/var-open 不写入对象。
   }
 }

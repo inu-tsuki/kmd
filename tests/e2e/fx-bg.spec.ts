@@ -83,7 +83,7 @@ test('fx-bg applies settled background profiles during natural playback', async 
     { labelPrefix: '// B1 + B2 组合', filterName: null },
     { labelPrefix: '// B3: :bg filter', filterName: 'duotone:background' },
     { labelPrefix: '// :bg emboss', filterName: 'emboss:background' },
-    { labelPrefix: '// :bg gray +', filterName: 'gray' },
+    { labelPrefix: '// :bg gray +', filterName: 'grayscale' },
   ].map((checkpoint) => ({
     ...checkpoint,
     timeMs: markers.find((marker) => marker.label?.startsWith(checkpoint.labelPrefix))?.timeMs,

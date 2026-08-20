@@ -1,0 +1,22 @@
+{
+  "chain": "cam.zoom(1s) hero.start.goto bold.wave",
+  "at": 20,
+  "registry": [
+    { "name": "bold", "family": "style" },
+    { "name": "wave", "family": "effect" },
+    { "name": "goto", "family": "layout" },
+    { "name": "cam.zoom", "family": "stage" }
+  ],
+  "definitions": [
+    {
+      "name": "hero",
+      "kind": "object",
+      "level": "scene",
+      "visibleFrom": { "offset": 0 },
+      "visibleUntil": { "offset": 200 },
+      "payload": null,
+      "declarationRange": { "start": 0, "end": 4 },
+      "source": "fence"
+    }
+  ]
+}

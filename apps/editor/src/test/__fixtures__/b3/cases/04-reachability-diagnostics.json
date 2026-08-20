@@ -1,0 +1,3 @@
+{
+  "source": "start\n-> #end\ndead\n[if true -> #branch]\n# branch\nbranch\n# end\nend\n-> #missing"
+}

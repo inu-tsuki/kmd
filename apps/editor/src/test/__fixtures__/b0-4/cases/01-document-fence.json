@@ -1,0 +1,4 @@
+{
+  "kind": "document-fence",
+  "source": "---\nmode: stage\n---\n:::outer\n# anchor\n:::inner\ntext\n:::\n:::\n---\n:::broken\nbody"
+}

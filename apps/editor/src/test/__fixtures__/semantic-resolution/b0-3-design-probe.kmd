@@ -1,0 +1,6 @@
+第一拍的成员按字符同起。 @ .wave:char(0~2s~>1).red:char ~500ms~> wave:char(0)
+连接符时长独立于参数值域。 @ .wave(0~4s~>1) -1s-> red
+全局主语从句逐字实例化。 @ .(cam.zoom(+=0.01)):char
+内置末尾阻塞归一到从句。 @ .(cam.zoom(1s)!):char ~250ms~> red
+同粒度阻塞按 unit 配对。 @ .wave:char! ~1s~> red:char
+粒度变化时使用前拍屏障。 @ .wave:char! -500ms-> red:group

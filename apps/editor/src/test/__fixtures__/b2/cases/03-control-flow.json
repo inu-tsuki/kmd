@@ -1,0 +1,8 @@
+{
+  "kind": "control-flow",
+  "source": "# start\n[if var.ready]\n[if var.visible]\n正文\n[if var.ready -> #end | else -> #start]\n# end\n-> #start",
+  "variables": {
+    "ready": true,
+    "visible": false
+  }
+}

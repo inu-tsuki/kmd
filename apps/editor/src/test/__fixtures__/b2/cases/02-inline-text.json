@@ -1,0 +1,10 @@
+{
+  "kind": "inline-text",
+  "source": "甲{红绿灯}{=var.name}{=var.ready ? 是 | 否}{=var.route ? a: 真 | b: 假 | 未定}|(click)",
+  "baseOffset": 40,
+  "variables": {
+    "name": "月",
+    "ready": true,
+    "route": "b"
+  }
+}

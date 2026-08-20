@@ -1,0 +1,27 @@
+{
+  "chain": "gray.wave up(100) {真}.wave {}.bold",
+  "at": 20,
+  "registry": [
+    { "name": "bold", "family": "style" },
+    { "name": "gray", "family": "style" },
+    { "name": "gray", "family": "effect" },
+    { "name": "up", "family": "layout" },
+    { "name": "wave", "family": "effect" }
+  ],
+  "definitions": [
+    {
+      "name": "cam",
+      "kind": "macro",
+      "level": "scene",
+      "visibleFrom": { "offset": 0 },
+      "visibleUntil": { "offset": 100 },
+      "payload": null,
+      "declarationRange": { "start": 0, "end": 3 },
+      "source": "definition"
+    }
+  ],
+  "braceGroups": [
+    { "id": 1, "text": "真相", "range": { "start": 0, "end": 4 } },
+    { "id": 2, "text": "真话", "range": { "start": 5, "end": 9 } }
+  ]
+}

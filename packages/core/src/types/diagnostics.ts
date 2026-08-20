@@ -1,28 +1,35 @@
 export type DiagnosticSeverity = "info" | "warning" | "error";
 
 export interface SourceRange {
-  start: number;
-  end: number;
+  readonly start: number;
+  readonly end: number;
 }
 
 export interface SourceOrigin {
-  line?: number;
-  range?: SourceRange;
-  paragraphIndex?: number;
-  segmentIndex?: number;
-  tokenIndex?: number;
-  charIndex?: number;
-  path?: string;
+  readonly line?: number;
+  readonly range?: SourceRange;
+  readonly paragraphIndex?: number;
+  readonly segmentIndex?: number;
+  readonly tokenIndex?: number;
+  readonly charIndex?: number;
+  readonly path?: string;
+}
+
+export interface DiagnosticSuggestion {
+  readonly label: string;
+  readonly replacement: string;
+  readonly range: SourceRange;
 }
 
 export interface DiagnosticEvent {
-  severity: DiagnosticSeverity;
-  message: string;
-  line?: number;
-  range?: SourceRange;
-  code?: string;
-  subsystem?: string;
-  origin?: SourceOrigin;
+  readonly severity: DiagnosticSeverity;
+  readonly message: string;
+  readonly line?: number;
+  readonly range?: SourceRange;
+  readonly code?: string;
+  readonly subsystem?: string;
+  readonly origin?: SourceOrigin;
+  readonly suggestions?: readonly DiagnosticSuggestion[];
 }
 
 export interface AuditEvent {

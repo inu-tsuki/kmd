@@ -9,6 +9,13 @@ export type ChainExecutionMode =
   | "container_only"
   | "graph_gate";
 
+/** execution plan 已归一化的 cursor 时序输入。 */
+export interface ExecutionTiming {
+  speedMultiplier?: number;
+  delayOverride?: number;
+  advanceLevel?: string;
+}
+
 export interface ChainExecutionPlan {
   id: string;
   mode: ChainExecutionMode;

@@ -1,0 +1,20 @@
+{
+  "chain": ".hold(1).invalidMeta(var.delay).$macro --1s-> missing",
+  "registry": [
+    {
+      "name": "hold",
+      "family": "effect",
+      "metadata": { "argumentUnits": { "positional": ["s"] } }
+    },
+    {
+      "name": "invalidMeta",
+      "family": "effect",
+      "metadata": { "argumentUnits": { "positional": ["minute"] } }
+    }
+  ],
+  "revealPlan": {
+    "char": [],
+    "group": [],
+    "block": []
+  }
+}

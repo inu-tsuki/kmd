@@ -579,7 +579,7 @@ describe('[33] SA-47 background profile 路由 + latest bg boundary', () => {
     const backgroundDuotone = effectManager.apply(profileTarget, 'duotone', {}, true, 'background');
     const textEmboss = effectManager.apply(profileTarget, 'emboss', {}, true, 'text');
     const backgroundEmboss = effectManager.apply(profileTarget, 'emboss', {}, true, 'background');
-    const backgroundGray = effectManager.apply(profileTarget, 'gray', {}, true, 'background');
+    const backgroundGray = effectManager.apply(profileTarget, 'grayscale', {}, true, 'background');
     assert(textDuotone instanceof TextDuotoneFilter, 'SA-47 text duotone 保持 alpha profile');
     assert(backgroundDuotone instanceof BackgroundDuotoneFilter, 'SA-47 bg duotone 选择 luma profile');
     assert(textEmboss instanceof TextEmbossFilter, 'SA-47 text emboss 保持 alpha profile');
@@ -589,7 +589,7 @@ describe('[33] SA-47 background profile 路由 + latest bg boundary', () => {
     assert(backgroundDuotone.kmdEffectProfile === 'duotone:background', 'SA-47 bg duotone 诊断标识稳定');
     assert(textEmboss.kmdEffectProfile === 'emboss:text', 'SA-47 text emboss 诊断标识稳定');
     assert(backgroundEmboss.kmdEffectProfile === 'emboss:background', 'SA-47 bg emboss 诊断标识稳定');
-    assert(backgroundGray.kmdEffectProfile === 'gray', 'SA-47 gray 诊断标识稳定');
+    assert(backgroundGray.kmdEffectProfile === 'grayscale', 'SA-47 grayscale 诊断标识稳定');
 
     const textUnderwater = effectManager.apply(profileTarget, 'underwater', {}, true, 'text');
     const backgroundUnderwater = effectManager.apply(profileTarget, 'underwater', {}, true, 'background');
@@ -602,10 +602,10 @@ describe('[33] SA-47 background profile 路由 + latest bg boundary', () => {
       'SA-47 underwater:background 组合 BackgroundDuotoneFilter',
     );
 
-    const grayBgClassification = EffectProcessor.classifyCommand({ name: 'gray', params: {}, level: 'bg' });
+    const grayBgClassification = EffectProcessor.classifyCommand({ name: 'grayscale', params: {}, level: 'bg' });
     assert(
       grayBgClassification.lane === 'effect' && !grayBgClassification.isStyle,
-      `SA-47 gray:bg 应优先走 effect lane（实际 lane=${grayBgClassification.lane} isStyle=${grayBgClassification.isStyle}）`,
+      `SA-47 grayscale:bg 应走 effect lane（实际 lane=${grayBgClassification.lane} isStyle=${grayBgClassification.isStyle}）`,
     );
 
     G.ticker.remove(textUnderwater.tickerFn);

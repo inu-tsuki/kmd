@@ -1,0 +1,21 @@
+{
+  "chain": ".(cam.zoom(+=0.01)!):char -1s-> red:group",
+  "registry": [
+    { "name": "red", "family": "style" },
+    {
+      "name": "cam.zoom",
+      "family": "stage",
+      "metadata": { "argumentUnits": { "positional": ["number", "s"] } }
+    }
+  ],
+  "revealPlan": {
+    "char": [
+      { "id": "char:0", "revealAtSeconds": 0.1 },
+      { "id": "char:1", "revealAtSeconds": 0.3 }
+    ],
+    "group": [
+      { "id": "group:0", "revealAtSeconds": 0.2 }
+    ],
+    "block": []
+  }
+}

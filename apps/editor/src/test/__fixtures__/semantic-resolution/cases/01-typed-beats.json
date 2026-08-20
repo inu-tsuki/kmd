@@ -1,0 +1,19 @@
+{
+  "chain": "bold.wave:char(0~2s~>1) ~500ms~> wave:char(0)",
+  "registry": [
+    { "name": "bold", "family": "style" },
+    {
+      "name": "wave",
+      "family": "effect",
+      "metadata": { "argumentUnits": { "positional": ["number"] } }
+    }
+  ],
+  "revealPlan": {
+    "char": [
+      { "id": "char:0", "revealAtSeconds": 0 },
+      { "id": "char:1", "revealAtSeconds": 0.15 }
+    ],
+    "group": [],
+    "block": []
+  }
+}

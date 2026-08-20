@@ -1,0 +1,4 @@
+{
+  "kind": "diagnostics",
+  "source": "## nested\n# same\n# same\n[if true]\n\n-> #missing\n[speed=80 if true -> #same]"
+}

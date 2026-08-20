@@ -1,0 +1,10 @@
+:::hero
+{真相}{真话} @ {}.bold {}.wave {真:2}.bold
+:::
+
+@ hero = .wave
+@ hero.start.goto
+@ cam.zoom(1s)
+@ mark(p).line.wave
+@ range(a,b).wave
+@ up(100)

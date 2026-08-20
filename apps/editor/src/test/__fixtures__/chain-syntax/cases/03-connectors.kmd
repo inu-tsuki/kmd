@@ -1,0 +1,1 @@
+cam.fade-250ms->hold~1s,.2,1.3,.8,-.1~>zoom

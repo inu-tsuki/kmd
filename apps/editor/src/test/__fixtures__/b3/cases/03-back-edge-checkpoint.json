@@ -1,0 +1,6 @@
+{
+  "source": "# loop\nbody\n[if var.more -> #loop]\n# end\nend",
+  "variables": {
+    "more": true
+  }
+}

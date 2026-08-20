@@ -163,18 +163,18 @@ export const pixelate = defineEffect(_pixelate, {
   stackable: true,             // 多次叠加加深像素化
 });
 
-// 灰度 (Gray) —— DIP-FX M1 点运算模板，静态 instant 滤镜
+// 灰度 (Grayscale) —— DIP-FX M1 点运算模板，静态 instant 滤镜
 // luma = dot(rgb, BT.609)，按 mix 在原色与灰度间插值。
 // 预乘 alpha 对偶（解预乘→运算→重新预乘），半透明字无暗边。
 // char/group/block 皆可；返回 filter 实例供 seek 幂等清理。
-const _gray: EffectFunction = (target, params = {}) => {
+const _grayscale: EffectFunction = (target, params = {}) => {
   const mix = params.mix ?? 1;
   const filter = new GrayFilter();
   filter.mix = mix;
   target.filters = [...(target.filters || []), filter];
   return filter;
 };
-export const gray = defineEffect(_gray, {
+export const grayscale = defineEffect(_grayscale, {
   type: "filter",
   track: "instant",
   targetType: "both",
