@@ -1,7 +1,7 @@
 # DIP-FX M3 Closure Plan
 
-> 状态：Ready for implementation
-> 最近更新：2026-07-11
+> 状态：M3.2 completed and verified
+> 最近更新：2026-08-13
 > 上游：`editor-dip-effect-library.md`、`editor-dip-effect-library-spec.md`
 > 目标：用作品级验证收束 DIP-FX，补齐必要的非 DIP 运动半边，并形成可用于课程报告的证据链。
 
@@ -60,6 +60,58 @@ M3 不再扩张完整 `bg.*` / `frame.*`、插件 loader 或滤镜数量。未�
 - 在 spec 与报告中明确标为“非 DIP 配套 behavior”。
 
 粒子 `splash` 不是默认交付项。若它要求新显示对象池、粒子资源或独立 cleanup shape，应另立任务，不塞进 M3 收尾。
+
+### M3.1 / M3.2 浏览器证据（2026-08-13）
+
+在 `packages/reader-runtime-web` 的 production bundle、Playwright Desktop Chrome
+（1280×720）中完成旧版 baseline 与重编后 after 的自然播放审计。
+
+旧版 baseline 的人工观察：
+
+- 七幕都能证明滤镜存在，但多数标题停在左上小区域，整体更像能力清单而非连续作品；
+- 第二幕在旧取样点只出现 `SIGNAL` 的一部分，暴露出测试把“到达 paragraph marker”误当成
+  “标题已经打完”；
+- 第四幕只有静态、偏小且模糊的 `DEEP BELOW`，能看到 underwater 像素处理，却没有明确的
+  入水、下沉或浪动叙事；
+- 第一幕 `duotone:background` 与第六幕 `emboss:background` 的背景 surface profile 可见。
+
+M3.2 after 结论：
+
+- demo 已重编为七幕“霓虹深潜协议”，不再逐项解释滤镜；标题完整且横向居中，镜头按
+  建城、截获、身份损坏、下潜、灭迹、封存、断链形成连续语义；
+- 第二幕的 scanline/noise/rgbShift、第三幕的 warp/dissolve、第五幕的 vignette/dissolve
+  具有可辨认的不同画面；
+- 第四幕通过既有 `jumpIn + gravity + wave` 驱动文字从入场向底部下沉，同时 block
+  `underwater` 负责位移、蓝移和模糊；运动与 DIP filter 两半均成立。终审改为 pause 后
+  仅等待两个 RAF 的观察帧后，标题仍完整位于视口中下部，四周有余量，没有裁切；
+- 第七幕以底部强 warp 收束；第一幕保留 `duotone:bg`，第六幕保留 `emboss:bg`；
+- 现有 behavior 已足以完成目标，没有触发 M3.3，不新增 `splash`、粒子或资源所有权模型。
+
+production-reader e2e 新增 `tests/e2e/dip-fx-m3.spec.ts`，覆盖七幕自然播放、ended 后
+replay、双向 seek、同源 `loadScript` 所触发的真实
+`ScriptPlayer.stop({ suppressIdle: true })` teardown、filter 实例不复用/不堆积、背景纹理
+存活，以及 runtime/page/console 零错误。七张 after 截图由 `testInfo.outputPath` 写入对应
+Playwright test-results 目录，只供人工审计，不做像素断言。
+
+测试 harness 的边界：
+
+- 控制面只走 `window.KmdRuntime.receive`，观测面只读 `__PIXI_APP__`；Reader Runtime v1
+  没有公开 stop command，因此同源 reload 是 production 可达的 stop 路径；
+- `bg(src)` 异步解析；背景探针递归 display tree 并选择最大纹理节点，不假设 sprite 是
+  background layer 的直接 child；seek 检查不使用固定 sleep，而是轮询预期 profile 与
+  sprite/texture/source 存活状态。纯色背景场景则轮询“旧纹理已移除 + 内容和预期 filter 已挂载”；
+- 一个镜头的注释、舞台命令和标题属于同一 paragraph，marker label 是首行注释；视觉截图
+  使用 `marker.timeMs + marker.duration + 750ms`，随后立即协议 pause，只等待两个 RAF 让协议
+  状态和 presentation 刷新便取样，避免长标题只出现一半或 4× 播放跨进下一次
+  `scene.clear`。pause 只冻结 segment timeline；`gravity` / `wave` 等 realtime behavior 仍由
+  ticker 推进，因此截图是 pause acknowledgement 附近的观察帧，不是“等待稳定后的冻结帧”；
+- 截图只能记录某一时刻，无法自动证明连续运动是否“好看”；下沉、波浪和转场观感仍以
+  七张 after 与真实自然播放的人工审查为准。
+
+本轮门禁结果：`pnpm build` 通过；parser 67/67、playback 70/70、invariants 1/1 通过；
+production Chromium e2e 13/13 通过。未修改任何 `*Filter.ts`，因此按门禁表不追加 shader
+gate；七张 after 已逐张人工检查。Windows 沙箱内 Vite/Vitest 写临时 config 会报 `EPERM`，
+相同命令在沙箱外工作区环境重跑通过，这一限制不属于产品运行时失败。
 
 ### M3.4 报告叙事与交付索引
 

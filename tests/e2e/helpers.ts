@@ -32,6 +32,7 @@ export type RuntimeEvent = {
       line?: number;
       timeMs?: number;
       startTime?: number;
+      duration?: number;
     }>;
     capabilities?: Record<string, unknown>;
     runtime?: string;

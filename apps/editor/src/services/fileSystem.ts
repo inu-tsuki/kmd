@@ -95,22 +95,72 @@ export async function readFile(handle: FileSystemFileHandle): Promise<string> {
 }
 
 /**
+ * Normalize a browser-project path without allowing it to escape the selected
+ * directory. Parent segments are valid when they only walk back through path
+ * segments that are already inside the project.
+ */
+export function normalizeProjectRelativePath(relativePath: string): string {
+  const candidate = relativePath.trim().replace(/\\/g, '/');
+  if (!candidate) {
+    throw new Error('Project file path must not be empty.');
+  }
+  if (candidate.startsWith('/') || /^[a-z][a-z0-9+.-]*:/i.test(candidate)) {
+    throw new Error(`Project file path must be relative: ${relativePath}`);
+  }
+
+  const normalizedSegments: string[] = [];
+  for (const segment of candidate.split('/')) {
+    if (!segment || segment === '.') continue;
+    if (segment === '..') {
+      if (normalizedSegments.length === 0) {
+        throw new Error(`Project file path escapes the project root: ${relativePath}`);
+      }
+      normalizedSegments.pop();
+      continue;
+    }
+    normalizedSegments.push(segment);
+  }
+
+  if (normalizedSegments.length === 0) {
+    throw new Error(`Project file path must identify a file: ${relativePath}`);
+  }
+  return normalizedSegments.join('/');
+}
+
+/** Resolve a file reference relative to another project file. */
+export function resolveProjectRelativePath(
+  containingFilePath: string,
+  referencedPath: string,
+): string {
+  const normalizedContainingPath = normalizeProjectRelativePath(containingFilePath);
+  const normalizedReference = referencedPath.trim().replace(/\\/g, '/');
+  if (!normalizedReference) {
+    throw new Error('Project file reference must not be empty.');
+  }
+  if (normalizedReference.startsWith('/') ||
+      /^[a-z][a-z0-9+.-]*:/i.test(normalizedReference)) {
+    throw new Error(`Project file reference must be relative: ${referencedPath}`);
+  }
+  const lastSlash = normalizedContainingPath.lastIndexOf('/');
+  const containingDirectory = lastSlash >= 0
+    ? normalizedContainingPath.slice(0, lastSlash)
+    : '';
+  const joinedPath = containingDirectory
+    ? `${containingDirectory}/${normalizedReference}`
+    : normalizedReference;
+  return normalizeProjectRelativePath(joinedPath);
+}
+
+/**
  * Read a UTF-8 text file below a project root. The path must remain relative to
- * that root; absolute paths and parent traversal are deliberately rejected.
+ * that root. Parent traversal is normalized first and accepted only when the
+ * result still belongs to the project.
  */
 export async function readProjectTextFile(
   projectRoot: FileSystemDirectoryHandle,
   relativePath: string
 ): Promise<string | null> {
-  const normalized = relativePath.trim().replace(/\\/g, '/')
-  if (!normalized || normalized.startsWith('/') || /^[a-z]:/i.test(normalized)) {
-    throw new Error(`Project file path must be relative: ${relativePath}`)
-  }
-
-  const segments = normalized.split('/').filter(segment => segment !== '' && segment !== '.')
-  if (segments.length === 0 || segments.some(segment => segment === '..')) {
-    throw new Error(`Project file path escapes the project root: ${relativePath}`)
-  }
+  const segments = normalizeProjectRelativePath(relativePath).split('/');
 
   try {
     let directory = projectRoot

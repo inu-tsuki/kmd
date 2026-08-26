@@ -225,7 +225,7 @@ const exportKmd = () => {
   border-top: 1px solid var(--border-main);
 }
 .splitpanes__splitter:hover {
-  background: var(--accent-secondary) !important;
+  background: var(--accent-background) !important;
 }
 
 /* 通用 UI 元素 */
@@ -258,7 +258,7 @@ const exportKmd = () => {
 }
 
 .brand {
-  color: var(--accent-primary);
+  color: var(--accent-text);
   font-weight: bold;
   font-size: 13px;
 }

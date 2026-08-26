@@ -51,7 +51,7 @@
 
 | 项 | 去向 |
 |---|---|
-| `TextLayoutEngine.lastAuditLog` write-only（S1 后） | 记入本台账，留待后续（无消费者，清理需动 layout pass 内部） |
+| ~~`TextLayoutEngine.lastAuditLog` write-only（S1 后）~~ | ✅ 2026-08-13 后续清理完成：删除逐结果隐藏审计副本；保留 `AuditBus` 的 preflight/calculation 聚合事件与回归 |
 | `ReaderCanvas` 剩余 3 个死暴露（loadAndPlay/stop/getPlayer） | 处方 8（Compat 层清退）清点 |
 | settings transaction / 字段特判 | post-B（防火墙 ≠ transaction；见 `docs/planning/packages/reader-runtime-web.md`） |
 | `@deprecated` legacy mirrors（KineticChar/KineticText/CompatBinder 等） | 处方 8 |

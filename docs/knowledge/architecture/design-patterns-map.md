@@ -27,7 +27,7 @@ KMD 的模式不是随机堆砌，而是一套自洽体系。评审新方案时�
 | scene-bake（`pData.snapshot`） | **备忘录 / 烘焙（Memento / Bake）** | 把运行时昂贵计算搬到构建期，换取 `seekTo()` 瞬时恢复 |
 | `BehaviorRecord` / `StyleRecord` / `InstantEffectRecord` | **命令模式（Command）— record & replay** | 把"做了什么"物化为不可变数据，同一份数据支持播放、倒带、跳转；**seek 幂等性整体建立在此之上** |
 | `src/runtime/readerRuntimeEditorAdapter.ts` | **适配器（Adapter）** | core 与 Vue/Pinia 之间唯一的翻译官；core 不感知 UI |
-| `AuditBus` / 诊断收集器 | **观察者 / 事件总线** | 各子系统发事件、不感知监听者；构建期 collector 与运行期 bus 分离 |
+| `AuditBus` / 诊断收集器 | **观察者 / 事件总线** | 各子系统发事件、不感知监听者；layout 只发布 preflight/calculation 聚合证据（result/marker/bounds），不再维护无消费者的逐结果静态审计副本 |
 | `ReaderRuntimeSession` + 协议信封（`version/id/type/payload`） | **门面 + 版本化消息契约** | 跨端（Android WebView）通信可演进、可校验 |
 | 模块级单例（`effectManager` 等 8 个） | **模块单例（Service-Locator 近似）** | 单人+AI 项目的合理取舍；代价是测试替换难、隐式共享状态。**约束：不再新增全局可变状态** |
 

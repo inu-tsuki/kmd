@@ -362,8 +362,8 @@
 - [ ] **Hot Replay**: Monaco "从此处播放" + segment seek。
 - [ ] **Monaco 视觉增强**: Segment 边界标记、Minimap 增强、控制流折叠。
 - [ ] **Inspector v2**: 指令元数据 + 实时调参 → 自动改写 KMD 源码。
-- [x] **VS Code 颜色主题加载**（2026-08-10：标准已展开 JSON + 项目路径加载完成；JSONC、`include`、扩展清单与热监听边界见 `docs/knowledge/integration/editor-vscode-theme-loading.md`）:
-  - Monaco 与 VS Code `tokenColors` 格式完全兼容（已用 TM grammar），任何 `.json` 主题文件可直接传入 `defineTheme`
+- [x] **VS Code 颜色主题加载**（2026-08-12：JSONC + 项目内相对 `include` 已补齐；扩展清单与热监听边界见 `docs/knowledge/integration/editor-vscode-theme-loading.md`）:
+  - Monaco 通过 TM grammar 兼容常用 VS Code `tokenColors`；复杂父 scope、排除 selector 等边界见集成文档
   - IDE Shell 变量映射：从主题 `colors` 对象提取 ~10 个键注入 CSS 变量
     ```
     editor.background       → --bg-editor
@@ -375,7 +375,9 @@
     ...
     ```
   - 加载来源：项目文件夹中的 `theme.json` 或 `project.yaml` 中 `editorTheme:` 字段
-  - 效果：Dracula、One Dark、Catppuccin 等主流 VS Code 主题开箱即用
+  - 支持 JSONC 注释、尾逗号与 base-first `include`；循环、越根或任一层损坏时整棵回退
+  - `dark/light/hc/hcLight` 缺色、空白色按类型回退；按钮强调色使用成对背景/前景，普通表面强调文字独立保证可读
+  - 效果：Dracula、One Dark、Catppuccin 等主题中可直接读取的 JSON/JSONC 颜色主题文件开箱即用
 
 ## 7. 插件化生态 (v1.7.0 - Plugin Architecture)
 
@@ -466,7 +468,7 @@
 
 ### P5. 主题系统插件化
 
-> **核心前提**：Monaco 已使用 TM grammar，与 VS Code `tokenColors` 完全兼容。
+> **核心前提**：Monaco 已使用 TM grammar，可投影常用 VS Code `tokenColors`；复杂 selector 不声称完全等价。
 > 主题分两层：语法着色层（Monaco `tokenColors`）+ IDE 外壳层（CSS variables）。
 
 - [x] **P5.1 提取默认主题为独立文件**:
@@ -479,6 +481,7 @@
   - 自动提取 `colors` → CSS variables（映射表约 15 个键）
   - 自动传递 `tokenColors` → Monaco `defineTheme`
   - 在 `project.yaml` 中声明：`editorTheme: ./themes/dracula.json`
+  - 支持 JSONC 与相对当前主题文件的项目内 `include`；`colors` 子级覆盖、`tokenColors` 基底在前
 
 - [ ] **P5.3 GrammarService — 语法插件化（方案 B）**:
   - 插件可通过 `SyntaxContribution` 贡献新 TM pattern（repository 条目 + bodyIncludes）
@@ -519,13 +522,18 @@
   - 复用现有 `KMDParser` + `parser.validate()` — 零重写
   - 标准 LSP server 入口（`vscode-languageserver` npm 包）
   - `extensions/vscode-kmd/client.ts` 作为轻量 LSP client 包装
+- [x] **V1.1a 语言资产打包副本同步**（2026-08-13）:
+  - `packages/language` 为 canonical，VSIX 保留静态 grammar/config 副本
+  - 共享 asset pair 清单；显式 `pnpm language:sync` 使用 `copyFile` 保持字节一致
+  - 根/扩展 build 与 package check 先做只读 `language:check`，不自动写副本
+  - `node:test` 覆盖 copy、no-op、drift、missing source 零部分写
 - [ ] **V1.2 Diagnostics（错误波浪线）**（2026-08-10：LSP `publishDiagnostics` 已完成；Web IDE 的 Monaco `setModelMarkers` 替换仍待迁移）:
   - `parser.validate(text)` → `publishDiagnostics`
   - 替代目前 Monaco 里手写的 `setModelMarkers` 逻辑
-- [ ] **V1.3 Completion（智能补全）**:
-  - 复用 `kmd-lang.ts` 里的补全逻辑，迁移到 LSP `onCompletion`
-  - 补全来源：`effectManager` / `styleManager` / `stageManager` / `layoutManager` 注册表
-  - v1.7 P1 完成后：补全列表自动包含所有已安装插件贡献的指令
+- [x] **V1.3 Completion（智能补全）**（2026-08-12：LSP `onCompletion` 最小闭环完成）:
+  - 复用 `kmd-lang.ts` 的语境规则：`f.` / `cam.` / `@` / `:` / 参数内 marker 与 `var.*`
+  - Node-safe 作者可见内建命令快照避免 completion 直接加载 Pixi/GSAP manager；focused parity test 按 metadata 排除 `internal` 项后与四类 live registry 双向校验，防止静默漂移或内部命令泄漏
+  - Monaco provider 暂保留；动态插件补全仍等待 v1.7 P1 的可序列化 metadata contribution，不把本轮快照声明为稳定插件 API
 - [ ] **V1.4 Hover 文档**:
   - 悬停在 effect/layout/stage 名称上显示简短说明
   - 来源：`EffectMeta.description`（为 meta 增加可选 description 字段）

@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "pnpm --filter @kmd/editor dev",
-    "build": "pnpm core:check && pnpm language-server:build && pnpm vscode-kmd:build && pnpm editor:build",
+    "build": "pnpm language:check && pnpm core:check && pnpm language-server:build && pnpm vscode-kmd:build && pnpm editor:build",
     "preview": "pnpm --filter @kmd/editor preview",
     "test": "pnpm core:check && pnpm language-server:test && pnpm --filter @kmd/editor test",
     "test:parser": "pnpm --filter @kmd/editor test:parser",
@@ -16,7 +16,9 @@
     "test:golden:write": "pnpm --filter @kmd/editor test:golden:write",
     "test:e2e": "pnpm reader:build && pnpm test:e2e:run",
     "test:e2e:run": "node scripts/run-e2e.mjs",
+    "language:sync": "node scripts/sync-language-assets.mjs",
     "language:check": "node scripts/check-language-assets.mjs",
+    "language:test": "node --test scripts/test/language-assets.test.mjs",
     "core:typecheck": "pnpm --filter @kmd/core typecheck",
     "core:check": "pnpm --filter @kmd/core check",
     "language-server:build": "pnpm --filter @kmd/language-server build",

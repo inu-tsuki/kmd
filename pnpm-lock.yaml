@@ -54,6 +54,9 @@ importers:
       gsap:
         specifier: ^3.14.2
         version: 3.14.2
+      jsonc-parser:
+        specifier: ^3.3.1
+        version: 3.3.1
       monaco-editor:
         specifier: ^0.55.1
         version: 0.55.1
@@ -1294,6 +1297,9 @@ packages:
 
   js-binary-schema-parser@2.0.3:
     resolution: {integrity: sha512-xezGJmOb4lk/M1ZZLTR/jaBHQ4gG/lqQnJqdIv4721DMggsa1bDVlHXNeHYogaIEHD9vCRv0fcL4hMA+Coarkg==}
+
+  jsonc-parser@3.3.1:
+    resolution: {integrity: sha512-HUgH65KyejrUFPvHFPbqOY0rsFip3Bo5wb4ngvdi1EpCYWUQDC5V+Y7mZws+DLkr4M//zQJoanu1SP+87Dv1oQ==}
 
   loupe@3.2.1:
     resolution: {integrity: sha512-CdzqowRJCeLU72bHvWqwRBBlLcMEtIvGrlvef74kMnV2AolS9Y8xUv1I0U/MNAWMhBlKIoyuEgoJ0t/bbwHbLQ==}
@@ -2701,6 +2707,8 @@ snapshots:
   ismobilejs@1.1.1: {}
 
   js-binary-schema-parser@2.0.3: {}
+
+  jsonc-parser@3.3.1: {}
 
   loupe@3.2.1: {}
 

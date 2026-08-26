@@ -73,6 +73,7 @@ export interface Work {
 export interface ScriptIssue {
   id: string;
   workId: string;
+  revisionId: string;
   severity: IssueSeverity;
   source: IssueSource;
   location: string;

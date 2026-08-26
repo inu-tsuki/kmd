@@ -63,8 +63,8 @@
   },
   "homepage": "https://github.com/inu-tsuki/kmd#readme",
   "scripts": {
-    "build": "node scripts/build-client.mjs && node scripts/copy-server.mjs && node scripts/check-package.mjs",
-    "package:check": "node scripts/check-package.mjs",
+    "build": "pnpm --dir ../.. language:check && node scripts/build-client.mjs && node scripts/copy-server.mjs && node scripts/check-package.mjs",
+    "package:check": "pnpm --dir ../.. language:check && node scripts/check-package.mjs",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {},

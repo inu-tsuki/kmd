@@ -171,8 +171,8 @@ const handleDrop = (e: DragEvent) => {
 
 .tab.active {
   background: var(--bg-editor);
-  color: var(--accent-primary);
-  border-bottom: 1px solid var(--accent-primary);
+  color: var(--accent-text);
+  border-bottom: 1px solid var(--accent-text);
 }
 
 .tab-icon {
@@ -189,7 +189,7 @@ const handleDrop = (e: DragEvent) => {
 .dock-overlay {
   position: absolute;
   background: rgba(0, 122, 204, 0.2);
-  border: 1px solid var(--accent-secondary);
+  border: 1px solid var(--accent-background);
   pointer-events: none;
   z-index: 1000;
 }

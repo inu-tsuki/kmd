@@ -29,6 +29,9 @@ jobs:
       - name: Language assets sync check
         run: pnpm language:check
 
+      - name: Language asset tooling tests
+        run: pnpm language:test
+
       - name: Editor type-check + build
         run: pnpm build
 

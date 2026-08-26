@@ -949,6 +949,7 @@ export const seedIssues: ScriptIssue[] = [
   {
     id: 'issue-rain-city-1',
     workId: 'rain-city',
+    revisionId: 'rev-1',
     severity: 'info',
     source: 'accessibility',
     location: 'scene: crosswalk',
@@ -958,6 +959,7 @@ export const seedIssues: ScriptIssue[] = [
   {
     id: 'issue-glass-rail-1',
     workId: 'glass-rail',
+    revisionId: 'rev-1',
     severity: 'warning',
     source: 'metadata',
     location: 'mobile preview',
@@ -967,6 +969,7 @@ export const seedIssues: ScriptIssue[] = [
   {
     id: 'issue-glass-rail-2',
     workId: 'glass-rail',
+    revisionId: 'rev-1',
     severity: 'warning',
     source: 'metadata',
     location: 'work metadata',
@@ -976,6 +979,7 @@ export const seedIssues: ScriptIssue[] = [
   {
     id: 'issue-after-school-orbit-1',
     workId: 'after-school-orbit',
+    revisionId: 'rev-1',
     severity: 'warning',
     source: 'runtime',
     location: 'choice teaser',
@@ -985,6 +989,7 @@ export const seedIssues: ScriptIssue[] = [
   {
     id: 'issue-final-test-1',
     workId: 'final-test',
+    revisionId: 'rev-1',
     severity: 'info',
     source: 'performance',
     location: 'whole script',
@@ -997,6 +1002,7 @@ export const seedIssues: ScriptIssue[] = [
   {
     id: 'issue-bg-1',
     workId: 'bg',
+    revisionId: 'rev-1',
     severity: 'info',
     source: 'runtime',
     location: ':bg filter scope',
@@ -1006,6 +1012,7 @@ export const seedIssues: ScriptIssue[] = [
   {
     id: 'issue-underwater-1',
     workId: 'underwater',
+    revisionId: 'rev-1',
     severity: 'info',
     source: 'runtime',
     location: 'seek filter lifecycle',
@@ -1015,6 +1022,7 @@ export const seedIssues: ScriptIssue[] = [
   {
     id: 'issue-cyberpunk-title-1',
     workId: 'cyberpunk-title',
+    revisionId: 'rev-1',
     severity: 'warning',
     source: 'performance',
     location: 'scene 2: CRT degradation stack',

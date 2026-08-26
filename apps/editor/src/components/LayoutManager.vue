@@ -89,7 +89,7 @@ const vClickOutside = {
 }
 
 .dropdown-trigger {
-  color: var(--accent-primary) !important;
+  color: var(--accent-text) !important;
 }
 
 .dropdown-menu {
@@ -171,15 +171,15 @@ const vClickOutside = {
 }
 
 .actions button:hover {
-  background: var(--accent-secondary);
-  color: #fff;
+  background: var(--accent-background);
+  color: var(--accent-foreground);
 }
 
 .export-btn {
   width: 100%;
-  background: var(--accent-primary);
+  background: var(--accent-background);
   border: none;
-  color: #fff;
+  color: var(--accent-foreground);
   font-size: 11px;
   padding: 8px;
   border-radius: 2px;

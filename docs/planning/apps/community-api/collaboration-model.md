@@ -1,7 +1,7 @@
 # Community API Collaboration Model
 
-> 文档状态：草案 / 待启动
-> 最近更新：2026-05-27
+> 文档状态：草案 / 只读 revision-aware 基线已启动
+> 最近更新：2026-08-12
 
 ## 1. 目标
 
@@ -185,14 +185,19 @@ GET  /works
 GET  /works/:id
 GET  /works/:id/source
 GET  /works/:id/revisions/:revisionId/source
+GET  /works/:id/revisions
 GET  /works/:id/issues
 POST /reviews
 ```
 
+其中 `GET /works/:id/issues` 已支持可选 `revisionId` 精确筛选，seed issue 也已绑定 revision；
+revision 列表只投影客户端元数据，并为每个 revision 返回不可变 source URL；不暴露服务器本地
+`sourcePath`。`/works/:id/source` 只保留为 active revision 别名。当前仍是内存/seed 的只读协作基线，
+尚未实现 revision 创建、提交、权限、持久化或 discussion。
+
 下一步可以扩展：
 
 ```text
-GET  /works/:id/revisions
 POST /works/:id/revisions
 POST /works/:id/revisions/:revisionId/submit
 

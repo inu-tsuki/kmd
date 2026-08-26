@@ -1,4 +1,10 @@
-import type { Review, ScriptIssue, Work, WorkFilters } from '../domain/types.js';
+import type {
+  KmdScriptRevision,
+  Review,
+  ScriptIssue,
+  Work,
+  WorkFilters
+} from '../domain/types.js';
 import { seedIssues, seedWorks } from './seed.js';
 
 export class CommunityStore {
@@ -42,8 +48,15 @@ export class CommunityStore {
     return this.works.find((work) => work.id === id);
   }
 
-  listIssues(workId: string): ScriptIssue[] {
-    return this.issues.filter((issue) => issue.workId === workId);
+  listRevisions(workId: string): KmdScriptRevision[] {
+    return this.getWork(workId)?.script.revisions ?? [];
+  }
+
+  listIssues(workId: string, revisionId?: string): ScriptIssue[] {
+    return this.issues.filter((issue) => (
+      issue.workId === workId
+      && (!revisionId || issue.revisionId === revisionId)
+    ));
   }
 
   createReview(input: Omit<Review, 'id' | 'createdAt'>): Review {
